@@ -1,0 +1,1344 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "canvas.enterSelecting" : {
+      "comment" : "Diagram background context menu item that turns the selection mode on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection mode (drag to select an area)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択モード（ドラッグで範囲を選ぶ）"
+          }
+        }
+      }
+    },
+    "canvas.exitSelecting" : {
+      "comment" : "Diagram background context menu item while the selection mode is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exit selection mode"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択モードを終える"
+          }
+        }
+      }
+    },
+    "canvas.writeInPlace" : {
+      "comment" : "Accessibility label of the text field a card is written in on the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write in place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その場で書く"
+          }
+        }
+      }
+    },
+    "card.brokenGhost" : {
+      "comment" : "Header badge of a card ghost that leads nowhere.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card ghost · no target"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト · 指す先なし"
+          }
+        }
+      }
+    },
+    "card.codeTipRecorded" : {
+      "comment" : "A line of that tooltip: where the implementation line leaves and what it reaches, then when its code was recorded (a date and a time).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (linked %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@ に覚えた）"
+          }
+        }
+      }
+    },
+    "card.codeTipTitle" : {
+      "comment" : "First line of the tooltip over the orange dot of a card with an implementation line whose code changed since it was linked; the lines it names follow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code changed since it was linked:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線を引いたあとでコードが変わりました:"
+          }
+        }
+      }
+    },
+    "card.documentCut" : {
+      "comment" : "Strip at the foot of a document card whose picture stops short of the end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rest is in the card editor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続きはカードエディタで"
+          }
+        }
+      }
+    },
+    "card.documentMore" : {
+      "comment" : "Strip at the foot of a document card that has more below.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↓ More (Option + scroll to move, pinch to zoom)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↓ 続き（Option＋スクロールで動かす・ピンチで拡大）"
+          }
+        }
+      }
+    },
+    "card.drawing" : {
+      "comment" : "Shown in a document card while its picture is being taken.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drawing…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描いています…"
+          }
+        }
+      }
+    },
+    "card.noRefTarget" : {
+      "comment" : "Text on the right of a reference row whose target is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（参照先なし）"
+          }
+        }
+      }
+    },
+    "card.noShape" : {
+      "comment" : "Header badge of a data card whose shape is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no shape)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（形なし）"
+          }
+        }
+      }
+    },
+    "card.noTarget" : {
+      "comment" : "Row text for a line whose card at the other end is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（指す先なし）"
+          }
+        }
+      }
+    },
+    "card.primaryKey" : {
+      "comment" : "Accessibility description of the key mark on a primary key row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主キー"
+          }
+        }
+      }
+    },
+    "card.tableOf" : {
+      "comment" : "Header badge of a table card; the argument is the shape it gathers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ table"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の表"
+          }
+        }
+      }
+    },
+    "card.temporary" : {
+      "comment" : "Added to the header badge of a card put on the diagram only for a look.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "temporary"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時"
+          }
+        }
+      }
+    },
+    "command.actualSize" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Section map at 100%"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップを 100% で表示"
+          }
+        }
+      }
+    },
+    "command.autoLayout" : {
+      "comment" : "Edit menu command that places the cards on the diagram automatically.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-arrange"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動整列"
+          }
+        }
+      }
+    },
+    "command.closeTab" : {
+      "comment" : "File menu command (⌘W) while a project is on screen: closes the tab in front.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close Tab"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タブを閉じる"
+          }
+        }
+      }
+    },
+    "command.closeWindow" : {
+      "comment" : "File menu command (⌘W) over the project list and the app settings: closes the window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる"
+          }
+        }
+      }
+    },
+    "command.fit" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fit Section map to view"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップの全体を表示"
+          }
+        }
+      }
+    },
+    "command.toggleNavigator" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open or close Navigator"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを開く・閉じる"
+          }
+        }
+      }
+    },
+    "command.toggleProperties" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open or close Properties panel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロパティパネルを開く・閉じる"
+          }
+        }
+      }
+    },
+    "command.zoomIn" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom in Section map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップを拡大"
+          }
+        }
+      }
+    },
+    "command.zoomOut" : {
+      "comment" : "View menu command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom out Section map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップを縮小"
+          }
+        }
+      }
+    },
+    "flow.branches" : {
+      "comment" : "Detail of a node's row that leads to several nodes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "splits"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かれる"
+          }
+        }
+      }
+    },
+    "flow.eventOutcome" : {
+      "comment" : "Text of a flow node that waits for or starts on another flow's event; the arguments are the outcome and the flow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$@ の %1$@"
+          }
+        }
+      }
+    },
+    "ghost.noTarget" : {
+      "comment" : "Body of a card ghost's box when the card it pointed to is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It points nowhere"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先がありません"
+          }
+        }
+      }
+    },
+    "help.fit" : {
+      "comment" : "Tooltip of the button that fits the whole diagram in the view.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom to fit"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全体を表示"
+          }
+        }
+      }
+    },
+    "menu.addCard" : {
+      "comment" : "Context menu item on the diagram that starts a new card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add card…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを追加…"
+          }
+        }
+      }
+    },
+    "menu.bringForward" : {
+      "comment" : "Context menu item on a ui section's part that moves it in the section's card order, which is the order parts overlap in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring Forward"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前面へ"
+          }
+        }
+      }
+    },
+    "menu.bringToFront" : {
+      "comment" : "Context menu item on a ui section's part that moves it in the section's card order, which is the order parts overlap in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring to Front"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最前面へ"
+          }
+        }
+      }
+    },
+    "menu.connections" : {
+      "comment" : "Menu item and button that open the connections map of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connections map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コネクションマップ"
+          }
+        }
+      }
+    },
+    "menu.copyGhostPath" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy card ghost path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストのパスをコピー"
+          }
+        }
+      }
+    },
+    "menu.copyRealPath" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy real card's path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物のパスをコピー"
+          }
+        }
+      }
+    },
+    "menu.deleteCard" : {
+      "comment" : "Context menu item on a card on the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを削除…"
+          }
+        }
+      }
+    },
+    "menu.deleteGhost" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストを削除"
+          }
+        }
+      }
+    },
+    "menu.fitCardContents" : {
+      "comment" : "Context menu item on a card drawn as a document, shown when it is scrolled or zoomed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fit card contents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの中を全体表示"
+          }
+        }
+      }
+    },
+    "menu.fitWidth" : {
+      "comment" : "Context menu item on a card drawn as rows: its width is set, once, to what its header and rows take now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fit width to contents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中身に合わせて幅を決める"
+          }
+        }
+      }
+    },
+    "menu.goToNode" : {
+      "comment" : "Context menu item on a row that points at a flow node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to this node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このノードへ移る"
+          }
+        }
+      }
+    },
+    "menu.keepAsGhost" : {
+      "comment" : "Context menu item on another section's card shown temporarily.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep as card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストに置く（残す）"
+          }
+        }
+      }
+    },
+    "menu.keepStandalone" : {
+      "comment" : "Context menu item on a value object or enum shown temporarily.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep on the diagram on its own"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図に単独で出す（残す）"
+          }
+        }
+      }
+    },
+    "menu.moveToSection" : {
+      "comment" : "Submenu on a card's context menu that lists the sections it may move to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションへ移す"
+          }
+        }
+      }
+    },
+    "menu.openCardShowRow" : {
+      "comment" : "Context menu item on a row of a card on the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the card and show this row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを開いてこの行を見る"
+          }
+        }
+      }
+    },
+    "menu.openReal" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the real card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物を開く"
+          }
+        }
+      }
+    },
+    "menu.pathsCutOff" : {
+      "comment" : "Disabled note at the end of the list of paths to copy when the list was cut short.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "(cut off at %lld path)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "(cut off at %lld paths)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（%lld 件で打ち切り）"
+          }
+        }
+      }
+    },
+    "menu.resetSize" : {
+      "comment" : "Context menu item on a card that has a size of its own: it goes back to the project's width, its height from its contents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset size"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きさを既定に戻す"
+          }
+        }
+      }
+    },
+    "menu.sendBackward" : {
+      "comment" : "Context menu item on a ui section's part that moves it in the section's card order, which is the order parts overlap in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Backward"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背面へ"
+          }
+        }
+      }
+    },
+    "menu.sendToBack" : {
+      "comment" : "Context menu item on a ui section's part that moves it in the section's card order, which is the order parts overlap in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send to Back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最背面へ"
+          }
+        }
+      }
+    },
+    "menu.stopShowingTemporary" : {
+      "comment" : "Context menu item on a card put on the diagram only for a look.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop showing temporarily"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時表示をやめる"
+          }
+        }
+      }
+    },
+    "menu.stopStandalone" : {
+      "comment" : "Context menu item on a value object or enum shown on its own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop showing on its own"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単独表示をやめる"
+          }
+        }
+      }
+    },
+    "menu.viewDocument" : {
+      "comment" : "Context menu item on a formatdoc drawn as rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View as document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書で見る"
+          }
+        }
+      }
+    },
+    "menu.viewRows" : {
+      "comment" : "Context menu item on a formatdoc drawn as a document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View as rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行で見る"
+          }
+        }
+      }
+    },
+    "mermaid.cantDraw" : {
+      "comment" : "Written after the mermaid comment mark when the diagram cannot be said as mermaid.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't draw this"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描けません"
+          }
+        }
+      }
+    },
+    "mermaid.copy" : {
+      "comment" : "Button in the diagram's top bar that copies the diagram as mermaid text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy mermaid"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mermaid をコピー"
+          }
+        }
+      }
+    },
+    "mermaid.help" : {
+      "comment" : "Tooltip of the mermaid toggle in the diagram's top bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View this diagram as mermaid (the same as MCP's as: diagram, with the kinds of line switched on)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この図を mermaid で見る（MCP の as: diagram と同じもの。切り替えた線の種類で）"
+          }
+        }
+      }
+    },
+    "row.done" : {
+      "comment" : "Row of a goal card under which the finished cards are folded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "済み"
+          }
+        }
+      }
+    },
+    "row.item" : {
+      "comment" : "Label of a formatdoc card's row for one item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目"
+          }
+        }
+      }
+    },
+    "row.noVersions" : {
+      "comment" : "Text of a stackdoc card's version row when it has no version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no versions yet)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（まだ版がありません）"
+          }
+        }
+      }
+    },
+    "row.outsideItems" : {
+      "comment" : "Text of a formatdoc card's row for the rows above its items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outside items"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目の外"
+          }
+        }
+      }
+    },
+    "row.rows" : {
+      "comment" : "Text of a flow process node's row: how many rows it has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld row"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rows"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 行"
+          }
+        }
+      }
+    },
+    "row.rules" : {
+      "comment" : "Label of a flow card's row for a notes line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rules"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決まり"
+          }
+        }
+      }
+    },
+    "row.summary" : {
+      "comment" : "Label of a stackdoc card's row that shows the first line of its description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "概要"
+          }
+        }
+      }
+    },
+    "row.version" : {
+      "comment" : "Label of a stackdoc card's row with the selector of its versions.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版"
+          }
+        }
+      }
+    },
+    "select.exit" : {
+      "comment" : "Button in the diagram's top bar that ends the selection mode.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exit"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終える"
+          }
+        }
+      }
+    },
+    "select.hint" : {
+      "comment" : "Explains the selection mode in the diagram's top bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to select an area (hold ⌥ to select only what fits entirely); drag a selected card's header to move them all together"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドラッグで範囲（⌥ で全部入るものだけ）・選んだカードの頭のドラッグでまとめて動かす"
+          }
+        }
+      }
+    },
+    "select.mode" : {
+      "comment" : "Label in the diagram's top bar while the selection mode is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection mode"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択モード"
+          }
+        }
+      }
+    },
+    "sequence.callerPlace" : {
+      "comment" : "Under the caller participant in the sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calling flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼んだ flow"
+          }
+        }
+      }
+    },
+    "sequence.ownFlow" : {
+      "comment" : "Under the sequence diagram's first participant: where this flow sits.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (this flow)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（この flow）"
+          }
+        }
+      }
+    },
+    "sequence.programPlace" : {
+      "comment" : "Under a program participant in the sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outside the project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの外"
+          }
+        }
+      }
+    },
+    "sequence.recordPlace" : {
+      "comment" : "Under a record participant in the sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録"
+          }
+        }
+      }
+    },
+    "sequence.storePlace" : {
+      "comment" : "Under a store participant in the sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where records are kept"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録を置く所"
+          }
+        }
+      }
+    },
+    "workDir.caption" : {
+      "comment" : "Said at the top of a working directory's section map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A folder on this Mac. The same in every branch (read only; notes can be added)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac のフォルダ。どの branch でも同じ（読むだけ。メモは置ける）"
+          }
+        }
+      }
+    },
+    "workDir.missingCaption" : {
+      "comment" : "Said at the top of the map of a working directory's folder that reading no longer finds; the argument is the folder's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The folder %@ is no longer there: move the notes here to another folder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダ %@ は今はありません。ここのメモをほかのフォルダへ移してください"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

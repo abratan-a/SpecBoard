@@ -1,0 +1,1164 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "alert.branchChanges" : {
+      "comment" : "Message of the delete-branch dialog; the argument is how many things the branch changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The %lld item changed, created or deleted in this branch will be deleted too. This can't be undone."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The %lld items changed, created or deleted in this branch will be deleted too. This can't be undone."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で変えた・作った・消したもの %lld 件も一緒に消えます。元に戻せません。"
+          }
+        }
+      }
+    },
+    "alert.branchUnchanged" : {
+      "comment" : "Message of the delete-branch dialog when the branch has no changes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing was changed in this branch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で変えたものはありません。"
+          }
+        }
+      }
+    },
+    "alert.deleteBranch" : {
+      "comment" : "Title of the confirmation dialog when deleting a branch; the argument is the branch name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete branch “%@”?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch「%@」を消しますか？"
+          }
+        }
+      }
+    },
+    "alert.deleteCard" : {
+      "comment" : "Title of the confirmation dialog when deleting a card from the navigator; the argument is the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %@ を削除しますか？"
+          }
+        }
+      }
+    },
+    "header.createHelp" : {
+      "comment" : "Tooltip of the plus button in the navigator header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a section inside the open section (not directly under main or a branch)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いているセクションの中にセクションを作る（main・branch の直下には作れません）"
+          }
+        }
+      }
+    },
+    "header.projects" : {
+      "comment" : "Back button at the top of the navigator that returns to the project list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト一覧"
+          }
+        }
+      }
+    },
+    "header.projectsHelp" : {
+      "comment" : "Tooltip of the back button at the top of the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose another project or create one"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトを選び直す・作る"
+          }
+        }
+      }
+    },
+    "menu.addCard" : {
+      "comment" : "Context menu item on a section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add card…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを追加…"
+          }
+        }
+      }
+    },
+    "menu.changeTarget" : {
+      "comment" : "Context menu item on a card ghost: point it at another card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change target…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付け替える…"
+          }
+        }
+      }
+    },
+    "menu.copyGhostPath" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy card ghost's path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストのパスをコピー"
+          }
+        }
+      }
+    },
+    "menu.copyRealPath" : {
+      "comment" : "Context menu item on a card ghost: copy the path of the card it points at.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy real card's path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物のパスをコピー"
+          }
+        }
+      }
+    },
+    "menu.createInside" : {
+      "comment" : "Menu item (a trailing ellipsis is added in code) of the plus menu in the navigator header; the argument is the open section's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create section inside %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の中にセクションを作る"
+          }
+        }
+      }
+    },
+    "menu.createInsideThis" : {
+      "comment" : "Context menu item on a section (a trailing ellipsis is added in code).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create section inside this one"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この中にセクションを作る"
+          }
+        }
+      }
+    },
+    "menu.deleteCard" : {
+      "comment" : "Context menu item on a card; it asks for confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを削除…"
+          }
+        }
+      }
+    },
+    "menu.deleteGhost" : {
+      "comment" : "Context menu item on a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストを削除"
+          }
+        }
+      }
+    },
+    "menu.keepAsGhost" : {
+      "comment" : "Context menu item on a card of another section: keep it as a card ghost in this section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place as card ghost (keep)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストに置く（残す）"
+          }
+        }
+      }
+    },
+    "menu.moveToSection" : {
+      "comment" : "Context menu on a card: a submenu of the sections it can be moved to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションへ移す"
+          }
+        }
+      }
+    },
+    "menu.openReal" : {
+      "comment" : "Context menu item on a card ghost: open the card it points at.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the real card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物を開く"
+          }
+        }
+      }
+    },
+    "menu.openSymbol" : {
+      "comment" : "Context menu item on a function or type in the navigator: opens its file's text at it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Code"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードを開く"
+          }
+        }
+      }
+    },
+    "menu.openToCreate" : {
+      "comment" : "Disabled hint in the plus menu of the navigator header when no section is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a section to create sections inside it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを開くと、その中にセクションを作れます"
+          }
+        }
+      }
+    },
+    "menu.placeGhost" : {
+      "comment" : "Context menu on a card: a submenu of the sections where a card ghost of it can be placed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place card ghost…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストを置く…"
+          }
+        }
+      }
+    },
+    "menu.showStandalone" : {
+      "comment" : "Context menu item on a value or enum card: draw it as a card of its own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show on its own in the diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図に単独で出す"
+          }
+        }
+      }
+    },
+    "menu.showTemporarily" : {
+      "comment" : "Context menu item on a card of another section that a section's lines reach: show it on the open diagram for now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show temporarily"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時的に出す"
+          }
+        }
+      }
+    },
+    "menu.showTemporarilyHere" : {
+      "comment" : "Context menu item on a card that is not drawn on the diagram on screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show temporarily (in this diagram)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時的に出す（いまの図に）"
+          }
+        }
+      }
+    },
+    "menu.stopStandalone" : {
+      "comment" : "Context menu item on a value or enum card drawn as a card of its own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop showing on its own"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単独表示をやめる"
+          }
+        }
+      }
+    },
+    "menu.stopTemporary" : {
+      "comment" : "Context menu item on a card that is shown temporarily.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop showing temporarily"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時表示をやめる"
+          }
+        }
+      }
+    },
+    "menu.viewInRelationPanel" : {
+      "comment" : "Context menu item on a card, card ghost or section-ghost card in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View in Section map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップで見る"
+          }
+        }
+      }
+    },
+    "prompt.branchMessage" : {
+      "comment" : "Message of the name sheet when creating a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A branch is where you plan changes. It is made from main and opens as soon as it is made. Whatever you change inside becomes a change in the branch, and what you haven't touched shows main as it is now."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch は変更の計画を立てる場所です。main から作り、作るとすぐ開きます。中ではどこを直しても branch の変更になり、触っていない所は main の今が見えます"
+          }
+        }
+      }
+    },
+    "prompt.createBranch" : {
+      "comment" : "Title of the name sheet when creating a branch, and label of the create-branch button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch を作る"
+          }
+        }
+      }
+    },
+    "prompt.createKindSection" : {
+      "comment" : "Title of the name sheet when creating a section of a kind; the argument is the kind's heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create %@ section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@セクションを作る"
+          }
+        }
+      }
+    },
+    "prompt.createSection" : {
+      "comment" : "Title of the name sheet when creating a section of no particular kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを作る"
+          }
+        }
+      }
+    },
+    "prompt.renameGhost" : {
+      "comment" : "Title of the name sheet when renaming a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストの名前を変える"
+          }
+        }
+      }
+    },
+    "row.boardHelp" : {
+      "comment" : "Tooltip of the Project Board row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where to-dos are kept (goals, tasks and working documents). It sits outside main and branches, and is never merged or locked."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やること（目標と小目標・作業の文書）を置く所。main・branch の外にあり、merge もロックもしない"
+          }
+        }
+      }
+    },
+    "row.boardHint" : {
+      "comment" : "Small gray caption on the Project Board row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To do"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やること"
+          }
+        }
+      }
+    },
+    "row.collapse" : {
+      "comment" : "Tooltip of the chevron of an open row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "たたむ"
+          }
+        }
+      }
+    },
+    "row.expand" : {
+      "comment" : "Tooltip of the chevron of a closed row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開く"
+          }
+        }
+      }
+    },
+    "row.inspection" : {
+      "comment" : "Title of the Inspection row in the navigator, and of the Inspection tab in the tab bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インスペクション"
+          }
+        }
+      }
+    },
+    "row.inspectionHelp" : {
+      "comment" : "Tooltip of the Inspection row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspection for each tree (To fix, Info, As designed). Pick the tree on the page that opens."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "木ごとのインスペクション（直すもの・情報・設計どおりにしたもの）。見る木は開いた画面で選ぶ"
+          }
+        }
+      }
+    },
+    "row.inspectionHint" : {
+      "comment" : "Small gray caption on the Inspection row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To fix, Info"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直すもの・情報"
+          }
+        }
+      }
+    },
+    "row.projectSettings" : {
+      "comment" : "Title of the Project Settings row in the navigator, and of its tab in the tab bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト設定"
+          }
+        }
+      }
+    },
+    "row.projectSettingsHelp" : {
+      "comment" : "Tooltip of the Project Settings row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One set of settings per project (description, card size, writing rules, working directory). They don't change per branch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトに 1 つの設定（説明・カードの大きさ・書き方の決まり・作業ディレクトリ）。branch では変わりません"
+          }
+        }
+      }
+    },
+    "row.projectSettingsHint" : {
+      "comment" : "Small gray caption on the Project Settings row in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing rules, Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き方の決まり・エクスポート"
+          }
+        }
+      }
+    },
+    "search.noKindsOrTags" : {
+      "comment" : "Shown under the navigator search field when no kind or tag suggestion matches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching kinds or tags"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当てはまる種類もタグもありません"
+          }
+        }
+      }
+    },
+    "search.placeholder" : {
+      "comment" : "Placeholder of the navigator search field; kind: and tag: are search keywords.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name, display name, tag (kind:flow tag:payment)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前・表示名・タグ（kind:flow tag:決済）"
+          }
+        }
+      }
+    },
+    "selector.noMatches" : {
+      "comment" : "Shown in the path picker when nothing matches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing matches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当たるものがありません"
+          }
+        }
+      }
+    },
+    "selector.search" : {
+      "comment" : "Placeholder of the search field in the path picker popover.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前で探す"
+          }
+        }
+      }
+    },
+    "selector.treeNamed" : {
+      "comment" : "Line of a tree in the path picker: the word for the tree followed by the root section's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "suggest.projectKind" : {
+      "comment" : "Tooltip of a kind suggestion in the navigator search box, for a kind the project defined itself.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project kind: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの種類: %@"
+          }
+        }
+      }
+    },
+    "suggest.tag" : {
+      "comment" : "Tooltip of a single tag suggestion in the navigator search box.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ"
+          }
+        }
+      }
+    },
+    "suggest.tagGroup" : {
+      "comment" : "Tooltip of a tag group suggestion in the navigator search box; the argument lists the tags in the group.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag group: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タググループ: %@"
+          }
+        }
+      }
+    },
+    "symbol.help" : {
+      "comment" : "Tooltip of a function or type in the navigator; the arguments are its language's word for it (fn, struct), the language, and its first and last line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) · lines %lld–%lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）・%lld〜%lld 行"
+          }
+        }
+      }
+    },
+    "tree.autoHelp" : {
+      "comment" : "Tooltip of the automatic section-ghost group row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards in other sections that this section's lines reach (automatic). In the Section map they are gathered into one section ghost per section, showing only where lines reach. To show a whole card, place a card ghost in this section: right-click the card, or drag it while holding ⌥⌘."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションの線が届く、ほかのセクションのカード（自動）。セクションマップでは、セクションごとに 1 枚のセクションゴーストにまとまり、線の届く所だけが出ます。カードを丸ごと出すには、カードの右クリックか ⌥⌘ を押しながらのドラッグで、このセクションにカードゴーストを置きます"
+          }
+        }
+      }
+    },
+    "tree.boardOpen" : {
+      "comment" : "Tooltip of the root row in the navigator when the Project Board is the open tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Project Board is open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトボードを開いています"
+          }
+        }
+      }
+    },
+    "tree.branchOpen" : {
+      "comment" : "Tooltip of the root row in the navigator when a branch is open; the argument is the branch name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ is open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ を開いています"
+          }
+        }
+      }
+    },
+    "tree.cardsHelp" : {
+      "comment" : "Tooltip of the \"cards\" group row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards and card ghosts of this section (↪ marks a shortcut to a card in another section). value and enum are grouped under “values / enums” inside it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションのカードとカードゴースト（↪。ほかのセクションのカードへのショートカット）。value と enum は、この中の「values / enums」にまとまります"
+          }
+        }
+      }
+    },
+    "tree.ghostHelp" : {
+      "comment" : "Tooltip of the arrow icon of a card ghost row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card ghost (shortcut)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト（ショートカット）"
+          }
+        }
+      }
+    },
+    "tree.hiddenOnPanel" : {
+      "comment" : "Tooltip of the crossed-out eye icon on a card row that the Section map does not draw.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not shown in the Section map with the current filter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまの絞り込みではセクションマップに出ていません"
+          }
+        }
+      }
+    },
+    "tree.mainMovedHelp" : {
+      "comment" : "Tooltip of the ↓ N count on the root row of a branch: how many cards main changed, made or removed since the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card changed in main since the branch was made (taking main in brings it)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards changed in main since the branch was made (taking main in brings them)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったあと main で %lld 枚変わった（main を取り込むと入る）"
+          }
+        }
+      }
+    },
+    "tree.mainOpen" : {
+      "comment" : "Tooltip of the root row in the navigator when main is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main is open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を開いています"
+          }
+        }
+      }
+    },
+    "tree.missingFolderHelp" : {
+      "comment" : "Tooltip of a working directory's folder that a note is in but that reading the folder no longer finds; the argument is the folder's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The folder %@ is no longer there. Move the notes in it to another folder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダ %@ が今はありません。中のメモをほかのフォルダへ移してください"
+          }
+        }
+      }
+    },
+    "tree.ownKindHelp" : {
+      "comment" : "Tooltip of the icon of a section whose kind is defined by the project; the argument is the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ section (a project kind)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@セクション（プロジェクトの種類）"
+          }
+        }
+      }
+    },
+    "tree.valuesHelp" : {
+      "comment" : "Tooltip of the \"values / enums\" group row in the navigator tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value and enum are folded into the cards that hold them. To see one as a card, show it temporarily from the right-click menu, or show it on its own in the diagram."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value と enum は、持っているカードの中に畳んで出ます。カードとして見たいときは右クリックで一時的に出すか、図に単独で出します"
+          }
+        }
+      }
+    },
+    "tree.workDirHelp" : {
+      "comment" : "Tooltip of the small lock beside a working directory's section in the navigator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A working directory: read from a folder on this Mac, the same in every branch. Only notes can be added here."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリ: この Mac のフォルダから読むだけで、どの branch でも同じ。置けるのはメモだけ"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

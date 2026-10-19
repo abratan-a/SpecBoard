@@ -1,0 +1,17 @@
+{
+  "tools.branch.directoryGone": "There is no branch \"{name}\". The working directories are sections directly under the root of main and every branch now: leave branch out and read them by a path from the working directory's name, like repo/src:'a.rs' (reading one again is section_action's op: read)",
+  "tools.branch.gone": "There is no branch \"{name}\". There are: {listed}",
+  "tools.branch.notTaken": "{name} does not take branch (project settings are not kept per branch. The tools that take branch are the ones that read and write sections and cards)",
+  "tools.branchInPath": "\"{found}@…\": a path does not carry a branch. To read or write inside branch {found}, name it with the argument branch: \"{found}\"",
+  "tools.capped": "{names} … and {count} more",
+  "tools.doc.fieldsNotObject": "The document's fields is not an object",
+  "tools.kindList.noKey": "kind_list's value cannot take \"{key}\" (it takes no value)",
+  "tools.line.slashed": "{head} / {tail}",
+  "tools.notYet": "\"{name}\" is not available yet (it is still being moved to the core)",
+  "tools.project.gone": "There is no project \"{name}\". There are: {listed}",
+  "tools.project.noneVisible": "There is no project \"{name}\". No project is visible to this access key",
+  "tools.project.slugAndId": "slug {slug}, id {id}",
+  "tools.project.twice": "There are {count} projects named \"{name}\" ({projects}). Call one by its slug or id instead of the name",
+  "tools.project.twiceSeparator": "; ",
+  "tools.section.gone": "There is no section \"{name}\". There is: Main"
+}

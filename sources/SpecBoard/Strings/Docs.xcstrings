@@ -1,0 +1,2124 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "add.cardTable" : {
+      "comment" : "Button under a formatdoc being edited: add a row that shows a schema card's contents as a table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add card table"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの表を追加"
+          }
+        }
+      }
+    },
+    "add.diagram" : {
+      "comment" : "Button under a formatdoc being edited: add a row that draws a card or section as a diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を追加"
+          }
+        }
+      }
+    },
+    "add.hint" : {
+      "comment" : "Hint beside the add buttons under a formatdoc being edited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds inside the selected item, after the selected row, or at the end if none is selected. Right-click to reorder, change the level, or delete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだ項目の中、選んだ行の後ろ、無ければ最後に足します。右クリックで並べ替え・段を変える・削除"
+          }
+        }
+      }
+    },
+    "add.rows" : {
+      "comment" : "Menu button and its tooltip under a formatdoc being edited: add a row of a chosen kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行を追加"
+          }
+        }
+      }
+    },
+    "add.sectionDiagrams" : {
+      "comment" : "Button under a formatdoc being edited: add a row that draws every flow of a chart section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add section diagrams"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの図を追加"
+          }
+        }
+      }
+    },
+    "embed.noProject" : {
+      "comment" : "Shown in a note in place of a ![[…]] diagram when no project is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't draw the diagram (no project is open)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を描けません（プロジェクトが開いていません）"
+          }
+        }
+      }
+    },
+    "error.rowNameTaken" : {
+      "comment" : "Error shown when a row is renamed to a name a sibling row already has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A row named %@ already exists at the same level"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じ階層に %@ の行がもうあります"
+          }
+        }
+      }
+    },
+    "formatdoc.addBody" : {
+      "comment" : "Button in the empty formatdoc that adds the first body (text) row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add body"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文を追加"
+          }
+        }
+      }
+    },
+    "formatdoc.addItem" : {
+      "comment" : "Button in the empty formatdoc that adds the first item row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目を追加"
+          }
+        }
+      }
+    },
+    "formatdoc.badge" : {
+      "comment" : "The kind badge in the header of a formatdoc's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc (formatted document)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc（整形文書）"
+          }
+        }
+      }
+    },
+    "formatdoc.foldMenu" : {
+      "comment" : "Title of the header menu that expands or collapses every item of a formatdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand or collapse all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて展開・すべて折りたたむ"
+          }
+        }
+      }
+    },
+    "formatdoc.noRows" : {
+      "comment" : "Shown on the left of a formatdoc being edited when it has no rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No rows yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ行がありません"
+          }
+        }
+      }
+    },
+    "formatdoc.nothingWritten" : {
+      "comment" : "Shown in a formatdoc that has no rows when it is read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing is written yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ何も書かれていません"
+          }
+        }
+      }
+    },
+    "insert.diagram" : {
+      "comment" : "Button above a stackdoc being edited: insert a ![[path]] at the cursor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を入れる"
+          }
+        }
+      }
+    },
+    "insert.diagramHelp" : {
+      "comment" : "Tooltip of the Insert diagram button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserts ![[path]] on a line of its own at the cursor. It becomes a diagram when viewed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルの所に ![[パス]] を 1 行で入れます。表示で図になります"
+          }
+        }
+      }
+    },
+    "insert.link" : {
+      "comment" : "Button above a stackdoc being edited: insert a [[path]] at the cursor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクを入れる"
+          }
+        }
+      }
+    },
+    "insert.linkHelp" : {
+      "comment" : "Tooltip of the Insert link button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserts [[path]] at the cursor. It becomes a link when viewed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルの所に [[パス]] を入れます。表示でリンクになります"
+          }
+        }
+      }
+    },
+    "kind.card" : {
+      "comment" : "Name of the row kind that shows a schema card as a table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card table"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの表"
+          }
+        }
+      }
+    },
+    "kind.diagram" : {
+      "comment" : "Name of the diagram row kind of a formatdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図"
+          }
+        }
+      }
+    },
+    "kind.diagrams" : {
+      "comment" : "Name of the row kind that draws every flow of a chart section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section diagrams"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの図"
+          }
+        }
+      }
+    },
+    "kind.item" : {
+      "comment" : "Name of the item row kind of a formatdoc, shown on a row, in menus and in messages.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目"
+          }
+        }
+      }
+    },
+    "kind.text" : {
+      "comment" : "Name of the text row kind of a formatdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文"
+          }
+        }
+      }
+    },
+    "licenses.anyOf" : {
+      "comment" : "Licenses settings page: beside a license that offers three or more to choose from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you may use it under any one of these licenses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれかのライセンスで使えます"
+          }
+        }
+      }
+    },
+    "licenses.chip.npm" : {
+      "comment" : "Licenses settings page: chip of a package's source.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm package"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm パッケージ"
+          }
+        }
+      }
+    },
+    "licenses.chip.rust" : {
+      "comment" : "Licenses settings page: chip of a package's source.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust crate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust の crate"
+          }
+        }
+      }
+    },
+    "licenses.chip.swift" : {
+      "comment" : "Licenses settings page: chip of a package's source.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift package"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift パッケージ"
+          }
+        }
+      }
+    },
+    "licenses.copyright.fromAuthors" : {
+      "comment" : "Licenses settings page: under a copyright line made from the package's authors.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from the package's authors; its license file has no copyright line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パッケージの作者名から。ライセンスのファイルに著作権の行がありません"
+          }
+        }
+      }
+    },
+    "licenses.copyright.none" : {
+      "comment" : "Licenses settings page: the Copyright row of a package that states none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not stated"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記載なし"
+          }
+        }
+      }
+    },
+    "licenses.count.npm" : {
+      "comment" : "Licenses settings page: how many npm packages a license is used by.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld npm package"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld npm packages"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm パッケージ %lld 個"
+          }
+        }
+      }
+    },
+    "licenses.count.rust" : {
+      "comment" : "Licenses settings page: how many Rust crates a license is used by.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Rust crate"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Rust crates"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust の crate %lld 個"
+          }
+        }
+      }
+    },
+    "licenses.count.swift" : {
+      "comment" : "Licenses settings page: how many Swift packages a license is used by.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Swift package"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Swift packages"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift パッケージ %lld 個"
+          }
+        }
+      }
+    },
+    "licenses.differs" : {
+      "comment" : "Licenses settings page: beside the text of a license: the copyright line is each package's own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The copyright line differs per package (listed above); the rest is the same."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "著作権の行はパッケージごとに違います（上の表）。ほかは同じです。"
+          }
+        }
+      }
+    },
+    "licenses.either" : {
+      "comment" : "Licenses settings page: beside a license that offers two to choose from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "you may use it under either license"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どちらのライセンスでも使えます"
+          }
+        }
+      }
+    },
+    "licenses.empty" : {
+      "comment" : "Licenses settings page: shown where a search matches no package.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No package matches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一致するパッケージはありません"
+          }
+        }
+      }
+    },
+    "licenses.from.npm" : {
+      "comment" : "Licenses settings page: the Source row of an npm package.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm package · bundled in mermaid (diagrams)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm パッケージ・mermaid（図の表示）に同梱されています"
+          }
+        }
+      }
+    },
+    "licenses.from.rust" : {
+      "comment" : "Licenses settings page: the Source row of a Rust crate.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust crate · linked into the app's core"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust の crate・アプリのコアに組み込んでいます"
+          }
+        }
+      }
+    },
+    "licenses.from.swift" : {
+      "comment" : "Licenses settings page: the Source row of a Swift package.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift package · linked into the app (Markdown)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift のパッケージ・アプリに組み込んでいます（Markdown の表示）"
+          }
+        }
+      }
+    },
+    "licenses.licenses" : {
+      "comment" : "Licenses settings page: how many licenses.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld license"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld licenses"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ライセンス"
+          }
+        }
+      }
+    },
+    "licenses.matches" : {
+      "comment" : "Licenses settings page: line under the search field while searching; the argument is how many packages match.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld match"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld matches"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件が一致"
+          }
+        }
+      }
+    },
+    "licenses.notFound" : {
+      "comment" : "Shown on the Licenses settings page when the bundled list is missing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(The list of licenses wasn't found)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（ライセンスの一覧が見つかりません）"
+          }
+        }
+      }
+    },
+    "licenses.note" : {
+      "comment" : "Note above the licenses on the Licenses settings page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open-source software SpecBoard includes: cmark-gfm (Markdown), the Rust core's crates, and mermaid with the libraries it bundles (diagrams)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SpecBoard が組み込むオープンソースのソフトウェア: cmark-gfm（Markdown）、Rust のコアの crate、mermaid とそれが同梱するライブラリ（図）。"
+          }
+        }
+      }
+    },
+    "licenses.packages" : {
+      "comment" : "Licenses settings page: how many packages.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld package"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld packages"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld パッケージ"
+          }
+        }
+      }
+    },
+    "licenses.row.copyright" : {
+      "comment" : "Licenses settings page: label of the Copyright row of a package, and the Copyright column of a license's table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "著作権"
+          }
+        }
+      }
+    },
+    "licenses.row.homepage" : {
+      "comment" : "Licenses settings page: label of the Homepage row of a package.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Homepage"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホームページ"
+          }
+        }
+      }
+    },
+    "licenses.row.license" : {
+      "comment" : "Licenses settings page: label of the License row of a package.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンス"
+          }
+        }
+      }
+    },
+    "licenses.row.source" : {
+      "comment" : "Licenses settings page: label of the Source row of a package, and the Source column of a license's table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入手元"
+          }
+        }
+      }
+    },
+    "licenses.search" : {
+      "comment" : "Licenses settings page: placeholder of the search field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search packages"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パッケージを検索"
+          }
+        }
+      }
+    },
+    "licenses.summary" : {
+      "comment" : "Licenses settings page: line under the search field; the arguments are the package count and the license count, each already said (%lld packages, %lld licenses).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@・%@"
+          }
+        }
+      }
+    },
+    "licenses.table.package" : {
+      "comment" : "Licenses settings page: column of a license's table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Package"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パッケージ"
+          }
+        }
+      }
+    },
+    "licenses.table.title" : {
+      "comment" : "Licenses settings page: heading over the table of a license's packages.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packages"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パッケージ"
+          }
+        }
+      }
+    },
+    "licenses.text.title" : {
+      "comment" : "Licenses settings page: heading over the license text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンスの本文"
+          }
+        }
+      }
+    },
+    "licenses.usedBy" : {
+      "comment" : "Licenses settings page: chip of a license: how many packages are under it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Used by %lld package"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Used by %lld packages"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個のパッケージが使っています"
+          }
+        }
+      }
+    },
+    "menu.addAfter" : {
+      "comment" : "Context-menu submenu of a formatdoc row: add a row of a chosen kind after it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add after"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後ろに追加"
+          }
+        }
+      }
+    },
+    "menu.addInside" : {
+      "comment" : "Context-menu submenu of a formatdoc item: add a row of a chosen kind inside it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中に追加"
+          }
+        }
+      }
+    },
+    "menu.deleteRow" : {
+      "comment" : "Context-menu item of a formatdoc row that deletes it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行を削除"
+          }
+        }
+      }
+    },
+    "menu.indent" : {
+      "comment" : "Context-menu item of a formatdoc row: move it one level down in the nesting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move in a level"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一段下げる"
+          }
+        }
+      }
+    },
+    "menu.outdent" : {
+      "comment" : "Context-menu item of a formatdoc row: move it one level up in the nesting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move out a level"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一段上げる"
+          }
+        }
+      }
+    },
+    "mode.formatHelp" : {
+      "comment" : "Tooltip of the View/Edit switch in a formatdoc's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View: read it as the single document it is exported as / Edit: add and change rows on the left, with a preview on the right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示: エクスポートしたときと同じ一続きの文書として読む／編集: 左で行を足して直し、右にプレビュー"
+          }
+        }
+      }
+    },
+    "mode.stackHelp" : {
+      "comment" : "Tooltip of the View/Edit switch in a stackdoc's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View: read the open version with its diagrams drawn / Edit: write the open version's body in Markdown, with a preview on the right (saves when you go back to View)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示: 開いている版を図を描いて読む／編集: 開いている版の本文を Markdown で書き、右にプレビュー（表示に戻すと保存します）"
+          }
+        }
+      }
+    },
+    "mode.view" : {
+      "comment" : "The segmented-control label that switches a formatdoc or stackdoc to reading mode.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
+          }
+        }
+      }
+    },
+    "new.column" : {
+      "comment" : "The heading given to the n-th column of a table row when it is added to a formatdoc (becomes content).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Column %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列%lld"
+          }
+        }
+      }
+    },
+    "new.item" : {
+      "comment" : "The heading given to an item row when it is added to a formatdoc (becomes content).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい項目"
+          }
+        }
+      }
+    },
+    "row.appearance" : {
+      "comment" : "Block title above what a diagram, section-diagrams or card-table row draws.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見え方"
+          }
+        }
+      }
+    },
+    "row.cellsHelp" : {
+      "comment" : "Hint above the cells editor of a table row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One table row per line; separate cells with “|”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表の行を 1 行に 1 つ、セルは「|」で区切る"
+          }
+        }
+      }
+    },
+    "row.columnsPlaceholder" : {
+      "comment" : "Placeholder of the columns field of a table row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Column headings, separated by “,” (Column 1, Column 2)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列の見出しを「,」で区切る（列1, 列2）"
+          }
+        }
+      }
+    },
+    "row.gone" : {
+      "comment" : "Shown in place of a picked formatdoc row's editor when the row has been removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This row no longer exists"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行はもうありません"
+          }
+        }
+      }
+    },
+    "row.headingPlaceholder" : {
+      "comment" : "Placeholder of the heading field of an item row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heading (the name if empty)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見出し（空なら名前）"
+          }
+        }
+      }
+    },
+    "row.kindAndId" : {
+      "comment" : "The kind property of a formatdoc row: its label and its kind name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "row.linksNone" : {
+      "comment" : "Shown in a list of connected documents and items when it is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ありません"
+          }
+        }
+      }
+    },
+    "row.nameHelp" : {
+      "comment" : "Help of the name property of a formatdoc row in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The name used in paths (1 to 255 characters; a name holding a space or a separator such as . is wrapped in single quotes in a path). Changing the heading doesn't break connections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスに使う名前（1〜255 字。空白や . などの区切りの字を含む名前は、パスでは一重引用符で囲む）。見出しを直してもつながりは切れない"
+          }
+        }
+      }
+    },
+    "row.noChartSection" : {
+      "comment" : "Shown when the target of a section-diagrams row is not a chart section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart section not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャートセクションが見つかりません"
+          }
+        }
+      }
+    },
+    "row.noFlows" : {
+      "comment" : "Drawn in place of the diagrams when the chart section of a section-diagrams row has no flows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no flows)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（flow がありません）"
+          }
+        }
+      }
+    },
+    "row.noSchemaCard" : {
+      "comment" : "Shown when the target of a card-table row is not a schema card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schema card (entity, value, enum) not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキーマのカード（entity・value・enum）が見つかりません"
+          }
+        }
+      }
+    },
+    "row.nothingYet" : {
+      "comment" : "Shown for a read-only text row without text, and for the preview of a text row without text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだありません"
+          }
+        }
+      }
+    },
+    "row.pathHelp" : {
+      "comment" : "Help of the path property of a formatdoc row in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path with its section. Write it to point at this row with [[…]]"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション付きのパス。[[…]] でこの行を指すときに書く"
+          }
+        }
+      }
+    },
+    "row.pointedAtBy" : {
+      "comment" : "Category title in the Properties panel for an item row: what points at the item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documents and items pointing at this item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この項目を指している文書と項目"
+          }
+        }
+      }
+    },
+    "row.pointsAt" : {
+      "comment" : "Category title in the Properties panel for an item row: what the item's rows point at.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documents and items this item points at"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この項目が指している文書と項目"
+          }
+        }
+      }
+    },
+    "row.targetCard" : {
+      "comment" : "Help of the target property of a card-table row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schema card to make a table of (target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表にするスキーマのカード（target）"
+          }
+        }
+      }
+    },
+    "row.targetDiagram" : {
+      "comment" : "Help of the target property of a diagram row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card or section to draw as a diagram (target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図にするカードかセクション（target）"
+          }
+        }
+      }
+    },
+    "row.targetDiagrams" : {
+      "comment" : "Help of the target property of a section-diagrams row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chart section whose diagrams are laid out (target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を並べるチャートセクション（target）"
+          }
+        }
+      }
+    },
+    "row.targetPlaceholder" : {
+      "comment" : "Placeholder of the target field of a formatdoc row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Behavior:Checkout"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例 Behavior:Checkout"
+          }
+        }
+      }
+    },
+    "row.textHelp" : {
+      "comment" : "Hint under the editor of a text row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point at things with [[section:card.field]] or [[section:document.item]] (a broken one shows up in the Inspection under brokenPaths), and insert a value with {{path}}"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[[セクション:カード.欄]] や [[セクション:文書.項目]] で指し（壊れるとインスペクションの brokenPaths に出ます）、{{パス}} で値を差し込みます"
+          }
+        }
+      }
+    },
+    "stackdoc.badge" : {
+      "comment" : "The kind badge in the header of a stackdoc's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stackdoc (stacked document)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stackdoc（積み重ね文書）"
+          }
+        }
+      }
+    },
+    "table.glance" : {
+      "comment" : "The one-line glance at a table row of a formatdoc: how many rows it has and its column headings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld row (%@)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rows (%@)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$@（%1$lld 行）"
+          }
+        }
+      }
+    },
+    "table.notInShape" : {
+      "comment" : "Type column of a data card's table row for a value that the shape does not have.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(not in the shape)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（形に無い）"
+          }
+        }
+      }
+    },
+    "validate.cellsWider" : {
+      "comment" : "Validation message for formatdoc rows: a line of cells wider than the columns.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.cells[%lld] has more cells than there are columns (%lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.cells[%lld] は列（%lld）より多くのセルを持っています"
+          }
+        }
+      }
+    },
+    "validate.itemDepth" : {
+      "comment" : "Validation message for formatdoc rows: items nested too deep.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: items can be nested at most %lld deep (put deeper parts in another document and connect them with [[…]])"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 項目は %lld 段までです（深い所は別の文書にして [[…]] でつなぎます）"
+          }
+        }
+      }
+    },
+    "validate.nameTwice" : {
+      "comment" : "Validation message for formatdoc rows: two sibling rows share a name. The first argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.name “%@” appears twice at the same level (name is used in paths, so it must be unique within the same parent)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.name「%@」が同じ階層に二つあります（name はパスに使うので同じ親の中で一意に）"
+          }
+        }
+      }
+    },
+    "validate.needsTargetCard" : {
+      "comment" : "Validation message for formatdoc rows: a card-table row without a target.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a “%@” row needs a target (a schema card, e.g. Data:Order)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@の行には target（スキーマのカード。例 Data:Order）が要ります"
+          }
+        }
+      }
+    },
+    "validate.needsTargetDiagram" : {
+      "comment" : "Validation message for formatdoc rows: a diagram row without a target.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a “%@” row needs a target (a card or section, e.g. Behavior:Checkout)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@の行には target（カードかセクション。例 Behavior:Checkout）が要ります"
+          }
+        }
+      }
+    },
+    "validate.needsTargetDiagrams" : {
+      "comment" : "Validation message for formatdoc rows: a section-diagrams row without a target.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a “%@” row needs a target (a chart section, e.g. Behavior/Flows:)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@の行には target（チャートセクション。例 Behavior/Flows:）が要ります"
+          }
+        }
+      }
+    },
+    "validate.rowHasNo" : {
+      "comment" : "Validation message for formatdoc rows: a row has a key its kind doesn't hold. Arguments: where, kind name, kind label, key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a %@ row (%@) doesn't have %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@（%@）の行は %@ を持ちません"
+          }
+        }
+      }
+    },
+    "validate.tableNeedsColumns" : {
+      "comment" : "Validation message for formatdoc rows: a table without columns.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a table needs columns (the column headings)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 表には columns（列の見出し）が要ります"
+          }
+        }
+      }
+    },
+    "validate.tableTooWide" : {
+      "comment" : "Validation message for formatdoc rows: a table with more than 30 columns.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a table can have at most 30 columns"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 表の列は 30 までです"
+          }
+        }
+      }
+    },
+    "validate.tooManyRows" : {
+      "comment" : "Validation message for formatdoc rows: too many rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A formatdoc can have at most %lld row in all"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A formatdoc can have at most %lld rows in all"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行は全部で %lld までです"
+          }
+        }
+      }
+    },
+    "validate.tooMuchText" : {
+      "comment" : "Validation message for formatdoc rows: too much text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The rows can have at most %lld character in all"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The rows can have at most %lld characters in all"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の文字は全部で %lld 文字までです"
+          }
+        }
+      }
+    },
+    "version.add" : {
+      "comment" : "Button and alert title that add a version to a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版を追加"
+          }
+        }
+      }
+    },
+    "version.addHelp" : {
+      "comment" : "Tooltip of the Add version button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a new version at the top and opens it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一番上に新しい版を足して開きます"
+          }
+        }
+      }
+    },
+    "version.addMessage" : {
+      "comment" : "Message of the Add version alert.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a new version at the top and opens it. A version is the name shown in the selector, and each one is unique within the card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一番上に新しい版を足して開きます。版はセレクタに出す名前で、カードの中で 1 つずつです"
+          }
+        }
+      }
+    },
+    "version.deleteHelp" : {
+      "comment" : "Tooltip of the Delete button of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete the open version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いている版を消します"
+          }
+        }
+      }
+    },
+    "version.deleteMessage" : {
+      "comment" : "Message of the confirmation dialog that deletes the open version of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its body is deleted too. Paths that pointed at this version will show in the Inspection as broken paths"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文も消えます。この版を指していたパスは壊れたパスとしてインスペクションに出ます"
+          }
+        }
+      }
+    },
+    "version.deleteTitle" : {
+      "comment" : "Title of the confirmation dialog that deletes the open version of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete version “%@”?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版「%@」を消しますか"
+          }
+        }
+      }
+    },
+    "version.keyPlaceholder" : {
+      "comment" : "Placeholder of the version name field in the Add version alert.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version (e.g. 0.2.24)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版（例 0.2.24）"
+          }
+        }
+      }
+    },
+    "version.label" : {
+      "comment" : "Label before the version selector of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版"
+          }
+        }
+      }
+    },
+    "version.moveDownHelp" : {
+      "comment" : "Tooltip of the Move down button of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move the open version down one (toward older)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いている版を 1 つ下（古い側）へ"
+          }
+        }
+      }
+    },
+    "version.moveUpHelp" : {
+      "comment" : "Tooltip of the Move up button of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move the open version up one (toward newer)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いている版を 1 つ上（新しい側）へ"
+          }
+        }
+      }
+    },
+    "version.noBody" : {
+      "comment" : "Shown under the open version of a stackdoc when its body is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No body yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ本文がありません"
+          }
+        }
+      }
+    },
+    "version.none" : {
+      "comment" : "Shown in a stackdoc that has no versions, beside the selector and in the empty editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No versions yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ版がありません"
+          }
+        }
+      }
+    },
+    "version.selectHelp" : {
+      "comment" : "Tooltip of the version selector of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The version to open. The newest is on top. Which version is open only changes how it looks and isn't recorded in History"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開く版。新しい版が上。選んだ版は見かけで、履歴に残らない"
+          }
+        }
+      }
+    },
+    "version.write" : {
+      "comment" : "Button beside \"No body yet\" that switches the stackdoc to editing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く"
+          }
+        }
+      }
+    },
+    "word.preview" : {
+      "comment" : "The heading of the live preview under a text row's editor, and the placeholder of the right pane of a formatdoc being edited while it has no rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビュー"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

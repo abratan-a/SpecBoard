@@ -1,0 +1,7 @@
+MOST — constant constant — line 6 — 5-6
+Order — type class — line 11 — 9-27
+  Order.__init__ — method def — line 16 — 16-20 — calls local
+  Order.total — method def — line 23 — 22-24 — calls sum, helper
+  Order.Line — type class — line 26 — 26-27
+helper — function def — line 32 — 32-34 — calls f
+fetch — function def — line 37 — 37-38 — calls sleep

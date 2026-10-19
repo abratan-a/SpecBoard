@@ -1,0 +1,46 @@
+name: Bug report / 不具合
+description: Something does not work as it should. English or Japanese. / 英語でも日本語でも。
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste real project data or access keys. A vulnerability goes to SECURITY.md, not here.
+        実際のプロジェクトのデータやアクセスキーは貼らないでください。脆弱性は SECURITY.md の方法で知らせてください。
+  - type: input
+    id: version
+    attributes:
+      label: SpecBoard version / 版
+      description: SpecBoard > About SpecBoard
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version / macOS の版
+      placeholder: "26.5"
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where / どこで
+      options:
+        - The app's window / アプリの画面
+        - MCP (an AI agent) / MCP（AI エージェント）
+        - Export / エクスポート
+        - Update / 更新
+        - Building from source / ソースからのビルド
+        - Other / ほか
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened / 何が起きたか
+      description: What you did, what you expected, and what happened. / したこと、思っていたこと、起きたこと。
+    validations:
+      required: true
+  - type: textarea
+    id: more
+    attributes:
+      label: Screenshots, errors, MCP calls / 画面・エラー・MCP の呼び出し

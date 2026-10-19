@@ -1,0 +1,42 @@
+classDiagram
+    namespace Docs {
+        class Docs__Overview["Docs:Overview"]
+        class Docs__Spec["Docs:Spec"]
+    }
+    namespace Schemas {
+        class Schemas__Customer["Schemas:Customer"]
+        class Schemas__Orders["Schemas:Orders"]
+        class Schemas__Rule["Schemas:Rule"]
+    }
+    namespace Schemas_Ordering {
+        class Schemas_Ordering__Order["Schemas/Ordering:Order"]
+    }
+    namespace Charts_Shop {
+        class Charts_Shop__Checkout["Charts/Shop:Checkout"]
+        class Charts_Shop__Refund["Charts/Shop:Refund"]
+    }
+    <<flow>> Charts_Shop__Checkout
+    <<flow>> Charts_Shop__Refund
+    <<freedoc>> Docs__Overview
+    <<formatdoc>> Docs__Spec
+    <<store>> Schemas__Orders
+    <<note>> Schemas__Rule
+    Charts_Shop__Checkout ..> Schemas_Ordering__Order : read ＃n.save.0 ← total
+    Charts_Shop__Checkout ..> Schemas__Orders : write ＃n.save.1
+    Charts_Shop__Refund ..> Schemas__Customer : read ＃n.a.0 ← name
+    Charts_Shop__Refund ..> Charts_Shop__Checkout : run ＃n.again
+    Charts_Shop__Refund ..> Charts_Shop__Checkout : next ＃n.ask.1
+    Charts_Shop__Refund ..> Schemas__Orders : write ＃n.ask.2
+    Docs__Overview ..> Charts_Shop__Checkout : mentions ＃m0
+    Docs__Overview ..> Charts_Shop__Refund : mentions ＃m1
+    Docs__Overview ..> Schemas_Ordering__Order : mentions ＃m2
+    Docs__Overview ..> Schemas_Ordering__Order : mentions ＃m5 ← kind
+    Docs__Overview ..> Schemas_Ordering__Order : mentions ＃m6 ← total
+    Docs__Overview ..> Schemas__Customer : mentions ＃m7
+    Docs__Spec ..> Schemas_Ordering__Order : mentions cards
+    Docs__Spec ..> Schemas_Ordering__Order : mentions intro
+    Docs__Spec ..> Charts_Shop__Checkout : mentions tables
+    Schemas__Rule ..> Schemas_Ordering__Order : mentions ＃b0 ← total
+    Schemas__Rule ..> Schemas_Ordering__Order : mentions ＃b2
+    Schemas_Ordering__Order ..> Schemas__Customer : signedBy ← id
+    Schemas_Ordering__Order "N" o-- "1" Schemas__Customer : customer_id

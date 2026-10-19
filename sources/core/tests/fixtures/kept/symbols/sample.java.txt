@@ -1,0 +1,13 @@
+Order — type class — line 7 — 5-36
+  Order.MOST — constant final — line 9 — 8-9
+  Order.Order — method constructor — line 14 — 13-16 — calls of
+  Order.'Order (2)' — method constructor — line 18 — 18-20
+  Order.price — method method — line 23 — 22-25 — calls total, help
+  Order.total — method method — line 27 — 27-31 — calls run, stream, mapToInt, sum
+  Order.Line — type class — line 33 — 33-35
+Priced — type interface — line 38 — 38-40
+  Priced.price — method method — line 39 — 39-39
+State — type enum — line 42 — 42-49
+  State.flipped — method method — line 46 — 46-48
+Point — type record — line 51 — 51-51
+Marked — type annotation — line 53 — 53-53

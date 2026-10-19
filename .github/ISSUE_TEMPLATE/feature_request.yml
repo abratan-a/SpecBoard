@@ -1,0 +1,14 @@
+name: Idea or question / 要望・質問
+description: Something SpecBoard could do, or a question. English or Japanese. / 英語でも日本語でも。
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What you want to do / したいこと
+      description: What you are trying to do, and where SpecBoard gets in the way. / 何をしたくて、どこで困っているか。
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: How it could work / こうなるとよい

@@ -1,0 +1,1176 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "error.areaForm" : {
+      "comment" : "app_control's answer to a malformed area.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass area as {x, y, width, height} (width and height positive)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "area は {x, y, width, height}（幅と高さは正の数）で渡してください"
+          }
+        }
+      }
+    },
+    "error.branchNotInWindow" : {
+      "comment" : "app_control's answer when the branch named for state, view or capture isn't the tree the window has open. The arguments are the branch named and the one open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window does not have the branch “%@” open (it has “%@”). Open it with op: select"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窓は branch「%@」を開いていません（開いているのは「%@」）。開くのは op: select です"
+          }
+        }
+      }
+    },
+    "error.cantReadProject" : {
+      "comment" : "app_control's answer when the project can't be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read the project “%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」を読めません"
+          }
+        }
+      }
+    },
+    "error.captureTarget" : {
+      "comment" : "app_control's answer to an unknown capture target.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target of op: capture is window (the whole window) or view (the part of the section map on screen) (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: capture の target は window（ウィンドウ全体）か view（セクションマップのいま見えている範囲）です（%@）"
+          }
+        }
+      }
+    },
+    "error.cardsNeeded" : {
+      "comment" : "app_control's answer when cards is missing or empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass one or more cards in value's cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value の cards にカードを一つ以上渡してください"
+          }
+        }
+      }
+    },
+    "error.centerNeeds" : {
+      "comment" : "app_control's answer when center has nothing to center on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "center needs value's card or point"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "center には value の card か point が要ります"
+          }
+        }
+      }
+    },
+    "error.connectionsTarget" : {
+      "comment" : "app_control's answer when as: connections is given without a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target of as: connections is a card's path (it opens that card's connections map)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "as: connections の target はカードのパスです（そのカードのコネクションマップを開きます）"
+          }
+        }
+      }
+    },
+    "error.customRowNotFound" : {
+      "comment" : "app_control's answer to a missing row of a card. The arguments are the path, where it looked, and what is there.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't found. The rows under %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」が見つかりません。%@ の下にある行は: %@"
+          }
+        }
+      }
+    },
+    "error.depthRange" : {
+      "comment" : "app_control's answer to a depth out of range.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "depth is 1 or 2, or 0 for all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "depth は 1・2、全部なら 0 です"
+          }
+        }
+      }
+    },
+    "error.depthWithoutAs" : {
+      "comment" : "app_control's answer when depth comes without as: connections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass depth together with as: connections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "depth は as: connections と一緒に渡します"
+          }
+        }
+      }
+    },
+    "error.directoryTree" : {
+      "comment" : "app_control's answer when a call names the tree “_directory_”, which the working directories no longer are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no tree “_directory_”: the working directories are sections of main and every branch. Leave branch out (or name a branch) and give the path from the working directory's section, e.g. repo/src:'a.rs'"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「_directory_」という木はありません。作業ディレクトリは main と各 branch のセクションです。branch を省くか branch を名指しして、作業ディレクトリのセクションからのパス（例: repo/src:'a.rs'）を渡してください"
+          }
+        }
+      }
+    },
+    "error.emptyPath" : {
+      "comment" : "app_control's answer to an empty path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path is empty. For example: Schemas:User or Schemas:User.profile"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスが空です。例: Schemas:User または Schemas:User.profile"
+          }
+        }
+      }
+    },
+    "error.emptyTarget" : {
+      "comment" : "app_control's answer when target is an empty string.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target が空です"
+          }
+        }
+      }
+    },
+    "error.fieldNotFound" : {
+      "comment" : "app_control's answer to a missing field. The arguments are the path, where it looked, and what is there.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't found. Directly under %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」が見つかりません。%@ の直下にあるのは: %@"
+          }
+        }
+      }
+    },
+    "error.graphNotShown" : {
+      "comment" : "app_control's answer when a picture of the diagram is asked for and none is on screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section map isn't shown. The section map shows schema sections and free sections. Take chart sections and document sections with target: window"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップが表示されていません。セクションマップは スキーマセクションとフリーセクションの画面です。チャートセクション・ドキュメントセクションは target: window で撮ってください"
+          }
+        }
+      }
+    },
+    "error.insideNode" : {
+      "comment" : "app_control's answer to a path into a node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” can't be pointed at. %@ is a node, with no names in it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は指せません。%@ はノードで、その中に名前はありません"
+          }
+        }
+      }
+    },
+    "error.keyCantReadWindow" : {
+      "comment" : "app_control's answer when the window shows nothing the caller's key may read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This window doesn't have a project of the agent's open that this key can read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この窓は、このキーで読めるエージェントのプロジェクトを開いていません"
+          }
+        }
+      }
+    },
+    "error.late" : {
+      "comment" : "app_control's answer when the window didn't answer in time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't finish in 20 seconds. If it was a tool that writes, the work may still be going on. Wait a little, then check"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 秒で終わりませんでした。書くツールなら、処理はまだ続いていることがあります。少し待ってから確かめてください"
+          }
+        }
+      }
+    },
+    "error.marginRange" : {
+      "comment" : "app_control's answer to a margin out of range.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "margin is 0–400 (not %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "margin は 0〜400 です（%lld）"
+          }
+        }
+      }
+    },
+    "error.maxSizeRange" : {
+      "comment" : "app_control's answer to a maxSize out of range.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "maxSize is 400–3000 (not %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "maxSize は 400〜3000 です（%lld）"
+          }
+        }
+      }
+    },
+    "error.noAppWindow" : {
+      "comment" : "app_control's answer when the app has no window to take a picture of.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't find the app's window"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリのウィンドウが見つかりません"
+          }
+        }
+      }
+    },
+    "error.noBranch" : {
+      "comment" : "app_control's answer to an unknown branch. The arguments are the name given and the branches there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no branch “%@”. There is: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch「%@」はありません。あるのは: %@"
+          }
+        }
+      }
+    },
+    "error.noCardsDrawn" : {
+      "comment" : "app_control's answer to fit when the diagram is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cards are drawn"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描かれているカードがありません"
+          }
+        }
+      }
+    },
+    "error.noImage" : {
+      "comment" : "app_control's answer when the picture can't be encoded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't make an image"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像にできませんでした"
+          }
+        }
+      }
+    },
+    "error.noProject" : {
+      "comment" : "app_control's answer when no project is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No project is open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトが開いていません"
+          }
+        }
+      }
+    },
+    "error.noProjectAmong" : {
+      "comment" : "app_control's answer to an unknown project. The arguments are the name given and the names there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no project “%@”. There is: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」がありません。あるのは: %@"
+          }
+        }
+      }
+    },
+    "error.noProjectVisible" : {
+      "comment" : "app_control's answer when the key sees no project at all.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no project “%@”. This access key can see no projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」がありません。このアクセスキーから見えるプロジェクトはありません"
+          }
+        }
+      }
+    },
+    "error.noRelationPanel" : {
+      "comment" : "app_control's answer when an op needs the diagram on screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section map isn't shown. Open a project and show the section map, then call again"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップが表示されていません。プロジェクトを開いてセクションマップの画面にしてから呼んでください"
+          }
+        }
+      }
+    },
+    "error.noSection" : {
+      "comment" : "app_control's answer to an unknown section in a project with only the default section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no section “%@”. There is: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション「%@」はありません。あるのは: %@"
+          }
+        }
+      }
+    },
+    "error.noSuchWindow" : {
+      "comment" : "app_control's answer when the named window isn't this one. The arguments are the name given and this window's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no window “%@”. There is: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窓「%@」はありません。あるのは: %@"
+          }
+        }
+      }
+    },
+    "error.noWindow" : {
+      "comment" : "app_control's answer when the app has no window to work on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app has no window"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリの画面がありません"
+          }
+        }
+      }
+    },
+    "error.nodeNotFound" : {
+      "comment" : "app_control's answer to a missing node. The arguments are the path, the flow, and its nodes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't found. The nodes of %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」が見つかりません。%@ のノードは: %@"
+          }
+        }
+      }
+    },
+    "error.notAnItemRow" : {
+      "comment" : "app_control's answer to a path into a row that holds no names.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” can't be pointed at. %@ is a row that isn't an item, with no names in it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は指せません。%@ は項目ではない行で、その中に名前はありません"
+          }
+        }
+      }
+    },
+    "error.notDrawn" : {
+      "comment" : "app_control's answer when a card named isn't on the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ isn't drawn on the screen now (it's in another section, or filtered out). Show its section with app_control's op: select first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ はいまの画面に描かれていません（ほかのセクションか、フィルタの外です）。app_control の op: select でそのセクションを出してから指定してください"
+          }
+        }
+      }
+    },
+    "error.notTaken" : {
+      "comment" : "app_control's answer when the app is set not to take window operations from agents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app doesn't take operations on its window from agents (the app's “MCP” settings)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリは、エージェントからの画面の操作を受けないようにしています（アプリの設定の「MCP」）"
+          }
+        }
+      }
+    },
+    "error.pointForm" : {
+      "comment" : "app_control's answer to a malformed point.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass point as numbers {x, y}"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "point は {x, y} の数で渡してください"
+          }
+        }
+      }
+    },
+    "error.projectNotInWindow" : {
+      "comment" : "app_control's answer when the named project isn't the one open. The arguments are the project named and the one open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No window has the project “%@” open (open: “%@”)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」を開いている窓がありません（開いているのは「%@」）"
+          }
+        }
+      }
+    },
+    "error.required" : {
+      "comment" : "app_control's answer when a string argument is missing. The argument is its name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is required (a string)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は必須です（文字列）"
+          }
+        }
+      }
+    },
+    "error.rowNotFound" : {
+      "comment" : "app_control's answer to a missing document row. The arguments are the path, where it looked, and what is there.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't found. The rows in %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」が見つかりません。%@ の中にある行は: %@"
+          }
+        }
+      }
+    },
+    "error.selectAs" : {
+      "comment" : "app_control's answer to an unknown as.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "as in op: select's value is connections (its form is in guide's about: app_control)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: select の value の as は connections です（形は guide の about: app_control）"
+          }
+        }
+      }
+    },
+    "error.selectNeedsProject" : {
+      "comment" : "app_control's answer when op: select has no project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: select needs project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: select には project が要ります"
+          }
+        }
+      }
+    },
+    "error.storeNotOpen" : {
+      "comment" : "app_control's answer when the store holding the project isn't open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project's store isn't open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの置き場が開いていません"
+          }
+        }
+      }
+    },
+    "error.targetArray" : {
+      "comment" : "app_control's answer when target is an array with empty or non-string items.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An array of target lists one or more non-empty strings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target の配列は、空でない文字列を 1 つ以上並べます"
+          }
+        }
+      }
+    },
+    "error.targetType" : {
+      "comment" : "app_control's answer when target has the wrong type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target is a string or an array of strings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target は文字列か、文字列の配列です"
+          }
+        }
+      }
+    },
+    "error.unknownOp" : {
+      "comment" : "app_control's answer to an unknown op. The arguments are the ops and the op given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op is one of %@ (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op は %@ のどれかです（%@）"
+          }
+        }
+      }
+    },
+    "error.unreadableArguments" : {
+      "comment" : "app_control's answer when its arguments aren't a JSON object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read the arguments of app_control"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "app_control の引数が読めません"
+          }
+        }
+      }
+    },
+    "error.valueNotObject" : {
+      "comment" : "app_control's answer when value isn't an object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value is an object (its form is in guide)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value はオブジェクトです（形は guide）"
+          }
+        }
+      }
+    },
+    "error.viewTarget" : {
+      "comment" : "app_control's answer when op: view has no target. The argument lists the modes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target of op: view is one of %@ (op: state tells how it looks now)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: view の target は %@ のどれかです（今の見え方は op: state）"
+          }
+        }
+      }
+    },
+    "error.viewTargetGiven" : {
+      "comment" : "app_control's answer to an unknown view mode. The arguments are the modes and the one given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target of op: view is one of %@ (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: view の target は %@ のどれかです（%@）"
+          }
+        }
+      }
+    },
+    "error.zoomNeeded" : {
+      "comment" : "app_control's answer when the zoom mode has no zoom.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode zoom needs zoom"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mode が zoom のときは zoom が要ります"
+          }
+        }
+      }
+    },
+    "error.zoomRange" : {
+      "comment" : "app_control's answer to a zoom out of range. The arguments are the limits and the zoom given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zoom is %@–%@ (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zoom は %@〜%@ です（%@）"
+          }
+        }
+      }
+    },
+    "list.noFields" : {
+      "comment" : "In app_control's answers, in place of the list of fields when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no fields)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（フィールドなし）"
+          }
+        }
+      }
+    },
+    "list.noNodes" : {
+      "comment" : "In app_control's answers, in place of the list of nodes when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no nodes)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（ノードなし）"
+          }
+        }
+      }
+    },
+    "list.noRows" : {
+      "comment" : "In app_control's answers, in place of the list of rows when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no rows)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（行なし）"
+          }
+        }
+      }
+    },
+    "picture.cardGone" : {
+      "comment" : "as: picture: the card is no longer in the tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card is no longer in the tree"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのカードは木にもうありません"
+          }
+        }
+      }
+    },
+    "picture.cardsNotOnMap" : {
+      "comment" : "as: picture: none of the cards to frame is on the map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None of the cards in cards is on the map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cards のカードはどれも図にありません"
+          }
+        }
+      }
+    },
+    "picture.late" : {
+      "comment" : "as: picture: the app did not finish drawing in time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app did not finish drawing in 20 seconds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリが 20 秒で描き終わりませんでした"
+          }
+        }
+      }
+    },
+    "picture.noCore" : {
+      "comment" : "as: picture asked where the app holds no store to read the project from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app is not connected to where the project is kept"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリがプロジェクトの置き場に繋がっていません"
+          }
+        }
+      }
+    },
+    "picture.notDrawn" : {
+      "comment" : "as: picture: drawing the map failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The map could not be drawn"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を描けませんでした"
+          }
+        }
+      }
+    },
+    "picture.nothingDrawn" : {
+      "comment" : "as: picture: the map has nothing on it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is nothing on the map to draw"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図に描くものがありません"
+          }
+        }
+      }
+    },
+    "picture.sectionGone" : {
+      "comment" : "as: picture: the section is no longer in the tree.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section is no longer in the tree"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのセクションは木にもうありません"
+          }
+        }
+      }
+    },
+    "picture.unreadable" : {
+      "comment" : "as: picture: the tree could not be read. The argument is why, as the core said it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tree could not be read (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "木を読めませんでした（%@）"
+          }
+        }
+      }
+    },
+    "picture.unreadableRequest" : {
+      "comment" : "as: picture's request to the app, unreadable.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app cannot read what was asked to draw"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描くよう頼まれたものをアプリが読めません"
+          }
+        }
+      }
+    },
+    "state.noRelationPanel" : {
+      "comment" : "app_control's op: state, in place of the view when no diagram is on screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section map isn't shown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップが表示されていません"
+          }
+        }
+      }
+    },
+    "word.none" : {
+      "comment" : "In app_control's answers, in place of the project open when none is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "none"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

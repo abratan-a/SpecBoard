@@ -1,0 +1,22 @@
+{
+  "ghosts.change.name": "名前を {name} に",
+  "ghosts.change.paths": "パス {count} か所を書き換え",
+  "ghosts.change.target": "指す先を {target} に",
+  "ghosts.field.name": "カードゴーストの名前",
+  "ghosts.gone": "カードゴーストがありません",
+  "ghosts.line.delete": "カードゴースト {full} を削除",
+  "ghosts.line.update": "カードゴースト {display} を更新（{changes}）",
+  "ghosts.target.circle": "指す先をたどると自分に戻るので指せません（{chain}）",
+  "ghosts.target.none": "指す先がありません",
+  "ghosts.target.sameSection": "{named} は同じセクションにあるので指せません（同じセクションの中のものは、名前だけで書けます）",
+  "ghosts.target.self": "自分自身は指せません",
+  "ghosts.update.cardHint": "（中身は本物の {card} を target にして書きます）",
+  "ghosts.update.kindChange": "付け替えられるのは、今と同じ種類（{kind}）のカードに着く先だけです（{raw} は {reached}）",
+  "ghosts.update.nameTaken": "カード「{name}」は既にあります",
+  "ghosts.update.noTarget": "{raw} の指す先がありません",
+  "ghosts.update.notGhostKind": "{display} はカードゴーストなので、ほかの種類にはできません（消して作り直してください）",
+  "ghosts.update.rewritten": "名前に合わせて、プロジェクトに書かれたパス {count} か所を {name} に書き換えました",
+  "ghosts.update.strayKeys": "{display} はカードゴーストで、{keys} は持ちません。持つのは name と target だけです{card}",
+  "ghosts.update.targetShape": "target は指す先のパス（文字列）です",
+  "ghosts.written.reread": "書き込んだカードゴーストを読み直せません"
+}

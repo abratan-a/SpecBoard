@@ -1,0 +1,7 @@
+{
+  "app.noApp": "No app is there to answer app_control (only an open app can read or move the window)",
+  "app.range.number": "{key} is a number from {from} to {to} (given: {given})",
+  "app.range.whole": "{key} is a whole number from {from} to {to} (given: {given})",
+  "app.select.notThere": "{path} is not in {tree} (the window was not moved): {why}",
+  "app.unreadable": "Cannot read the app's answer: {head}"
+}

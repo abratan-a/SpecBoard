@@ -1,0 +1,9 @@
+{
+  "summary.exists.tooMany": "paths takes at most 5000 ({count} given)",
+  "summary.impact.noFlowRows": "No flow row deals with it",
+  "summary.impact.noFlows": "This project has no flow",
+  "summary.impact.notFound": "\"{path}\" is not found. {hint}",
+  "summary.section.noneButMain": "There is no section \"{name}\". There is: Main",
+  "summary.sectionProblem": "A {section} section does not hold {kind} (it holds {holds})",
+  "summary.uncheckedPattern": "This pattern cannot be read, so the data's values are not checked ({why})"
+}

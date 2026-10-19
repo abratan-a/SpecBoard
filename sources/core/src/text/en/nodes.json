@@ -1,0 +1,4 @@
+{
+  "nodes.line.nodeMissing": "{said} \"{name}\" of {node} names a node that is not in the flow, so it was not made a line",
+  "nodes.line.pathWithoutPlace": "{said}: {path} of {node} has no place to land, so it cannot be a line and was copied to the end of the description"
+}

@@ -1,0 +1,11 @@
+{
+  "steps.error.beyond": "{path} cannot be made: {node} has {count} steps (steps[{count}] adds one at the end)",
+  "steps.error.noProcess": "{path} is not the path of a process node's step (<flow>.<node>.steps[n])",
+  "steps.error.path": "A step is pointed to by its place from 0, at the path <flow>.<node>.steps[n] ({path})",
+  "steps.error.position": "position is a whole number from 0",
+  "steps.line.added": "Added the step {step} to {full}",
+  "steps.line.changed": "Changed the step {step} of {full}",
+  "steps.line.moved": "Moved the step {step} of {full} to {now}",
+  "steps.line.removed": "Removed the step {step} from {full}",
+  "steps.warn.renumbered": "Renumbered {count} lines and paths that name the steps by their places, so they follow the steps"
+}

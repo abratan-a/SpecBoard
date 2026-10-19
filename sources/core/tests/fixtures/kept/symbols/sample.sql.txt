@@ -1,0 +1,4 @@
+orders — type table — line 2 — 1-5
+'shop.lines' — type table — line 7 — 7-9
+open_orders — type view — line 12 — 11-13
+add_one — function function — line 17 — 17-19

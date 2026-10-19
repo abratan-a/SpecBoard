@@ -1,0 +1,7 @@
+{
+  "core.error.badRequest": "The JSON of the request cannot be read: {e}",
+  "core.error.closed": "The core is closed",
+  "core.error.noOp": "The request has no op",
+  "core.error.noPlace": "The place for the data is empty",
+  "core.error.notYet": "\"{other}\" is not available yet"
+}

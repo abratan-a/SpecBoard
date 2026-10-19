@@ -1,0 +1,50 @@
+{
+  "project": "見本",
+  "path": "Schemas/Ordering:Order.total",
+  "flows": [
+    {
+      "flow": "Charts/Shop:Checkout",
+      "role": "read",
+      "uses": "Schemas/Ordering:Order.total",
+      "via": "Schemas/Ordering:Order.total"
+    },
+    {
+      "flow": "Charts/Shop:Refund",
+      "role": "read",
+      "uses": "Schemas/Ordering:Order.total",
+      "via": "Schemas/Ordering:Order.total"
+    },
+    {
+      "flow": "Charts/Shop:Refund",
+      "role": "read",
+      "uses": "Schemas/Ordering:Order.total",
+      "via": "Schemas/Ordering:Order.total"
+    }
+  ],
+  "notes": [
+    {
+      "note": "Schemas:Rule",
+      "mentions": "Schemas/Ordering:Order.total"
+    },
+    {
+      "note": "Schemas:Rule",
+      "mentions": "Schemas/Ordering:Order"
+    },
+    {
+      "note": "Docs:Spec.intro",
+      "mentions": "Schemas/Ordering:Order"
+    },
+    {
+      "note": "Docs:Spec.cards",
+      "mentions": "Schemas/Ordering:Order"
+    },
+    {
+      "note": "Docs:Overview",
+      "mentions": "Schemas/Ordering:Order"
+    },
+    {
+      "note": "Docs:Overview",
+      "mentions": "Schemas/Ordering:Order.total"
+    }
+  ]
+}

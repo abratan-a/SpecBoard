@@ -1,0 +1,4 @@
+{
+  "nodes.line.nodeMissing": "{node} の {said}「{name}」というノードはフローにないので、線にしなかった",
+  "nodes.line.pathWithoutPlace": "{node} の {said}: {path} は着く所が無いので線にできず、説明の末尾に書き写した"
+}

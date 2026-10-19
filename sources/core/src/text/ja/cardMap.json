@@ -1,0 +1,9 @@
+{
+  "cardMap.card.missing": "カードがありません",
+  "cardMap.places.at": "places の「{path}」: {why}",
+  "cardMap.places.needTopLeft": "places の「{path}」に topLeft を書いてください",
+  "cardMap.places.outside": "places の「{path}」: {goal} の中にありません（コンテンツマップに置けるのは goal の中のカードです）",
+  "cardMap.places.shape": "places は goal の中のカードのパスごとの {top_left} です（例: {\"Goals:Design\": {\"topLeft\": {\"x\": 0, \"y\": 0}}}）",
+  "cardMap.places.sizeNotHere": "places の「{path}」: コンテンツマップの places に書くのは topLeft だけです（{kind} の大きさは、そのカードの card_update の value の size で変えます）",
+  "cardMap.places.stray": "places の「{path}」に使えないキーです: {keys}。使えるのは topLeft"
+}

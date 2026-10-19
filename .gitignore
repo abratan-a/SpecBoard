@@ -1,0 +1,22 @@
+# Claude Code: not for the repository
+.claude/settings.local.json
+CLAUDE.local.md
+.claude/cycle-state.json
+# Worktrees of parallel sessions
+.claude/worktrees/
+# OS
+.DS_Store
+# Build output of Rust and Swift
+target/
+/build/
+.build/
+sources/core/swift-check/Frameworks/
+sources/core/swift-check/Generated/
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+# The preview the release tool leaves when it stops before publishing
+.release-preview/
+# Local signing settings (read by sources/Config/Signing.xcconfig)
+sources/Config/Signing.local.xcconfig

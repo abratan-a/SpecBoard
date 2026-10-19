@@ -1,0 +1,17 @@
+{
+  "tables.path.inArray": "{at} is an array, so point inside it with {at}[] or by picking an element",
+  "tables.path.noField": "The shape {shape} has no \"{base}\" (it has: {fields})",
+  "tables.path.none": "There is no path",
+  "tables.path.notArray": "{base} is not an array",
+  "tables.said.descShape": "{full}.{name}[{i}].desc: true or false",
+  "tables.said.itemObject": "{full}.{name}[{i}]: write it as an object",
+  "tables.said.keyNotAllowed": "{full}.{name}[{i}]: {k} cannot be written (you can write {allowed})",
+  "tables.said.labelShape": "{full}.{name}[{i}].label: a heading is a string",
+  "tables.said.notArray": "{full}.{name}: write it as an array",
+  "tables.said.ofNeeded": "{full}: of is required (the path of the entity or value that gives the shape of the data to tabulate, e.g. Schema:Host)",
+  "tables.said.opShape": "{full}.{name}[{i}].op: the ways to compare are {ops}",
+  "tables.said.pathNeeded": "{full}.{name}[{i}]: path (the path of a value) is required",
+  "tables.said.showShape": "{full}.{name}[{i}].show: the ways to show are {shows} (label shows an enum's value by its display name, link shows a value that is a card's path as a link)",
+  "tables.unnest.shape": "unnest is the path of an array field (without [ ])",
+  "tables.within.noSection": "There is no section \"{within}\""
+}

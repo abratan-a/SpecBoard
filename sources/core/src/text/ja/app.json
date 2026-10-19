@@ -1,0 +1,7 @@
+{
+  "app.noApp": "app_control に答えるアプリがありません（画面を読む・動かすのは、開いているアプリです）",
+  "app.range.number": "{key} は {from}〜{to} の数で書きます（渡されたのは {given}）",
+  "app.range.whole": "{key} は {from}〜{to} の整数で書きます（渡されたのは {given}）",
+  "app.select.notThere": "{path} は {tree} にありません（窓は動かしていません）: {why}",
+  "app.unreadable": "アプリの答えが読めません: {head}"
+}

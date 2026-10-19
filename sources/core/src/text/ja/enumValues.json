@@ -1,0 +1,18 @@
+{
+  "enumValues.error.descriptionShape": "description は文字列か、無しにする null です",
+  "enumValues.error.labelShape": "label は文字列か、無しにする null です",
+  "enumValues.error.missing": "{full} に値 {name} はありません",
+  "enumValues.error.nameFromPath": "値の名前はパスの {name} です（value の name は省くか、同じにします。改名は card_update の name）",
+  "enumValues.error.nameShape": "name は文字列です",
+  "enumValues.error.noEnum": "{path} は enum の値のパスではありません（<enum のパス>.<値>）",
+  "enumValues.error.path": "enum の値は <enum のパス>.<値> のパスで作ります（{path}）",
+  "enumValues.error.position": "position は 0 からの整数です",
+  "enumValues.error.valueKey": "values の要素は name と label で書きます（以前の value は name）。use にその書き方の呼び出しを付けます",
+  "enumValues.line.added": "{full} に値 {name} を足しました",
+  "enumValues.line.changed": "{full} の値 {name} を変えました",
+  "enumValues.line.dataFollowed": "{card} の {count} か所の値を、改めた名前 {value} に書き直しました",
+  "enumValues.line.removed": "{full} の値 {name} を消しました",
+  "enumValues.line.renamed": "{full} の値 {name} を {now} に改めました",
+  "enumValues.warn.held": "{paths} のデータは {name} のままです（変えていません。点検の cardProblems に出ます）",
+  "enumValues.warn.heldOpen": "{paths} のデータは {name} のままです（変えていません。この enum は open なので、知らない値として通ります）"
+}

@@ -1,0 +1,10 @@
+MOST — constant define — line 4 — 3-4
+TWICE — macro define — line 5 — 5-5
+least — constant const — line 7 — 7-7
+order — type struct — line 10 — 9-12
+order_t — type typedef — line 14 — 14-14
+state — type enum — line 16 — 16-16
+value — type union — line 18 — 18-21
+helper — function prototype — line 23 — 23-23
+total — function function — line 28 — 27-35 — calls printf, helper, TWICE
+pointer — function function — line 37 — 37-37

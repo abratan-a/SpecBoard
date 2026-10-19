@@ -1,0 +1,23 @@
+{
+  "tags.cardsMissing": "There are no such cards: {listed}. This project has {count} cards. find can search for them",
+  "tags.cardsNeeded": "Give one or more card paths in value's add or remove",
+  "tags.comma": "A tag cannot contain a comma: {value}",
+  "tags.field.groupName": "Group name",
+  "tags.field.tags": "Tags",
+  "tags.field.tagsOf": "Tags of {full}",
+  "tags.group.cycle": "Groups form a cycle: {chain}. A group cannot contain itself",
+  "tags.group.deleteAlone": "delete cannot be combined with other keys",
+  "tags.group.gone": "There is no group \"{name}\"",
+  "tags.group.inBranch": "Tag groups ({name}) are project settings, not kept per branch. Call without branch (in branch {branch}, only a card's tags can be added and removed)",
+  "tags.group.keyNeeded": "Give one of add, remove, exclusive or delete",
+  "tags.group.nameComma": "A group name cannot contain a comma",
+  "tags.group.nameIsTag": "\"{name}\" is already used as a tag. Group names and tag names share one namespace",
+  "tags.group.nameNeeded": "Enter the group name",
+  "tags.group.nameTwice": "Duplicate group name: {name}",
+  "tags.group.tooMany": "tagGroups is limited to {max} groups",
+  "tags.line.changed": "Change tags on {count} card(s) ({tags})",
+  "tags.line.groupsCleared": "Clear the tag groups",
+  "tags.line.groupsSet": "Set the tag groups ({names})",
+  "tags.tooLong": "{field} can be at most {max} characters each: {value}",
+  "tags.tooMany": "{field} must number at most {max} ({count} would result)"
+}

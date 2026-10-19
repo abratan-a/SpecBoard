@@ -1,0 +1,11 @@
+{
+  "steps.error.beyond": "{path} には作れません: {node} の手は {count} 個です（steps[{count}] で最後に足します）",
+  "steps.error.noProcess": "{path} は process ノードの手のパスではありません（<flow>.<ノード>.steps[n]）",
+  "steps.error.path": "手は <flow>.<ノード>.steps[n] のパスで、0 からの場所で指します（{path}）",
+  "steps.error.position": "position は 0 からの整数です",
+  "steps.line.added": "{full} に手 {step} を足しました",
+  "steps.line.changed": "{full} の手 {step} を変えました",
+  "steps.line.moved": "{full} の手 {step} を {now} へ動かしました",
+  "steps.line.removed": "{full} の手 {step} を消しました",
+  "steps.warn.renumbered": "手を場所で指す線とパス {count} か所を、手に付いて番号を振り直しました"
+}

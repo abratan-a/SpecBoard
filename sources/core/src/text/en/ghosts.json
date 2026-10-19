@@ -1,0 +1,22 @@
+{
+  "ghosts.change.name": "name to {name}",
+  "ghosts.change.paths": "{count} paths rewritten",
+  "ghosts.change.target": "target to {target}",
+  "ghosts.field.name": "Card ghost name",
+  "ghosts.gone": "There is no card ghost",
+  "ghosts.line.delete": "Delete card ghost {full}",
+  "ghosts.line.update": "Update card ghost {display} ({changes})",
+  "ghosts.target.circle": "Following the target leads back to itself, so it cannot be pointed at ({chain})",
+  "ghosts.target.none": "There is nothing to point at",
+  "ghosts.target.sameSection": "{named} is in the same section, so it cannot be pointed at (what is in the same section is written by its name alone)",
+  "ghosts.target.self": "A card ghost cannot point at itself",
+  "ghosts.update.cardHint": " (write its content with the real {card} as target)",
+  "ghosts.update.kindChange": "Only a target that leads to a card of the same kind as now ({kind}) can be switched to ({raw} is {reached})",
+  "ghosts.update.nameTaken": "The card \"{name}\" already exists",
+  "ghosts.update.noTarget": "{raw} points at nothing",
+  "ghosts.update.notGhostKind": "{display} is a card ghost, so it cannot be another kind (delete it and make it again)",
+  "ghosts.update.rewritten": "To match the new name, {count} paths written in the project were rewritten to {name}",
+  "ghosts.update.strayKeys": "{display} is a card ghost and has no {keys}. It has only name and target{card}",
+  "ghosts.update.targetShape": "target is the path of what to point at (a string)",
+  "ghosts.written.reread": "The card ghost just written cannot be read again"
+}

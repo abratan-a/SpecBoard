@@ -1,0 +1,22 @@
+{
+  "directory.part.more": " …ほか {count} 件",
+  "directory.part.noSections": "（セクションがありません）",
+  "directory.part.placeProject": "このプロジェクトには",
+  "directory.part.placeSection": "セクション {section} には",
+  "directory.problem.cardCount": "{place} {total} 件あります。card_list の query で探してください",
+  "directory.problem.closeCards": "近いのは: {shown}{more}（{place}全 {total} 件。card_list の query で探せます）",
+  "directory.problem.elsewhere": "（ほかのセクションには {found} があります）",
+  "directory.problem.elsewhereHint": "。ほかのセクションのものは、セクションを付けて書くか（例: {example}:{raw}）、セクション {section} にカードゴーストを置けば名前だけで書けます",
+  "directory.problem.foundIn": "「{raw}」があるのは: {sections}",
+  "directory.problem.ghostEmpty": "「{raw}」はカードゴーストですが、指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）",
+  "directory.problem.ghostRound": "「{raw}」はカードゴーストですが、指す先をたどると輪になっています",
+  "directory.problem.isCard": "「{raw}」はカードです",
+  "directory.problem.manySections": "セクション「{name}」は {count} つあります: {sections}。親から書いてください",
+  "directory.problem.noCard": "カード「{wanted}」がありません。{tail}",
+  "directory.problem.noSection": "セクション「{name}」がありません。あるのは: {sections}",
+  "directory.problem.noSectionBeforeCard": "「{raw}」はカードの前にセクションがありません。パスにツリーは書かず、カードの前にセクションと「:」を付けます（例: {example}:{rest}）",
+  "directory.problem.oldSectionPath": "「{name}」は前の書き方です。セクションは根の下から書きます: {rest}",
+  "directory.problem.sectionFromTop": "セクションは木の頭から書きます: {path}（セクションの最後の名前だけでは書けません）",
+  "directory.problem.treeInPath": "「{tree}@」はパスに書けません。パスにツリーは書きません（main@ は外して読みます）。branch の中は、MCP では引数 branch で名指し（省けば main）、画面では開いている branch で読み書きします",
+  "directory.problem.writeWithSection": "セクションを付けて書いてください（例: {example}:{raw}）。{detail}"
+}

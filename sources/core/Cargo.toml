@@ -1,0 +1,79 @@
+# The core of SpecBoard (this package), the bindings Swift calls (ffi), the tool that writes their Swift
+# side (bindgen), and the agent that serves MCP (agent)
+[package]
+name = "specboard-core"
+description = "The core of SpecBoard: reads and writes projects"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+license.workspace = true
+# The files of `tests/` are modules of one test binary (`tests/integration.rs`), not a binary each:
+# each binary would link the core and every grammar again. Only this package's; `agent` keeps its own.
+autotests = false
+
+[[test]]
+name = "integration"
+path = "tests/integration.rs"
+
+[dependencies]
+serde_json.workspace = true
+# `rc`: a reading's cards are shared between a write's reading and what it was before
+# (`model::Detail`).
+serde = { version = "1", features = ["derive", "rc"] }
+sha2 = "0.10"
+getrandom = "0.4"
+# `hooks`: a connection that reads apart from the writes is refused any write to the store
+# (`Store::open_reader`'s authorizer).
+rusqlite = { version = "0.40", features = ["bundled", "hooks"] }
+# A working directory read as git reads it: what .gitignore leaves out (`workdir`).
+ignore = "0.4"
+# A data card's text held to its field's `pattern` rule (`tools::instances`).
+regex = "1"
+# A working directory's files read for their functions and types, and coloured by language (`code`).
+# Every grammar is in every build: a project names its languages, and every machine reads them alike.
+tree-sitter = "=0.27.1"
+tree-sitter-highlight = "=0.27.1"
+streaming-iterator = "0.1"
+tree-sitter-rust = "=0.24.2"
+tree-sitter-swift = "=0.7.4"
+tree-sitter-typescript = "=0.23.2"
+tree-sitter-javascript = "=0.25.0"
+tree-sitter-python = "=0.25.0"
+tree-sitter-go = "=0.25.0"
+tree-sitter-c = "=0.24.2"
+tree-sitter-cpp = "=0.23.4"
+tree-sitter-java = "=0.23.5"
+tree-sitter-c-sharp = "=0.23.5"
+tree-sitter-ruby = "=0.23.1"
+tree-sitter-php = "=0.25.1"
+tree-sitter-kotlin-ng = "=1.1.0"
+tree-sitter-sequel = "=0.3.11"
+tree-sitter-bash = "=0.25.1"
+tree-sitter-json = "=0.24.8"
+tree-sitter-yaml = "=0.7.2"
+tree-sitter-toml-ng = "=0.7.0"
+tree-sitter-html = "=0.23.2"
+tree-sitter-css = "=0.25.0"
+tree-sitter-md = "=0.5.3"
+# Grammars a machine adds of its own (`code::loader`): native libraries, so the agent alone loads them.
+libloading = { version = "0.8", optional = true }
+tree-sitter-language = { version = "0.1", optional = true }
+libc = { version = "0.2", optional = true }
+
+[features]
+dynamic-grammars = ["dep:libloading", "dep:tree-sitter-language", "dep:libc"]
+
+[workspace]
+resolver = "3"
+members = [".", "ffi", "bindgen", "agent"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+# Keeps the order of keys: a document's keys (the parameters of a rule, say) come back as written
+serde_json = { version = "1", features = ["preserve_order"] }

@@ -1,0 +1,1116 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "bar.back" : {
+      "comment" : "Tooltip of the back button right of the nav panel's button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back (⌘[)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻る（⌘[）"
+          }
+        }
+      }
+    },
+    "bar.forward" : {
+      "comment" : "Tooltip of the forward button right of the nav panel's button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forward (⌘])"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進む（⌘]）"
+          }
+        }
+      }
+    },
+    "ghost.deadEndGone" : {
+      "comment" : "Problem message about a card ghost whose card was deleted; the argument is the name written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is a card ghost, but it points at nothing (the card it pointed at is gone; re-point it with target in card_update, or delete it with card_delete)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」はカードゴーストですが、指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）"
+          }
+        }
+      }
+    },
+    "ghost.deadEndRound" : {
+      "comment" : "Problem message about a card ghost whose chain loops; the argument is the name written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is a card ghost, but following what it points at goes in a circle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」はカードゴーストですが、指す先をたどると輪になっています"
+          }
+        }
+      }
+    },
+    "ghost.drawnGone" : {
+      "comment" : "Short problem shown on a card ghost in the Section map when its card is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It points at nothing"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先がありません"
+          }
+        }
+      }
+    },
+    "ghost.drawnRound" : {
+      "comment" : "Short problem shown on a card ghost in the Section map when its chain loops.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Following what it points at goes in a circle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先をたどると輪になっています"
+          }
+        }
+      }
+    },
+    "ghost.noTarget" : {
+      "comment" : "What a card ghost points at when it points at nothing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(points at nothing)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（指す先なし）"
+          }
+        }
+      }
+    },
+    "ghost.problemGone" : {
+      "comment" : "Broken-path problem of a card ghost whose card was deleted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It points at nothing (the card it pointed at is gone; re-point it with target in card_update, or delete it with card_delete)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）"
+          }
+        }
+      }
+    },
+    "ghost.problemNotCard" : {
+      "comment" : "Broken-path problem of a card ghost; the argument is the path it points at.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it points at, %@, doesn't lead to a card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先の %@ がカードに着きません"
+          }
+        }
+      }
+    },
+    "ghost.problemRound" : {
+      "comment" : "Broken-path problem of a card ghost whose chain loops.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Following what it points at goes in a circle (re-point it with target in card_update)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先をたどると輪になっています（card_update の target で付け替えます）"
+          }
+        }
+      }
+    },
+    "holding.board" : {
+      "comment" : "Tooltip line describing what a Project Board section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds to-dos (custom cards such as goal) and working documents (freedoc, note). Never merged."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やること（goal などのカスタムカード）と作業の文書（freedoc・note）を置く。merge しない"
+          }
+        }
+      }
+    },
+    "holding.chart" : {
+      "comment" : "Tooltip line describing what a chart section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds flow. Viewed in the Contents map and the Sequence diagram. Notes can go here too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow を置く。コンテンツマップとシーケンス図で見る。note も置ける"
+          }
+        }
+      }
+    },
+    "holding.definition" : {
+      "comment" : "Tooltip line describing what a definition section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds definitions promised to the outside (the shapes of API arguments, configuration files and messages): the shapes (entity, value, enum, store) beside their data and tables. Notes can go here too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外へ約束する定義（API の引数・設定ファイル・メッセージの形）を置く。形（entity・value・enum・store）とそのデータ・表を並べる。note も置ける"
+          }
+        }
+      }
+    },
+    "holding.document" : {
+      "comment" : "Tooltip line describing what a document section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds freedoc (free-form document), formatdoc (formatted document) and stackdoc (stacked document). Notes can go here too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "freedoc（自由文書）・formatdoc（整形文書）・stackdoc（積み重ね文書）を置く。note も置ける"
+          }
+        }
+      }
+    },
+    "holding.export" : {
+      "comment" : "Tooltip line describing what the export section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds working directories. See the files an export produces."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリを置く。エクスポートから、できるファイルを見る"
+          }
+        }
+      }
+    },
+    "holding.free" : {
+      "comment" : "Tooltip line describing what a free section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A scratch place that takes cards of any kind. Move them to a section that fits their kind to tidy up."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの種類のカードも置ける下書きの場所。種類の合うセクションへ移して整理する"
+          }
+        }
+      }
+    },
+    "holding.rules" : {
+      "comment" : "Tooltip line describing what the rules section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds the rules for each place you write (what a description should say)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く場所ごとの決まり（説明に何を書くか）を置く"
+          }
+        }
+      }
+    },
+    "holding.schema" : {
+      "comment" : "Tooltip line describing what a schema section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds entity, value, enum and store. Viewed in the Section map. Notes can go here too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entity・value・enum・store を置く。セクションマップで見る。note も置ける"
+          }
+        }
+      }
+    },
+    "holding.ui" : {
+      "comment" : "Tooltip line describing what a UI section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds html and svg parts and frames (frame) that put other UI sections in, laid out as a screen. Notes can go here too. Opens on its mock."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "html・svg の部品と、ほかの UI のセクションをはめ込むはめ込み（frame）を置いて画面を組む。note も置ける。開くとモック"
+          }
+        }
+      }
+    },
+    "kind.board" : {
+      "comment" : "Heading of the Project Board section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボード"
+          }
+        }
+      }
+    },
+    "kind.cancelled" : {
+      "comment" : "Heading of the board's built-in section kind that cancelled goals move into.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelled"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打ち切り"
+          }
+        }
+      }
+    },
+    "kind.chart" : {
+      "comment" : "Heading of a chart section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャート"
+          }
+        }
+      }
+    },
+    "kind.complete" : {
+      "comment" : "Heading of the board's built-in section kind that finished goals (and done tasks not inside a goal) move into.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
+    "kind.definition" : {
+      "comment" : "Heading of a definition section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義"
+          }
+        }
+      }
+    },
+    "kind.document" : {
+      "comment" : "Heading of a document section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドキュメント"
+          }
+        }
+      }
+    },
+    "kind.export" : {
+      "comment" : "Heading of the export section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
+          }
+        }
+      }
+    },
+    "kind.free" : {
+      "comment" : "Heading of the free section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フリー"
+          }
+        }
+      }
+    },
+    "kind.named" : {
+      "comment" : "A section kind's heading followed by the word for a section, as used in sentences and tooltips.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@セクション"
+          }
+        }
+      }
+    },
+    "kind.rules" : {
+      "comment" : "Heading of the rules section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rules"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ルール"
+          }
+        }
+      }
+    },
+    "kind.schema" : {
+      "comment" : "Heading of a schema section kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schema"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキーマ"
+          }
+        }
+      }
+    },
+    "kind.ui" : {
+      "comment" : "Heading of a UI section kind (a screen's design built of parts).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UI"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UI"
+          }
+        }
+      }
+    },
+    "list.add" : {
+      "comment" : "Button adding a section in the section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを追加"
+          }
+        }
+      }
+    },
+    "list.cantDeleteFixed" : {
+      "comment" : "Tooltip of the disabled delete button of the board's built-in Complete or Cancelled section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The board keeps this section for finished and cancelled goals, so it can't be deleted (you can rename it)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードが完了・打ち切りの置き場として持つセクションなので、消せません（名前は変えられます）"
+          }
+        }
+      }
+    },
+    "list.cantDeleteNotEmpty" : {
+      "comment" : "Tooltip of the disabled delete button of a section that is not empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A section that holds cards or sections can't be deleted (move or delete them first)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードかセクションが中にあるセクションは消せません（移すか消してから）"
+          }
+        }
+      }
+    },
+    "list.cantDeleteRootOwn" : {
+      "comment" : "Tooltip of the disabled delete button of a section directly under the root.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A section directly under the root is set by the project's tree, so it can't be deleted here (you can rename it; remove it under “Project tree” in the “Kinds” tab of Project Settings)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根の直下のセクションはプロジェクトの木で決まるので、ここでは消せません（名前は変えられます。外すのはプロジェクト設定の「種類」の「プロジェクトの木」で）"
+          }
+        }
+      }
+    },
+    "list.cardCount" : {
+      "comment" : "How many cards a section holds, in the project's section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件"
+          }
+        }
+      }
+    },
+    "list.createBranchHelp" : {
+      "comment" : "Tooltip of the create-branch button in the section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates a branch (a plan for changes) from the current main and opens it. What you change in a branch doesn't show in main."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまの main から branch（変更の計画）を作って開きます。branch で変えたものは main に映りません"
+          }
+        }
+      }
+    },
+    "list.delete" : {
+      "comment" : "Tooltip of the delete button of a section in the section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションを削除"
+          }
+        }
+      }
+    },
+    "list.inside" : {
+      "comment" : "Menu item choosing where a new section goes; the argument is the parent section's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inside %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の中に"
+          }
+        }
+      }
+    },
+    "list.namePlaceholder" : {
+      "comment" : "Placeholder of a section's name field in the project's section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの名前"
+          }
+        }
+      }
+    },
+    "list.newName" : {
+      "comment" : "Placeholder of the field for a new section's name in the section list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New section name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいセクションの名前"
+          }
+        }
+      }
+    },
+    "list.noteFew" : {
+      "comment" : "Note under the section list when the project has fewer than two sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With two or more sections, the bar above switches between sections and draws the Section map for each. Cards in another section are referred to with the section name, like Core:User."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを 2 つ以上にすると、上のバーでセクションを切り替えてセクションマップを描き分けます。別のセクションのカードは Core:User のようにセクション名を付けて指します"
+          }
+        }
+      }
+    },
+    "list.noteRename" : {
+      "comment" : "Note under the section list when the project has two or more sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renaming a section also rewrites the old name (“old name:”) wherever it is written in a path."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変えると、パスに書かれた「旧名:」も書き換わります"
+          }
+        }
+      }
+    },
+    "list.openInBranch" : {
+      "comment" : "Tooltip of the root's label in the section list when a branch is open; the argument is the branch name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in branch %@ (main with what the branch changed laid over it)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ で開いています（main に、branch で変えたものを重ねた見え方）"
+          }
+        }
+      }
+    },
+    "list.openInMain" : {
+      "comment" : "Tooltip of the root's label in the section list when main is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The current implementation"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまの実装"
+          }
+        }
+      }
+    },
+    "problem.branchesAreNamed" : {
+      "comment" : "Note appended to the problem message about trees in paths.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inside a branch, MCP names it with the branch argument (main if omitted); the screen reads and writes the branch that is open."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch の中は、MCP では引数 branch で名指し（省けば main）、画面では開いている branch で読み書きします"
+          }
+        }
+      }
+    },
+    "problem.elsewhere" : {
+      "comment" : "Appended to a problem message about a missing card when other sections have one of that name; the argument is the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (Other sections have: %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（ほかのセクションには %@ があります）"
+          }
+        }
+      }
+    },
+    "problem.elsewhereHint" : {
+      "comment" : "Hint appended to a problem message about a missing card; the arguments are a section path, the card name and the section path of the reader.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". To use the one in another section, write it with its section (for example: %@:%@), or put a card ghost in section %@ and write it by name alone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。ほかのセクションのものは、セクションを付けて書くか（例: %@:%@）、セクション %@ にカードゴーストを置けば名前だけで書けます"
+          }
+        }
+      }
+    },
+    "problem.foundIn" : {
+      "comment" : "Part of a problem message: the sections that have a card of that name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is in: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」があるのは: %@"
+          }
+        }
+      }
+    },
+    "problem.noSection" : {
+      "comment" : "Problem message for an unknown section; the arguments are the name and the list of existing sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no section “%@”. There are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション「%@」がありません。あるのは: %@"
+          }
+        }
+      }
+    },
+    "problem.noSectionBefore" : {
+      "comment" : "Problem message when a card name carries a tree but no section; the arguments are the written name, an example section and the card name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” has no section before the card. Don't write a tree in a path; put the section and “:” before the card (for example: %@:%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」はカードの前にセクションがありません。パスにツリーは書かず、カードの前にセクションと「:」を付けます（例: %@:%@）"
+          }
+        }
+      }
+    },
+    "problem.noSectionsAtAll" : {
+      "comment" : "Shown in a problem message listing sections when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no sections)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（セクションがありません）"
+          }
+        }
+      }
+    },
+    "problem.oldPath" : {
+      "comment" : "Problem message when a section name is written with its root's name; the arguments are the name and how to write it now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is the old way of writing it. Write a section from below the root: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は前の書き方です。セクションは根の下から書きます: %@"
+          }
+        }
+      }
+    },
+    "problem.sectionAmbiguous" : {
+      "comment" : "Problem message when a section name is not unique; the arguments are the name, the count and the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is the name of %lld sections: %@. Write the path from the parent."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション「%@」は %lld つあります: %@。親から書いてください"
+          }
+        }
+      }
+    },
+    "problem.sectionFromTop" : {
+      "comment" : "Problem message when only a section's last name was written; the argument is the full path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write a section from the top of the tree: %@ (the last name of a section alone isn't enough)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションは木の頭から書きます: %@（セクションの最後の名前だけでは書けません）"
+          }
+        }
+      }
+    },
+    "problem.treeInPath" : {
+      "comment" : "Problem message when a path names a tree; the arguments are the tree name with @ and the note about branches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” can't be written in a path. A path doesn't name a tree (main@ is dropped when reading). %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」はパスに書けません。パスにツリーは書きません（main@ は外して読みます）。%@"
+          }
+        }
+      }
+    },
+    "problem.writeWithSection" : {
+      "comment" : "Problem message when a card name has no section; the arguments are an example section, the card name and what follows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write it with its section (for example: %@:%@). %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを付けて書いてください（例: %@:%@）。%@"
+          }
+        }
+      }
+    },
+    "tab.close" : {
+      "comment" : "Tooltip of the close button on a tab of the tab bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close tab (⌘W)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タブを閉じる（⌘W）"
+          }
+        }
+      }
+    },
+    "tab.closeOthers" : {
+      "comment" : "Item under the » button of the tab bar: closes every tab but the map tab and the one in front.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close Other Tabs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのタブを閉じる"
+          }
+        }
+      }
+    },
+    "tab.connections" : {
+      "comment" : "Label of a Connections map's tab in the tab bar: the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connections · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コネクションマップ · %@"
+          }
+        }
+      }
+    },
+    "tab.more" : {
+      "comment" : "Tooltip of the » button at the right end of the tab bar: how many tabs do not fit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more tabs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのタブ %lld 枚"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

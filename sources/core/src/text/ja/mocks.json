@@ -1,0 +1,4 @@
+{
+  "mocks.facesOnlyMock": "faces は as: mock のときだけ書けます（UI のセクションの部品ごとのページ）",
+  "mocks.notUi": "{path} は UI のセクションではありません（{kind}）。モックは UI のセクションだけです。このセクションの図は as: picture（PNG）か as: diagram（mermaid）で読みます"
+}

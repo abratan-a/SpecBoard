@@ -1,0 +1,21 @@
+{
+  "access.keyItemUnknown": "There is no access key item \"{item}\"",
+  "access.keyItemUnknownAmong": "There is no access key item \"{item}\" (available: {known})",
+  "access.keyNameEmpty": "Enter an access key name",
+  "access.keyNameTooLong": "The access key name must be at most 80 characters",
+  "access.keyNeeded": "Connecting to MCP needs an access key (Authorization: Bearer <access key>). Create one under \"Access key\" in the Place settings of the project list",
+  "access.keyNotFound": "Access key not found",
+  "access.levelWord": "level must be read or write ({value} is not understood)",
+  "access.needs": "{op} needs {key} ({what})",
+  "access.noProject": "There is no such project",
+  "access.noRandom": "Cannot get random numbers",
+  "access.permitsNeeded": "{op} needs permits ({item: allow | ask | deny}; the items are {known})",
+  "access.permitsShape": "permits of {op} must be {item: allow | ask | deny} (not {other})",
+  "access.permitsState": "{item} in permits of {op} must be one of allow, ask, deny (not {said})",
+  "access.projectNotFound": "Project not found",
+  "access.readOnly": "Project \"{project}\" is read only with this access key (to make it writable, use \"Access key\" in the Place settings of the project list)",
+  "access.what.keyId": "the access key's id",
+  "access.what.keyName": "the access key's name",
+  "access.what.on": "whether to make it public",
+  "access.what.projectId": "the project's id"
+}

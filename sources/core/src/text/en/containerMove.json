@@ -1,0 +1,16 @@
+{
+  "containerMove.error.sql": "Cannot move the contents of containers: {e}",
+  "containerMove.line.flows": "Turned {nodes} nodes of {flows} flows into cards and lines inside the flows",
+  "containerMove.line.goals": "Turned {held} items of {goals} goals into cards inside the goals",
+  "containerMove.line.inCard": "{name}: {line}",
+  "containerMove.line.itemLeft": "Item {what} of goal {name} was dropped, because {why}",
+  "containerMove.line.itemLinked": "Item {what} of goal {name} was not put inside but made a \"link\" line, because {why}",
+  "containerMove.line.lineKindRenamed": "Renamed the project's line kind {from} to {to} (it had the same name as a flow line)",
+  "containerMove.line.pathsRewritten": "Rewrote {count} paths that point to cards moved into a goal to paths under the goal",
+  "containerMove.reason.cycle": "putting it in would make it contain that goal",
+  "containerMove.reason.ghost": "it is a card ghost, which cannot be put inside a container",
+  "containerMove.reason.kind": "it is a kind of card that cannot go in a goal",
+  "containerMove.reason.noTarget": "the card it points to does not exist",
+  "containerMove.reason.otherGoal": "it already went into another goal",
+  "containerMove.reason.sameName": "a card with the same name already went into that goal"
+}

@@ -1,0 +1,9 @@
+classDiagram
+    namespace Schemas {
+        class Schemas__Customer["Schemas:Customer"]
+    }
+    namespace Schemas_Ordering {
+        class Schemas_Ordering__Order["Schemas/Ordering:Order"]
+    }
+    Schemas_Ordering__Order ..> Schemas__Customer : signedBy ← id
+    Schemas_Ordering__Order "N" o-- "1" Schemas__Customer : customer_id

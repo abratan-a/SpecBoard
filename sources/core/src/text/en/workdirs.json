@@ -1,0 +1,14 @@
+{
+  "workdirs.action.noValue": "section_action's value cannot hold {key} (read takes no value)",
+  "workdirs.action.none": "The kind of {path} ({kind}) has no actions",
+  "workdirs.action.notNow": "{path} cannot be read now: {why}",
+  "workdirs.action.notOfKind": "The actions of a section of the kind {kind} are {ops} ({op} is not one)",
+  "workdirs.line.settings": "Changed the settings of the working directory {name}",
+  "workdirs.settings.descriptionString": "description is a string",
+  "workdirs.settings.inBatch": "readType, exclude, description and folder of a working directory's section are the project's settings (folder is this machine's binding), so a batch step cannot write them. Write them with section_update outside the batch",
+  "workdirs.settings.notWorkdir": "{key} is a key of a working directory's section ({path} is not a working directory's section)",
+  "workdirs.write.directory": "{path} is a directory of a working directory and is read only (it is made, renamed, moved and deleted in the folder; it is read again by section_action's op: read on the working directory's section)",
+  "workdirs.write.file": "{path} is a file of a working directory and is read only (its name, content, lines and tags cannot be changed, and it cannot be deleted; only its place on the diagram, topLeft, can be written). A line to the file is drawn from a card of main or a branch, with {\"line\": \"implementedBy\", \"to\": \"{path}\"} in its connections",
+  "workdirs.write.onlyNote": "Only notes (kind: note) can be put in a working directory's section ({path}). Create the {kind} in a section of a kind that holds it",
+  "workdirs.write.sectionInside": "{path} is inside a working directory's section, so no section can be created there (the core makes the directories in it by reading the folder)"
+}

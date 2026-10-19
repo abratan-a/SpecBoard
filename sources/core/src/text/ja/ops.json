@@ -1,0 +1,16 @@
+{
+  "ops.error.branchNotFound": "branch「{tree}」が見つかりません",
+  "ops.error.landing": "landing は replace か copy です（{other} は読めません）",
+  "ops.error.needs": "{op} には {key}（{what}）が要ります",
+  "ops.error.notProjectFile": "プロジェクトのファイルとして読めません",
+  "ops.error.projectNotFound": "プロジェクトが見つかりません",
+  "ops.what.aiMergeOn": "承認なしで入れるか",
+  "ops.what.bundle": "project_bundle の答え",
+  "ops.what.commitSeq": "コミットの番号",
+  "ops.what.copyName": "写しのプロジェクトの名前",
+  "ops.what.cutBefore": "残す一番古いコミットの番号",
+  "ops.what.fileText": "ファイルの中身",
+  "ops.what.lockOn": "掛けるか",
+  "ops.what.projectId": "プロジェクトの id",
+  "ops.what.revertTo": "戻る先のコミットの番号"
+}

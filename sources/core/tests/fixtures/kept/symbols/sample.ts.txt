@@ -1,0 +1,19 @@
+MOST — constant const — line 4 — 3-4
+Order — type class — line 8 — 6-24
+  Order.constructor — method constructor — line 12 — 11-15 — calls local
+  Order.total — method method — line 17 — 17-19 — calls reduce, helper
+  Order.count — method method — line 21 — 21-23
+Priced — type interface — line 26 — 26-29
+  Priced.price — method method — line 27 — 27-27
+  Priced.cheap — method method — line 28 — 28-28
+State — type enum — line 31 — 31-34
+Lines — type type — line 36 — 36-36
+Inner — module namespace — line 38 — 38-40
+  Inner.deep — function function — line 39 — 39-39
+main — function function — line 42 — 42-44 — calls log, Order, total
+helper — function function — line 49 — 48-52 — calls f
+over — function function — line 54 — 54-54
+'over (2)' — function function — line 55 — 55-55
+'over (3)' — function function — line 56 — 56-56
+Shape — type class — line 58 — 58-60
+  Shape.area — method method — line 59 — 59-59

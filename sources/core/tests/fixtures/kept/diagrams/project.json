@@ -1,0 +1,18 @@
+{
+  "project": "見本",
+  "branch": "main",
+  "roots": "*",
+  "depth": 1,
+  "kinds": [
+    "embed",
+    "points",
+    "signedBy",
+    "reads",
+    "writes",
+    "next",
+    "mentions",
+    "run"
+  ],
+  "fields": false,
+  "rev": "1bc2df7206e0"
+}

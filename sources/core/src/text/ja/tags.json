@@ -1,0 +1,23 @@
+{
+  "tags.cardsMissing": "スキーマがありません: {listed}。このプロジェクトには {count} 件あります。find で探せます",
+  "tags.cardsNeeded": "value の add か remove に、カードのパスを 1 つ以上渡してください",
+  "tags.comma": "タグにカンマは使えません: {value}",
+  "tags.field.groupName": "グループ名",
+  "tags.field.tags": "タグ",
+  "tags.field.tagsOf": "{full} のタグ",
+  "tags.group.cycle": "グループが循環しています: {chain}。グループは自分自身を含められません",
+  "tags.group.deleteAlone": "delete はほかの指定と一緒には使えません",
+  "tags.group.gone": "グループ「{name}」はありません",
+  "tags.group.inBranch": "タググループ（{name}）はプロジェクトの設定で、branch ごとには持ちません。branch を付けずに呼びます（branch {branch} で付け外しできるのはカードのタグです）",
+  "tags.group.keyNeeded": "add・remove・exclusive・delete のどれかを渡してください",
+  "tags.group.nameComma": "グループ名にカンマは使えません",
+  "tags.group.nameIsTag": "「{name}」は既にタグとして使われています。グループ名とタグ名は同じ名前空間です",
+  "tags.group.nameNeeded": "グループ名 を入力してください",
+  "tags.group.nameTwice": "グループ名が重複しています: {name}",
+  "tags.group.tooMany": "tagGroups は {max} グループまでです",
+  "tags.line.changed": "{count} 件のタグを変更（{tags}）",
+  "tags.line.groupsCleared": "タググループを解除",
+  "tags.line.groupsSet": "タググループを設定（{names}）",
+  "tags.tooLong": "{field}は {max} 文字以内です: {value}",
+  "tags.tooMany": "{field}は {max} 個までです（{count} 個になります）"
+}

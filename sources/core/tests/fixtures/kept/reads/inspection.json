@@ -1,0 +1,74 @@
+[
+  {
+    "id": "brokenPaths-69de3e6947",
+    "group": "brokenPaths",
+    "kind": "fix",
+    "label": "壊れたパス",
+    "at": "Docs:Overview",
+    "problem": "body の Nope:Missing が解決できません",
+    "via": "body",
+    "path": "Nope:Missing",
+    "hint": "セクション「Nope」がありません。あるのは: Docs / Schemas / Schemas/Ordering / Charts / Charts/Shop / Free / ts / zod / schema / charts_2 / docs_2",
+    "fix": "パスを今ある所に書き直すか、指す先を作ります（改名・移動したものは新しいパスに）"
+  },
+  {
+    "id": "brokenPaths-90cf91d1b6",
+    "group": "brokenPaths",
+    "kind": "fix",
+    "label": "壊れたパス",
+    "at": "Docs:Overview",
+    "problem": "body![[]] の Nope:Gone が解決できません",
+    "via": "body![[]]",
+    "path": "Nope:Gone",
+    "hint": "セクション「Nope」がありません。あるのは: Docs / Schemas / Schemas/Ordering / Charts / Charts/Shop / Free / ts / zod / schema / charts_2 / docs_2",
+    "fix": "パスを今ある所に書き直すか、指す先を作ります（改名・移動したものは新しいパスに）"
+  },
+  {
+    "id": "brokenPaths-d594dd8f05",
+    "group": "brokenPaths",
+    "kind": "fix",
+    "label": "壊れたパス",
+    "at": "Docs:Overview",
+    "problem": "body{{}} の Schemas:Nothing が解決できません",
+    "via": "body{{}}",
+    "path": "Schemas:Nothing",
+    "hint": "カード「Nothing」がありません。セクション Schemas には 4 件あります。card_list の query で探してください",
+    "fix": "パスを今ある所に書き直すか、指す先を作ります（改名・移動したものは新しいパスに）"
+  },
+  {
+    "id": "peerMismatches-33a2ac48cc",
+    "group": "peerMismatches",
+    "kind": "fix",
+    "label": "flow のやり取りの食い違い",
+    "at": "Charts/Shop:Refund.start",
+    "problem": "Charts/Shop:Checkout に、Charts/Shop:Refund へ送る行（send の行か end の return か、Charts/Shop:Refund を実行する run。Charts/Shop:Refund へ peer の線を引くか、run の runs の線を Charts/Shop:Refund へ引く）がありません。Charts/Shop:Checkout から受けないなら、ここから Charts/Shop:Checkout への peer の線を外します",
+    "peer": "Charts/Shop:Checkout",
+    "carries": [
+      "Schemas/Ordering:Order.total"
+    ],
+    "fix": "相手の flow に受ける口（送る口）を書くか、peer の線を正しい相手へ引き直すか外します"
+  },
+  {
+    "id": "peerMismatches-3f2ed4efcd",
+    "group": "peerMismatches",
+    "kind": "fix",
+    "label": "flow のやり取りの食い違い",
+    "at": "Charts/Shop:Refund.ask.steps[1]",
+    "problem": "Charts/Shop:Checkout に、Charts/Shop:Refund から受ける口（begin の trigger receive か receive の行。Charts/Shop:Refund へ peer の線を引くか、相手を書かない）がありません。Charts/Shop:Checkout へ送らないなら、ここから Charts/Shop:Checkout への peer の線を外します",
+    "peer": "Charts/Shop:Checkout",
+    "carries": [
+      "Schemas/Ordering:Order.id"
+    ],
+    "fix": "相手の flow に受ける口（送る口）を書くか、peer の線を正しい相手へ引き直すか外します"
+  },
+  {
+    "id": "freeCards-ed84e339ac",
+    "group": "freeCards",
+    "kind": "info",
+    "label": "フリーセクションのカード",
+    "at": "Free:Memo",
+    "problem": "フリーセクション Free に置いたままです",
+    "section": "Free",
+    "fix": "置き場が決まったら、種類の合うセクションへ移します"
+  }
+]

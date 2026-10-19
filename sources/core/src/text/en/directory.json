@@ -1,0 +1,22 @@
+{
+  "directory.part.more": " ... and {count} more",
+  "directory.part.noSections": "(no sections)",
+  "directory.part.placeProject": "This project has",
+  "directory.part.placeSection": "Section {section} has",
+  "directory.problem.cardCount": "{place} {total} cards; search with the query of card_list",
+  "directory.problem.closeCards": "Close matches: {shown}{more} ({place} {total} cards in all; search with the query of card_list)",
+  "directory.problem.elsewhere": " (other sections have {found})",
+  "directory.problem.elsewhereHint": ". Write the ones in other sections with their section (for example: {example}:{raw}), or place a card ghost in section {section} to write them by name alone",
+  "directory.problem.foundIn": "\"{raw}\" exists in: {sections}",
+  "directory.problem.ghostEmpty": "\"{raw}\" is a card ghost, but it points to nothing (the card it pointed to is gone; re-point it with the target of card_update, or remove it with card_delete)",
+  "directory.problem.ghostRound": "\"{raw}\" is a card ghost, but following what it points to goes round in a circle",
+  "directory.problem.isCard": "\"{raw}\" is a card",
+  "directory.problem.manySections": "Section \"{name}\" exists {count} times: {sections}. Write it from its parent",
+  "directory.problem.noCard": "Card \"{wanted}\" does not exist. {tail}",
+  "directory.problem.noSection": "Section \"{name}\" does not exist. There are: {sections}",
+  "directory.problem.noSectionBeforeCard": "\"{raw}\" has no section before the card. Do not write a tree in a path; put the section and \":\" before the card (for example: {example}:{rest})",
+  "directory.problem.oldSectionPath": "\"{name}\" is the old way of writing. Write sections from under the root: {rest}",
+  "directory.problem.sectionFromTop": "Write a section from the top of the tree: {path} (the last name of the section alone is not enough)",
+  "directory.problem.treeInPath": "\"{tree}@\" cannot be written in a path. A path does not name a tree (main@ is read with the @ removed). To work inside a branch, name it with the branch argument in MCP (main if omitted), or use the branch open in the window",
+  "directory.problem.writeWithSection": "Write it with its section (for example: {example}:{raw}). {detail}"
+}

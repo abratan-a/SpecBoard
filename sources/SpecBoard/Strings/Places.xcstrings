@@ -1,0 +1,984 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "addForm.note" : {
+      "comment" : "Explanation in the popover that adds an agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSH destination (user@host or a name from ~/.ssh/config). It connects with this Mac's SSH settings and keys."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSH の接続先（user@host か ~/.ssh/config の名前）。この Mac の SSH の設定と鍵で繋ぎます。"
+          }
+        }
+      }
+    },
+    "agent.linuxLabel" : {
+      "comment" : "Name of the kind of host an agent is carried for, used inside a failure message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linux (x86_64)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linux（x86_64）"
+          }
+        }
+      }
+    },
+    "away.notYet" : {
+      "comment" : "Notice in an agent's keys and public tabs while it is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This agent isn't connected yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントには、まだ繋がっていません"
+          }
+        }
+      }
+    },
+    "away.why" : {
+      "comment" : "Explanation under the not-connected notice.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access keys and public settings are kept in the agent itself, so they can be seen only while it is connected (connect it in the “Connection” tab)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセスキーと公開は、エージェントの本体に置いているので、繋がっている間だけ見られます（接続は「接続」で）"
+          }
+        }
+      }
+    },
+    "column.addAgent" : {
+      "comment" : "Button under the list of places, and the title of the form it opens.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントを追加"
+          }
+        }
+      }
+    },
+    "column.addAgentHelp" : {
+      "comment" : "Tooltip of the Add agent button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add an SSH destination to put an agent there and start it. The agent keeps projects on that host."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SSH の接続先を足すと、そこにエージェントを置いて起こします。エージェントはそこでプロジェクトを持ちます"
+          }
+        }
+      }
+    },
+    "connection.about" : {
+      "comment" : "Explanation at the top of an agent's connection tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connects to this host over SSH, puts the agent bundled with this app there and starts it (under ~/.specboard/agent on the host; nothing needs to be set up on the host). The agent receives MCP on the host's 127.0.0.1 and answers for the host's projects."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホストへ SSH で繋ぎ、このアプリに入っているエージェントを置いて起こします（ホストの ~/.specboard/agent の下。ホストの設定は要りません）。エージェントはそのホストの 127.0.0.1 で MCP を受け、そのホストのプロジェクトに答えます。"
+          }
+        }
+      }
+    },
+    "connection.claudeMissing" : {
+      "comment" : "Badge that says no Claude Code was found on the host.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude が見つからない"
+          }
+        }
+      }
+    },
+    "connection.nameHelp" : {
+      "comment" : "Tooltip of the name field in an agent's connection tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent name (shown in lists and move destinations; the destination if empty)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントの名前（一覧や移す先に出ます。空なら接続先）"
+          }
+        }
+      }
+    },
+    "connection.notReached" : {
+      "comment" : "Line shown when the host cannot be reached and gave no reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続できていません"
+          }
+        }
+      }
+    },
+    "connection.portLabel" : {
+      "comment" : "Label of the MCP port field in an agent's connection tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP port"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP のポート"
+          }
+        }
+      }
+    },
+    "connection.portNote" : {
+      "comment" : "Explanation under the MCP port field in an agent's connection tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The port that the AI sessions of this user on this host connect to (127.0.0.1). Use a different port for each user."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホストの、この利用者の AI のセッションが繋ぐポート（127.0.0.1）。利用者ごとに別のポートにします。"
+          }
+        }
+      }
+    },
+    "connection.probeNow" : {
+      "comment" : "Button that probes the host at once.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いま調べる"
+          }
+        }
+      }
+    },
+    "connection.removeAgent" : {
+      "comment" : "Button that lets go of an agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントを外す"
+          }
+        }
+      }
+    },
+    "error.agentMissing" : {
+      "comment" : "Failure when the app was built without the agent for the host; the argument is the kind of host.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app doesn't include an agent for %@ (it wasn't built)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリには %@ 用のエージェントが入っていません（ビルドで作られていません）"
+          }
+        }
+      }
+    },
+    "error.arrivedDiffers" : {
+      "comment" : "Reason used when the copy on the host does not match the agent bundled with the app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What arrived differs from the bundled agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "届いたものが同梱のものと違います"
+          }
+        }
+      }
+    },
+    "error.cantConnect" : {
+      "comment" : "Reason shown when the SSH connection to a host cannot be made and ssh gave none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続できません"
+          }
+        }
+      }
+    },
+    "error.cantPlace" : {
+      "comment" : "Failure when copying the agent to the host; the argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't put the agent on the host: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントを置けません: %@"
+          }
+        }
+      }
+    },
+    "error.connectionLost" : {
+      "comment" : "Reason shown when an agent's connection ended without a reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection lost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続が切れました"
+          }
+        }
+      }
+    },
+    "error.hostUnreadable" : {
+      "comment" : "Failure when putting the agent on a host; the argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't check the host: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホストを調べられません: %@"
+          }
+        }
+      }
+    },
+    "error.noAgentForHost" : {
+      "comment" : "Failure when the host is of a kind the app has no agent for; the argument is what uname says.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No agent for this host (%@) is bundled with this app (only for macOS and x86_64 Linux)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホスト（%@）用のエージェントは入っていません（macOS と x86_64 の Linux 用だけ）"
+          }
+        }
+      }
+    },
+    "error.noSocket" : {
+      "comment" : "Failure when ssh connected but its control socket never appeared.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection was made but the control socket did not appear"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続は張れましたが制御ソケットが現れません"
+          }
+        }
+      }
+    },
+    "error.probeFailed" : {
+      "comment" : "Reason shown when probing a host failed and gave none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check the host"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "調べられませんでした"
+          }
+        }
+      }
+    },
+    "error.timedOut" : {
+      "comment" : "Failure of a command on the host that ran past its time limit; the argument is the limit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Did not finish in %lld second"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Did not finish in %lld seconds"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 秒で終わりませんでした"
+          }
+        }
+      }
+    },
+    "error.timedOutWith" : {
+      "comment" : "Same, with what the command said as the second argument.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Did not finish in %lld second (%@)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Did not finish in %lld seconds (%@)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 秒で終わりませんでした（%@）"
+          }
+        }
+      }
+    },
+    "error.unameFailed" : {
+      "comment" : "Reason used when asking the host what it is failed without a message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uname failed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uname が失敗しました"
+          }
+        }
+      }
+    },
+    "host.connect" : {
+      "comment" : "Context menu item and switch tooltip that connects an agent's host.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋ぐ"
+          }
+        }
+      }
+    },
+    "host.disconnect" : {
+      "comment" : "Context menu item and switch tooltip that switches an agent's host off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切る"
+          }
+        }
+      }
+    },
+    "mcp.listening" : {
+      "comment" : "Line in an agent's connection tab; the argument is the port.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: listening on this host's 127.0.0.1:%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: このホストの 127.0.0.1:%@ で受けています"
+          }
+        }
+      }
+    },
+    "mcp.notListening" : {
+      "comment" : "Line in an agent's connection tab when MCP is not listening.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: not listening"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: 受けていません"
+          }
+        }
+      }
+    },
+    "mcp.notListeningWhy" : {
+      "comment" : "Same, with the reason as the argument.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: not listening (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: 受けていません（%@）"
+          }
+        }
+      }
+    },
+    "mcp.unknown" : {
+      "comment" : "Line in an agent's connection tab before the agent has said anything about MCP.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: not known yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: まだ分かりません"
+          }
+        }
+      }
+    },
+    "menu.mcpPort" : {
+      "comment" : "Context menu item of an agent's row that asks for the port its MCP listens on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP port…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP のポート…"
+          }
+        }
+      }
+    },
+    "nameForm.note" : {
+      "comment" : "Explanation in the popover that renames an agent; the argument is its SSH destination.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The name shown in lists and move destinations. If left empty, the destination (%@) is shown. It is kept only in this Mac's settings."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一覧や移す先に出る名前。空にすると接続先（%@）で出ます。この Mac の設定だけに残ります。"
+          }
+        }
+      }
+    },
+    "nameForm.title" : {
+      "comment" : "Title of the popover that renames an agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントの名前"
+          }
+        }
+      }
+    },
+    "portForm.note" : {
+      "comment" : "Explanation in the popover that sets an agent's MCP port.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The port that the AI sessions of this user on this host connect to (127.0.0.1). Use a different port for each user. It answers for the agent's projects and the agent's access keys."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホストの、この利用者の AI のセッションが繋ぐポート（127.0.0.1）。利用者ごとに別のポートにします。エージェントのプロジェクトと、そのエージェントのアクセスキーに答えます。"
+          }
+        }
+      }
+    },
+    "portForm.title" : {
+      "comment" : "Title of the popover that sets an agent's MCP port; the argument is the agent's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP port (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP のポート（%@）"
+          }
+        }
+      }
+    },
+    "publish.about" : {
+      "comment" : "Explanation at the top of a place's public tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public projects can be read with any access key (only keys allowed “Read & write” can write). Private projects can be read only by the keys allowed in the access key's settings. New projects start private. In the app, both look the same and can be edited."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開のプロジェクトは、どのアクセスキーからも読めます（書けるのは「読み書き」を許したキーだけ）。非公開のプロジェクトは、アクセスキーの設定で許したキーだけが読めます。新しいプロジェクトは非公開で始まります。画面からは、どちらも同じように見えて直せます。"
+          }
+        }
+      }
+    },
+    "publish.archived" : {
+      "comment" : "Small label beside an archived project's name in the public tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archived"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アーカイブ"
+          }
+        }
+      }
+    },
+    "publish.noProjects" : {
+      "comment" : "Shown in the public tab of a place without projects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place has no projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この場所にプロジェクトがありません"
+          }
+        }
+      }
+    },
+    "row.settingsHelp" : {
+      "comment" : "Tooltip of the gear button of a place's row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place settings (connection, access keys, public)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この場所の設定（接続・アクセスキー・公開）"
+          }
+        }
+      }
+    },
+    "row.thisMacHelp" : {
+      "comment" : "Tooltip of the This Mac row in the list of places.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects kept on this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac に置いているプロジェクト"
+          }
+        }
+      }
+    },
+    "settings.noConnection" : {
+      "comment" : "Shown in the connection tab of a place that has no agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This place has no connection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この場所には接続がありません"
+          }
+        }
+      }
+    },
+    "status.connected" : {
+      "comment" : "Line under an agent's name when it is connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋がっています"
+          }
+        }
+      }
+    },
+    "status.connecting" : {
+      "comment" : "Line under an agent's name while it is being connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋いでいます…"
+          }
+        }
+      }
+    },
+    "status.notYet" : {
+      "comment" : "Line under an agent's name when it has not been connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ繋がっていません"
+          }
+        }
+      }
+    },
+    "status.off" : {
+      "comment" : "Line under an agent's name when its connection is switched off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switched off"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切っています"
+          }
+        }
+      }
+    },
+    "tab.connection" : {
+      "comment" : "Title of a place's settings tab, and the label of the connection badge in an agent's connection panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続"
+          }
+        }
+      }
+    },
+    "tab.keys" : {
+      "comment" : "Title of a place's settings tab for the MCP access keys.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access keys"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセスキー"
+          }
+        }
+      }
+    },
+    "thisMac.none" : {
+      "comment" : "What the settings of This Mac say in the place settings pane.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP doesn't reach this Mac's projects, so there are no access keys and nothing is public."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac のプロジェクトには MCP が届かないので、アクセスキーと公開はありません。"
+          }
+        }
+      }
+    },
+    "thisMac.where" : {
+      "comment" : "Explanation under the notice in the settings of This Mac.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP is received by the agent on the host where the AI session runs, and answers for that agent's projects. To let an AI read a project, move it to an agent with “Move to an agent” in the row's context menu. Access keys and public settings are under the gear of the agent in the list on the left."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP は、AI のセッションが動くホストのエージェントが受け、そのエージェントのプロジェクトに答えます。AI に読ませるプロジェクトは、行の右クリック「エージェントへ移す」でエージェントへ移します。アクセスキーと公開は、左の一覧のエージェントの ⚙ にあります。"
+          }
+        }
+      }
+    },
+    "word.private" : {
+      "comment" : "Choice in the place's public-projects list that keeps a project private.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Private"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非公開"
+          }
+        }
+      }
+    },
+    "word.public" : {
+      "comment" : "Title of a place's settings tab, and the choice that makes a project public.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

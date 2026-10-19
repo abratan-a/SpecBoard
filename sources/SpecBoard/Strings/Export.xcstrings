@@ -1,0 +1,1632 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.export" : {
+      "comment" : "Button that writes one export, and confirms the folder for exporting once.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
+          }
+        }
+      }
+    },
+    "action.exportAll" : {
+      "comment" : "Button on the exports screen that writes every export into its default folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部エクスポート"
+          }
+        }
+      }
+    },
+    "action.exportElsewhere" : {
+      "comment" : "Button and menu item that write exports once into a folder chosen at that time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export to another folder…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他のフォルダへエクスポート…"
+          }
+        }
+      }
+    },
+    "card.notExported" : {
+      "comment" : "Shown in a card's details when no export writes it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not exported (not in any export)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートされません（どのエクスポートにも入っていない）"
+          }
+        }
+      }
+    },
+    "card.open" : {
+      "comment" : "Button in a card's details that opens the exports screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open exports"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートを開く"
+          }
+        }
+      }
+    },
+    "card.openHelp" : {
+      "comment" : "Tooltip of the button that opens the exports screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exports are set under “Export” in Project Settings."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートは、プロジェクト設定の「エクスポート」で決めます"
+          }
+        }
+      }
+    },
+    "content.chart" : {
+      "comment" : "Tag naming what an exported file holds: a chart.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャート"
+          }
+        }
+      }
+    },
+    "content.document" : {
+      "comment" : "Tag naming what an exported file holds: a document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書"
+          }
+        }
+      }
+    },
+    "content.mock" : {
+      "comment" : "What an export file holds: the mock of a UI section (one HTML page of its parts).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mock"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モック"
+          }
+        }
+      }
+    },
+    "delete.message" : {
+      "comment" : "Message of the confirmation for deleting an export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files already written are kept. Only the record of what was written (inside .specboard in the default export folder) is removed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いたファイルは消しません。書いた記録（既定のエクスポート先の .specboard の中）だけを外します"
+          }
+        }
+      }
+    },
+    "delete.title" : {
+      "comment" : "Title of the confirmation for deleting an export; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete export %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ を消しますか？"
+          }
+        }
+      }
+    },
+    "dirs.askTitle" : {
+      "comment" : "Title of the sheet for typing a working directory's folder on an agent's host; arguments are the place name and the directory's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder on %@ (working directory %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ のフォルダ（作業ディレクトリ %@）"
+          }
+        }
+      }
+    },
+    "dirs.changeFolder" : {
+      "comment" : "Button that changes the folder linked to a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change folder…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを変える…"
+          }
+        }
+      }
+    },
+    "dirs.excludePlaceholder" : {
+      "comment" : "Placeholder of the field listing what a working directory leaves out besides.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also left out (one per line): target/, sources/core/target/, .png"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかに外すもの（1 行に 1 つ）: target/・sources/core/target/・.png"
+          }
+        }
+      }
+    },
+    "dirs.filesRead" : {
+      "comment" : "Shown under a working directory; the argument is how many directories and files were read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directories and files read: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んだディレクトリとファイル: %@"
+          }
+        }
+      }
+    },
+    "dirs.link" : {
+      "comment" : "Button that confirms the typed folder of a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結び付ける"
+          }
+        }
+      }
+    },
+    "dirs.linkFolder" : {
+      "comment" : "Button that links a folder to a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link folder…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを結び付ける…"
+          }
+        }
+      }
+    },
+    "dirs.noFolder" : {
+      "comment" : "Shown in a working directory's row when no folder is linked; the argument is the place name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No folder is set on %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダが%@で決まっていません"
+          }
+        }
+      }
+    },
+    "dirs.panelMessage" : {
+      "comment" : "Message of the folder panel for a working directory; the argument is its name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the folder to use as working directory %@ (inside a repository's working tree, you can commit what is exported as it is)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリ %@ にするフォルダを選んでください（リポジトリの作業ツリーの中なら、エクスポートしたものをそのまま commit できます）"
+          }
+        }
+      }
+    },
+    "dirs.readBasic" : {
+      "comment" : "Option of how a working directory is read: everything except .git/ and .DS_Store.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basic"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基本"
+          }
+        }
+      }
+    },
+    "dirs.readGit" : {
+      "comment" : "Option of how a working directory is read: also leaves out what .gitignore says.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "git repository"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "git リポジトリ"
+          }
+        }
+      }
+    },
+    "dirs.readHelp" : {
+      "comment" : "Tooltip of the picker for how a working directory is read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Don't read” does not read the inside (the tree is only the box, and lines to files in it are not checked). “Basic” leaves out .git/ and .DS_Store. “git repository” also leaves out what .gitignore says (the same as Basic where there is no git)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読まないは中を読まない（木は箱だけで、そこのファイルへの線は確かめない）。基本は .git/ と .DS_Store を外す。git リポジトリはそれに .gitignore のもの（git の無い所では基本と同じ）"
+          }
+        }
+      }
+    },
+    "dirs.readNone" : {
+      "comment" : "Option of how a working directory is read: its inside is not read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't read (box only)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読まない（箱だけ）"
+          }
+        }
+      }
+    },
+    "dirs.unlinkFolder" : {
+      "comment" : "Menu item that unlinks a working directory's folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlink folder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを外す"
+          }
+        }
+      }
+    },
+    "elsewhere.askMessage" : {
+      "comment" : "Message of the sheet for typing a folder to export to once.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The default export folder stays as it is. Nothing can be written if the folder does not exist."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定のエクスポート先は変えません。フォルダが無ければ書けません"
+          }
+        }
+      }
+    },
+    "elsewhere.askTitle" : {
+      "comment" : "Title of the sheet for typing a folder on an agent's host to export to once; arguments are the place name and what is exported.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export to a folder on %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ のフォルダへエクスポート（%@）"
+          }
+        }
+      }
+    },
+    "elsewhere.panelMessage" : {
+      "comment" : "Message of the folder panel for exporting once to another folder; the argument says what is exported.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the folder to write %@ into (this once only; the default export folder stays as it is)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ をエクスポートするフォルダを選んでください（1 回だけ。既定のエクスポート先は変えません）"
+          }
+        }
+      }
+    },
+    "entry.add" : {
+      "comment" : "Button that opens the sheet for adding a row to an export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add row…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行を追加…"
+          }
+        }
+      }
+    },
+    "entry.format" : {
+      "comment" : "Label of the format picker in the sheet for adding a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形式"
+          }
+        }
+      }
+    },
+    "entry.formatFromExtension" : {
+      "comment" : "Option of the format picker: take the format from the file's extension.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From extension"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拡張子から"
+          }
+        }
+      }
+    },
+    "entry.fromPlaceholder" : {
+      "comment" : "Placeholder of the from field in the sheet for adding a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from: path of a card or section (e.g. Schemas/Ordering or Schemas:Customer)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from: カードかセクションのパス（例: Schemas/Ordering か Schemas:Customer）"
+          }
+        }
+      }
+    },
+    "entry.kindsPlaceholder" : {
+      "comment" : "Placeholder of the kinds field in the sheet for adding a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limit by kind (for a section; e.g. entity, value; empty uses the default)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類で絞る（セクションのとき。例: entity, value。空なら既定）"
+          }
+        }
+      }
+    },
+    "entry.removeHelp" : {
+      "comment" : "Tooltip of the button that removes a row of an export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行を外す"
+          }
+        }
+      }
+    },
+    "entry.title" : {
+      "comment" : "Title of the sheet for adding a row to an export; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a row to export %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ に行を追加"
+          }
+        }
+      }
+    },
+    "entry.toPlaceholder" : {
+      "comment" : "Placeholder of the to field in the sheet for adding a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to: file in the export folder (a folder if it ends with /)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to: エクスポート先の中のファイル（/ で終わればフォルダ）"
+          }
+        }
+      }
+    },
+    "error.notConnected" : {
+      "comment" : "Error when exporting while the machine keeping the project is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected to the place where this project is kept"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトを置いている所に繋がっていません"
+          }
+        }
+      }
+    },
+    "error.stillRunning" : {
+      "comment" : "Error when exporting while a previous export of the project is still running.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An export of this project is still running. Export again after it has finished."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトのエクスポートがまだ続いています。終わってからエクスポートしてください"
+          }
+        }
+      }
+    },
+    "exclude.add" : {
+      "comment" : "Button that opens the sheet for adding something an export leaves out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add something to leave out…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外すものを追加…"
+          }
+        }
+      }
+    },
+    "exclude.pathPlaceholder" : {
+      "comment" : "Placeholder of the path field in the sheet for leaving something out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path of a card or section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードかセクションのパス"
+          }
+        }
+      }
+    },
+    "exclude.removeHelp" : {
+      "comment" : "Tooltip of the button that removes an item from an export's left-out list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop leaving this out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外すのをやめる"
+          }
+        }
+      }
+    },
+    "exclude.title" : {
+      "comment" : "Title of the sheet for adding something an export leaves out; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave out of export %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ から外す"
+          }
+        }
+      }
+    },
+    "file.startOnly" : {
+      "comment" : "Shown in a file's header when only the start of a large file is displayed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First part only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先頭だけ"
+          }
+        }
+      }
+    },
+    "file.startOnlyHelp" : {
+      "comment" : "Tooltip of the “first part only” mark; the argument is the size shown, such as 256 KB.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file is large, so only the first %@ is shown."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きいファイルなので、先頭 %@ だけを出しています"
+          }
+        }
+      }
+    },
+    "files.changedCardHelp" : {
+      "comment" : "Tooltip of a card name in an export's file list when the card changed after the file was written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card changed since it was written"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いた時から変わったカード"
+          }
+        }
+      }
+    },
+    "files.none" : {
+      "comment" : "Shown when an export would write no file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cards to write"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くカードはありません"
+          }
+        }
+      }
+    },
+    "files.removing" : {
+      "comment" : "Shown under an export's files; the argument lists the files that writing again takes away.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed by the next write: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次に書くと消す: %@"
+          }
+        }
+      }
+    },
+    "files.writtenAt" : {
+      "comment" : "Shown under an export's files; the argument is the time it was last written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last written: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に書いた: %@"
+          }
+        }
+      }
+    },
+    "folder.askTitle" : {
+      "comment" : "Title of the sheet for typing an export's default folder on an agent's host; arguments are the place name and the export name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder on %@ (where export %@ is written)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ のフォルダ（エクスポート %@ のエクスポート先）"
+          }
+        }
+      }
+    },
+    "folder.decide" : {
+      "comment" : "Button that confirms the typed default folder of an export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決める"
+          }
+        }
+      }
+    },
+    "folder.panelMessage" : {
+      "comment" : "Message of the folder panel for an export's default folder; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the folder that export %@ is written to (inside a repository's working tree, you can commit what is written as it is)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ のエクスポート先にするフォルダを選んでください（リポジトリの作業ツリーの中なら、エクスポートしたものをそのまま commit できます）"
+          }
+        }
+      }
+    },
+    "header.about" : {
+      "comment" : "Explanation under the title of the exports screen; the argument is the place name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each export decides what to write where. The folder it is written to is the export's default folder (set on %@) or the folder you choose when exporting. Exporting from a section includes the cards of writable kinds in it and in the sections under it (unless limited by kind, flows are left out, and notes are included only in schema sections), and a single card is written by the row nearest to it. This is a project setting: it does not change per branch and main's lock does not apply."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートごとに、何をどこに書くかを決めます。書く先のフォルダは、エクスポートごとの既定の先（%@の設定）か、書くときに選んだフォルダです。セクションから書くと、下のセクションまでの書ける種類のカードが入り（種類で絞らなければ flow は入らず、note はスキーマのセクションだけ）、1 枚のカードはそれに一番近い行で書かれます。プロジェクトの設定で、branch では変わらず、main のロックも受けません"
+          }
+        }
+      }
+    },
+    "header.exportAllHelp" : {
+      "comment" : "Tooltip of the button that writes every export; the argument is the place name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes main into each export's default folder on %@ (main even when a branch is open)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を、エクスポートごとに%@の既定のエクスポート先のフォルダへ書きます（branch を開いていても main）"
+          }
+        }
+      }
+    },
+    "header.exportElsewhereHelp" : {
+      "comment" : "Tooltip of the button that exports everything once to another folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes all exports of the chosen tree into a folder you choose, once only (a goal's working tree, for example). The default export folder stays as it is."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートする木の全部のエクスポートを、選んだフォルダへ 1 回だけ書きます（goal の作業木など。既定のエクスポート先は変えません）"
+          }
+        }
+      }
+    },
+    "header.new" : {
+      "comment" : "Button on the exports screen that opens the sheet for a new export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New export…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートを作る…"
+          }
+        }
+      }
+    },
+    "label.export" : {
+      "comment" : "Names the export that writes a file or a card; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@"
+          }
+        }
+      }
+    },
+    "list.empty" : {
+      "comment" : "Shown on the exports screen when the project has no export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exports. Use “New export…” to decide what to write where."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートがありません。「エクスポートを作る…」で、何をどこに書くかを決めます"
+          }
+        }
+      }
+    },
+    "make.namePlaceholder" : {
+      "comment" : "Placeholder of the name field in the sheet for a new export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (e.g. types)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前（例: types）"
+          }
+        }
+      }
+    },
+    "make.note" : {
+      "comment" : "Note in the sheet for a new export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After creating it, decide what to write where with “Add row…”, and the export folder with “Set export folder…”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何をどこへ書くかは、作ってから「行を追加…」で、エクスポート先は「エクスポート先を決める…」で決めます"
+          }
+        }
+      }
+    },
+    "make.title" : {
+      "comment" : "Title of the sheet for a new export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートを作る"
+          }
+        }
+      }
+    },
+    "mark.help" : {
+      "comment" : "Tooltip of the export mark on a file; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File written by export %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ が書くファイル"
+          }
+        }
+      }
+    },
+    "mark.helpCards" : {
+      "comment" : "Appended to the tooltip of the export mark on a file; the argument lists the cards written into it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". Source cards: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。元のカード: %@"
+          }
+        }
+      }
+    },
+    "mark.helpStatus" : {
+      "comment" : "Appended to the tooltip of the export mark on a file; the argument is how the file stands. Starts with a space in English.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（%@）"
+          }
+        }
+      }
+    },
+    "menu.delete" : {
+      "comment" : "Menu item that deletes an export, after asking.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除…"
+          }
+        }
+      }
+    },
+    "menu.removeFolder" : {
+      "comment" : "Menu item that removes an export's default folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove export folder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート先を外す"
+          }
+        }
+      }
+    },
+    "notice.exported" : {
+      "comment" : "First part of the notice shown after exporting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exported"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートしました"
+          }
+        }
+      }
+    },
+    "notice.fileCount" : {
+      "comment" : "Part of the notice shown after exporting; the argument is how many files were written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : ": %lld file"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : ": %lld files"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ": %lld ファイル"
+          }
+        }
+      }
+    },
+    "notice.fromBranch" : {
+      "comment" : "Part of the notice shown after exporting from a branch; the argument is the branch name. Starts with a space in English.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (from branch %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（branch %@ から）"
+          }
+        }
+      }
+    },
+    "notice.removedCount" : {
+      "comment" : "Part of the notice shown after exporting; the argument is how many files written before were removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : " (removed %lld file that was written before but not this time)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : " (removed %lld files that were written before but not this time)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（前に書いて今回書かない %lld ファイルを消しました）"
+          }
+        }
+      }
+    },
+    "problems.title" : {
+      "comment" : "Heading of the list of problems that stop the export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't export as it is"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このままではエクスポートできません"
+          }
+        }
+      }
+    },
+    "rename.newName" : {
+      "comment" : "Placeholder of the name field in the sheet for renaming an export.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい名前"
+          }
+        }
+      }
+    },
+    "rename.title" : {
+      "comment" : "Title of the sheet for renaming an export; the argument is the export's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename export %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート %@ の名前を変える"
+          }
+        }
+      }
+    },
+    "row.changeFolder" : {
+      "comment" : "Button that changes an export's default folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change export folder…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート先を変える…"
+          }
+        }
+      }
+    },
+    "row.folderHelp" : {
+      "comment" : "Tooltip of an export's default folder; the argument is the place name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default export folder (folder on %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定のエクスポート先（%@のフォルダ）"
+          }
+        }
+      }
+    },
+    "row.noFolder" : {
+      "comment" : "Shown in an export's row when it has no default folder; the argument is the place name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No export folder is set on %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート先が%@で決まっていません"
+          }
+        }
+      }
+    },
+    "row.setFolder" : {
+      "comment" : "Button that sets an export's default folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set export folder…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート先を決める…"
+          }
+        }
+      }
+    },
+    "scope.allFromBranch" : {
+      "comment" : "Names what is exported once to another folder: every export, written from a branch. Used inside other texts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all exports from branch %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ の全部のエクスポート"
+          }
+        }
+      }
+    },
+    "scope.allFromMain" : {
+      "comment" : "Names what is exported once to another folder: every export, written from main. Used inside other texts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all exports from main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main の全部のエクスポート"
+          }
+        }
+      }
+    },
+    "scope.namesFromBranch" : {
+      "comment" : "Names what is exported once to another folder: the listed exports, written from a branch; arguments are the export names and the branch name. Used inside other texts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ from branch %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %2$@ の%1$@"
+          }
+        }
+      }
+    },
+    "scope.namesFromMain" : {
+      "comment" : "Names what is exported once to another folder: the listed exports, written from main. Used inside other texts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ from main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main の%@"
+          }
+        }
+      }
+    },
+    "section.entries" : {
+      "comment" : "Heading of the rows of an export saying which cards or sections go to which files.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What goes where"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何をどこへ"
+          }
+        }
+      }
+    },
+    "section.exclude" : {
+      "comment" : "Heading of the list of cards or sections an export leaves out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left out (from the section rows above)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外すもの（上のセクションの行から）"
+          }
+        }
+      }
+    },
+    "section.files" : {
+      "comment" : "Heading of the list of files an export writes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files written"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くファイル"
+          }
+        }
+      }
+    },
+    "status.changed" : {
+      "comment" : "Tag of a file whose cards changed after it was written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed since written"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いた時から変わった"
+          }
+        }
+      }
+    },
+    "status.current" : {
+      "comment" : "Tag of a written file that is as the export would write it now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新"
+          }
+        }
+      }
+    },
+    "status.edited" : {
+      "comment" : "Tag of a written file that was changed outside the app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edited by hand"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手で変えられた"
+          }
+        }
+      }
+    },
+    "status.missing" : {
+      "comment" : "Tag of a written file that no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無くなった"
+          }
+        }
+      }
+    },
+    "status.unwritten" : {
+      "comment" : "Tag of a file that an export would write but has not written yet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not written yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ書いていない"
+          }
+        }
+      }
+    },
+    "tree.help" : {
+      "comment" : "Tooltip of the picker for the tree to export from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tree that “Export to another folder…” writes from (the open one to begin with). The default export folders are always written from main."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「他のフォルダへエクスポート…」で書く木（初めは開いている木）。既定のエクスポート先へ書くのは、いつも main です"
+          }
+        }
+      }
+    },
+    "tree.label" : {
+      "comment" : "Label of the picker for the tree (main or a branch) that exporting to another folder writes from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export from"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートする木"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

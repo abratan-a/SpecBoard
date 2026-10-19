@@ -1,0 +1,11 @@
+{
+  "create.card.exists": "The card \"{name}\" already exists (to change it use card_update; to make it again, card_delete it first)",
+  "create.duplicate.name": "The same card name is given twice",
+  "create.kind.cannotMake": "{kind} is a kind that cannot be made",
+  "create.label.cardName": "Card name",
+  "create.line.created": "Created card {full}",
+  "create.line.fieldAdded": "Added {name}.{field}",
+  "create.line.ghostCreated": "Created card ghost {full} (pointing at {target})",
+  "create.line.updated": "Updated card {full} ({changed})",
+  "create.line.valuesSet": "Set {count} values of {name}"
+}

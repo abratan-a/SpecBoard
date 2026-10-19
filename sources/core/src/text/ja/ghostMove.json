@@ -1,0 +1,8 @@
+{
+  "ghostMove.error.sql": "カードゴーストを移せません: {e}",
+  "ghostMove.line.moved": "セクションのカードゴースト {count} 件を、セクションに置くカード（種類 ghost）にした",
+  "ghostMove.line.renamed": "カードゴースト {path} は、名前がぶつかるので {name} にした（{target} を指す）",
+  "ghostMove.line.rootGhost": "根のカードゴースト {path} は、根にカードを置けないので移さなかった",
+  "ghostMove.line.standalone": "{path} を図に単独で出す（standalone）にした",
+  "ghostMove.line.targetMissing": "セクション {section} のカードゴーストの 1 つは、指すカードが無いので移さなかった"
+}

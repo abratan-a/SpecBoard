@@ -1,0 +1,1116 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "default.cardDescription" : {
+      "comment" : "The app's rule for what to write in a card's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say what the card is in the first sentence, then write the rules that hold for the whole card. Put long reasons and background in a note and point to it with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の一文でそのカードが何かを言い、続けてカード全体にかかる決まりを書く。長い理由や経緯は note に書いて [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）"
+          }
+        }
+      }
+    },
+    "default.documentBody" : {
+      "comment" : "The app's rule for what to write in the body of a design or specification document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The body of a design or specification document: rules that span several cards, and the reasons and background of the design. Point to the cards concerned with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works). Do not write in prose what the fields of rules and absentFields, or lines (connections), can say"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計書・仕様書の本文: 複数のカードにまたがる決まり、設計の理由と経緯。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）。rules・absentFields の欄や線（connections）で書けることは文章にしない"
+          }
+        }
+      }
+    },
+    "default.fieldDescription" : {
+      "comment" : "The app's rule for what to write in a field's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rules of that value (format, unit, range, what empty or null means, notes on what it points to). Why it is so, and rules that span other cards, go in a note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その値の決まり（形式・単位・範囲、空や null の意味、指し先の補足）。なぜそうしたか・ほかのカードにまたがる決まりは note に"
+          }
+        }
+      }
+    },
+    "default.nodeDescription" : {
+      "comment" : "The app's rule for what to write in a flow node's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A supplement for that node only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのノードだけの補足"
+          }
+        }
+      }
+    },
+    "default.noteBody" : {
+      "comment" : "The app's rule for what to write in a note's body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memos, change history and open questions (sticky notes) about the cards beside it. Point to the cards concerned with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのそばのカードについてのメモ・変更履歴・未決の問い（付箋）。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）"
+          }
+        }
+      }
+    },
+    "default.projectDescription" : {
+      "comment" : "The app's rule for what to write in a project's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What the project is, how its sections are divided, and where to start reading (the map of the project). Write each individual rule at its own place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何のプロジェクトか、セクションの分け方、どこから読むか（プロジェクトの地図）。個々の決まりはそれぞれの場所に書く"
+          }
+        }
+      }
+    },
+    "default.sectionDescription" : {
+      "comment" : "The app's rule for what to write in a section's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What the section (a part) is responsible for, and where it ends and other sections begin"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのセクション（部品）が受け持つことと、ほかのセクションとの境目"
+          }
+        }
+      }
+    },
+    "default.stepDescription" : {
+      "comment" : "The app's rule for what to write in the description of a row of a flow's processing node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A supplement for that row (trigger, route) only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その行（きっかけ・道）だけの補足"
+          }
+        }
+      }
+    },
+    "error.margin" : {
+      "comment" : "Problem when the cells kept clear around a card are out of range; arguments are the lowest, the highest and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cells around a card must be %lld to %lld (got %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まわりのマスは %lld〜%lld です（%lld ではなく）"
+          }
+        }
+      }
+    },
+    "error.rows" : {
+      "comment" : "Problem when the number of rows a card shows is out of range; arguments are the lowest, the highest and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows must be %lld to %lld (got %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行数は %lld〜%lld です（%lld ではなく）"
+          }
+        }
+      }
+    },
+    "error.ruleTooLong" : {
+      "comment" : "Problem when a writing rule is too long; the argument is the place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rule for %@ is too long (4000 characters at most)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の決まりが長すぎます（4000 文字まで）"
+          }
+        }
+      }
+    },
+    "error.size" : {
+      "comment" : "Problem when a card's size is out of range; arguments are the width range, the height range and the size given, as MCP writes it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size must be %lld to %lld cells wide and %lld to %lld cells tall (got %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きさは幅 %lld〜%lld マス、高さ %lld〜%lld マスです（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "error.unknownPlace" : {
+      "comment" : "Problem when the rules name places the app does not know; arguments are the unknown places and the known ones.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown place to write: %@. Places you can write in: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知らない書く場所です: %@。書ける場所は %@"
+          }
+        }
+      }
+    },
+    "error.width" : {
+      "comment" : "Problem when a card width is out of range; arguments are the lowest and highest width and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Width must be auto or a number from %lld to %lld (got %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅は auto か %lld〜%lld の数です（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "exportLanguage.help" : {
+      "comment" : "Said under the export language setting: what it is for and why there is one per project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The language of the words the app writes in exports, mermaid and flow documents. One per project, so that the files are the same whoever exports them"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート・mermaid・flow の文書に使う言語。誰がエクスポートしても同じになるよう、プロジェクトに 1 つ"
+          }
+        }
+      }
+    },
+    "exportLanguage.title" : {
+      "comment" : "Heading of the export language setting on the project tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export language"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートの言語"
+          }
+        }
+      }
+    },
+    "facts.note" : {
+      "comment" : "Note under the project name on the project tab of the project settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A setting of the project as a whole; it does not change per branch. A person can edit it even while main is locked."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトに 1 つの設定で、branch では変わりません。main がロック中でも人は直せます"
+          }
+        }
+      }
+    },
+    "help.app" : {
+      "comment" : "Help at the foot of a property in the Properties panel; arguments are the place and the app's rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing rule (app default, %@): %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き方の決まり（アプリの既定、%@）: %@"
+          }
+        }
+      }
+    },
+    "help.project" : {
+      "comment" : "Help at the foot of a property in the Properties panel; arguments are the place and the project's rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing rule (Project Settings, %@): %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き方の決まり（プロジェクト設定、%@）: %@"
+          }
+        }
+      }
+    },
+    "lock.aiMergeExplanation" : {
+      "comment" : "Explanation under the switch for AI merges into a locked main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When an AI merges into main, it goes in as it is, without an MR. Each time, a bubble from the bell in the header tells who merged which branch (it also stays in the bell's list and in the history). Into a main that is not locked, merges always go in without approval. This is the only place to change it (MCP can only read it)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI が main へ merge すると、MR を出さずにそのまま入ります。入るたびに、ヘッダーのベルから出る吹き出しで誰がどの branch を入れたかを知らせます（ベルの一覧と履歴にも残ります）。ロックしていない main へは、もとから承認なしで入ります。変えられるのはここだけです（MCP からは読むだけ）"
+          }
+        }
+      }
+    },
+    "lock.aiMergeLabel" : {
+      "comment" : "Label of the switch that lets an AI's merges into a locked main go in without an MR.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let AI merges go into main without approval, even while locked"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック中も、AI の merge を承認なしで main に入れる"
+          }
+        }
+      }
+    },
+    "lock.explanation" : {
+      "comment" : "Explanation under the switch that locks main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While locked, main can only be changed by a merge (from the screen or from MCP). Change cards and sections in a branch and merge it, or use “Group edit” (when closed, it goes into main as a single merge). When an AI merges into main, it becomes an MR that a person approves in the MR tab of the dashboard. Still editable while locked: the position and order of cards inside a section, the size and look of writing cards, the position of flow nodes, tags, and the project settings. You can also lock and unlock with a right-click on main in the Navigator."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック中は、main を merge でしか変えられません（画面からも MCP からも）。カードとセクションは branch で直して merge するか、「まとめて直す」で直します（閉じると 1 つの merge として main に入ります）。AI が main へ merge するとMR になり、人がダッシュボードの MR のタブで承認します。ロック中も直せるのは、セクションの中のカードの位置と並び・書くカードの大きさと見え方・flow のノードの位置・タグ・プロジェクトの設定です。ナビパネルの main の右クリックでも掛け外しできます"
+          }
+        }
+      }
+    },
+    "lock.title" : {
+      "comment" : "Heading of main's lock setting on the project tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock on main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main のロック"
+          }
+        }
+      }
+    },
+    "lock.toggle" : {
+      "comment" : "Label of the switch that locks main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main をロックする"
+          }
+        }
+      }
+    },
+    "place.cardDescription" : {
+      "comment" : "Name of the writing place for a card's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの説明"
+          }
+        }
+      }
+    },
+    "place.documentBody" : {
+      "comment" : "Name of the writing place for the body of documents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body of a document (a freedoc's body, the body rows of a formatdoc)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書の本文（freedoc の本文、formatdoc の本文の行）"
+          }
+        }
+      }
+    },
+    "place.entityFieldDescription" : {
+      "comment" : "Name of the writing place for the description of a field in an entity card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description of an entity's field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entity のフィールドの説明"
+          }
+        }
+      }
+    },
+    "place.fieldDescription" : {
+      "comment" : "Name of the writing place for a field's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールドの説明"
+          }
+        }
+      }
+    },
+    "place.kindDescription" : {
+      "comment" : "Name of the writing place for the description of a card of one kind; the argument is the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の説明"
+          }
+        }
+      }
+    },
+    "place.nodeDescription" : {
+      "comment" : "Name of the writing place for the description of a flow's node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description of a flow node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow のノードの説明"
+          }
+        }
+      }
+    },
+    "place.noteBody" : {
+      "comment" : "Name of the writing place for a note's body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body of a note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note の本文"
+          }
+        }
+      }
+    },
+    "place.projectDescription" : {
+      "comment" : "Name of the writing place for a project's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの説明"
+          }
+        }
+      }
+    },
+    "place.sectionDescription" : {
+      "comment" : "Name of the writing place for a section's description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの説明"
+          }
+        }
+      }
+    },
+    "place.stepDescription" : {
+      "comment" : "Name of the writing place for the description of a row in a processing node of a flow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description of a row in a flow's processing node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow の処理ノードの行の説明"
+          }
+        }
+      }
+    },
+    "place.valueFieldDescription" : {
+      "comment" : "Name of the writing place for the description of a field in a value card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description of a value's field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value のフィールドの説明"
+          }
+        }
+      }
+    },
+    "rules.groupCards" : {
+      "comment" : "Heading of the group of writing places for cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        }
+      }
+    },
+    "rules.groupFields" : {
+      "comment" : "Heading of the group of writing places for fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールド"
+          }
+        }
+      }
+    },
+    "rules.groupNotes" : {
+      "comment" : "Heading of the group of writing places for notes and documents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes and documents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note と文書"
+          }
+        }
+      }
+    },
+    "rules.groupProject" : {
+      "comment" : "Heading of the group of writing places for the project and sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project and sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトとセクション"
+          }
+        }
+      }
+    },
+    "rules.groupRows" : {
+      "comment" : "Heading of the group of writing places for rows and nodes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows and nodes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行とノード"
+          }
+        }
+      }
+    },
+    "rules.intro" : {
+      "comment" : "Explanation under the title of the writing rules tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For each place, decide what to write in the free-text descriptions (description). Places without a rule use the rule of a broader place or the app's default (faint text). Before writing, an AI reads this with MCP's project_read (value as: rules)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由に書く説明（description）に何を書くかを、書く場所ごとに決めます。決めていない場所は、広い場所の決まりかアプリの既定（薄い字）を使います。AI は書く前に MCP の project_read（value の as: rules）でこれを読みます"
+          }
+        }
+      }
+    },
+    "rules.sourceApp" : {
+      "comment" : "Shown beside a writing place that uses the app's default rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリの既定"
+          }
+        }
+      }
+    },
+    "rules.sourceProject" : {
+      "comment" : "Shown beside a writing place without its own rule; the argument is the broader place whose rule is used.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses the rule of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の決まりを使う"
+          }
+        }
+      }
+    },
+    "settings.title" : {
+      "comment" : "Title at the top of the project settings screen, beside the tab picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト設定"
+          }
+        }
+      }
+    },
+    "size.autoNote" : {
+      "comment" : "Note under the card width picker when the width is auto; the argument is the width in points.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All cards are made as wide as the widest card in the project (now %lld px)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの中で一番広いカードに、全部のカードを揃えます（今は %lld px）"
+          }
+        }
+      }
+    },
+    "size.docCards" : {
+      "comment" : "Label of the picker for how formatdoc cards show in the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc のカード"
+          }
+        }
+      }
+    },
+    "size.docHelp" : {
+      "comment" : "Tooltip of the picker for how formatdoc cards show in the diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Whether formatdoc cards in the diagram show the document as it is exported, or one row per item. Each card can also be changed on its own."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc のカードを図で、エクスポートと同じ文書の絵で見るか、項目ごとの行で見るか。カードごとにも変えられます"
+          }
+        }
+      }
+    },
+    "size.fixedNote" : {
+      "comment" : "Note under the card width picker when a width is set.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All cards get this width. It is widened when the text does not fit."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部のカードがこの幅になります。文字が入りきらないときは広げます"
+          }
+        }
+      }
+    },
+    "size.gridNote" : {
+      "comment" : "Note in the card size settings about the grid cards are placed on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards sit on cells (1/10 of the width × 1 row, like cells in a spreadsheet). When dragged, a card goes to the nearest cell."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードはマス（幅の 1/10 × 1 行。表計算のセルのようなもの）に置きます。ドラッグすると一番近いマスに入ります"
+          }
+        }
+      }
+    },
+    "size.margin" : {
+      "comment" : "Label of the stepper for the grid cells kept clear around a card; the argument is the number of cells.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Space around cards: %lld cell"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Space around cards: %lld cells"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードのまわり %lld マス"
+          }
+        }
+      }
+    },
+    "size.marginHelp" : {
+      "comment" : "Tooltip of the stepper for the space around cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cells kept clear on all four sides of a card. If you drag a card too close, it is placed on the nearest cell where the space can be kept."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの 4 辺にあけるマス。ドラッグで近づけすぎると、あけられる一番近いマスに置きます"
+          }
+        }
+      }
+    },
+    "size.resizeNote" : {
+      "comment" : "Note in the card size settings about resizing cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag the bottom right of a card in the diagram to resize it (snapping to cells)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードは、図で右下をドラッグすると大きさを変えられます（マスに合わせて）"
+          }
+        }
+      }
+    },
+    "size.rows" : {
+      "comment" : "Label of the stepper for how many rows a card shows; the argument is the number of rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows: %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行数 %lld 行"
+          }
+        }
+      }
+    },
+    "size.rowsHelp" : {
+      "comment" : "Tooltip of the stepper for how many rows a card shows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows beyond this scroll inside the card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これより多い行は、カードの中でスクロールします"
+          }
+        }
+      }
+    },
+    "size.title" : {
+      "comment" : "Heading of the card size settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card size (whole project)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの大きさ（プロジェクト全体）"
+          }
+        }
+      }
+    },
+    "size.widthAuto" : {
+      "comment" : "Option of the card width picker: as wide as the widest card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Width: auto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅 auto"
+          }
+        }
+      }
+    },
+    "size.widthSet" : {
+      "comment" : "Option of the card width picker: a width given in points.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set width"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅を指定"
+          }
+        }
+      }
+    },
+    "tab.exports" : {
+      "comment" : "The Project Settings tab that lists the project's exports.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
+          }
+        }
+      }
+    },
+    "tab.kinds" : {
+      "comment" : "The tab of the project settings with the kinds of cards, sections and lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kinds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類"
+          }
+        }
+      }
+    },
+    "tab.project" : {
+      "comment" : "The tab of the project settings about the project itself.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト"
+          }
+        }
+      }
+    },
+    "tab.rules" : {
+      "comment" : "The tab of the project settings with the rules for what to write where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing rules"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き方の決まり"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

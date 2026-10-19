@@ -1,0 +1,11 @@
+{
+  "rules.default.cardDescription": "最初の一文でそのカードが何かを言い、続けてカード全体にかかる決まりを書く。長い理由や経緯は note に書いて [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）",
+  "rules.default.documentBody": "設計書・仕様書の本文: 複数のカードにまたがる決まり、設計の理由と経緯。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）。rules・absentFields の欄や線（connections）で書けることは文章にしない",
+  "rules.default.fieldDescription": "その値の決まり（形式・単位・範囲、空や null の意味、指し先の補足）。なぜそうしたか・ほかのカードにまたがる決まりは note に",
+  "rules.default.nodeDescription": "そのノードだけの補足",
+  "rules.default.noteBody": "そのそばのカードについてのメモ・変更履歴・未決の問い（付箋）。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）",
+  "rules.default.projectDescription": "何のプロジェクトか、セクションの分け方、どこから読むか（プロジェクトの地図）。個々の決まりはそれぞれの場所に書く",
+  "rules.default.sectionDescription": "そのセクション（部品）が受け持つことと、ほかのセクションとの境目",
+  "rules.default.stepDescription": "その行（きっかけ・道）だけの補足",
+  "rules.place.unknown": "知らない書く場所です（{place}）。書く場所: {places}"
+}

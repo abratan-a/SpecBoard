@@ -1,0 +1,16 @@
+{
+  "store.error.create": "Cannot create the database: {e}",
+  "store.error.exists": "The database already exists: {path}",
+  "store.error.keepFinish": "Cannot finish writing the copy: {e}",
+  "store.error.keepLook": "Cannot look at where the copy is kept: {e}",
+  "store.error.keepName": "The name of the copy cannot be made into text",
+  "store.error.keepPartial": "Cannot remove the unfinished copy {path}: {e}",
+  "store.error.keepRefused": "The database is not opened because a copy cannot be kept before it is brought up to the current form (database: {database}, copy: {copy}): {reason}",
+  "store.error.keepRename": "Cannot give the copy its name: {e}",
+  "store.error.keepWrite": "Cannot write the copy: {e}",
+  "store.error.missing": "There is no database: {path}",
+  "store.error.notCoreForm": "This is not a database of the core's form",
+  "store.error.open": "Cannot open the database: {e}",
+  "store.error.read": "Cannot read the database: {e}",
+  "store.error.tableMissing": "The database of the core's form has no {table}"
+}

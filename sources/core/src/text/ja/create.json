@@ -1,0 +1,11 @@
+{
+  "create.card.exists": "カード「{name}」は既にあります（中を変えるのは card_update。作り直すなら先に card_delete）",
+  "create.duplicate.name": "同じ名前のカードが 2 回指定されています",
+  "create.kind.cannotMake": "{kind} は作れない種類です",
+  "create.label.cardName": "スキーマ名",
+  "create.line.created": "カード {full} を作成",
+  "create.line.fieldAdded": "{name}.{field} を追加",
+  "create.line.ghostCreated": "カードゴースト {full} を作成（{target} を指す）",
+  "create.line.updated": "カード {full} を更新（{changed}）",
+  "create.line.valuesSet": "{name} の値を {count} 件に設定"
+}

@@ -1,0 +1,24 @@
+// Code signing for every target, the base configuration of the project's Debug and Release.
+//
+// The default is "Sign to Run Locally": no team, an ad-hoc signature, so anybody can build
+// the app from source without an Apple developer account. Hardened Runtime is off for such
+// builds: library validation would only load libraries signed by the same team, and an
+// ad-hoc signature has none.
+//
+// To sign with your own team, put the settings in Signing.local.xcconfig next to this file
+// (it is ignored by git), for example:
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   CODE_SIGN_IDENTITY = Apple Development
+//   ENABLE_HARDENED_RUNTIME = YES
+//
+// A build signed by no team does not update itself: updates are accepted only when signed
+// by the same team as the running app.
+
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM =
+CODE_SIGN_IDENTITY = -
+ENABLE_HARDENED_RUNTIME = NO
+
+#include? "Signing.maintainer.xcconfig"
+#include? "Signing.local.xcconfig"

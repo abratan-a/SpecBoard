@@ -1,0 +1,18 @@
+{
+  "directories.exclude.inside": "exclude の「{text}」は作業ディレクトリの中の名前かパスです（/ で始めず、.. を含めない）",
+  "directories.exclude.item": "exclude の {item} は空でない文字列です",
+  "directories.exclude.list": "exclude は外すものの並びです（\"target/\"・\"sources/core/target/\"・\".png\" など）",
+  "directories.exclude.most": "exclude は 500 件までです",
+  "directories.folder.absolute": "フォルダは / か ~/ から書いてください",
+  "directories.folder.control": "フォルダに改行や制御文字は使えません",
+  "directories.folder.path": "folder はこの機械のフォルダです（文字列。外すのは null）",
+  "directories.named.missing": "作業ディレクトリ「{name}」はありません（ある: {there}）",
+  "directories.named.none": "作業ディレクトリ「{name}」はありません（まだ 1 つもありません。作るのは project_update の project_tree に {\"type\": \"workdir\", \"name\": \"{name}\"} を足すこと）",
+  "directories.parsers.key": "parsers のキー「{key}」は、拡張子（.h）かファイルの名前（Makefile）です（/ と前後の空白は入れられません）",
+  "directories.parsers.language": "parsers の「{key}」の値 {other} は、言語の id（英小文字・数字・_・-）か null（言語なし）です",
+  "directories.parsers.most": "parsers は 500 個までです",
+  "directories.parsers.object": "parsers は {\"<拡張子かファイルの名前>\": \"<言語の id>\" | null} のオブジェクトか、null（既定に戻す）です",
+  "directories.readType.oneOf": "readType は {types} のどれかです（{raw}）",
+  "directories.tree.twice": "作業ディレクトリ {name} は、ほかの workdir の行と同じ作業ディレクトリを指しています",
+  "directories.tree.unknown": "作業ディレクトリ {name} の directory（{id}）はこのプロジェクトの作業ディレクトリではありません。省けば名前で突き合わせます"
+}

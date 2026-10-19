@@ -1,0 +1,8 @@
+{
+  "ghostMove.error.sql": "Cannot move the card ghosts: {e}",
+  "ghostMove.line.moved": "Turned {count} section card ghosts into cards (kind ghost) placed in the sections",
+  "ghostMove.line.renamed": "The card ghost {path} was named {name} because the name was taken (it points to {target})",
+  "ghostMove.line.rootGhost": "The card ghost {path} at the root was not moved because the root cannot hold cards",
+  "ghostMove.line.standalone": "Set {path} to show alone in the diagram (standalone)",
+  "ghostMove.line.targetMissing": "One card ghost of section {section} was not moved because the card it points to does not exist"
+}

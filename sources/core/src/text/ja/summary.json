@@ -1,0 +1,9 @@
+{
+  "summary.exists.tooMany": "paths は 5000 件までです（{count} 件）",
+  "summary.impact.noFlowRows": "どの flow の行にも掛かりません",
+  "summary.impact.noFlows": "このプロジェクトには flow がありません",
+  "summary.impact.notFound": "「{path}」が見つかりません。{hint}",
+  "summary.section.noneButMain": "セクション「{name}」はありません。あるのは: Main",
+  "summary.sectionProblem": "{section}セクションは {kind} を入れません（入れるのは {holds}）",
+  "summary.uncheckedPattern": "この pattern は読めないので、データの値を確かめていません（{why}）"
+}

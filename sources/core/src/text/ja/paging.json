@@ -1,0 +1,7 @@
+{
+  "paging.after.gone": "after の「{after}」は一覧にありません（消えたか、名前が変わった）。並びでその次に来るものから返します",
+  "paging.after.goneFromTop": "after の「{after}」は一覧にありません（消えたか、名前が変わったか、移った）。頭から返します（前に読んだものも入ります）",
+  "paging.after.shape": "after は前の答えの next です（文字か数。その次から返します）",
+  "paging.limit.count": "limit は 1〜{most} の件数です",
+  "paging.limit.range": "limit は 1〜{most} です（{f}）"
+}

@@ -1,0 +1,11 @@
+{
+  "picks.lit.aroundValue": "「{name}」の \" は値の前後に付けます",
+  "picks.lit.unclosed": "「{name}」の \" が閉じていません",
+  "picks.notOne.many": "{count} つに当たります（{places}）",
+  "picks.notOne.none": "当たる要素がありません",
+  "picks.notOne.out": "{at} は {len} 個です",
+  "picks.step.indexTooBig": "「{name}」の添字が大きすぎます",
+  "picks.step.keyTwice": "「{name}」の条件に {key} が 2 度あります",
+  "picks.step.shape": "「{name}」の [ ] は、欄の値の条件 [欄=値,…]（例 ports[number=8200,protocol=tcp]）、値そのもの [=値]（例 groups[=web]）、添字 [0] のどれかで書きます",
+  "picks.step.unclosed": "「{name}」の [ ] が閉じていません"
+}

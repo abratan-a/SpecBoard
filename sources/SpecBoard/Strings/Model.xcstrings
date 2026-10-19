@@ -1,0 +1,1002 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "activity.working" : {
+      "comment" : "Status bar text while the app writes or reads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "処理中..."
+          }
+        }
+      }
+    },
+    "agent.cantConnect" : {
+      "comment" : "Error when an agent said it failed without a reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't connect to the agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントに繋がりません"
+          }
+        }
+      }
+    },
+    "agent.droppedEarly" : {
+      "comment" : "Error when an agent's way closed before it said hello.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent disconnected before responding"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが返事をする前に切れました"
+          }
+        }
+      }
+    },
+    "agent.lostNow" : {
+      "comment" : "Error when a request is made over an agent's way that has already ended.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the agent is lost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントとの接続が切れています"
+          }
+        }
+      }
+    },
+    "agent.lostWhileWaiting" : {
+      "comment" : "Error when an agent's way ends while a request waits for its answer.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the agent was lost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントとの接続が切れました"
+          }
+        }
+      }
+    },
+    "agent.noAnswer" : {
+      "comment" : "Error when an agent does not answer a request. The argument is the time waited, in seconds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The agent didn't answer within %lld second"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The agent didn't answer within %lld seconds"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが %lld 秒たっても答えません"
+          }
+        }
+      }
+    },
+    "agent.noGreeting" : {
+      "comment" : "Error when an agent started but never said hello. The argument is the time waited, in seconds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The agent didn't respond within %lld second"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The agent didn't respond within %lld seconds"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが %lld 秒たっても返事をしません"
+          }
+        }
+      }
+    },
+    "author.mcp" : {
+      "comment" : "History: a commit made through MCP. The argument is the access key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP（%@）"
+          }
+        }
+      }
+    },
+    "author.screen" : {
+      "comment" : "History: a commit made from the app's window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面"
+          }
+        }
+      }
+    },
+    "embed.cantDraw" : {
+      "comment" : "Shown in place of an embedded diagram when the core gave no reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't draw the diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を描けません"
+          }
+        }
+      }
+    },
+    "embed.notConnected" : {
+      "comment" : "Shown in place of an embedded diagram when the agent that keeps the project is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't draw the diagram (not connected to where this project is kept)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を描けません（このプロジェクトを置いている所に繋がっていません）"
+          }
+        }
+      }
+    },
+    "error.actionGone" : {
+      "comment" : "Message of the refusal for making a card of the retired kind action.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "action is gone. What a part does is written as a flow: begin (kind: begin; trigger: receive to be called) → process node (kind: process; put the rows for read, write, sign, check, call, send, receive and compute in steps) → end (kind: end; what it returns goes in return). To call another flow and wait for it to finish, use a run node (kind: run). For the form, see guide's about: flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "action はなくなりました。部品がすることは flow で書きます: 開始（kind: begin。trigger: receive で受ける） → 処理ノード（kind: process。読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算するの行を steps に）→ 終了（kind: end。返すものは return）。ほかの flow を呼んで終わりを待つのは実行ノード（kind: run）。形は guide の about: flow"
+          }
+        }
+      }
+    },
+    "error.moveCantOpen" : {
+      "comment" : "Error when a moved project cannot be opened at the destination. The argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open it at the destination, so the move was cancelled: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移した先で開けないので、移すのをやめました: %@"
+          }
+        }
+      }
+    },
+    "error.moveWhileGrouping" : {
+      "comment" : "Error when moving a project to another place while a tree is held for a group edit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't move a project during a group edit (wait until the Group edit on screen or the MCP batch is done)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて直している間は移せません（画面のまとめて直すか MCP のバッチが終わってから）"
+          }
+        }
+      }
+    },
+    "error.noBranchInAnswer" : {
+      "comment" : "Error when the core's answer to a merge request operation lacks the branch. The argument is the operation's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The answer to %@ has no branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の答えに branch がありません"
+          }
+        }
+      }
+    },
+    "error.noCard" : {
+      "comment" : "Refusal when a card to act on is not found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードがありません"
+          }
+        }
+      }
+    },
+    "error.noField" : {
+      "comment" : "Refusal when a field to act on is not found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The field doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールドがありません"
+          }
+        }
+      }
+    },
+    "error.noGhost" : {
+      "comment" : "Refusal when a card ghost to act on is not found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card ghost doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストがありません"
+          }
+        }
+      }
+    },
+    "error.noRowsUnderTask" : {
+      "comment" : "Error when a row is put under a task of a goal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows can't go under a task (write finer checks as a checklist (- [ ]) in the task's body)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task の下に行は置けません（細かい確かめは task の本文にチェックリスト（- [ ]）で書きます）"
+          }
+        }
+      }
+    },
+    "error.noSection" : {
+      "comment" : "Refusal when a section to act on is not found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションがありません"
+          }
+        }
+      }
+    },
+    "error.notProjectFile" : {
+      "comment" : "Error when a file opened as a project is not a project file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read this as a project file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトのファイルとして読めません"
+          }
+        }
+      }
+    },
+    "ghostName.confirm" : {
+      "comment" : "Confirm button of that sheet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置く"
+          }
+        }
+      }
+    },
+    "ghostName.message" : {
+      "comment" : "Message of that sheet. Arguments: the section's path, the name taken.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section %1$@ already has “%2$@”. Give the card ghost another name (inside %1$@ it can be written by this name alone)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション %1$@ には「%2$@」があります。カードゴーストに別の名前を付けます（%1$@ の中ではこの名前だけで書けます）"
+          }
+        }
+      }
+    },
+    "ghostName.title" : {
+      "comment" : "Title of the sheet that asks for a name for a new card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card ghost name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストの名前"
+          }
+        }
+      }
+    },
+    "import.name" : {
+      "comment" : "Name given to a project read in from a file as a copy, when the name is taken. The argument is the project's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (imported)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（読み込み）"
+          }
+        }
+      }
+    },
+    "import.nameNumbered" : {
+      "comment" : "Same, when that name is taken too. Arguments: the project's name, a number from 2.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (imported %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（読み込み %lld）"
+          }
+        }
+      }
+    },
+    "mark.inside.changed" : {
+      "comment" : "Tooltip meaning of a yellow ● on a row: the branch changed things inside.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch changed things inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中に branch で変えたものがある"
+          }
+        }
+      }
+    },
+    "mark.inside.made" : {
+      "comment" : "Tooltip meaning of a green ● on a row: the branch only added things inside.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch added things inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中に branch で作ったものがある"
+          }
+        }
+      }
+    },
+    "mark.inside.mainChanged" : {
+      "comment" : "Tooltip meaning of a blue ● on a row: only main changed things inside.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main changed things inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中に main で変わったものがある"
+          }
+        }
+      }
+    },
+    "mark.inside.removed" : {
+      "comment" : "Tooltip meaning of a red ● on a row: the branch only removed things inside.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch removed things inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中に branch で消したものがある"
+          }
+        }
+      }
+    },
+    "mark.meaning.changed" : {
+      "comment" : "Tooltip meaning of the M mark on a row: the branch changed it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed in the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で変えた"
+          }
+        }
+      }
+    },
+    "mark.meaning.changedBoth" : {
+      "comment" : "Tooltip meaning of the M↓ mark on a row: main changed it and the branch changed it too.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed in main, and in the branch too"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main で変わり、branch でも変えた"
+          }
+        }
+      }
+    },
+    "mark.meaning.made" : {
+      "comment" : "Tooltip meaning of the A mark on a row: the branch made it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Made in the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で作った"
+          }
+        }
+      }
+    },
+    "mark.meaning.mainChanged" : {
+      "comment" : "Tooltip meaning of the ↓ mark on a row: main changed it since the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed in main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main で変わった"
+          }
+        }
+      }
+    },
+    "mark.meaning.removed" : {
+      "comment" : "Tooltip meaning of the D mark on a row: the branch removed it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed in the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で消した"
+          }
+        }
+      }
+    },
+    "notice.agentLost" : {
+      "comment" : "Notice shown when the agent keeping the open project disconnects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the agent that keeps the project was lost, so the project was closed. It will be opened again when the connection is back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。繋がり直したら開き直します"
+          }
+        }
+      }
+    },
+    "notice.agentLostWhy" : {
+      "comment" : "Same notice with the reason the connection ended. The argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the agent that keeps the project was lost, so the project was closed. It will be opened again when the connection is back (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。繋がり直したら開き直します（%@）"
+          }
+        }
+      }
+    },
+    "notice.moved" : {
+      "comment" : "Notice after moving a project to another place. Arguments: the project's name, the place, the path of the kept file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moved the project “%@” to %@ (the project's file from before the move is kept at %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」を%@へ移しました（移す前のプロジェクトのファイルを %@ に残しました）"
+          }
+        }
+      }
+    },
+    "role.read" : {
+      "comment" : "Card editor: a flow reads this path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読む"
+          }
+        }
+      }
+    },
+    "role.write" : {
+      "comment" : "Card editor: a flow writes this path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く"
+          }
+        }
+      }
+    },
+    "rule.absentIf" : {
+      "comment" : "Card editor: what the absentIf rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the condition in when holds, the field in then must be absent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "when が成り立つとき then が存在しないこと"
+          }
+        }
+      }
+    },
+    "rule.chainedBy" : {
+      "comment" : "Card editor: what the chainedBy rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pins the previous generation by its digest, not by its generation number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直前の世代を、世代番号ではなくその digest で固定すること"
+          }
+        }
+      }
+    },
+    "rule.derivedFrom" : {
+      "comment" : "Card editor: what the derivedFrom rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must match the value recomputed from the path in from"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from から再計算した値と一致すること"
+          }
+        }
+      }
+    },
+    "rule.gteRef" : {
+      "comment" : "Card editor: what the gteRef rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must be greater than or equal to the referenced value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照先の値以上であること"
+          }
+        }
+      }
+    },
+    "rule.lteRef" : {
+      "comment" : "Card editor: what the lteRef rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must be less than or equal to the referenced value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照先の値以下であること"
+          }
+        }
+      }
+    },
+    "rule.memberOf" : {
+      "comment" : "Card editor: what the memberOf rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The value must be in the set at target. Where pointsAt's in says “where it is defined”, this narrows “how much of that may be used”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値が target の集合に含まれること。pointsAt の in が「どこで定義されているか」なのに対し、これは「そのうちどこまで使ってよいか」という絞り込みを表す"
+          }
+        }
+      }
+    },
+    "rule.monotonicPerKey" : {
+      "comment" : "Card editor: what the monotonicPerKey rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must increase monotonically for each combination of keys"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "keys の組ごとに単調増加すること"
+          }
+        }
+      }
+    },
+    "rule.pattern" : {
+      "comment" : "Card editor: what the pattern rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must match the regular expression"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正規表現に一致すること"
+          }
+        }
+      }
+    },
+    "rule.requiredIf" : {
+      "comment" : "Card editor: what the requiredIf rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the condition in when holds, the field in then must be present"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "when が成り立つとき then が存在すること"
+          }
+        }
+      }
+    },
+    "rule.sortedBy" : {
+      "comment" : "Card editor: what the sortedBy rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The array must be in this order. If field is omitted, the elements themselves are compared"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配列がこの順で並んでいること。field 省略時は要素そのもので比較"
+          }
+        }
+      }
+    },
+    "rule.uniqueBy" : {
+      "comment" : "Card editor: what the uniqueBy rule means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No duplicates in the array. If field is omitted, the elements themselves are compared"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配列内で重複しないこと。field 省略時は要素そのもの"
+          }
+        }
+      }
+    },
+    "size.label" : {
+      "comment" : "Project size line. Arguments: the size of the documents, of the history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content %@, history %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中身 %@・履歴 %@"
+          }
+        }
+      }
+    },
+    "size.labelByBranch" : {
+      "comment" : "Project size line with the history per branch. Arguments: the size of the documents, of the history, the list of branches with their sizes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content %@, history %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中身 %@・履歴 %@（%@）"
+          }
+        }
+      }
+    },
+    "status.drifted" : {
+      "comment" : "Status bar text when what the window held of a project turned out to differ from the core's, and the whole project was read again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found a mismatch and read the whole project again"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ずれを見つけて全体を読み直しました"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

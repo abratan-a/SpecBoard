@@ -1,0 +1,12 @@
+{
+  "asking.denied": "A person denied it ({items}). Nothing was done",
+  "asking.never": "A person denied it and set {items} to Deny from now on (only a person can change this, in {place}). Nothing was done",
+  "asking.noScreen": "There is no window to ask for permission on (the app is not open). Have a person allow it in the app's settings, or open the app and call again",
+  "asking.timeout": "No answer came within {minutes} minutes (the request was withdrawn). Nothing was done",
+  "asking.unreadable": "Cannot read the window's answer: {said}",
+  "asking.what.commit": "Commit {seq} ({who}, {at}): {lines}",
+  "asking.what.moreLines": "{count} more lines",
+  "asking.whereSet.both": "the \"MCP\" tab of the app's Project Settings and \"Access key\" in the Place settings of the project list",
+  "asking.whereSet.key": "\"Access key\" in the Place settings of the project list",
+  "asking.whereSet.project": "the \"MCP\" tab of the app's Project Settings"
+}

@@ -1,0 +1,6 @@
+{
+  "frames.refused": "{card} は置けません: {why}",
+  "frames.target.circle": "はめ込みをたどると自分のいるセクションに戻ります（{chain}）。輪になるはめ込みは置けません",
+  "frames.target.notUi": "指す先の {path} は UI のセクションではありません（{kind}）。はめ込めるのは UI のセクションだけです",
+  "frames.target.self": "指す先の {path} は自分のいるセクションです。自分のいるセクションははめ込めません"
+}

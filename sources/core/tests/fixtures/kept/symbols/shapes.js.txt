@@ -1,0 +1,26 @@
+makeTaskHandlers — function function — line 3 — 3-14
+  makeTaskHandlers.list — function method — line 6 — 6-8
+  makeTaskHandlers.create — function method — line 9 — 9-9
+  makeTaskHandlers.updateStatus — function method — line 10 — 10-12
+makeRoutes — function function — line 16 — 16-21
+  makeRoutes.index — function method — line 17 — 17-19
+  makeRoutes.show — function method — line 20 — 20-20
+mapped — function function — line 23 — 23-25 — calls map
+Store — type class — line 27 — 27-33
+  Store.load — method method — line 28 — 28-30
+  Store.save — method method — line 31 — 31-31
+  Store.'#check' — method method — line 32 — 32-32
+handlers — constant const — line 35 — 35-40
+  handlers.list — function method — line 36 — 36-38
+  handlers.create — function method — line 39 — 39-39
+wrapped — function function — line 45 — 45-47 — calls withAuth
+canView — function function — line 49 — 49-49
+Project — module describe — line 51 — 51-62 — calls describe, each, it
+  Project.'can edit when owner' — function it — line 52 — 52-54 — calls it, expect, canView, toBe
+  Project.'cannot edit' — function test — line 55 — 55-55 — calls skip
+  Project.'a.b c' — function it — line 56 — 56-56 — calls only
+  Project.nested — module describe — line 59 — 59-61 — calls only
+    Project.nested.deep — function test — line 60 — 60-60 — calls test
+Other — module suite — line 64 — 64-66 — calls suite
+  Other.later — function test — line 65 — 65-65 — calls todo
+helper — function function — line 68 — 68-70 — calls it

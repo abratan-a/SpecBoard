@@ -1,0 +1,12 @@
+{
+  "asking.denied": "人が拒否しました（{items}）。何もしていません",
+  "asking.never": "人が拒否し、{items} をこれから拒否にしました（変えられるのは人だけで、{place}）。何もしていません",
+  "asking.noScreen": "許可を求める画面がありません（アプリが開いていません）。人に、アプリの設定で許可にしてもらうか、アプリを開いてから呼び直してください",
+  "asking.timeout": "{minutes} 分のうちに答えがありませんでした（求めは取り下げました）。何もしていません",
+  "asking.unreadable": "画面の答えが読めません: {said}",
+  "asking.what.commit": "コミット {seq}（{who}、{at}）: {lines}",
+  "asking.what.moreLines": "ほか {count} 行",
+  "asking.whereSet.both": "アプリのプロジェクト設定の「MCP」のタブと、プロジェクト一覧の場所の設定の「アクセスキー」",
+  "asking.whereSet.key": "プロジェクト一覧の場所の設定の「アクセスキー」",
+  "asking.whereSet.project": "アプリのプロジェクト設定の「MCP」のタブ"
+}

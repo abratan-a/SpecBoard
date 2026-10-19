@@ -1,0 +1,17 @@
+{
+  "tables.path.inArray": "{at} は並び（配列）なので、その中は {at}[] か要素を選んで指します",
+  "tables.path.noField": "形 {shape} に「{base}」はありません（あるのは: {fields}）",
+  "tables.path.none": "パスがありません",
+  "tables.path.notArray": "{base} は並び（配列）ではありません",
+  "tables.said.descShape": "{full}.{name}[{i}].desc: true か false です",
+  "tables.said.itemObject": "{full}.{name}[{i}]: オブジェクトで書きます",
+  "tables.said.keyNotAllowed": "{full}.{name}[{i}]: {k} は書けません（書けるのは {allowed}）",
+  "tables.said.labelShape": "{full}.{name}[{i}].label: 見出しは文字です",
+  "tables.said.notArray": "{full}.{name}: 並び（配列）で書きます",
+  "tables.said.ofNeeded": "{full}: of が要ります（表にするデータの形の entity か value のパス。例 Schema:Host）",
+  "tables.said.opShape": "{full}.{name}[{i}].op: 比べ方は {ops} です",
+  "tables.said.pathNeeded": "{full}.{name}[{i}]: path（値のパス）が要ります",
+  "tables.said.showShape": "{full}.{name}[{i}].show: 見せ方は {shows}（label は列挙の値を表示名で、link はカードのパスの値をリンクで）です",
+  "tables.unnest.shape": "unnest は並び（配列）の欄のパスです（[ ] は付けません）",
+  "tables.within.noSection": "セクション「{within}」はありません"
+}

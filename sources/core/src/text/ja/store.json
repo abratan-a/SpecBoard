@@ -1,0 +1,16 @@
+{
+  "store.error.create": "データベースを作れません: {e}",
+  "store.error.exists": "データベースがもうあります: {path}",
+  "store.error.keepFinish": "控えを書き切れません: {e}",
+  "store.error.keepLook": "控えの所を見られません: {e}",
+  "store.error.keepName": "控えの名前を文字にできません",
+  "store.error.keepPartial": "取りかけの控え {path} を消せません: {e}",
+  "store.error.keepRefused": "データベースを今の形に移す前の控えを取れないので、開きません（データベース: {database}、控え: {copy}）: {reason}",
+  "store.error.keepRename": "控えに名前を付けられません: {e}",
+  "store.error.keepWrite": "控えを書けません: {e}",
+  "store.error.missing": "データベースがありません: {path}",
+  "store.error.notCoreForm": "コアの形のデータベースではありません",
+  "store.error.open": "データベースを開けません: {e}",
+  "store.error.read": "データベースを読めません: {e}",
+  "store.error.tableMissing": "コアの形のデータベースに {table} がありません"
+}

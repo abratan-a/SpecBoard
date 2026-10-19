@@ -1,0 +1,2166 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "builtin.contextChanged" : {
+      "comment" : "Badge on a built-in kind whose purpose and usage notes this project has rewritten.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usage rewritten in this project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う場面をこのプロジェクトで書き換え"
+          }
+        }
+      }
+    },
+    "builtin.help" : {
+      "comment" : "Explanation under the name of a built-in kind in the Kinds tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built-in definitions are read-only, and their names can't be used by the project's own definitions. What a kind is for, when to use it and when not, and a section kind's mark in the navigator can be rewritten for this project (an AI reads them with kind_list and kind_read)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みの定義は読むだけで、名前はプロジェクトの定義では使えません。何のためか・使うとき・使わないときと、セクションの種類のナビパネルの印は、このプロジェクトに合わせて書き換えられます（AI が kind_list・kind_read で読みます）"
+          }
+        }
+      }
+    },
+    "builtin.iconChanged" : {
+      "comment" : "Badge on a built-in kind of section whose navigator mark this project has rewritten.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark rewritten in this project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "印をこのプロジェクトで書き換え"
+          }
+        }
+      }
+    },
+    "builtin.restore" : {
+      "comment" : "Button that gives a built-in kind back its own mark or usage notes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore built-in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みに戻す"
+          }
+        }
+      }
+    },
+    "builtin.title" : {
+      "comment" : "Caption beside the name of a built-in kind; the argument is Card, Section or Line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built-in · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込み・%@"
+          }
+        }
+      }
+    },
+    "button.revert" : {
+      "comment" : "Button that discards what was written in a definition editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revert"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元に戻す"
+          }
+        }
+      }
+    },
+    "button.save" : {
+      "comment" : "Button that saves a definition editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        }
+      }
+    },
+    "check.notObject" : {
+      "comment" : "Problem shown under the project tree editor when its text is not a JSON object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read it as a JSON object"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON のオブジェクトとして読めません"
+          }
+        }
+      }
+    },
+    "check.ok" : {
+      "comment" : "Shown under a definition editor when the check found nothing wrong and nothing changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No problems"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "誤りはありません"
+          }
+        }
+      }
+    },
+    "check.okCanSave" : {
+      "comment" : "Shown under a definition editor when the check found nothing wrong and there are changes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No problems. Ready to save."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "誤りはありません。保存できます"
+          }
+        }
+      }
+    },
+    "confirm.deleteMessage" : {
+      "comment" : "Message of the confirmation before deleting a project-defined kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A kind that is in use can't be deleted. Remove its cards, sections and lines first."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使われている種類は消せません（そのカード・セクション・線を先に外します）"
+          }
+        }
+      }
+    },
+    "confirm.deleteTitle" : {
+      "comment" : "Title of the confirmation before deleting a project-defined kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this definition?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この定義を消しますか"
+          }
+        }
+      }
+    },
+    "context.notFor" : {
+      "comment" : "Label and placeholder of the field that says when not to use a built-in kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When not to use"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使わないとき"
+          }
+        }
+      }
+    },
+    "context.purpose" : {
+      "comment" : "Label and placeholder of the field that says what a built-in kind is for.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purpose"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何のためか"
+          }
+        }
+      }
+    },
+    "context.save" : {
+      "comment" : "Button that saves a built-in kind's purpose and usage notes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save usage"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う場面を保存"
+          }
+        }
+      }
+    },
+    "context.useWhen" : {
+      "comment" : "Label and placeholder of the field that says when to use a built-in kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When to use"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使うとき"
+          }
+        }
+      }
+    },
+    "editor.jsonHelp" : {
+      "comment" : "Explanation above the JSON editor of a project-defined kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write it as JSON (the shape is the same as MCP's guide, about: kind_create). It is checked as you write (dryRun of kind_create and kind_update)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON で書きます（形は MCP の guide の about: kind_create と同じ）。書くと、その場で確かめます（kind_create・kind_update の dryRun）"
+          }
+        }
+      }
+    },
+    "editor.renameHelp" : {
+      "comment" : "Tooltip on the Rename button of a kind of card's editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename fields, row kinds and the kind itself; the cards' values move with them (renames)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄・行の種類・種類の名前を変え、カードの値も移します（renames）"
+          }
+        }
+      }
+    },
+    "editor.renamesPending" : {
+      "comment" : "Line under the JSON editor listing the renames that will be sent when saved.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renames on save: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存すると名前を変える: %@"
+          }
+        }
+      }
+    },
+    "editor.renamesSeparator" : {
+      "comment" : "Between the renames listed under the JSON editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "、"
+          }
+        }
+      }
+    },
+    "empty.help" : {
+      "comment" : "Explanation shown in the Kinds tab when no definition is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a definition on the left and it appears here. Built-in definitions are read-only (when to use them can be rewritten); the project's own can be written. Add one with +. This is one setting per project and doesn't change per branch. Over MCP, read it with kind_list and kind_read, and write it with kind_create, kind_update and kind_delete."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左で定義を選ぶと、ここに出ます。組み込みの定義は読むだけ（使う場面は書き換えられます）、プロジェクトの定義は書けます。＋ で足します。プロジェクトに 1 つの設定で、branch では変わりません。MCP からは kind_list・kind_read で読み、kind_create・kind_update・kind_delete で書きます"
+          }
+        }
+      }
+    },
+    "empty.title" : {
+      "comment" : "Heading shown in the Kinds tab when no definition is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kind definition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類の定義"
+          }
+        }
+      }
+    },
+    "icon.book" : {
+      "comment" : "Name of an icon in the section mark menu (book).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本"
+          }
+        }
+      }
+    },
+    "icon.box" : {
+      "comment" : "Name of an icon in the section mark menu (shipping box).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "箱"
+          }
+        }
+      }
+    },
+    "icon.bug" : {
+      "comment" : "Name of an icon in the section mark menu (ladybug).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bug"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不具合"
+          }
+        }
+      }
+    },
+    "icon.caution" : {
+      "comment" : "Name of an icon in the section mark menu (warning triangle).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caution"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "注意"
+          }
+        }
+      }
+    },
+    "icon.checklist" : {
+      "comment" : "Name of an icon in the section mark menu (checklist).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checklist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックリスト"
+          }
+        }
+      }
+    },
+    "icon.definition" : {
+      "comment" : "Name of an icon in the section mark menu (curly braces).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Definition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義"
+          }
+        }
+      }
+    },
+    "icon.document" : {
+      "comment" : "Name of an icon in the section mark menu (document).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書"
+          }
+        }
+      }
+    },
+    "icon.flag" : {
+      "comment" : "Name of an icon in the section mark menu (flag).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flag"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旗"
+          }
+        }
+      }
+    },
+    "icon.folder" : {
+      "comment" : "Name of an icon in the section mark menu (folder).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダ"
+          }
+        }
+      }
+    },
+    "icon.idea" : {
+      "comment" : "Name of an icon in the section mark menu (light bulb).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idea"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "考え"
+          }
+        }
+      }
+    },
+    "icon.key" : {
+      "comment" : "Name of an icon in the section mark menu (key).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鍵"
+          }
+        }
+      }
+    },
+    "icon.link" : {
+      "comment" : "Name of an icon in the section mark menu (link).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つながり"
+          }
+        }
+      }
+    },
+    "icon.network" : {
+      "comment" : "Name of an icon in the section mark menu (network).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネットワーク"
+          }
+        }
+      }
+    },
+    "icon.part" : {
+      "comment" : "Name of an icon in the section mark menu (cube).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品"
+          }
+        }
+      }
+    },
+    "icon.people" : {
+      "comment" : "Name of an icon in the section mark menu (two people).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "People"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "人"
+          }
+        }
+      }
+    },
+    "icon.protection" : {
+      "comment" : "Name of an icon in the section mark menu (lock with shield).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "守り"
+          }
+        }
+      }
+    },
+    "icon.schedule" : {
+      "comment" : "Name of an icon in the section mark menu (calendar).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予定"
+          }
+        }
+      }
+    },
+    "icon.server" : {
+      "comment" : "Name of an icon in the section mark menu (server rack).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サーバー"
+          }
+        }
+      }
+    },
+    "icon.star" : {
+      "comment" : "Name of an icon in the section mark menu (star).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Star"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "星"
+          }
+        }
+      }
+    },
+    "icon.storage" : {
+      "comment" : "Name of an icon in the section mark menu (a full tray).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場"
+          }
+        }
+      }
+    },
+    "icon.tag" : {
+      "comment" : "Name of an icon in the section mark menu (tag).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ"
+          }
+        }
+      }
+    },
+    "icon.test" : {
+      "comment" : "Name of an icon in the section mark menu (test tubes).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト"
+          }
+        }
+      }
+    },
+    "icon.verify" : {
+      "comment" : "Name of an icon in the section mark menu (checkmark seal).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確かめ"
+          }
+        }
+      }
+    },
+    "kindDef.badge" : {
+      "comment" : "Badge of a project-defined kind: its name and its label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "kindDef.meaningSeparator" : {
+      "comment" : "Between the parts of the description of a project-defined kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
+    },
+    "kindDef.notFor" : {
+      "comment" : "Part of the description of a project-defined kind: when not to use it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not for: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使わない: %@"
+          }
+        }
+      }
+    },
+    "kindDef.useWhen" : {
+      "comment" : "Part of the description of a project-defined kind: when to use it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use when: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う: %@"
+          }
+        }
+      }
+    },
+    "list.addHelp" : {
+      "comment" : "Tooltip on the plus button of a list in the Kinds tab; the argument is card, section or line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a %@ kind (written in JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の種類を追加（JSON で書く）"
+          }
+        }
+      }
+    },
+    "list.newDefinition" : {
+      "comment" : "Row in the Kinds tab's list while a new definition is being written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(New definition)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（新しい定義）"
+          }
+        }
+      }
+    },
+    "list.newTitle" : {
+      "comment" : "Heading of the editor while a new definition is being written; the argument is card, section or line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New %@ kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい%@の種類"
+          }
+        }
+      }
+    },
+    "list.nounCard" : {
+      "comment" : "Lowercase word for kinds of card, used inside a sentence in the Kinds tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        }
+      }
+    },
+    "list.nounLine" : {
+      "comment" : "Lowercase word for kinds of line, used inside a sentence in the Kinds tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線"
+          }
+        }
+      }
+    },
+    "list.nounSection" : {
+      "comment" : "Lowercase word for kinds of section, used inside a sentence in the Kinds tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション"
+          }
+        }
+      }
+    },
+    "mark.changed" : {
+      "comment" : "Note under the mark pickers of a built-in kind of section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This mark was rewritten in this project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトで書き換えた印です"
+          }
+        }
+      }
+    },
+    "mark.clearColor" : {
+      "comment" : "Button that clears the color of a project-defined section kind's mark.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear color"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "色を決めない"
+          }
+        }
+      }
+    },
+    "mark.color" : {
+      "comment" : "Label of the color picker of a section kind's mark.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "色"
+          }
+        }
+      }
+    },
+    "mark.default" : {
+      "comment" : "Note under the mark pickers of a built-in kind of section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is the built-in default mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みの既定の印です"
+          }
+        }
+      }
+    },
+    "mark.label" : {
+      "comment" : "Label of the mark pickers of a kind of section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigator mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルの印"
+          }
+        }
+      }
+    },
+    "mark.restoreBuiltin" : {
+      "comment" : "Menu item that clears the project's mark so the built-in one shows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore the built-in mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みの印に戻す"
+          }
+        }
+      }
+    },
+    "mark.restoreColor" : {
+      "comment" : "Button that clears the project's mark color so the built-in one shows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore the built-in color"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みの色に戻す"
+          }
+        }
+      }
+    },
+    "mark.save" : {
+      "comment" : "Button that saves a built-in section kind's mark.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save navigator mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルの印を保存"
+          }
+        }
+      }
+    },
+    "mark.unset" : {
+      "comment" : "Menu title when a kind of section has no mark set.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not set"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決めない"
+          }
+        }
+      }
+    },
+    "mark.unsetFolder" : {
+      "comment" : "Menu item that clears the mark of a project-defined kind of section; a folder is shown then.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not set (folder)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決めない（フォルダ）"
+          }
+        }
+      }
+    },
+    "problem.fixJSONFirst" : {
+      "comment" : "Problem in the rename sheet when the definition's JSON can't be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fix the definition's JSON first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義の JSON を先に直してください"
+          }
+        }
+      }
+    },
+    "problem.nameMissing" : {
+      "comment" : "Problem when a definition has no name; the argument is the key that names it (kind, section or line).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (name) is missing"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（名前）がありません"
+          }
+        }
+      }
+    },
+    "problem.newNameMissing" : {
+      "comment" : "Problem in the rename sheet when the new name is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write the new name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい名前を書いてください"
+          }
+        }
+      }
+    },
+    "problem.notJSON" : {
+      "comment" : "Problem when the text is not JSON; the argument is what the JSON reader said.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read it as JSON: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON として読めません: %@"
+          }
+        }
+      }
+    },
+    "problem.notObject" : {
+      "comment" : "Problem when the text is JSON but not an object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A definition is a JSON object ({ … })"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義は JSON のオブジェクト（{ … }）です"
+          }
+        }
+      }
+    },
+    "problem.previousFieldMissing" : {
+      "comment" : "Problem in the rename sheet when renaming a field without the previous name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write the previous field's name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の欄の名前を書いてください"
+          }
+        }
+      }
+    },
+    "problem.previousRowMissing" : {
+      "comment" : "Problem in the rename sheet when renaming a row kind without the previous name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write the previous row kind's name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の行の種類の名前を書いてください"
+          }
+        }
+      }
+    },
+    "projectTree.delete" : {
+      "comment" : "Word in the summary of what saving the project tree does: empty sections that are deleted. A summary, not a button, so it keeps the verb of a sentence.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消す"
+          }
+        }
+      }
+    },
+    "projectTree.evacuate" : {
+      "comment" : "Word in the summary of what saving the project tree does: sections with content that are moved into _evacuation_.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set aside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退避する"
+          }
+        }
+      }
+    },
+    "projectTree.explain" : {
+      "comment" : "Explanation under the heading of the project tree editor in the Kinds tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main_sections is the sections directly under the root of main and of every branch, and board_sections those directly under the board's root (listed as {type, name}, in order). The type workdir makes a working directory (a section read from a folder on this Mac); taking it out removes it (notes in it go to _evacuation_). Saving matches them by name: new names are created, ones taken out are deleted if empty and moved into _evacuation_ if they have content. To rename one, use “Rename…” in the navigator's right-click menu (its content and paths follow; renaming it here deletes it and adds a new one)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main_sections は main と各 branch の根の直下、board_sections はボードの根の直下のセクションです（{type, name} を並べた順）。type に workdir を書くと作業ディレクトリ（この Mac のフォルダを読むだけのセクション）ができ、外すと消えます（置いたメモは _evacuation_ へ）。保存すると名前で突き合わせ、新しい名前は作り、外したものは空なら消え、中身があれば _evacuation_ へ退避します。名前を変えるのはナビパネルの右クリックの「名前を変える…」で（中身とパスが付いて行きます。ここで名前を書き換えると、消して足したことになります）"
+          }
+        }
+      }
+    },
+    "projectTree.help" : {
+      "comment" : "Tooltip on the project_tree row in the Kinds tab's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections directly under the root of main, of every branch and of the board (kind, name, order)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main・branch とボードの根の直下のセクション（種類・名前・並び）"
+          }
+        }
+      }
+    },
+    "projectTree.line" : {
+      "comment" : "One line in the project tree check: where it applies, then what saving does there.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ — %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@　%@"
+          }
+        }
+      }
+    },
+    "projectTree.parts" : {
+      "comment" : "Joins two parts of what saving the project tree does under one root.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@; %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@　%@"
+          }
+        }
+      }
+    },
+    "projectTree.title" : {
+      "comment" : "Heading of the project tree row in the Kinds tab's list and of its editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project tree"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの木"
+          }
+        }
+      }
+    },
+    "projectTree.underBoard" : {
+      "comment" : "Start of a line in the project tree check: the sections under the board's root.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directly under the board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードの直下"
+          }
+        }
+      }
+    },
+    "projectTree.underBranches" : {
+      "comment" : "Start of a line in the project tree check: the sections under the roots of main and every branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directly under main and branches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main・branch の直下"
+          }
+        }
+      }
+    },
+    "rename.cards" : {
+      "comment" : "How many cards a rename moves.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %lld 枚"
+          }
+        }
+      }
+    },
+    "rename.moved" : {
+      "comment" : "Line under a valid definition: what a rename moves, to where, and how many cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ → %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ → %@（%@）"
+          }
+        }
+      }
+    },
+    "renameSheet.apply" : {
+      "comment" : "Default button of the rename sheet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変える"
+          }
+        }
+      }
+    },
+    "renameSheet.help" : {
+      "comment" : "Explanation at the top of the rename sheet of a kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renames the definition and, when saved, moves the cards' values to the new name too (cards in every branch)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義の名前を変え、保存するときにカードの値も新しい名前へ移します（どの branch のカードも）"
+          }
+        }
+      }
+    },
+    "renameSheet.helpField" : {
+      "comment" : "Explanation in the rename sheet when renaming a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If the previous name is in the definition, that field is renamed; if it is not (a field not in the definition), its values move to the field with the new name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の名前が定義にあればその欄の名前を変え、無ければ（定義に無い欄）その値を新しい名前の欄へ移します"
+          }
+        }
+      }
+    },
+    "renameSheet.helpRow" : {
+      "comment" : "Explanation in the rename sheet when renaming a row kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If the previous name is in the definition, that row kind is renamed; if it is not, its rows move to the row kind with the new name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の名前が定義にあればその行の種類の名前を変え、無ければその行を新しい名前の行の種類へ移します"
+          }
+        }
+      }
+    },
+    "renameSheet.newName" : {
+      "comment" : "Placeholder of the field for the new name in the rename sheet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい名前"
+          }
+        }
+      }
+    },
+    "renameSheet.pick" : {
+      "comment" : "Menu that fills in the previous name from the names the definition has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選ぶ"
+          }
+        }
+      }
+    },
+    "renameSheet.previousName" : {
+      "comment" : "Placeholder of the field for the name being renamed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の名前"
+          }
+        }
+      }
+    },
+    "renameSheet.stray" : {
+      "comment" : "Menu item for a field the cards still hold that the definition no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (field not in the definition)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（定義に無い欄）"
+          }
+        }
+      }
+    },
+    "renamed.row" : {
+      "comment" : "Segment of the rename sheet: rename a kind of row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の種類"
+          }
+        }
+      }
+    },
+    "row.helpBuiltin" : {
+      "comment" : "Tooltip on a built-in kind in the Kinds tab's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built-in definition (read-only)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みの定義（読むだけ）"
+          }
+        }
+      }
+    },
+    "row.helpNoPlace" : {
+      "comment" : "Tooltip on a project-defined kind that no section of the project tree can hold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project's own definition. It can't be placed in any section of the project tree (write the kind of section that holds it and add that section to the project tree, and it can)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの定義。プロジェクトの木のどのセクションにも置けない（入れるセクションの種類を書き、プロジェクトの木に並べると置ける）"
+          }
+        }
+      }
+    },
+    "row.helpOwn" : {
+      "comment" : "Tooltip on a project-defined kind in the Kinds tab's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project's own definition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの定義"
+          }
+        }
+      }
+    },
+    "row.noPlace" : {
+      "comment" : "Small badge on a project-defined kind that no section of the project tree can hold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場なし"
+          }
+        }
+      }
+    },
+    "template.newKind" : {
+      "comment" : "Label in the starting JSON of a new kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい種類"
+          }
+        }
+      }
+    },
+    "template.newLineLabel" : {
+      "comment" : "Label in the starting JSON of a new kind of line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい線"
+          }
+        }
+      }
+    },
+    "template.newLineName" : {
+      "comment" : "Name in the starting JSON of a new kind of line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "new_line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい線"
+          }
+        }
+      }
+    },
+    "template.newSection" : {
+      "comment" : "Label in the starting JSON of a new kind of section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいセクション"
+          }
+        }
+      }
+    },
+    "template.stateDone" : {
+      "comment" : "Second option of the state field in the starting JSON of a new kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "済み"
+          }
+        }
+      }
+    },
+    "template.stateLabel" : {
+      "comment" : "Label of the state field in the starting JSON of a new kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "State"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状態"
+          }
+        }
+      }
+    },
+    "template.stateTodo" : {
+      "comment" : "First option and default of the state field in the starting JSON of a new kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To do"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未着手"
+          }
+        }
+      }
+    },
+    "validation.boolFormat" : {
+      "comment" : "Problem when a checkbox field's value is not true or false.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must be true or false (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "true か false です（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "validation.dateFormat" : {
+      "comment" : "Problem when a date field's value is not in the date format.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write dates as YYYY-MM-DD (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付は YYYY-MM-DD で書きます（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "validation.linkCount" : {
+      "comment" : "Number of links, inside the problem about too many links.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld link"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld links"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 本"
+          }
+        }
+      }
+    },
+    "validation.nameChars" : {
+      "comment" : "Problem when a row name is not a name: too long, or with a control character or spaces around it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The row name “%@” has 1 to 255 characters, with no line break, tab or other control character and no spaces before or after it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の名前「%@」は 1〜255 字で、改行・タブなどの制御文字と前後の空白を含みません"
+          }
+        }
+      }
+    },
+    "validation.nameTaken" : {
+      "comment" : "Problem when two rows of a card have the same name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row name “%@” is used twice (each must be unique within the card)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の名前「%@」が重なっています（カードの中で 1 つずつ）"
+          }
+        }
+      }
+    },
+    "validation.noField" : {
+      "comment" : "Problem when a value is given for a field the kind does not have: kind, field, the fields it has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has no field “%@” (it has: %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に欄「%@」はありません（あるのは %@）"
+          }
+        }
+      }
+    },
+    "validation.noLinks" : {
+      "comment" : "Problem when a row of a kind that takes no links has links.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” rows can't be linked to other cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の行はほかのカードにつなげません"
+          }
+        }
+      }
+    },
+    "validation.noNesting" : {
+      "comment" : "Problem when rows are nested under rows in a kind that does not allow it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ can't have rows under rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は行の下に行を持てません"
+          }
+        }
+      }
+    },
+    "validation.noRowKind" : {
+      "comment" : "Problem when a row is of a kind the card's kind does not have: kind, row kind, the row kinds it has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has no row kind “%@” (it has: %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に行の種類「%@」はありません（あるのは %@）"
+          }
+        }
+      }
+    },
+    "validation.notChoice" : {
+      "comment" : "Problem when a value is not one of a field's options: the value, the options.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't a choice (one of: %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」は選べません（%@ のどれか）"
+          }
+        }
+      }
+    },
+    "validation.notUnder" : {
+      "comment" : "Problem when a row is under a row that does not take its kind: parent row kind, allowed row kinds, the row's kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under “%@”, only %@ can go (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の下に置けるのは %@ です（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "validation.numberFormat" : {
+      "comment" : "Problem when a number field's value is not a number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write a number (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数で書きます（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "validation.required" : {
+      "comment" : "Problem when a required field has no value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field “%@” is required"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄「%@」は必ず書きます"
+          }
+        }
+      }
+    },
+    "validation.tooDeep" : {
+      "comment" : "Problem when rows are nested deeper than allowed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Rows under rows go at most %lld level deep"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Rows under rows go at most %lld levels deep"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の下の行は %lld 段までです"
+          }
+        }
+      }
+    },
+    "validation.tooManyLinks" : {
+      "comment" : "Problem when a row has more links than its kind allows: row kind, the most allowed, how many it has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” rows can link at most %@ (this one has %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」の行がつなげるのは %@までです（%@）"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

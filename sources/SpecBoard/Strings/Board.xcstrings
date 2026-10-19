@@ -1,0 +1,1080 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.discardConfirm" : {
+      "comment" : "Destructive button of the alert that cancels a goal and discards its branch's changes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard Changes and Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更を捨てて打ち切る"
+          }
+        }
+      }
+    },
+    "action.discardKeep" : {
+      "comment" : "Button of the alert about cancelling a goal that leaves everything as it is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やめる"
+          }
+        }
+      }
+    },
+    "action.discardMessage" : {
+      "comment" : "Message of the alert asked before cancelling a goal; the first argument is the branch name, the second how many of its changes are not in main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch %@ has changes not in main (%lld). Cancelling the goal deletes the branch and discards them."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ に main へ入っていない変更が %lld 件あります。打ち切ると branch ごと捨てます"
+          }
+        }
+      }
+    },
+    "action.discardTitle" : {
+      "comment" : "Title of the alert asked before cancelling a goal whose branch has changes not in main; the argument is the goal's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を打ち切りますか？"
+          }
+        }
+      }
+    },
+    "action.startConfirm" : {
+      "comment" : "Button of the sheet that starts a goal with the branch name typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始"
+          }
+        }
+      }
+    },
+    "action.startMessage" : {
+      "comment" : "Line under the title of the sheet that starts a goal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates the branch to work on this goal in, and sets the goal in progress. Name the branch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この goal を進める branch を作り、goal を進行中にします。branch の名前を決めてください"
+          }
+        }
+      }
+    },
+    "action.startPlaceholder" : {
+      "comment" : "Placeholder of the branch name field in the sheet that starts a goal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Branch name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch の名前"
+          }
+        }
+      }
+    },
+    "action.startTitle" : {
+      "comment" : "Title of the sheet that asks for the branch name when starting a goal; the argument is the goal's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を開始"
+          }
+        }
+      }
+    },
+    "actions.menu" : {
+      "comment" : "Submenu in a goal's or a task's right-click menu listing the actions that can be done to it now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actions"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクション"
+          }
+        }
+      }
+    },
+    "actions.rowHelp" : {
+      "comment" : "Tooltip of the actions row in the Properties panel of a goal or a task.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What can be done to this card now. Each changes its fields, its branch and where it is kept in one step (card_action)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードに今できること。押すと欄・branch・置き場をまとめて変えます（card_action）"
+          }
+        }
+      }
+    },
+    "actions.rowHelpCode" : {
+      "comment" : "Tooltip of the actions row in the Properties panel of a card with implementation lines (lines to files).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare the card with the code its implementation lines point at, then record that code as it is now (card_action reviewed). The card itself is not changed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードと、実装の線の先のコードを見比べたあとで、そのコードを今の形で覚え直します（card_action の reviewed）。カードは書き換わりません"
+          }
+        }
+      }
+    },
+    "add.whereTo" : {
+      "comment" : "Line under the title of the popover that adds a task or a card; the argument is the full path of the goal or container.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds at the end of the contents of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の中身の終わりに足します"
+          }
+        }
+      }
+    },
+    "block.labelAndName" : {
+      "comment" : "Heading of a kind of row in a card editor: the row kind's label and then its name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "card.add" : {
+      "comment" : "Button in a container card's editor bar, the empty contents map's button and the title of the popover that adds a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを追加"
+          }
+        }
+      }
+    },
+    "card.addHelp" : {
+      "comment" : "Tooltip of the Add card button in a container card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name a card and choose its kind, then create it at the end of this container's contents (one commit)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前と種類を決めて、この入れ物の中身の終わりにカードを作ります（1 つのコミット）"
+          }
+        }
+      }
+    },
+    "card.empty" : {
+      "comment" : "Shown in the middle of a container card's editor when it holds nothing yet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no cards inside yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ中にカードがありません"
+          }
+        }
+      }
+    },
+    "card.mapHint" : {
+      "comment" : "The hint under a container card's contents map that explains how to use it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a card to edit its fields in the Properties panel. Double-click to open. Drag to move it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを選ぶとプロパティパネルで欄を直せます。ダブルクリックで開きます。ドラッグで置き直します"
+          }
+        }
+      }
+    },
+    "card.modesHelp" : {
+      "comment" : "Tooltip of the contents map / fields and rows switch in a container card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents map: see and move the cards inside / Fields and rows: write this card's fields and rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンテンツマップ: 中のカードを並べて見る・動かす／欄と行: このカードの欄と行を書く"
+          }
+        }
+      }
+    },
+    "card.namePlaceholder" : {
+      "comment" : "Placeholder of the name field in the popover that adds a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの名前"
+          }
+        }
+      }
+    },
+    "field.displayName" : {
+      "comment" : "Placeholder of the display name field in the popovers that add a task or a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名（任意）"
+          }
+        }
+      }
+    },
+    "field.jsonListPlaceholder" : {
+      "comment" : "Faint text in the box of a field that holds a list and is written as JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[\"…\"] (JSON list)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[\"…\"]（JSON の並び）"
+          }
+        }
+      }
+    },
+    "field.jsonProblem" : {
+      "comment" : "Problem shown under a field written as JSON when what was typed is not JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read this as JSON"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON として読めません"
+          }
+        }
+      }
+    },
+    "field.number" : {
+      "comment" : "Faint text in the box of a number field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数"
+          }
+        }
+      }
+    },
+    "field.numberProblem" : {
+      "comment" : "Problem shown under a number field when what was typed is not a number; the argument is what was typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a number (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数で書きます（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "goal.addTask" : {
+      "comment" : "Button in a goal's card editor bar, the empty contents map's button and the title of the popover that adds a task to the goal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add task"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task を追加"
+          }
+        }
+      }
+    },
+    "goal.addTaskHelp" : {
+      "comment" : "Tooltip of the Add task button in a goal's card editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name a task and add it to the end of this goal's contents (one commit)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を決めて task を作り、この goal の中身の終わりに足します（1 つのコミット）"
+          }
+        }
+      }
+    },
+    "goal.addTaskMenu" : {
+      "comment" : "Context menu item on the empty space of a goal's contents map; it opens the popover that adds a task.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add task…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task を追加…"
+          }
+        }
+      }
+    },
+    "goal.badge" : {
+      "comment" : "The kind badge at the left of a goal's card editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal（目標）"
+          }
+        }
+      }
+    },
+    "goal.canFinish" : {
+      "comment" : "Button in a goal's card editor bar, shown when everything inside is done; it finishes the goal (the same as the Finish action).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark complete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了にできます"
+          }
+        }
+      }
+    },
+    "goal.empty" : {
+      "comment" : "Shown in the middle of a goal's card editor when the goal holds nothing yet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no tasks or goals inside yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ中に task も goal もありません"
+          }
+        }
+      }
+    },
+    "goal.mapHint" : {
+      "comment" : "The hint under a goal's contents map that explains how to use it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a card to edit its fields in the Properties panel. Check the box to mark it done. The number is the work order (reorder with “Move earlier” and “Move later” in the right-click menu). The height follows the body; change the size with the corner at the bottom right (reset it with “Reset size to auto” in the right-click menu). Double-click to open (a goal inside opens as its contents map). Drag to move it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを選ぶとプロパティパネルで欄を直せます。チェックで済みに。番号は作業の順（右クリックの「前へ」「後ろへ」で並べ替え）。高さは本文に合わせ、右下の角で大きさを変えます（右クリックの「大きさを自動に戻す」で戻す）。ダブルクリックで開きます（中の goal はそのコンテンツマップ）。ドラッグで置き直します"
+          }
+        }
+      }
+    },
+    "goal.modesHelp" : {
+      "comment" : "Tooltip of the contents map / body switch in a goal's card editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents map: see and move the tasks and goals inside / Body: write the goal's body (the finished form and the order to work in)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンテンツマップ: 中の task と goal を並べて見る・動かす／本文: goal の本文（完成系と進める順）を書く"
+          }
+        }
+      }
+    },
+    "goal.progressHelp" : {
+      "comment" : "Tooltip of the done/total count in a goal's card editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of finished tasks and completed goals"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終わった task と完了した goal の数"
+          }
+        }
+      }
+    },
+    "goal.taskName" : {
+      "comment" : "Placeholder of the name field in the popover that adds a task.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Task name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task の名前"
+          }
+        }
+      }
+    },
+    "kind.noDefinitionDefine" : {
+      "comment" : "Shown in the card editor for a card whose kind has no definition; the argument is the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no definition for kind “%@”. Define it on the Kinds tab in Project Settings."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類「%@」の定義がありません。プロジェクト設定の「種類」のタブで定義します"
+          }
+        }
+      }
+    },
+    "kind.noDefinitionTab" : {
+      "comment" : "Shown in the Properties panel for a card whose kind has no definition; the argument is the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no definition for kind “%@” (see the Kinds tab in Project Settings)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類「%@」の定義がありません（プロジェクト設定の「種類」のタブ）"
+          }
+        }
+      }
+    },
+    "list.due" : {
+      "comment" : "Tooltip of the due date in a goal's row in the board's goal list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期限"
+          }
+        }
+      }
+    },
+    "list.empty" : {
+      "comment" : "Shown on the board when it has no goals.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No goals yet. Create a goal card in a section and it will be listed here by status."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標はまだありません。セクションに goal のカードを作ると、ここに状態ごとに並びます"
+          }
+        }
+      }
+    },
+    "list.noStatus" : {
+      "comment" : "Heading of the group of goals that have no status and whose kind gives no default.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no status)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（状態なし）"
+          }
+        }
+      }
+    },
+    "list.priority" : {
+      "comment" : "Tooltip of the priority in a goal's row in the board's goal list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priority"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "優先度"
+          }
+        }
+      }
+    },
+    "list.progressHelp" : {
+      "comment" : "Tooltip of the progress bar in a goal's row in the board's goal list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasks and goals inside that are done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中の task と goal のうち済んだもの"
+          }
+        }
+      }
+    },
+    "list.tabsHelp" : {
+      "comment" : "Tooltip of the tabs above the board's goal list; each tab is a section of goals.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goals of each goals section directly under the board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードの直下の goals のセクションごとの目標"
+          }
+        }
+      }
+    },
+    "menu.earlier" : {
+      "comment" : "Context menu item on a card of a goal's contents map; moves the card one place earlier in the work order.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move earlier (one step earlier in the work order)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前へ（作業の順を 1 つ前に）"
+          }
+        }
+      }
+    },
+    "menu.later" : {
+      "comment" : "Context menu item on a card of a goal's contents map; moves the card one place later in the work order.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move later (one step later in the work order)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後ろへ（作業の順を 1 つ後ろに）"
+          }
+        }
+      }
+    },
+    "mode.body" : {
+      "comment" : "Name of the body view in the segmented control of a goal's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文"
+          }
+        }
+      }
+    },
+    "mode.cardMap" : {
+      "comment" : "Name of the contents map view in the segmented control of a goal's or container's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンテンツマップ"
+          }
+        }
+      }
+    },
+    "mode.fieldsAndRows" : {
+      "comment" : "Name of the view that writes a card's fields and rows, in the segmented control of a custom card's card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields and rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄と行"
+          }
+        }
+      }
+    },
+    "row.delete" : {
+      "comment" : "Button in the Properties panel that deletes the row that is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行を削除"
+          }
+        }
+      }
+    },
+    "row.deleteWithChildren" : {
+      "comment" : "Tooltip of the minus button beside a row in a card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this row (and the rows under it)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行を削除（下の行も）"
+          }
+        }
+      }
+    },
+    "row.pathHelp" : {
+      "comment" : "Explanation of the path of a row of a card of a project-defined kind; the argument is the path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The row's path. Write it in a line's from (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行のパス。線の from に書く（%@）"
+          }
+        }
+      }
+    },
+    "rows.add" : {
+      "comment" : "Button that adds a row to a card in its card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行を追加"
+          }
+        }
+      }
+    },
+    "rows.count" : {
+      "comment" : "Value of a row kind in the Properties panel of a card of a project-defined kind; the argument is how many rows the card has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld row (written in the card editor; pick a row in a diagram to edit it here)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rows (written in the card editor; pick a row in a diagram to edit it here)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 行（カードエディタで書く。図で行を押すとここで直す）"
+          }
+        }
+      }
+    },
+    "rows.empty" : {
+      "comment" : "Shown under a row kind's heading in a card editor when there are no rows of it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No rows yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ行がありません"
+          }
+        }
+      }
+    },
+    "rows.newPlaceholder" : {
+      "comment" : "Placeholder of the field that names a row to add when the row kind has no title field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row to add"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "足す行"
+          }
+        }
+      }
+    },
+    "rows.newTitleField" : {
+      "comment" : "Placeholder of the field that names a row to add; the argument is the name of the row kind's title field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of the row to add"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "足す行の %@"
+          }
+        }
+      }
+    },
+    "separator.sentence" : {
+      "comment" : "Put between a field's label and its description when they are joined into one tooltip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
+    },
+    "strays.deleteAll" : {
+      "comment" : "Button that deletes all the values a card holds that its kind definition no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部削除"
+          }
+        }
+      }
+    },
+    "strays.help" : {
+      "comment" : "Explanation of the values a card holds that its kind definition no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values of fields removed from the definition or renamed. Keep them, or delete them if they are not needed. To move a value to the new name, use “Rename…” on the Kinds tab in Project Settings."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義から消した欄・名前を変えた欄の値です。残しておけ、要らなければ消します。値を新しい名前へ移すのは、プロジェクト設定の「種類」のタブの「名前を変える…」"
+          }
+        }
+      }
+    },
+    "strays.title" : {
+      "comment" : "Heading of the group of values a card holds that its kind definition no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields not in the definition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定義に無い欄"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

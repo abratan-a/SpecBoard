@@ -1,0 +1,1560 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "aiMerge.counts" : {
+      "comment" : "What AI merges together added, changed and removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld added, %lld changed, %lld removed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "足す %lld・直す %lld・消す %lld"
+          }
+        }
+      }
+    },
+    "aiMerge.inProject" : {
+      "comment" : "AI merge bubble for a project other than the open one: its name and the rest of the line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In project “%@”: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」で、%@"
+          }
+        }
+      }
+    },
+    "aiMerge.many" : {
+      "comment" : "AI merge bubble for several merges: how many, the last one's access key and branch, and the counts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The AI merged into main %lld time (last: %@, branch %@; %@ in total)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The AI merged into main %lld times (last: %@, branch %@; %@ in total)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI が main へ %lld 回 merge しました（最後は %@ の branch %@。合わせて %@）"
+          }
+        }
+      }
+    },
+    "aiMerge.one" : {
+      "comment" : "AI merge bubble for one merge: the access key's name, the branch and the counts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The AI (%@) merged branch %@ into main (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI（%@）が branch %@ を main へ merge しました（%@）"
+          }
+        }
+      }
+    },
+    "aiMerge.otherProject" : {
+      "comment" : "Stands for the name of a project that is no longer listed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "another project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのプロジェクト"
+          }
+        }
+      }
+    },
+    "aiMerge.showHistory" : {
+      "comment" : "Button of the AI merge bubble and of the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View in history"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴で見る"
+          }
+        }
+      }
+    },
+    "aiMerge.showHistoryHelp" : {
+      "comment" : "Tooltip of the View in history button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open that project's main history (this notice closes)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのプロジェクトの main の履歴を開きます（この知らせは閉じます）"
+          }
+        }
+      }
+    },
+    "hold.abandonHelp" : {
+      "comment" : "Tooltip of the cancel button of a group edit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goes back to where you started (the revert is recorded in the history too)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始めた所まで戻します（戻したことも履歴に残ります）"
+          }
+        }
+      }
+    },
+    "hold.abandonLockedHelp" : {
+      "comment" : "Tooltip of the cancel button of a group edit of a locked main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discards what you changed (main stays as it was when you started)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直したものを捨てます（main は始めたときのまま）"
+          }
+        }
+      }
+    },
+    "hold.cancelBatch" : {
+      "comment" : "Button of the MCP batch banner.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel batch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
+          }
+        }
+      }
+    },
+    "hold.cancelBatchHelp" : {
+      "comment" : "Tooltip of the cancel batch button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discards the queued batches so this branch can be edited"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "積まれているバッチを破棄して、この branch を直せるようにします"
+          }
+        }
+      }
+    },
+    "hold.elsewhere" : {
+      "comment" : "Banner while another Mac does a group edit; that Mac's name, the tree's name and the start time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group edit in progress in the window on %@ (%@, since %@). This branch is read-only until it ends."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の画面でまとめて直しています（%@、%@ から）。終わるまで、この branch は読むだけです"
+          }
+        }
+      }
+    },
+    "hold.groupLocked" : {
+      "comment" : "Banner while this window does a group edit of a locked main; the tree's name and the start time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group edit in progress (%@, since %@). main is locked, so closing puts what you changed into main as one merge. Meanwhile MCP writes and merges are refused."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて直しています（%@、%@ から）。main はロック中なので、閉じると直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は断ります"
+          }
+        }
+      }
+    },
+    "hold.groupOpen" : {
+      "comment" : "Banner while this window does a group edit; the tree's name and the start time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group edit in progress (%@, since %@). Edits until you close become one commit, and MCP writes to this branch are refused."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて直しています（%@、%@ から）。閉じるまでの直しは 1 つのコミットになり、この branch への MCP の書き込みは断ります"
+          }
+        }
+      }
+    },
+    "hold.mcpBatch" : {
+      "comment" : "Banner while an MCP batch holds the branch; the tree's name and the start time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP batch in progress (%@, since %@). This branch is read-only until it ends."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP バッチ処理中です（%@、%@ から）。終わるまで、この branch は読むだけです"
+          }
+        }
+      }
+    },
+    "list.createHelp" : {
+      "comment" : "Tooltip of the plus button above the branch list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a branch from main and open it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main から branch を作って開く"
+          }
+        }
+      }
+    },
+    "list.delete" : {
+      "comment" : "Context menu item on a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除…"
+          }
+        }
+      }
+    },
+    "list.lockMain" : {
+      "comment" : "Context menu item on main in the branch list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main をロックする"
+          }
+        }
+      }
+    },
+    "list.mainLockedHelp" : {
+      "comment" : "Tooltip of the lock icon next to main (in the branch list and on the root row of the navigator) while main is locked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main is locked (it can only be changed by a merge). Positions on the diagram, the size and look of writing cards, tags and the project's settings can still be changed. Change the contents in a branch or with “Group edit”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main はロック中（merge でしか変えられません）。図の上の位置・書くカードの大きさと見え方・タグ・プロジェクトの設定は直せます。中身は branch か「まとめて直す」で直します"
+          }
+        }
+      }
+    },
+    "list.merge" : {
+      "comment" : "Context menu item on a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge…"
+          }
+        }
+      }
+    },
+    "list.mergeMainIn" : {
+      "comment" : "Context menu item on a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge main in…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を取り込む…"
+          }
+        }
+      }
+    },
+    "list.openBranchHelp" : {
+      "comment" : "Tooltip of a branch's row in the branch list; the branch's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open branch %@ (right-click to merge, rename or delete)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch %@ を開く（右クリックで merge・名前を変える・削除）"
+          }
+        }
+      }
+    },
+    "list.openMainHelp" : {
+      "comment" : "Tooltip of main's row in the branch list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open main (right-click to lock)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を開く（右クリックでロック）"
+          }
+        }
+      }
+    },
+    "list.requestHelp" : {
+      "comment" : "Tooltip of an MR row of the branch list; the MR's number and its branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open main as it would be once MR %lld (%@ → main) is merged (read-only; approve or reject in the banner above)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR %lld（%@ → main）を merge したあとの main を開いて見る（読むだけ。上の帯で承認・拒否）"
+          }
+        }
+      }
+    },
+    "list.requestStale" : {
+      "comment" : "Mark on an MR row of the branch list whose branch or main moved since it was tried.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "古い"
+          }
+        }
+      }
+    },
+    "list.requestsHelp" : {
+      "comment" : "Tooltip of the MR count next to main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open MRs (merge requests). Approve or reject them in the MR tab of main's dashboard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出ている MR（merge request。main のダッシュボードの MR のタブで承認か拒否）"
+          }
+        }
+      }
+    },
+    "list.unlockMain" : {
+      "comment" : "Context menu item on main in the branch list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock main…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main のロックを外す…"
+          }
+        }
+      }
+    },
+    "lock.help" : {
+      "comment" : "Tooltip of the commands that lock main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Makes main changeable only by a merge (from the window and from MCP)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を merge でしか変えられなくします（画面からも MCP からも）"
+          }
+        }
+      }
+    },
+    "lock.unlock" : {
+      "comment" : "Confirm button of the unlock-main confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外す"
+          }
+        }
+      }
+    },
+    "lock.unlockMessage" : {
+      "comment" : "Message of the confirmation before main's lock is let go.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both the window and MCP will be able to write to main directly."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面からも MCP からも、main に直接書けるようになります"
+          }
+        }
+      }
+    },
+    "lock.unlockTitle" : {
+      "comment" : "Title of the confirmation before main's lock is let go.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock main?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main のロックを外しますか"
+          }
+        }
+      }
+    },
+    "merge.base" : {
+      "comment" : "Label of the common ancestor's value in a conflict.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基点"
+          }
+        }
+      }
+    },
+    "merge.conflictOf" : {
+      "comment" : "Heading of one conflict in the merge window: the card's path and the conflicting unit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ — %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の %@"
+          }
+        }
+      }
+    },
+    "merge.conflictsTitle" : {
+      "comment" : "Heading of the conflicts list in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld conflict (choose which side to take)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld conflicts (choose which side to take)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突 %lld（どちらを取るかを選ぶ）"
+          }
+        }
+      }
+    },
+    "merge.explainBranch" : {
+      "comment" : "Explanation in the merge window when the source is a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything changed in the source goes into the target. Where both sides changed the same thing differently, you choose which side to take."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 元で変えたこと全部を merge 先に入れます。両側で同じ所を違うように直した所は、どちらを取るかを選びます"
+          }
+        }
+      }
+    },
+    "merge.explainMainIn" : {
+      "comment" : "Explanation in the merge window when the source is main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brings main's changes into the target branch (cards edited in the branch get main's changes too)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main の変更を merge 先の branch に取り込みます（branch で直したカードには、main の変更が入ります）"
+          }
+        }
+      }
+    },
+    "merge.itemSection" : {
+      "comment" : "A path in the merge window's list that is a section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (section)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（セクション）"
+          }
+        }
+      }
+    },
+    "merge.itemsTitle" : {
+      "comment" : "Heading of the list of what the merge brings in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld item coming in"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld items coming in"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入るもの %lld"
+          }
+        }
+      }
+    },
+    "merge.keepBranch" : {
+      "comment" : "Checkbox in the merge window when merging a branch into main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch を残す"
+          }
+        }
+      }
+    },
+    "merge.keepHelp" : {
+      "comment" : "Tooltip of the keep-branch checkbox in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When off, the branch is set aside after it goes into main (it leaves the list and its name becomes free; it comes back if a revert of this merge goes into main). When on, it stays, in the same state as main."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切ると、main に入れたあと branch を退けます（一覧から外れ、名前も空きます。この merge を取り消す戻すが main に入ると戻ります）。入れると、main と同じ形で残します"
+          }
+        }
+      }
+    },
+    "merge.keepTarget" : {
+      "comment" : "Segment that settles a conflict with the target's value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep target"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 先を残す"
+          }
+        }
+      }
+    },
+    "merge.merge" : {
+      "comment" : "Title of the merge window and its confirm button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge"
+          }
+        }
+      }
+    },
+    "merge.noValue" : {
+      "comment" : "Shown for a conflict side that has no value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(none)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（無い）"
+          }
+        }
+      }
+    },
+    "merge.nothing" : {
+      "comment" : "Shown in the merge window when the merge would bring nothing in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入るものはありません"
+          }
+        }
+      }
+    },
+    "merge.overlapsTitle" : {
+      "comment" : "Heading of the paths that hold two different things in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different things at the same path (rename or delete one of them, then merge)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じパスに別のもの（どちらかの名前を変えるか消してから merge します）"
+          }
+        }
+      }
+    },
+    "merge.placesHelp" : {
+      "comment" : "Tooltip of the positions checkbox in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overwrites the target's layout with the positions of the cards, card ghosts, flow nodes and section ghosts moved in the branch, and with the sizes of writing cards and the boxes of a goal's contents map (also into a locked main). When off, the target's layout stays, and positions go in only for things the target has no position for (such as cards made in the branch)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かしたカード・カードゴースト・flow のノード・セクションゴーストの箱の位置と、書くカードの大きさ・goal のコンテンツマップの箱を、merge 先の位置に上書きして入れます（ロック中の main にも）。切ると merge 先の並べ方のままで、merge 先に位置の無いもの（branch で作ったカードなど）にだけ入ります"
+          }
+        }
+      }
+    },
+    "merge.placesNotTaking" : {
+      "comment" : "Merge window: the moved positions stay out for now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The branch moved %lld position (the checkbox above puts it in; for now the target's layout stays)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The branch moved %lld positions (the checkbox above puts them in; for now the target's layout stays)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置が %lld 件あります（上のチェックで入れます。今は merge 先の並べ方のまま）"
+          }
+        }
+      }
+    },
+    "merge.placesTaking" : {
+      "comment" : "Merge window: the moved positions go in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld position moved in the branch is put over its place in the target"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld positions moved in the branch are put over their places in the target"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置 %lld 件を、merge 先の位置に上書きして入れます"
+          }
+        }
+      }
+    },
+    "merge.placesTitle" : {
+      "comment" : "Heading of the moved positions in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld position"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld positions"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置 %lld"
+          }
+        }
+      }
+    },
+    "merge.placesToMain" : {
+      "comment" : "Checkbox in the merge window when merging a branch into main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also put positions moved in the branch into main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も main に入れる"
+          }
+        }
+      }
+    },
+    "merge.placesToMainCount" : {
+      "comment" : "Checkbox into main, with how many positions would change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Also put positions moved in the branch into main (%lld position changes)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Also put positions moved in the branch into main (%lld positions change)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も main に入れる（%lld 件の位置が変わる）"
+          }
+        }
+      }
+    },
+    "merge.placesToMainNone" : {
+      "comment" : "Checkbox into main when no position would change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also put positions moved in the branch into main (no positions change)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も main に入れる（変わる位置はありません）"
+          }
+        }
+      }
+    },
+    "merge.placesToTarget" : {
+      "comment" : "Checkbox in the merge window when the target is another branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also put positions moved in the branch into the merge target"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も merge 先に入れる"
+          }
+        }
+      }
+    },
+    "merge.placesToTargetCount" : {
+      "comment" : "Checkbox into another branch, with how many positions would change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Also put positions moved in the branch into the merge target (%lld position changes)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Also put positions moved in the branch into the merge target (%lld positions change)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も merge 先に入れる（%lld 件の位置が変わる）"
+          }
+        }
+      }
+    },
+    "merge.placesToTargetNone" : {
+      "comment" : "Checkbox into another branch when no position would change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also put positions moved in the branch into the merge target (no positions change)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置も merge 先に入れる（変わる位置はありません）"
+          }
+        }
+      }
+    },
+    "merge.sameBranch" : {
+      "comment" : "Shown in the merge window when the same branch is picked on both sides.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source and target are the same"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 元と merge 先が同じです"
+          }
+        }
+      }
+    },
+    "merge.source" : {
+      "comment" : "Label of the merge source: its picker in the merge window and its value in a conflict.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 元"
+          }
+        }
+      }
+    },
+    "merge.takeSource" : {
+      "comment" : "Segment that settles a conflict with the source's value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 元を取る"
+          }
+        }
+      }
+    },
+    "merge.target" : {
+      "comment" : "Label of the merge target: its picker in the merge window and its value in a conflict.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge 先"
+          }
+        }
+      }
+    },
+    "merge.viewResult" : {
+      "comment" : "Button in the merge window that opens main as it would be after the merge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View result"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果を開いて見る"
+          }
+        }
+      }
+    },
+    "merge.viewResultHelp" : {
+      "comment" : "Tooltip of the View result button in the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open main as it would be after the merge, as a diagram and cards (read-only; merge or close in the banner above)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge したあとの main を図とカードで開く（読むだけ。上の帯で merge する・閉じる）"
+          }
+        }
+      }
+    },
+    "request.authorMCP" : {
+      "comment" : "Who made a merge request: MCP, with the access key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP（%@）"
+          }
+        }
+      }
+    },
+    "request.stateMerged" : {
+      "comment" : "State of a merge request that was approved.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merged"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge した"
+          }
+        }
+      }
+    },
+    "request.stateOpen" : {
+      "comment" : "State of a merge request that is waiting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出ている"
+          }
+        }
+      }
+    },
+    "request.stateRejected" : {
+      "comment" : "State of a merge request that was rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rejected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否した"
+          }
+        }
+      }
+    },
+    "request.stateStale" : {
+      "comment" : "State of a merge request whose branch or main moved since it was tried.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "古くなった"
+          }
+        }
+      }
+    },
+    "request.stateWithdrawn" : {
+      "comment" : "State of a merge request that was withdrawn.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdrawn"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り下げた"
+          }
+        }
+      }
+    },
+    "result.approve" : {
+      "comment" : "Button of the result banner that approves the MR shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approve and merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "承認して merge"
+          }
+        }
+      }
+    },
+    "result.closeHelp" : {
+      "comment" : "Tooltip of the close button of the result banner.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go back to where you were (the result you were looking at goes away; nothing is left in the project)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前に開いていた所へ戻る（見ていた結果は消えます。プロジェクトには何も残りません）"
+          }
+        }
+      }
+    },
+    "result.merge" : {
+      "comment" : "Button of the result banner that does the merge shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge する"
+          }
+        }
+      }
+    },
+    "result.reject" : {
+      "comment" : "Button of the result banner that rejects the MR shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否…"
+          }
+        }
+      }
+    },
+    "result.rejectConfirm" : {
+      "comment" : "Confirm button of the sheet asking why an MR is rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否する"
+          }
+        }
+      }
+    },
+    "result.rejectMessage" : {
+      "comment" : "Message of the sheet asking why an MR is rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends it back with a reason, without changing its contents. The AI fixes it and submits it again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中身は直さず、理由を添えて返します。AI が直して出し直します"
+          }
+        }
+      }
+    },
+    "result.rejectPlaceholder" : {
+      "comment" : "Placeholder of the reason field when rejecting an MR.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason (the AI reads it and fixes the MR)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "理由（AI が読んで直します）"
+          }
+        }
+      }
+    },
+    "result.rejectTitle" : {
+      "comment" : "Title of the sheet asking why an MR is rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject MR"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR を拒否する"
+          }
+        }
+      }
+    },
+    "result.removed" : {
+      "comment" : "Banner line listing the paths the merge removes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Going away (a section's cards are drawn faded and struck through on the diagram): %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消えるもの（セクションのカードは、図に薄く打ち消して描きます）: %@"
+          }
+        }
+      }
+    },
+    "result.stale" : {
+      "comment" : "Banner line when the MR shown is out of date.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This MR is out of date (the branch or main has moved). What you see is the result of the merge as it is now, and it can't be approved. The AI has to submit it again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この MR は古くなっています（branch か main が動きました）。見えているのは今の merge の結果で、承認はできません。AI に出し直してもらいます"
+          }
+        }
+      }
+    },
+    "result.titleMerge" : {
+      "comment" : "Names the merge shown in the result banner, after 'as it would be after': the branch merged.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merging %@ into main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を main へ merge したら"
+          }
+        }
+      }
+    },
+    "result.titleRequest" : {
+      "comment" : "Names the merge shown in the result banner, after 'as it would be after': an MR's number, title and branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merging MR %lld “%@” (%@ → main)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR %lld「%@」（%@ → main）"
+          }
+        }
+      }
+    },
+    "result.treeName" : {
+      "comment" : "Name of the open tree while a merge's result is shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After the merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge したあと"
+          }
+        }
+      }
+    },
+    "result.viewing" : {
+      "comment" : "Banner while a merge's result is open; it continues with what the merge is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viewing main as it would be after %@. Read-only: marks on the diagram show the cards the merge changes or adds, faded struck-through cards are the ones it removes, and the history in the Properties panel shows what changes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の main を見ています（読むだけ。図の印が merge で変わる・増えるカード、薄く打ち消したものが消えるカード、プロパティパネルの履歴に変わる所）"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

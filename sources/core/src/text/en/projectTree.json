@@ -1,0 +1,13 @@
+{
+  "projectTree.branch.hasIt": "project_tree {tree}[{at}]: a branch already has {name} directly under the root (rename it in that branch, or merge it into main first)",
+  "projectTree.kind.cannotChange": "project_tree {tree}[{at}]: {name} is now a section of kind {kind}. The kind (type) cannot be changed alone (add one under another name and move what it holds)",
+  "projectTree.kind.none": "none",
+  "projectTree.line.changed": "Sections {tree} ({parts})",
+  "projectTree.line.created": "Created {names}",
+  "projectTree.line.deleted": "Deleted {names}",
+  "projectTree.line.evacuated": "Moved to {evacuation}: {names}",
+  "projectTree.line.renamed": "Renamed {names}",
+  "projectTree.line.then": "{head}; {rest}",
+  "projectTree.rename.sourceStays": "renames top_section {from} → {to}: project_tree still has {from}",
+  "projectTree.rename.targetMissing": "renames top_section {from} → {to}: project_tree has no {to} (when renaming, set the name in project_tree to {to} too)"
+}

@@ -1,0 +1,16 @@
+# The SpecBoard agent: the daemon (serve) holds the projects' database and the core, and answers MCP for
+# its projects. The app reaches it over SSH through a relay started per connection (attach), the way
+# Claude Code works over SSH
+[package]
+name = "specboard-agent"
+description = "The SpecBoard agent: holds projects and answers MCP"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+license.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+specboard-core = { path = "..", features = ["dynamic-grammars"] }
+libc = "0.2"

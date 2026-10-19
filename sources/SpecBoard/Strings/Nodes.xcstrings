@@ -1,0 +1,1860 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "button.addBranch" : {
+      "comment" : "Button that adds a branch to a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かれ道を追加"
+          }
+        }
+      }
+    },
+    "button.addNext" : {
+      "comment" : "Button that adds one more destination to a node's next.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a parallel destination"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かれる行き先を追加"
+          }
+        }
+      }
+    },
+    "button.choose" : {
+      "comment" : "Button that opens the selector for a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選ぶ…"
+          }
+        }
+      }
+    },
+    "button.chooseFromProject" : {
+      "comment" : "Tooltip of the button beside a path field that opens the selector.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose from the project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトから選ぶ"
+          }
+        }
+      }
+    },
+    "button.openTarget" : {
+      "comment" : "Button that opens the flow a run node runs; the argument is its path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を開く"
+          }
+        }
+      }
+    },
+    "default.condition" : {
+      "comment" : "Condition given to a branch that is added to a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件"
+          }
+        }
+      }
+    },
+    "empty.notFound" : {
+      "comment" : "Shown under a path field when the path leads nowhere and the project gave no hint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見つかりません"
+          }
+        }
+      }
+    },
+    "empty.rowGone" : {
+      "comment" : "Shown in the Properties panel when the selected row has been removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This row no longer exists"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行はもうありません"
+          }
+        }
+      }
+    },
+    "error.badNodeName" : {
+      "comment" : "Shown when a node's new name is refused.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A name has 1 to 255 characters with no line break, tab or other control character, and is unique within the flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前は 1〜255 字で、改行・タブなどの制御文字を含まず、フローの中で 1 つずつです"
+          }
+        }
+      }
+    },
+    "help.addNext" : {
+      "comment" : "Tooltip of the button that adds a parallel destination to a node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With two or more next, the flow parts in parallel. Connect each way to a join node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next が 2 つ以上だと並列に分かれます。分かれた先は、それぞれ合流（join）のノードへつなぎます"
+          }
+        }
+      }
+    },
+    "help.branchNext" : {
+      "comment" : "Help beside the next of a branch of a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node this branch goes to"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この分かれ道で行くノード"
+          }
+        }
+      }
+    },
+    "help.deleteNode" : {
+      "comment" : "Tooltip of the button that deletes a node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ways leading here are removed too (those nodes become unfinished)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここへの行き先も一緒に外れます（そのノードは未完成になります）"
+          }
+        }
+      }
+    },
+    "help.else" : {
+      "comment" : "Help beside the else way of a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node to go to when no branch matches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの分かれ道にも当たらないときに行くノード"
+          }
+        }
+      }
+    },
+    "help.event" : {
+      "comment" : "Help beside the event of a begin or wait node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other flow whose end it waits for"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終わりを待つほかのフロー"
+          }
+        }
+      }
+    },
+    "help.eventOutcome" : {
+      "comment" : "Help beside the outcome of an event.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How the awaited flow ends"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待つフローの終わり方"
+          }
+        }
+      }
+    },
+    "help.every" : {
+      "comment" : "Help beside the every key of a begin node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How often it starts, for a schedule"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定期で始まるときの周期"
+          }
+        }
+      }
+    },
+    "help.join" : {
+      "comment" : "Help beside the join key of a join node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many of the parted ways must arrive before it goes on"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かれた道がいくつそろったら進むか"
+          }
+        }
+      }
+    },
+    "help.joiner" : {
+      "comment" : "Between the words that start a key's help and the glossary's meaning of the key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
+    },
+    "help.nextMany" : {
+      "comment" : "Help beside the next of a node that parts the way.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The next nodes. Two or more part the way in parallel, each going on to a join"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のノード。2 つ以上で並列に分かれ、それぞれ合流（join）へつなぐ"
+          }
+        }
+      }
+    },
+    "help.nextOne" : {
+      "comment" : "Help beside the next of a node that has one way on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のノード"
+          }
+        }
+      }
+    },
+    "help.nodeLabel" : {
+      "comment" : "Help beside the label of a node in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node's heading (any language)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ノードの見出し（日本語可）"
+          }
+        }
+      }
+    },
+    "help.nodeName" : {
+      "comment" : "Help beside the name of a node in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node's name. Unique within the flow; used in paths (Section:Flow.node)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ノードの名前。フローの中で 1 つずつで、パス（セクション:フロー.ノード）に使う"
+          }
+        }
+      }
+    },
+    "help.onError" : {
+      "comment" : "Help beside the onError way of a run node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node to go to when the run fails"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実行が失敗したときに行くノード"
+          }
+        }
+      }
+    },
+    "help.onTimeout" : {
+      "comment" : "Help beside the onTimeout way of a wait node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The node to go to when the time runs out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期限切れのときに行くノード"
+          }
+        }
+      }
+    },
+    "help.outcome" : {
+      "comment" : "Help beside the outcome of an end node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The flow's result. The caller's decision and another flow's start (event) look at it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フローの戻り値。呼んだ側の判断や、ほかのフローの開始（event）が見る"
+          }
+        }
+      }
+    },
+    "help.partial" : {
+      "comment" : "Help beside the partial key of a join node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What to do when some of the parted ways fail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分かれた道の一部が失敗したときにどうするか"
+          }
+        }
+      }
+    },
+    "help.peerReceive" : {
+      "comment" : "Help beside the peer key of a begin node that receives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flows that send it (as many as needed; may be combined with a program). Leave both peer and program out for the caller"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送ってくる flow（何本でも。program と一緒にも書ける）。peer も program も省くと呼んだ側"
+          }
+        }
+      }
+    },
+    "help.peerReturn" : {
+      "comment" : "Help beside the peer key of an end node's return.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flows it returns to (as many as needed; may be combined with a program). Leave both peer and program out for the caller"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返す先の flow（何本でも。program と一緒にも書ける）。peer も program も省くと呼んだ側"
+          }
+        }
+      }
+    },
+    "help.return" : {
+      "comment" : "Help beside the return of an end node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it gives back to the caller (or to the peer or program). An end that gives nothing back leaves it out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼んだ側（か peer・program の相手）へ返すもの。返さない終了は書かない"
+          }
+        }
+      }
+    },
+    "help.row" : {
+      "comment" : "Start of the help beside the do key of a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What this row does"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行がすること"
+          }
+        }
+      }
+    },
+    "help.runTarget" : {
+      "comment" : "Help beside the target of a run node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The flow to run. Reads and writes go in the process-node rows of the flow that is run"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実行するフロー。読み書きは実行されるフローの処理ノードの行に書く"
+          }
+        }
+      }
+    },
+    "help.steps" : {
+      "comment" : "Help beside the steps of a process node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows that go straight on (read, write, sign, verify, call, send, receive, compute). Select one to edit it here; right-click a row in the diagram to add, reorder or delete."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まっすぐ続く行（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算する）。選ぶとここで直せ、図の行の右クリックで足す・並べ替え・消す"
+          }
+        }
+      }
+    },
+    "help.timeout" : {
+      "comment" : "Help beside the timeout of a wait node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How long it waits at most"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待つ期限"
+          }
+        }
+      }
+    },
+    "help.trigger" : {
+      "comment" : "Help beside the trigger of a begin node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What starts the flow: manual, receive (called or delivered), another flow's end, schedule, at every startup"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フローが始まるきっかけ: 手動・受ける（呼ばれる・届く）・ほかのフローの終わり・定期・起動のたび"
+          }
+        }
+      }
+    },
+    "help.value" : {
+      "comment" : "Help beside the value of a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path of the value to decide on"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "判断に使う値のパス"
+          }
+        }
+      }
+    },
+    "help.waitFor" : {
+      "comment" : "Help beside the for key of a wait node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it waits for: an approval, a time or another flow's end"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待つもの: 承認・時間・ほかのフローの終わり"
+          }
+        }
+      }
+    },
+    "join.all" : {
+      "comment" : "Option of the join node's join picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When all have arrived"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部そろったら"
+          }
+        }
+      }
+    },
+    "join.any" : {
+      "comment" : "Option of the join node's join picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When any one has arrived"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれか 1 つで"
+          }
+        }
+      }
+    },
+    "join.first" : {
+      "comment" : "Option of the join node's join picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At the first one; the others are stopped"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の 1 つで他は中断"
+          }
+        }
+      }
+    },
+    "outcome.cancelled" : {
+      "comment" : "Option of an end node's outcome picker and of an event's outcome picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelled"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中止"
+          }
+        }
+      }
+    },
+    "outcome.failure" : {
+      "comment" : "Option of an end node's outcome picker and of an event's outcome picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failure"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失敗"
+          }
+        }
+      }
+    },
+    "outcome.success" : {
+      "comment" : "Option of an end node's outcome picker and of an event's outcome picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功"
+          }
+        }
+      }
+    },
+    "partial.continue" : {
+      "comment" : "Option of the join node's partial picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続ける"
+          }
+        }
+      }
+    },
+    "partial.fail" : {
+      "comment" : "Option of the join node's partial picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fail as a whole"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全体を失敗に"
+          }
+        }
+      }
+    },
+    "placeholder.addPartner" : {
+      "comment" : "Placeholder of the field that adds a partner flow to a row's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a partner flow (e.g. Payments:Charge)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の flow を足す（例: Payments:Charge）"
+          }
+        }
+      }
+    },
+    "placeholder.addPartnerCaller" : {
+      "comment" : "Placeholder of the field that adds a partner flow to a node's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a partner flow (leave out for the caller)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の flow を足す（省くと呼んだ側）"
+          }
+        }
+      }
+    },
+    "placeholder.addPartnerReceive" : {
+      "comment" : "Placeholder of the field that adds a partner flow to a receive row's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a partner flow (leave out for the caller; e.g. Payments:Charge)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の flow を足す（省くと呼んだ側。例: Payments:Charge）"
+          }
+        }
+      }
+    },
+    "placeholder.addPath" : {
+      "comment" : "Placeholder of the field that adds a path to a list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a path (e.g. Core:Order.total)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスを足す（例: Core:Order.total）"
+          }
+        }
+      }
+    },
+    "placeholder.anyLanguage" : {
+      "comment" : "Placeholder of the node's heading field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any language"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日本語可"
+          }
+        }
+      }
+    },
+    "placeholder.condition" : {
+      "comment" : "Placeholder of a branch's condition field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condition (a [[path]] can point to a field)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件（[[パス]] で欄を指せる）"
+          }
+        }
+      }
+    },
+    "placeholder.every" : {
+      "comment" : "Placeholder of the every field of a begin node that starts on a schedule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. every day at 9:00"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例: 毎日 9 時"
+          }
+        }
+      }
+    },
+    "placeholder.keyPath" : {
+      "comment" : "Placeholder of the path field of a sign or verify row's key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key path (e.g. Core:Keys.signing)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鍵のパス（例: Core:Keys.signing）"
+          }
+        }
+      }
+    },
+    "placeholder.path" : {
+      "comment" : "Placeholder of a path in a list of paths.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パス"
+          }
+        }
+      }
+    },
+    "placeholder.pathOf" : {
+      "comment" : "Placeholder of a key's path field; the argument names the key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のパス"
+          }
+        }
+      }
+    },
+    "placeholder.programBegin" : {
+      "comment" : "Placeholder of the program field of a begin node that receives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Claude Code, git"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例: Claude Code・git"
+          }
+        }
+      }
+    },
+    "placeholder.programEnd" : {
+      "comment" : "Placeholder of the program field of an end node's return.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Claude Code"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例: Claude Code"
+          }
+        }
+      }
+    },
+    "placeholder.programRow" : {
+      "comment" : "Placeholder of the program field of a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. git, curl"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例: git・curl"
+          }
+        }
+      }
+    },
+    "placeholder.timeout" : {
+      "comment" : "Placeholder of the timeout field of a wait node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. 24 hours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例: 24 時間"
+          }
+        }
+      }
+    },
+    "placeholder.valuePath" : {
+      "comment" : "Placeholder of the value field of a decision node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path (e.g. Core:Order.status)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パス（例: Core:Order.status）"
+          }
+        }
+      }
+    },
+    "problem.caseNeedsWhen" : {
+      "comment" : "Message when a case of a switch has no condition; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ needs when"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ には when が要ります"
+          }
+        }
+      }
+    },
+    "problem.caseShape" : {
+      "comment" : "Message when a case of a switch has other keys; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ must be { when, steps }"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は { when, steps } です"
+          }
+        }
+      }
+    },
+    "problem.doOneOfGot" : {
+      "comment" : "Message when a row's do is not allowed; the arguments are where, the allowed values and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.do must be one of %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.do は %@ のいずれかです（%@）"
+          }
+        }
+      }
+    },
+    "problem.doOneOfNone" : {
+      "comment" : "Message when a row has no do; the arguments are where and the allowed values.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.do must be one of %@ (none given)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.do は %@ のいずれかです（ありません）"
+          }
+        }
+      }
+    },
+    "problem.everyOnlySchedule" : {
+      "comment" : "Message when a trigger that is not a schedule has every.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "every is only for schedule"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "every は schedule のときだけです"
+          }
+        }
+      }
+    },
+    "problem.initiator" : {
+      "comment" : "Message when an initiator is neither self nor peer; the arguments are where and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.initiator must be self or peer (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@.initiator は self か peer です（%@）"
+          }
+        }
+      }
+    },
+    "problem.needsAction" : {
+      "comment" : "Message when an action row names no action; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ needs action"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ には action が要ります"
+          }
+        }
+      }
+    },
+    "problem.needsKey" : {
+      "comment" : "Message when a row lacks a key it needs; the arguments are where, do and the key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) needs %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）には %@ が要ります"
+          }
+        }
+      }
+    },
+    "problem.needsPartner" : {
+      "comment" : "Message when a call or send row names no partner; the arguments are where and do.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) needs a partner: peer (an action; as many as needed) or program"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）には相手が要ります: peer（相手の action。何本でも）か program"
+          }
+        }
+      }
+    },
+    "problem.nestingLimit" : {
+      "comment" : "Message when rows are nested too deep; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: nesting goes at most 8 levels deep"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 入れ子は 8 段までです"
+          }
+        }
+      }
+    },
+    "problem.processCallFlow" : {
+      "comment" : "Message when a process node's call row names a flow; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (call): running another flow and waiting for its end is a run node (kind: run, its target). A call row goes to a program the project does not have (program)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（call）: ほかのフローを呼んで終わりを待つのは実行ノード（kind: run の target）です。行の call はプロジェクトに無いプログラムへ（program）"
+          }
+        }
+      }
+    },
+    "problem.processNoGroup" : {
+      "comment" : "Message when a process node has a group row; the arguments are where and do.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a process node's row cannot be %@. Branches and repeats are a decision node (kind: eval); parallel is next as an array, met at a join (kind: join)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 処理ノードの行に %@ は書けません。分かれ道・繰り返しは判断ノード（kind: eval）、並列は next を配列にして合流（kind: join）で書きます"
+          }
+        }
+      }
+    },
+    "problem.processNoReturn" : {
+      "comment" : "Message when a process node has a return row; the argument is where.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: a process node's row cannot be a return. What a flow gives back is the return of an end node (kind: end)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 処理ノードの行に return は書けません。返すのは終了ノード（kind: end）の return です"
+          }
+        }
+      }
+    },
+    "problem.scheduleNeedsEvery" : {
+      "comment" : "Message when a schedule trigger has no every.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger (schedule) needs every (for example, once an hour)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger（schedule）には every が要ります（例: 1時間に1回）"
+          }
+        }
+      }
+    },
+    "problem.scheduleNoPartner" : {
+      "comment" : "Message when a schedule trigger has a partner or carries.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger (schedule) cannot have peer, program or carries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger（schedule）に peer・program・carries は書けません"
+          }
+        }
+      }
+    },
+    "problem.startupOnlyDescription" : {
+      "comment" : "Message when a startup trigger has other keys.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger (startup) can only have description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger（startup）には description だけが書けます"
+          }
+        }
+      }
+    },
+    "problem.stepsLimit" : {
+      "comment" : "Message when there are too many rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "steps can have at most 300 rows in all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "steps は全部で 300 行までです"
+          }
+        }
+      }
+    },
+    "problem.strayKeys" : {
+      "comment" : "Message when a row has keys its do does not take; the arguments are where, do, the keys not allowed and the keys allowed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) cannot have %@. It can have %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）に %@ は書けません。書けるのは %@"
+          }
+        }
+      }
+    },
+    "problem.strayNoKeys" : {
+      "comment" : "Message when a row has keys its do does not take and takes none; the arguments are where, do, the keys and do again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@) cannot have %@. A %@ row says what it does in description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）に %@ は書けません。%@ の行は何をするかを description に書きます"
+          }
+        }
+      }
+    },
+    "problem.triggerOnOneOf" : {
+      "comment" : "Message when a trigger's on is not allowed; the arguments are the allowed values and the value given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger.on must be one of %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trigger.on は %@ のいずれかです（%@）"
+          }
+        }
+      }
+    },
+    "toggle.return" : {
+      "comment" : "Label of the switch that gives an end node a return.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返す"
+          }
+        }
+      }
+    },
+    "trigger.manual" : {
+      "comment" : "Option of the begin node's trigger picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手動"
+          }
+        }
+      }
+    },
+    "trigger.receive" : {
+      "comment" : "Option of the begin node's trigger picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive (called or delivered)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受ける（呼ばれる・届く）"
+          }
+        }
+      }
+    },
+    "trigger.schedule" : {
+      "comment" : "Option of the begin node's trigger picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定期"
+          }
+        }
+      }
+    },
+    "trigger.startup" : {
+      "comment" : "Option of the begin node's trigger picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At every startup"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "起動のたび"
+          }
+        }
+      }
+    },
+    "wait.approval" : {
+      "comment" : "Option of the wait node's for picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approval"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "承認"
+          }
+        }
+      }
+    },
+    "wait.timer" : {
+      "comment" : "Option of the wait node's for picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間"
+          }
+        }
+      }
+    },
+    "word.carries" : {
+      "comment" : "Name of the carries key of a row or node, as the help beside it starts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "運ぶもの"
+          }
+        }
+      }
+    },
+    "word.comesBack" : {
+      "comment" : "Start of the help beside the returns key of a run node or a call row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What comes back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返ってくるもの"
+          }
+        }
+      }
+    },
+    "word.handsOver" : {
+      "comment" : "Start of the help beside the carries key of a run node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it hands over"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "渡すもの"
+          }
+        }
+      }
+    },
+    "word.initiator" : {
+      "comment" : "Start of the help beside the initiator key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Who opens the exchange"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼びに行く側"
+          }
+        }
+      }
+    },
+    "word.key" : {
+      "comment" : "Start of the help beside the key key of a sign or verify row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鍵"
+          }
+        }
+      }
+    },
+    "word.notWritten" : {
+      "comment" : "Option of the initiator picker meaning the key is left out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not set"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書かない"
+          }
+        }
+      }
+    },
+    "word.otherFlowEnd" : {
+      "comment" : "Option of the begin node's trigger picker and of the wait node's for picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another flow's end"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのフローの終わり"
+          }
+        }
+      }
+    },
+    "word.outsideTool" : {
+      "comment" : "Start of the help beside the program key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outside tool"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外の道具"
+          }
+        }
+      }
+    },
+    "word.partnerFlow" : {
+      "comment" : "Start of the help beside the peer key; also what a path in its list is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の flow"
+          }
+        }
+      }
+    },
+    "word.readWritePlaces" : {
+      "comment" : "Start of the help beside the paths key of a row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places it reads and writes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み書きする場所"
+          }
+        }
+      }
+    },
+    "word.receives" : {
+      "comment" : "Start of the help beside the carries key of a begin node that receives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it receives"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受けるもの"
+          }
+        }
+      }
+    },
+    "word.returns" : {
+      "comment" : "Start of the help beside the carries key of an end node's return.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it returns"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返すもの"
+          }
+        }
+      }
+    },
+    "word.signKey" : {
+      "comment" : "Start of the help beside the signWith key; also the first part of its path field's placeholder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名する鍵"
+          }
+        }
+      }
+    },
+    "word.undecided" : {
+      "comment" : "Shown where a node, a way or a choice has no value yet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Not decided)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（決めていない）"
+          }
+        }
+      }
+    },
+    "word.verifyKey" : {
+      "comment" : "Start of the help beside the verifyWith key; also the first part of its path field's placeholder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifying key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確かめる鍵"
+          }
+        }
+      }
+    },
+    "word.via" : {
+      "comment" : "Start of the help beside the via key of a node or row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How it travels"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受け渡しの道"
+          }
+        }
+      }
+    },
+    "word.withinPart" : {
+      "comment" : "Option of the via picker meaning the exchange stays inside the part.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Within the part"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品の中"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

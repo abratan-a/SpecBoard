@@ -1,0 +1,4 @@
+{
+  "detail.error.branchMissing": "branch「{b}」がありません",
+  "detail.error.projectMissing": "プロジェクト「{project_id}」がありません"
+}

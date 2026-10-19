@@ -1,0 +1,1863 @@
+{
+  "format": "specboard/project",
+  "version": 28,
+  "project": {
+    "id": "d9cbe0d0-d9b3-4ba8-8c72-72248757e527",
+    "name": "見本",
+    "slug": "見本",
+    "description": "コアのテストの見本のプラン",
+    "created_at": "2026-10-04T11:11:20.240Z",
+    "export_dirs": [
+      {
+        "id": "83798b1e-eb4c-4a7d-be58-5467fb615273",
+        "name": "ts"
+      },
+      {
+        "id": "c38cf5ef-6db9-4368-a08a-352676f9d2c5",
+        "name": "zod"
+      },
+      {
+        "id": "7e1f9772-4287-45fe-9902-cc6f85880578",
+        "name": "schema"
+      },
+      {
+        "id": "1b7ca0b9-1f00-45c3-96a9-c5a4b0fba5ce",
+        "name": "charts_2"
+      },
+      {
+        "id": "f6881a19-de3c-43fb-8a8e-01ac15a3035b",
+        "name": "docs_2"
+      }
+    ],
+    "kinds": {
+      "lines": [
+        {
+          "line": "signedBy",
+          "label": "署名する",
+          "description": "署名を作る鍵（秘密鍵かそのハンドル）を指す。payload（覆いの名前）・excludes（覆わないパス）・valueAt（値の置き場所）を欄に持つ",
+          "base": "link",
+          "look": {
+            "color": "red",
+            "dash": "dashed",
+            "begin": "none",
+            "end": "arrow"
+          },
+          "from": [
+            {
+              "kinds": [
+                "entity",
+                "value",
+                "enum"
+              ],
+              "at": "card"
+            }
+          ],
+          "to": {
+            "kinds": [
+              "*"
+            ],
+            "at": [
+              "card",
+              "row"
+            ]
+          },
+          "max": null,
+          "fields": [
+            {
+              "name": "payload",
+              "label": "覆いの名前",
+              "fieldtype": "text",
+              "required": true
+            },
+            {
+              "name": "excludes",
+              "label": "覆わないパス",
+              "fieldtype": "path",
+              "many": true
+            },
+            {
+              "name": "valueAt",
+              "label": "値の置き場所",
+              "fieldtype": "path"
+            }
+          ],
+          "export": {
+            "as": "annotation",
+            "key": "x-payloads"
+          }
+        }
+      ],
+      "project_tree": {
+        "main_sections": [
+          {
+            "type": "document",
+            "name": "Docs"
+          },
+          {
+            "type": "schema",
+            "name": "Schemas"
+          },
+          {
+            "type": "chart",
+            "name": "Charts"
+          },
+          {
+            "type": "free",
+            "name": "Free"
+          },
+          {
+            "type": "workdir",
+            "name": "ts",
+            "directory": "83798b1e-eb4c-4a7d-be58-5467fb615273"
+          },
+          {
+            "type": "workdir",
+            "name": "zod",
+            "directory": "c38cf5ef-6db9-4368-a08a-352676f9d2c5"
+          },
+          {
+            "type": "workdir",
+            "name": "schema",
+            "directory": "7e1f9772-4287-45fe-9902-cc6f85880578"
+          },
+          {
+            "type": "workdir",
+            "name": "charts_2",
+            "directory": "1b7ca0b9-1f00-45c3-96a9-c5a4b0fba5ce"
+          },
+          {
+            "type": "workdir",
+            "name": "docs_2",
+            "directory": "f6881a19-de3c-43fb-8a8e-01ac15a3035b"
+          }
+        ],
+        "board_sections": [
+          {
+            "type": "goals",
+            "name": "Goals"
+          }
+        ]
+      }
+    },
+    "exports": [
+      {
+        "id": "55b20526-9c6e-47a4-9982-1967beedcc0b",
+        "name": "ts",
+        "entries": [
+          {
+            "from": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "to": "types.ts"
+          },
+          {
+            "from": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+            "to": "customer.ts"
+          },
+          {
+            "from": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+            "to": "types.ts"
+          }
+        ]
+      },
+      {
+        "id": "3c1a1b38-3fff-4300-bf43-8a614034ac37",
+        "name": "zod",
+        "entries": [
+          {
+            "from": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "to": "types.zod.ts",
+            "format": "zod"
+          }
+        ]
+      },
+      {
+        "id": "2d828da5-97a8-4d34-ae72-685a9c2f0f16",
+        "name": "schema",
+        "entries": [
+          {
+            "from": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "to": "types.schema.json"
+          }
+        ]
+      },
+      {
+        "id": "666d39d0-390b-4ca5-b201-723787b0097a",
+        "name": "charts",
+        "entries": [
+          {
+            "from": "65f0519b-330e-4293-bd81-614d6ea12f87",
+            "to": "charts.md"
+          },
+          {
+            "from": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+            "to": "charts.md"
+          }
+        ]
+      },
+      {
+        "id": "5a823ec7-082f-480c-9f58-00d31eb467c5",
+        "name": "docs",
+        "entries": [
+          {
+            "from": "b797fe7c-9d56-42d3-a55e-dbeb0de0042e",
+            "to": "notes/"
+          },
+          {
+            "from": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+            "to": "notes/"
+          }
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "Main",
+      "created_at": "2026-10-04T11:11:20.239Z"
+    },
+    {
+      "id": "b797fe7c-9d56-42d3-a55e-dbeb0de0042e",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "Docs",
+      "created_at": "2026-10-04T11:11:20.239Z",
+      "kind": "document"
+    },
+    {
+      "id": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "Schemas",
+      "sort_order": 1,
+      "created_at": "2026-10-04T11:11:20.240Z",
+      "kind": "schema"
+    },
+    {
+      "id": "0e248de1-09bc-4006-a40c-b42ff900d2eb",
+      "parent_id": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "name": "Ordering",
+      "created_at": "2026-10-04T11:11:20.249Z",
+      "kind": "schema"
+    },
+    {
+      "id": "e21ceb94-9909-48a1-a63f-e09a7f849b4e",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "Charts",
+      "sort_order": 2,
+      "created_at": "2026-10-04T11:11:20.240Z",
+      "kind": "chart"
+    },
+    {
+      "id": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "parent_id": "e21ceb94-9909-48a1-a63f-e09a7f849b4e",
+      "name": "Shop",
+      "created_at": "2026-10-04T11:11:20.249Z",
+      "kind": "chart"
+    },
+    {
+      "id": "10c0d118-1643-4415-b02d-ae0bf50bdff5",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "Free",
+      "sort_order": 3,
+      "created_at": "2026-10-04T11:11:20.240Z",
+      "kind": "free"
+    },
+    {
+      "id": "dir:83798b1e-eb4c-4a7d-be58-5467fb615273",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "ts",
+      "sort_order": 4,
+      "created_at": "2026-10-17T08:20:14.652Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:c38cf5ef-6db9-4368-a08a-352676f9d2c5",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "zod",
+      "sort_order": 5,
+      "created_at": "2026-10-17T08:20:14.652Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:7e1f9772-4287-45fe-9902-cc6f85880578",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "schema",
+      "sort_order": 6,
+      "created_at": "2026-10-17T08:20:14.652Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:1b7ca0b9-1f00-45c3-96a9-c5a4b0fba5ce",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "charts_2",
+      "sort_order": 7,
+      "created_at": "2026-10-17T08:20:14.652Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:f6881a19-de3c-43fb-8a8e-01ac15a3035b",
+      "parent_id": "02d9ea22-1dc9-46c2-b969-7cb44b82224e",
+      "name": "docs_2",
+      "sort_order": 8,
+      "created_at": "2026-10-17T08:20:14.652Z",
+      "kind": "workdir"
+    }
+  ],
+  "cards": [
+    {
+      "id": "143c8393-d17b-4307-a55e-fc109ef2bea0",
+      "kind": "formatdoc",
+      "name": "Spec",
+      "section": "b797fe7c-9d56-42d3-a55e-dbeb0de0042e",
+      "v": 7,
+      "order": 8,
+      "fields": {
+        "label": "仕様"
+      },
+      "rows": {
+        "rows": [
+          {
+            "id": "aaa13b00a68a6d73adf8fcc3",
+            "fields": {
+              "name": "intro",
+              "kind": "item",
+              "heading": "はじめに"
+            },
+            "rows": {
+              "rows": [
+                {
+                  "id": "9e11ee6e7243acc64b0b349f",
+                  "fields": {
+                    "name": "body",
+                    "kind": "text",
+                    "body": "[[Schemas/Ordering:Order]] を扱う"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "b7b58dada761ca0402eb8142",
+            "fields": {
+              "name": "tables",
+              "kind": "item",
+              "heading": "表"
+            },
+            "rows": {
+              "rows": [
+                {
+                  "id": "a62e005dbb37b5e005ec14d4",
+                  "fields": {
+                    "name": "words",
+                    "kind": "table",
+                    "columns": [
+                      "名前",
+                      "意味"
+                    ],
+                    "cells": [
+                      [
+                        "id",
+                        "識別子"
+                      ],
+                      [
+                        "total",
+                        "合計"
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "id": "aebbf3b87bb285d57ecdb93c",
+                  "fields": {
+                    "name": "chart",
+                    "kind": "diagram",
+                    "target": "Charts/Shop:Checkout"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "68461a63fb3a832a1566b415",
+            "fields": {
+              "name": "cards",
+              "kind": "item",
+              "heading": "カード"
+            },
+            "rows": {
+              "rows": [
+                {
+                  "id": "812ddfb9c139f9fc9a4e7bd9",
+                  "fields": {
+                    "name": "order",
+                    "kind": "card",
+                    "target": "Schemas/Ordering:Order"
+                  }
+                },
+                {
+                  "id": "b8d3490305c9717fa44d8086",
+                  "fields": {
+                    "name": "status",
+                    "kind": "card",
+                    "target": "Schemas:Status"
+                  }
+                },
+                {
+                  "id": "8208385c61283b0e50a7ad64",
+                  "fields": {
+                    "name": "flows",
+                    "kind": "diagrams",
+                    "target": "Charts/Shop:"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "6d5c47b8-c8ca-4e03-86f3-5608d2e9aafb",
+      "kind": "freedoc",
+      "name": "Overview",
+      "section": "b797fe7c-9d56-42d3-a55e-dbeb0de0042e",
+      "v": 7,
+      "order": 9,
+      "fields": {
+        "body": "# 概要\n\n注文を受けて記録する。\n\n![[Charts/Shop:Checkout]]\n\n![[Charts/Shop:Refund|sequence]]\n\n注文の図 ![[Schemas/Ordering:Order]] と区画の図 ![[Schemas:]]。\n\n状態は {{Schemas:Status}}、種類は {{Schemas/Ordering:Order.kind}}。合計は [[Schemas/Ordering:Order.total]]、顧客は [[Schemas:Customer]]。\n\n無いもの [[Nope:Missing]] と ![[Nope:Gone]] と {{Schemas:Nothing}}。`[[コードの中]]` は読まない。"
+      }
+    },
+    {
+      "id": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+      "kind": "enum",
+      "name": "Status",
+      "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "v": 7,
+      "order": 2,
+      "fields": {
+        "open": true
+      },
+      "rows": {
+        "values": [
+          {
+            "id": "fa7668a7-c2ce-4555-834a-260f52c7cbf7",
+            "fields": {
+              "value": "open",
+              "label": "受付"
+            }
+          },
+          {
+            "id": "905a44af-addf-44e8-9316-af9e65304460",
+            "fields": {
+              "value": "paid"
+            }
+          },
+          {
+            "id": "3209dd53-20c6-4c30-8bde-627b681e52c3",
+            "fields": {
+              "value": "shipped",
+              "label": "発送済み"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+      "kind": "entity",
+      "name": "Customer",
+      "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "v": 7,
+      "order": 3,
+      "rows": {
+        "fields": [
+          {
+            "id": "d12cdef3-4aa7-4242-8f19-07fe46ca6dbb",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "9b51712c-1dd5-4077-8878-160b3a8a804a",
+            "fields": {
+              "name": "name",
+              "label": "名前"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "3093755a-3fb9-4a96-900a-0f115a63d49a",
+      "kind": "store",
+      "name": "Orders",
+      "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "v": 7,
+      "order": 4,
+      "connections": [
+        {
+          "id": "45fa11c49e0c372160908786",
+          "line": "holds",
+          "to": "0279a562-6f89-4ba3-bc08-70dc650e495e"
+        }
+      ]
+    },
+    {
+      "id": "6aa1fb8f-1b22-4fca-b796-65288c4c5e2c",
+      "kind": "note",
+      "name": "Rule",
+      "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+      "v": 7,
+      "order": 5,
+      "fields": {
+        "body": "注文は [[Schemas/Ordering:Order.total]] を持つ。\n\n![[Schemas/Ordering:Order]]"
+      }
+    },
+    {
+      "id": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+      "kind": "entity",
+      "name": "Order",
+      "section": "0e248de1-09bc-4006-a40c-b42ff900d2eb",
+      "v": 7,
+      "fields": {
+        "label": "注文",
+        "description": "注文の記録",
+        "tags": [
+          "中核"
+        ],
+        "metadata": {
+          "source": "spec"
+        },
+        "rules": [
+          {
+            "kind": "sumOf",
+            "of": "lines[].qty",
+            "into": "total"
+          }
+        ],
+        "absentFields": [
+          {
+            "name": "discount",
+            "reason": "割引は別の文書で持つ"
+          }
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "f51b8766-53f4-4c90-af51-ee9c1422c387",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "dbb06303-818c-48d6-9168-a73fa2b1ca6f",
+            "fields": {
+              "name": "total",
+              "description": "税込み",
+              "type": "decimal",
+              "required": true
+            }
+          },
+          {
+            "id": "f557c7ca-7460-4a55-875c-33e378405de6",
+            "fields": {
+              "name": "status"
+            }
+          },
+          {
+            "id": "00332d35-4d19-4513-a5d8-7c79227bf939",
+            "fields": {
+              "name": "lines",
+              "array": true
+            }
+          },
+          {
+            "id": "fa9f365a-abb1-4546-a714-7eff0f22b426",
+            "fields": {
+              "name": "customer_id"
+            }
+          },
+          {
+            "id": "d34dea83-e06b-4290-8aeb-17f9e7f16349",
+            "fields": {
+              "name": "shipping",
+              "type": "object"
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "e97cf9e1-6b53-4a33-b7a6-aa5e78cc26ff",
+                  "fields": {
+                    "name": "postal_code",
+                    "nullable": true,
+                    "unique": true
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "6041da71-b0e5-4de1-8013-fc6cda7438a1",
+            "fields": {
+              "name": "kind",
+              "const": "order"
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "8e07fb17b35380943a9da6fd",
+          "line": "embed",
+          "from": "status",
+          "to": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c"
+        },
+        {
+          "id": "2c2007acada31587cfb6ace7",
+          "line": "embed",
+          "from": "lines",
+          "to": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02"
+        },
+        {
+          "id": "5a0d0185c3598fcfc761cfac",
+          "line": "points",
+          "from": "customer_id",
+          "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+          "fields": {
+            "cardinality": "N:1"
+          }
+        },
+        {
+          "id": "7c88e76ba167f3962451c2ed",
+          "line": "signedBy",
+          "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+          "at": "id",
+          "fields": {
+            "payload": "approval",
+            "excludes": [
+              "Schemas/Ordering:Order.kind"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02",
+      "kind": "value",
+      "name": "Line",
+      "section": "0e248de1-09bc-4006-a40c-b42ff900d2eb",
+      "v": 7,
+      "order": 1,
+      "rows": {
+        "fields": [
+          {
+            "id": "7e17f1d3-28af-4d54-bedc-c87f80bbcae4",
+            "fields": {
+              "name": "sku",
+              "required": true
+            }
+          },
+          {
+            "id": "aa723c9b-906b-4966-a5fd-54af760b6c44",
+            "fields": {
+              "name": "qty",
+              "type": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "8f1395e4f4b3f0539089a57a",
+      "kind": "begin",
+      "name": "start",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "v": 7,
+      "fields": {
+        "trigger": "manual"
+      },
+      "connections": [
+        {
+          "id": "d1f6c5566e48036811da9029",
+          "line": "next",
+          "to": "12fc7777179c3b1fefaf925b"
+        }
+      ]
+    },
+    {
+      "id": "d6139afd144acd23733d9760",
+      "kind": "begin",
+      "name": "start",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "fields": {
+        "trigger": "receive",
+        "carries": [
+          "Schemas/Ordering:Order.total"
+        ]
+      },
+      "connections": [
+        {
+          "id": "ce6a00a93ddb199e2a477195",
+          "line": "next",
+          "to": "a64820ee902277d2c8120496"
+        },
+        {
+          "id": "1b1b1c1167c9bf41a242346e",
+          "line": "peer",
+          "to": "65f0519b-330e-4293-bd81-614d6ea12f87"
+        }
+      ]
+    },
+    {
+      "id": "a64820ee902277d2c8120496",
+      "kind": "process",
+      "name": "ask",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 1,
+      "fields": {
+        "label": "問い合わせ"
+      },
+      "rows": {
+        "steps": [
+          {
+            "id": "6acfc81eba7c675a4e65cf4e",
+            "fields": {
+              "do": "call",
+              "program": "payment-gateway",
+              "carries": [
+                "Schemas/Ordering:Order.total"
+              ],
+              "returns": [
+                "Schemas/Ordering:Order.status"
+              ]
+            }
+          },
+          {
+            "id": "353b247e797136f23d674d7d",
+            "fields": {
+              "do": "send",
+              "carries": [
+                "Schemas/Ordering:Order.id"
+              ]
+            }
+          },
+          {
+            "id": "03f5b597d0268e9863889c2d",
+            "fields": {
+              "do": "write"
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "7e0b3d5039c72ee7b4816871",
+          "line": "next",
+          "to": "f9cf2b673d2bc3dc86e3d235"
+        },
+        {
+          "id": "67b82048a0b8d7ea862acf0e",
+          "line": "next",
+          "to": "f42b7b9b0386a9e6de201a5c"
+        },
+        {
+          "id": "f0c06c66b18fd546ffdb6fee",
+          "line": "peer",
+          "from": "steps[1]",
+          "to": "65f0519b-330e-4293-bd81-614d6ea12f87"
+        },
+        {
+          "id": "db2ef3f557e2395b9e238693",
+          "line": "writes",
+          "from": "steps[2]",
+          "to": "3093755a-3fb9-4a96-900a-0f115a63d49a"
+        }
+      ]
+    },
+    {
+      "id": "12fc7777179c3b1fefaf925b",
+      "kind": "process",
+      "name": "save",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "v": 7,
+      "order": 1,
+      "fields": {
+        "label": "保存"
+      },
+      "rows": {
+        "steps": [
+          {
+            "id": "b4d2693a5371419aa77f5eaa",
+            "fields": {
+              "do": "read"
+            }
+          },
+          {
+            "id": "2fb437b004ae4e7292800084",
+            "fields": {
+              "do": "write",
+              "description": "記録に置く"
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "6626acf31ddb75897eb2d417",
+          "line": "next",
+          "to": "ef43b5868ec7a18dc246c254"
+        },
+        {
+          "id": "3ac651b0e3c6e25502c19a98",
+          "line": "reads",
+          "from": "steps[0]",
+          "to": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+          "at": "total"
+        },
+        {
+          "id": "de59f547b39a9953dadb32ab",
+          "line": "writes",
+          "from": "steps[1]",
+          "to": "3093755a-3fb9-4a96-900a-0f115a63d49a"
+        }
+      ]
+    },
+    {
+      "id": "f9cf2b673d2bc3dc86e3d235",
+      "kind": "process",
+      "name": "a",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 2,
+      "rows": {
+        "steps": [
+          {
+            "id": "def87f275f576920dbb3f03d",
+            "fields": {
+              "do": "read"
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "a69d56da52cdc75dd7b56f89",
+          "line": "next",
+          "to": "a7f4aaf6272f91347571b34d"
+        },
+        {
+          "id": "d9d0d14741feda0c20ca62cb",
+          "line": "reads",
+          "from": "steps[0]",
+          "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+          "at": "name"
+        }
+      ]
+    },
+    {
+      "id": "ef43b5868ec7a18dc246c254",
+      "kind": "eval",
+      "name": "check",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "v": 7,
+      "order": 2,
+      "fields": {
+        "value": "Schemas/Ordering:Order.status"
+      },
+      "connections": [
+        {
+          "id": "7c274f2c547cfdf660b470e3",
+          "line": "branch",
+          "to": "b5a3d2f198536da6625ec07f",
+          "fields": {
+            "when": "支払い済み"
+          }
+        },
+        {
+          "id": "a4f3b8b5c46ea27a622eaae4",
+          "line": "else",
+          "to": "91065fd9ce30cc268659c710"
+        }
+      ]
+    },
+    {
+      "id": "f42b7b9b0386a9e6de201a5c",
+      "kind": "wait",
+      "name": "b",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 3,
+      "fields": {
+        "for": "approval",
+        "timeout": "1日"
+      },
+      "connections": [
+        {
+          "id": "f8533c1978075cbf8c85d284",
+          "line": "next",
+          "to": "a7f4aaf6272f91347571b34d"
+        },
+        {
+          "id": "9576937eeac73f005190a6bf",
+          "line": "onTimeout",
+          "to": "c6875dbb414eeb0b5665abb1"
+        }
+      ]
+    },
+    {
+      "id": "b5a3d2f198536da6625ec07f",
+      "kind": "end",
+      "name": "done",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "v": 7,
+      "order": 3,
+      "fields": {
+        "outcome": "success"
+      }
+    },
+    {
+      "id": "91065fd9ce30cc268659c710",
+      "kind": "end",
+      "name": "failed",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "v": 7,
+      "order": 4,
+      "fields": {
+        "outcome": "failure"
+      }
+    },
+    {
+      "id": "a7f4aaf6272f91347571b34d",
+      "kind": "join",
+      "name": "meet",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 4,
+      "fields": {
+        "join": "all"
+      },
+      "connections": [
+        {
+          "id": "08184395e51bc986ee3c0572",
+          "line": "next",
+          "to": "9f7b1055282616a6af59358d"
+        }
+      ]
+    },
+    {
+      "id": "9f7b1055282616a6af59358d",
+      "kind": "run",
+      "name": "again",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 5,
+      "connections": [
+        {
+          "id": "2c59576ffe8f76ba68f67116",
+          "line": "next",
+          "to": "831a3c9e995e3abc713b5afc"
+        },
+        {
+          "id": "70e32a02ebb67fd7bfc1d305",
+          "line": "onError",
+          "to": "c6875dbb414eeb0b5665abb1"
+        },
+        {
+          "id": "de879da57d4f200ef7a2dda4",
+          "line": "runs",
+          "to": "65f0519b-330e-4293-bd81-614d6ea12f87"
+        }
+      ]
+    },
+    {
+      "id": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "kind": "flow",
+      "name": "Checkout",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "v": 7,
+      "order": 6,
+      "fields": {
+        "label": "購入",
+        "diagram": "sequence"
+      }
+    },
+    {
+      "id": "831a3c9e995e3abc713b5afc",
+      "kind": "eval",
+      "name": "check",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 6,
+      "fields": {
+        "value": "Schemas/Ordering:Order.status"
+      },
+      "connections": [
+        {
+          "id": "a235e9b892a5bfcaae7374f1",
+          "line": "branch",
+          "to": "ba29095877aba460663f2431",
+          "fields": {
+            "when": "[[Schemas:Status]] が paid"
+          }
+        },
+        {
+          "id": "db42dba55bbeee1e56cab8d5",
+          "line": "else",
+          "to": "a64820ee902277d2c8120496"
+        }
+      ]
+    },
+    {
+      "id": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "kind": "flow",
+      "name": "Refund",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "v": 7,
+      "order": 7,
+      "fields": {
+        "label": "返金"
+      }
+    },
+    {
+      "id": "ba29095877aba460663f2431",
+      "kind": "end",
+      "name": "done",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 7,
+      "fields": {
+        "outcome": "success",
+        "return": {
+          "carries": [
+            "Schemas/Ordering:Order.id"
+          ]
+        }
+      }
+    },
+    {
+      "id": "c6875dbb414eeb0b5665abb1",
+      "kind": "end",
+      "name": "failed",
+      "section": "2a5e419c-0d54-42dc-99cc-95f302f26c84",
+      "in": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "v": 7,
+      "order": 8,
+      "fields": {
+        "outcome": "failure"
+      }
+    },
+    {
+      "id": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+      "kind": "note",
+      "name": "Memo",
+      "section": "10c0d118-1643-4415-b02d-ae0bf50bdff5",
+      "v": 7,
+      "order": 10,
+      "fields": {
+        "body": "決めること: 返金の扱い"
+      }
+    }
+  ],
+  "branches": [
+    {
+      "id": "09016f77-e73c-49b5-830e-a21e1a2ae7e9",
+      "name": "refunds",
+      "created_at": "2026-10-04T11:11:20.298Z",
+      "cards": [
+        {
+          "id": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+          "doc": {
+            "id": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+            "kind": "entity",
+            "name": "Order",
+            "section": "0e248de1-09bc-4006-a40c-b42ff900d2eb",
+            "v": 7,
+            "fields": {
+              "label": "注文",
+              "description": "注文の記録",
+              "tags": [
+                "中核"
+              ],
+              "metadata": {
+                "source": "spec"
+              },
+              "rules": [
+                {
+                  "kind": "sumOf",
+                  "of": "lines[].qty",
+                  "into": "total"
+                }
+              ],
+              "absentFields": [
+                {
+                  "name": "discount",
+                  "reason": "割引は別の文書で持つ"
+                }
+              ]
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "f51b8766-53f4-4c90-af51-ee9c1422c387",
+                  "fields": {
+                    "name": "id",
+                    "type": "uuid",
+                    "required": true,
+                    "primaryKey": true
+                  }
+                },
+                {
+                  "id": "dbb06303-818c-48d6-9168-a73fa2b1ca6f",
+                  "fields": {
+                    "name": "total",
+                    "description": "税込み",
+                    "type": "decimal",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "f557c7ca-7460-4a55-875c-33e378405de6",
+                  "fields": {
+                    "name": "status"
+                  }
+                },
+                {
+                  "id": "00332d35-4d19-4513-a5d8-7c79227bf939",
+                  "fields": {
+                    "name": "lines",
+                    "array": true
+                  }
+                },
+                {
+                  "id": "fa9f365a-abb1-4546-a714-7eff0f22b426",
+                  "fields": {
+                    "name": "customer_id"
+                  }
+                },
+                {
+                  "id": "d34dea83-e06b-4290-8aeb-17f9e7f16349",
+                  "fields": {
+                    "name": "shipping",
+                    "type": "object"
+                  },
+                  "rows": {
+                    "fields": [
+                      {
+                        "id": "e97cf9e1-6b53-4a33-b7a6-aa5e78cc26ff",
+                        "fields": {
+                          "name": "postal_code",
+                          "nullable": true,
+                          "unique": true
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "6041da71-b0e5-4de1-8013-fc6cda7438a1",
+                  "fields": {
+                    "name": "kind",
+                    "const": "order"
+                  }
+                },
+                {
+                  "id": "f2c3c33e-6795-4260-916c-9b71b0bd522e",
+                  "fields": {
+                    "name": "refund_total",
+                    "type": "decimal",
+                    "nullable": true
+                  }
+                }
+              ]
+            },
+            "connections": [
+              {
+                "id": "8e07fb17b35380943a9da6fd",
+                "line": "embed",
+                "from": "status",
+                "to": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c"
+              },
+              {
+                "id": "2c2007acada31587cfb6ace7",
+                "line": "embed",
+                "from": "lines",
+                "to": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02"
+              },
+              {
+                "id": "5a0d0185c3598fcfc761cfac",
+                "line": "points",
+                "from": "customer_id",
+                "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+                "fields": {
+                  "cardinality": "N:1"
+                }
+              },
+              {
+                "id": "7c88e76ba167f3962451c2ed",
+                "line": "signedBy",
+                "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+                "at": "id",
+                "fields": {
+                  "payload": "approval",
+                  "excludes": [
+                    "Schemas/Ordering:Order.kind"
+                  ]
+                }
+              }
+            ]
+          },
+          "base": {
+            "id": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+            "kind": "entity",
+            "name": "Order",
+            "section": "0e248de1-09bc-4006-a40c-b42ff900d2eb",
+            "v": 7,
+            "fields": {
+              "label": "注文",
+              "description": "注文の記録",
+              "tags": [
+                "中核"
+              ],
+              "metadata": {
+                "source": "spec"
+              },
+              "rules": [
+                {
+                  "kind": "sumOf",
+                  "of": "lines[].qty",
+                  "into": "total"
+                }
+              ],
+              "absentFields": [
+                {
+                  "name": "discount",
+                  "reason": "割引は別の文書で持つ"
+                }
+              ]
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "f51b8766-53f4-4c90-af51-ee9c1422c387",
+                  "fields": {
+                    "name": "id",
+                    "type": "uuid",
+                    "required": true,
+                    "primaryKey": true
+                  }
+                },
+                {
+                  "id": "dbb06303-818c-48d6-9168-a73fa2b1ca6f",
+                  "fields": {
+                    "name": "total",
+                    "description": "税込み",
+                    "type": "decimal",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "f557c7ca-7460-4a55-875c-33e378405de6",
+                  "fields": {
+                    "name": "status"
+                  }
+                },
+                {
+                  "id": "00332d35-4d19-4513-a5d8-7c79227bf939",
+                  "fields": {
+                    "name": "lines",
+                    "array": true
+                  }
+                },
+                {
+                  "id": "fa9f365a-abb1-4546-a714-7eff0f22b426",
+                  "fields": {
+                    "name": "customer_id"
+                  }
+                },
+                {
+                  "id": "d34dea83-e06b-4290-8aeb-17f9e7f16349",
+                  "fields": {
+                    "name": "shipping",
+                    "type": "object"
+                  },
+                  "rows": {
+                    "fields": [
+                      {
+                        "id": "e97cf9e1-6b53-4a33-b7a6-aa5e78cc26ff",
+                        "fields": {
+                          "name": "postal_code",
+                          "nullable": true,
+                          "unique": true
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "6041da71-b0e5-4de1-8013-fc6cda7438a1",
+                  "fields": {
+                    "name": "kind",
+                    "const": "order"
+                  }
+                }
+              ]
+            },
+            "connections": [
+              {
+                "id": "8e07fb17b35380943a9da6fd",
+                "line": "embed",
+                "from": "status",
+                "to": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c"
+              },
+              {
+                "id": "2c2007acada31587cfb6ace7",
+                "line": "embed",
+                "from": "lines",
+                "to": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02"
+              },
+              {
+                "id": "5a0d0185c3598fcfc761cfac",
+                "line": "points",
+                "from": "customer_id",
+                "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+                "fields": {
+                  "cardinality": "N:1"
+                }
+              },
+              {
+                "id": "7c88e76ba167f3962451c2ed",
+                "line": "signedBy",
+                "to": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+                "at": "id",
+                "fields": {
+                  "payload": "approval",
+                  "excludes": [
+                    "Schemas/Ordering:Order.kind"
+                  ]
+                }
+              }
+            ]
+          },
+          "based_at": "2026-10-04T11:11:20.323Z"
+        },
+        {
+          "id": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+          "removed": true,
+          "base": {
+            "id": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+            "kind": "note",
+            "name": "Memo",
+            "section": "10c0d118-1643-4415-b02d-ae0bf50bdff5",
+            "v": 7,
+            "order": 10,
+            "fields": {
+              "body": "決めること: 返金の扱い"
+            }
+          },
+          "based_at": "2026-10-04T11:11:20.349Z"
+        },
+        {
+          "id": "4a2e2345-96e4-4fda-9512-093091f0dd89",
+          "doc": {
+            "id": "4a2e2345-96e4-4fda-9512-093091f0dd89",
+            "kind": "entity",
+            "name": "Refund",
+            "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "v": 7,
+            "order": 11,
+            "rows": {
+              "fields": [
+                {
+                  "id": "d56737b6-f038-4519-9a6b-9279afc8f169",
+                  "fields": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true
+                  }
+                },
+                {
+                  "id": "31b4402f-6355-4d74-9055-b5977e9ea07f",
+                  "fields": {
+                    "name": "order_id",
+                    "type": "uuid"
+                  }
+                }
+              ]
+            },
+            "connections": [
+              {
+                "id": "bedff90345624be6fa72a59e",
+                "line": "points",
+                "from": "order_id",
+                "to": "0279a562-6f89-4ba3-bc08-70dc650e495e"
+              }
+            ]
+          }
+        },
+        {
+          "id": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+          "doc": {
+            "id": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+            "kind": "enum",
+            "name": "Status",
+            "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "v": 7,
+            "order": 2,
+            "fields": {
+              "open": true
+            },
+            "rows": {
+              "values": [
+                {
+                  "id": "bdb9f200-30a9-46b7-b36d-c0b37c127c17",
+                  "fields": {
+                    "value": "open",
+                    "label": "受付"
+                  }
+                },
+                {
+                  "id": "a22ecdac-fa40-4130-9a6b-8b301c9cbcfb",
+                  "fields": {
+                    "value": "paid"
+                  }
+                },
+                {
+                  "id": "9dd42037-f554-4eda-83fc-c74eef496534",
+                  "fields": {
+                    "value": "refunded",
+                    "label": "返金済み"
+                  }
+                }
+              ]
+            }
+          },
+          "base": {
+            "id": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+            "kind": "enum",
+            "name": "Status",
+            "section": "69ee29b2-3c67-4830-87e5-3349d64628d9",
+            "v": 7,
+            "order": 2,
+            "fields": {
+              "open": true
+            },
+            "rows": {
+              "values": [
+                {
+                  "id": "fa7668a7-c2ce-4555-834a-260f52c7cbf7",
+                  "fields": {
+                    "value": "open",
+                    "label": "受付"
+                  }
+                },
+                {
+                  "id": "905a44af-addf-44e8-9316-af9e65304460",
+                  "fields": {
+                    "value": "paid"
+                  }
+                },
+                {
+                  "id": "3209dd53-20c6-4c30-8bde-627b681e52c3",
+                  "fields": {
+                    "value": "shipped",
+                    "label": "発送済み"
+                  }
+                }
+              ]
+            }
+          },
+          "based_at": "2026-10-04T11:11:20.336Z"
+        }
+      ],
+      "prints": [
+        {
+          "card": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+          "print": "9637faf8e29e6848aab2411415d3a192cf89ccac4455fd34d9cbb1a563445924",
+          "path": "Schemas/Ordering:Order"
+        },
+        {
+          "card": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+          "print": "dcaecb4e9c4fd692a71b7cfd31e51c4e182b0dc69cc00364479c957876165d36",
+          "path": "Free:Memo"
+        },
+        {
+          "card": "12fc7777179c3b1fefaf925b",
+          "print": "bf024d516db1e24dd93707bf9247752c7dece49a7133c8e62f3bb43d81e9b090",
+          "path": "Charts/Shop:Checkout.save"
+        },
+        {
+          "card": "143c8393-d17b-4307-a55e-fc109ef2bea0",
+          "print": "d817d05668ffeee5d02d1c90079d35379fb01fcc2283d6fabb8e51097aea2faf",
+          "path": "Docs:Spec"
+        },
+        {
+          "card": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+          "print": "c8241c6917af252dec167aee4fee9086211323d2948a0f862a6b25fd312dc94a",
+          "path": "Schemas:Customer"
+        },
+        {
+          "card": "3093755a-3fb9-4a96-900a-0f115a63d49a",
+          "print": "c33f49c7d83d2a772ed54d6f0e6c0c98a6ff2171e6c8782b1bb2222f10dcc17c",
+          "path": "Schemas:Orders"
+        },
+        {
+          "card": "65f0519b-330e-4293-bd81-614d6ea12f87",
+          "print": "5e764e58adc29c8d203550f9ddefc552211b43d12ca3223795af8db5e5a0d688",
+          "path": "Charts/Shop:Checkout"
+        },
+        {
+          "card": "6aa1fb8f-1b22-4fca-b796-65288c4c5e2c",
+          "print": "dcdb56dca6eefd09fdccdeb7889d2d3ce20db4d805e888dca3a75f1a1289f794",
+          "path": "Schemas:Rule"
+        },
+        {
+          "card": "6d5c47b8-c8ca-4e03-86f3-5608d2e9aafb",
+          "print": "db584c9ac9a2791d788add9e050096cddf26ad7a13e7194c5d0d15250a19974a",
+          "path": "Docs:Overview"
+        },
+        {
+          "card": "831a3c9e995e3abc713b5afc",
+          "print": "5fd142413445d00ae120177b5403cac328716e16cc7350516c63c37ada0bc3b8",
+          "path": "Charts/Shop:Refund.check"
+        },
+        {
+          "card": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+          "print": "c83bda0f702a286c1558c1fbe7adfab36d0d71e0ed650a0be22c16fcdc28b160",
+          "path": "Schemas:Status"
+        },
+        {
+          "card": "8f1395e4f4b3f0539089a57a",
+          "print": "6129c657e18226abd7524a9824fd0d6743f2721f28f9154a53d4e76a4677e89f",
+          "path": "Charts/Shop:Checkout.start"
+        },
+        {
+          "card": "91065fd9ce30cc268659c710",
+          "print": "a4c9a77b07c1d76fd007e3c6659db9a7363e3032842b8e8d19f7e827ca79624f",
+          "path": "Charts/Shop:Checkout.failed"
+        },
+        {
+          "card": "9f7b1055282616a6af59358d",
+          "print": "01a3038b43a84a95b9e836249587de4b260fc17c71121b54980f88bc3912a269",
+          "path": "Charts/Shop:Refund.again"
+        },
+        {
+          "card": "a64820ee902277d2c8120496",
+          "print": "110b9de5bdbd48c8ba37aca7647bdf613e01048f8e98e1be538b4d1f0a46a545",
+          "path": "Charts/Shop:Refund.ask"
+        },
+        {
+          "card": "a7f4aaf6272f91347571b34d",
+          "print": "eb94f424407a191bc35c35c0befb708e567b682060a1c4163e7da94d99fc1d28",
+          "path": "Charts/Shop:Refund.meet"
+        },
+        {
+          "card": "b5a3d2f198536da6625ec07f",
+          "print": "56ba97e345432b59dc9fc14619248fc9e67c64374d110d275bf5416d3ed35a28",
+          "path": "Charts/Shop:Checkout.done"
+        },
+        {
+          "card": "ba29095877aba460663f2431",
+          "print": "b3aca13a968f5649433152cc91c8a40c9f9e9eede247165a62ef5b3de987f1df",
+          "path": "Charts/Shop:Refund.done"
+        },
+        {
+          "card": "c6875dbb414eeb0b5665abb1",
+          "print": "f01a18a5291755752277114c84d5640f7d80b04ee0fdd32f8647f52f2c08b6d4",
+          "path": "Charts/Shop:Refund.failed"
+        },
+        {
+          "card": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+          "print": "82ca7d61434a118c8908d3ebe5e7528ec8ea5f92113257bd376168dbbd677494",
+          "path": "Charts/Shop:Refund"
+        },
+        {
+          "card": "d6139afd144acd23733d9760",
+          "print": "e7141e66a1e95f2abdfd6787f69dd7d26dfe9a74034696c4372a415c775fd87c",
+          "path": "Charts/Shop:Refund.start"
+        },
+        {
+          "card": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02",
+          "print": "e26d967ffe0667766259a9aee2fbafdb06231428178ac37d083a178f10f0de4e",
+          "path": "Schemas/Ordering:Line"
+        },
+        {
+          "card": "ef43b5868ec7a18dc246c254",
+          "print": "1e8f8d26ad0649076077dfe59165998d0dd7bc1660f116e36e55a7a48d2acf9c",
+          "path": "Charts/Shop:Checkout.check"
+        },
+        {
+          "card": "f42b7b9b0386a9e6de201a5c",
+          "print": "930da6ee98a38594743d3ee3b422ec492489447a2ea68bbe6ad23128d3d11789",
+          "path": "Charts/Shop:Refund.b"
+        },
+        {
+          "card": "f9cf2b673d2bc3dc86e3d235",
+          "print": "f01629c21de030ac572f6a2e69c56478fa7780a548d3bce72154a770fee3b372",
+          "path": "Charts/Shop:Refund.a"
+        }
+      ]
+    }
+  ],
+  "board": {
+    "sections": [
+      {
+        "id": "ee1cbbad-8bec-46f9-ac37-e86be3eae038",
+        "name": "Board",
+        "created_at": "2026-10-04T11:11:20.241Z"
+      },
+      {
+        "id": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "parent_id": "ee1cbbad-8bec-46f9-ac37-e86be3eae038",
+        "name": "Goals",
+        "created_at": "2026-10-04T11:11:20.242Z",
+        "kind": "goals"
+      },
+      {
+        "id": "5071af16-1d3b-5ae0-b085-467980ab3dcb",
+        "parent_id": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "name": "Complete",
+        "created_at": "2026-10-04T11:11:20.242Z",
+        "kind": "complete"
+      },
+      {
+        "id": "25aea517-fbce-53fe-95b2-1bd3a498264b",
+        "parent_id": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "name": "Cancelled",
+        "sort_order": 1,
+        "created_at": "2026-10-04T11:11:20.242Z",
+        "kind": "cancelled"
+      }
+    ],
+    "cards": [
+      {
+        "id": "efd49e75-03bd-4597-b740-e1c9423be80b",
+        "kind": "task",
+        "name": "Design",
+        "section": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "v": 7,
+        "fields": {
+          "body": "返金の設計",
+          "label": "設計を決める",
+          "done": true
+        },
+        "in": "42de4e0d-6d6a-42d5-8f4f-26cfcb2dacaf"
+      },
+      {
+        "id": "42de4e0d-6d6a-42d5-8f4f-26cfcb2dacaf",
+        "kind": "goal",
+        "name": "Ship",
+        "section": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "v": 7,
+        "order": 1,
+        "fields": {
+          "担当": "Claude",
+          "status": "進行中",
+          "due": "2026-10-10"
+        }
+      },
+      {
+        "id": "66a2f9510526bd7913be57ec",
+        "kind": "task",
+        "name": "t2",
+        "section": "2be69028-c877-48df-90ea-bdfe94f2168d",
+        "v": 7,
+        "order": 1,
+        "fields": {
+          "label": "作る",
+          "body": "- [x] 保存\n- [ ] 画面"
+        },
+        "in": "42de4e0d-6d6a-42d5-8f4f-26cfcb2dacaf"
+      }
+    ]
+  },
+  "default_view": {
+    "grid_gap": 1
+  },
+  "places": [
+    {
+      "item_kind": "card",
+      "item": "0279a562-6f89-4ba3-bc08-70dc650e495e",
+      "x": 0,
+      "y": 0,
+      "pinned": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "04bd5bf0-5ff8-4b4b-b6ca-a8564417027c",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "143c8393-d17b-4307-a55e-fc109ef2bea0",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "1a420d63-f71a-4715-adb6-3d5f80f46f1e",
+      "x": 12,
+      "y": 0,
+      "pinned": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "3093755a-3fb9-4a96-900a-0f115a63d49a",
+      "x": 22,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "6aa1fb8f-1b22-4fca-b796-65288c4c5e2c",
+      "x": 33,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "6d5c47b8-c8ca-4e03-86f3-5608d2e9aafb",
+      "x": 11,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "8dc0c3ba-098d-48d3-911d-cecbccf4d65c",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "x": 11,
+      "y": 0
+    },
+    {
+      "item_kind": "card",
+      "item": "dcb4c83e-07e4-44d7-88d0-ecc163dd8e02",
+      "x": 11,
+      "y": 0
+    },
+    {
+      "view": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "item_kind": "card",
+      "item": "12fc7777179c3b1fefaf925b",
+      "x": 12,
+      "y": 0
+    },
+    {
+      "view": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "item_kind": "card",
+      "item": "8f1395e4f4b3f0539089a57a",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "view": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "item_kind": "card",
+      "item": "91065fd9ce30cc268659c710",
+      "x": 36,
+      "y": 5
+    },
+    {
+      "view": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "item_kind": "card",
+      "item": "b5a3d2f198536da6625ec07f",
+      "x": 36,
+      "y": 0
+    },
+    {
+      "view": "65f0519b-330e-4293-bd81-614d6ea12f87",
+      "item_kind": "card",
+      "item": "ef43b5868ec7a18dc246c254",
+      "x": 24,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "831a3c9e995e3abc713b5afc",
+      "x": 60,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "9f7b1055282616a6af59358d",
+      "x": 48,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "a64820ee902277d2c8120496",
+      "x": 12,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "a7f4aaf6272f91347571b34d",
+      "x": 36,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "ba29095877aba460663f2431",
+      "x": 72,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "c6875dbb414eeb0b5665abb1",
+      "x": 36,
+      "y": 6
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "d6139afd144acd23733d9760",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "f42b7b9b0386a9e6de201a5c",
+      "x": 24,
+      "y": 6
+    },
+    {
+      "view": "c92047cb-2a0d-4339-8ca5-3347de1796b0",
+      "item_kind": "card",
+      "item": "f9cf2b673d2bc3dc86e3d235",
+      "x": 24,
+      "y": 0
+    }
+  ]
+}

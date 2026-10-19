@@ -1,0 +1,19 @@
+{
+  "walk.miss.customRow": "\"{path}\" was not found. The rows under {at} are: {there}",
+  "walk.miss.enumValue": "\"{path}\" was not found. The values of {at} are: {there}",
+  "walk.miss.field": "\"{path}\" was not found. Directly under {at} is: {there}",
+  "walk.miss.inner": "\"{path}\" was not found. What {at} holds is: {there}",
+  "walk.miss.noFields": "(no fields)",
+  "walk.miss.noRows": "(no rows)",
+  "walk.miss.noSteps": "(no steps)",
+  "walk.miss.noValues": "(no values)",
+  "walk.miss.none": "(none)",
+  "walk.miss.notItemRow": "\"{path}\" cannot be pointed to. {at} is a row that is not an item, and holds no names",
+  "walk.miss.pick": "\"{path}\" cannot be pointed to. {hint}",
+  "walk.miss.rows": "\"{path}\" was not found. The rows in {at} are: {there}",
+  "walk.miss.step": "\"{path}\" was not found. {at} has {count} steps: {there}",
+  "walk.path.empty": "The path is empty. For example: Schemas:User or Schemas:User.profile",
+  "walk.value.isArray": "\"{path}\" cannot be pointed to. {at} is an array, and what is inside is pointed to after picking an element ({at}[field=value,…] or {at}[0]. For an array of plain values: {at}[=value])",
+  "walk.value.missing": "\"{path}\" was not found. The fields under {at} are: {there}",
+  "walk.value.noShape": "\"{path}\" cannot be pointed to. {at} has no shape (the entity or value that of points to)"
+}

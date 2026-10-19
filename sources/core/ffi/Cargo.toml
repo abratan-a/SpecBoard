@@ -1,0 +1,18 @@
+# The bindings Swift calls the core through (UniFFI). The app takes the dynamic library
+# (tools/build-core-lib.sh; a static one would clash the core's SQLite symbols with the app's SQLite).
+# The static library is for the Swift check (swift-check)
+[package]
+name = "specboard-ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+license.workspace = true
+
+[lib]
+name = "specboard_ffi"
+crate-type = ["lib", "staticlib", "cdylib"]
+
+[dependencies]
+specboard-core = { path = ".." }
+uniffi = "0.32"

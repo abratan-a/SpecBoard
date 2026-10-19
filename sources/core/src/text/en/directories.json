@@ -1,0 +1,18 @@
+{
+  "directories.exclude.inside": "\"{text}\" in exclude must be a name or path inside the working directory (do not start with /, do not include ..)",
+  "directories.exclude.item": "{item} in exclude must be a non-empty string",
+  "directories.exclude.list": "exclude must be a list of what to leave out (\"target/\", \"sources/core/target/\", \".png\", and so on)",
+  "directories.exclude.most": "exclude takes at most 500 entries",
+  "directories.folder.absolute": "Write the folder starting with / or ~/",
+  "directories.folder.control": "A folder cannot contain line breaks or control characters",
+  "directories.folder.path": "folder is a folder on this machine (a string; null lets it go)",
+  "directories.named.missing": "There is no working directory \"{name}\" (available: {there})",
+  "directories.named.none": "There is no working directory \"{name}\" (there is none yet; one is made by adding {\"type\": \"workdir\", \"name\": \"{name}\"} to project_update's project_tree)",
+  "directories.parsers.key": "The key \"{key}\" of parsers is an extension (.h) or a file's name (Makefile), with no / and no spaces around it",
+  "directories.parsers.language": "The value {other} of \"{key}\" in parsers is a language's id (lower-case letters, digits, _ and -) or null (no language)",
+  "directories.parsers.most": "parsers holds at most 500",
+  "directories.parsers.object": "parsers is an object {\"<extension or file name>\": \"<language id>\" | null}, or null (back to the defaults)",
+  "directories.readType.oneOf": "readType must be one of {types} (got {raw})",
+  "directories.tree.twice": "The working directory {name} names the same working directory as another workdir entry",
+  "directories.tree.unknown": "The directory ({id}) of the working directory {name} is not one of this project's working directories; left out, it is matched by name"
+}

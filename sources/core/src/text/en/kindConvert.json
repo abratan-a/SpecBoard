@@ -1,0 +1,13 @@
+{
+  "kindConvert.problem.groupKey": "\"{key}\" is not a key you can write in {label}",
+  "kindConvert.problem.kindIs": "It must be {kind}, not {value}",
+  "kindConvert.problem.noCard": "There is no card \"{path}\"",
+  "kindConvert.problem.noCardUnmade": "There is no card \"{path}\" (it points at {card}, which could not be made in the same call; fix {card} and this goes through)",
+  "kindConvert.problem.noCardWhy": "There is no card \"{path}\". {why}",
+  "kindConvert.problem.noSection": "There is no section \"{path}\" (a section is written from the top of the tree, like UI/Home)",
+  "kindConvert.problem.rowKey": "\"{key}\" is not a key you can write in a {label} row",
+  "kindConvert.problem.rowNotPlaceable": "\"{key}\" is a kind of row that cannot be placed here",
+  "kindConvert.problem.rowObject": "A row must be an object",
+  "kindConvert.problem.rowsList": "Must be a list of rows",
+  "kindConvert.problem.strayKey": "{kind} cannot have this key"
+}

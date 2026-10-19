@@ -1,0 +1,18 @@
+{
+  "args.actionGone": "action はなくなりました。部品がすることは flow で書きます。flow は入れ物のカードで、中にノードのカードを置き、線でつなぎます: 開始（kind: begin。trigger: receive で受ける）→ 処理（kind: process。読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算するの行を steps に。行が読む・書く所は reads・writes の線）→ 終了（kind: end。返すものは return）を next の線で。ほかの flow を呼んで終わりを待つのは実行（kind: run と runs の線）。形は guide の about: flow。例（card_create の target を省き、value をパスごとに並べた 1 回の呼び出し）: {\"Behavior:Order\": {\"kind\": \"flow\"}, \"Behavior:Order.start\": {\"kind\": \"begin\", \"trigger\": \"receive\", \"program\": \"Claude Code\", \"carries\": [\"Data:Order\"], \"connections\": [{\"line\": \"next\", \"to\": \"work\"}]}, \"Behavior:Order.work\": {\"kind\": \"process\", \"steps\": [{\"do\": \"read\"}, {\"do\": \"write\"}], \"connections\": [{\"line\": \"reads\", \"from\": \"steps[0]\", \"to\": \"Data:Order\"}, {\"line\": \"writes\", \"from\": \"steps[1]\", \"to\": \"Data:Order\", \"at\": \"total\"}, {\"line\": \"next\", \"to\": \"done\"}]}, \"Behavior:Order.done\": {\"kind\": \"end\", \"outcome\": \"success\", \"return\": {\"carries\": [\"Data:Order.total\"]}}}",
+  "args.cardKeyGone": "カードの {key} は使いません。{gone}",
+  "args.guideAbout": "guide の about: {tool}）",
+  "args.oldClauses": "clauses（note の節）はなくなりました。項目と行で書く文書は kind: formatdoc のカードの rows で、note と freedoc は body だけです（形は guide の about: rows）",
+  "args.pairsValueShape": "target を省いたときの value は、パスごとのオブジェクトです（value.{key} がオブジェクトではありません）",
+  "args.refusals.count": "{count} 件の誤りがあるので、どれも書いていません",
+  "args.refusals.more": "ほか {count} 件",
+  "args.required": "{name} は必須です（文字列）",
+  "args.targetEmpty": "target が空です",
+  "args.targetListShape": "target の配列は、空でない文字列を 1 つ以上並べます",
+  "args.targetNeeded": "target が要ります",
+  "args.targetNeededForPairs": "target が要ります（違う value をまとめて渡すときは、target を省いて value をパスごとのオブジェクトにします）",
+  "args.targetOne": "このツールの target は 1 つです（配列は取りません）",
+  "args.targetType": "target は文字列か、文字列の配列です",
+  "args.valueObject": "value はオブジェクトです（形は guide）",
+  "args.valueShape": "（value の形は guide の about: {tool}）"
+}

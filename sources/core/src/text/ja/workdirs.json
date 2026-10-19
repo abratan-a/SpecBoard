@@ -1,0 +1,14 @@
+{
+  "workdirs.action.noValue": "section_action の value に {key} は書けません（read は value を取りません）",
+  "workdirs.action.none": "{path} の種類（{kind}）にアクションはありません",
+  "workdirs.action.notNow": "{path} は今読み込めません: {why}",
+  "workdirs.action.notOfKind": "{kind} のセクションのアクションは {ops} です（{op} はありません）",
+  "workdirs.line.settings": "作業ディレクトリ {name} の設定を変更",
+  "workdirs.settings.descriptionString": "description は文字列です",
+  "workdirs.settings.inBatch": "作業ディレクトリのセクションの readType・exclude・description・folder はプロジェクトの設定（folder はこの機械の結び付け）なので、batch の手では書けません。batch の外の section_update で書きます",
+  "workdirs.settings.notWorkdir": "{key} は作業ディレクトリのセクションのキーです（{path} は作業ディレクトリのセクションではありません）",
+  "workdirs.write.directory": "{path} は作業ディレクトリのディレクトリで、読むだけです（作る・名前を変える・動かす・消すのはフォルダの側で。読み直すのは作業ディレクトリのセクションの section_action の op: read）",
+  "workdirs.write.file": "{path} は作業ディレクトリのファイルで、読むだけです（名前・中身・線・タグは変えられず、消せません。図の上の位置 topLeft だけは書けます）。ファイルへ線を引くのは、main か branch のカードの connections に {\"line\": \"implementedBy\", \"to\": \"{path}\"}",
+  "workdirs.write.onlyNote": "作業ディレクトリのセクション（{path}）に置けるのはメモ（kind: note）だけです。{kind} は種類の合うセクションに作ります",
+  "workdirs.write.sectionInside": "{path} は作業ディレクトリのセクションの中なので、セクションは作れません（中のディレクトリはコアがフォルダを読んで作ります）"
+}

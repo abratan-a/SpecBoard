@@ -1,0 +1,17 @@
+{
+  "kindConnections.problem.descriptionMax": "description は {max} 字までです",
+  "kindConnections.problem.fieldsObject": "fields はオブジェクトです",
+  "kindConnections.problem.fromText": "{name}（{label}）は本文の [[ ]] から拾う線なので、connections には書きません",
+  "kindConnections.problem.goneNull": "相手が消えた線（to: null）は、読んだとおりの線のほかには書けません。to に相手のパスを書くか、線を外してください",
+  "kindConnections.problem.idMissing": "線の id がありません",
+  "kindConnections.problem.idTwice": "線の id「{id}」が重なっています",
+  "kindConnections.problem.key": "「{key}」は線に書けないキーです",
+  "kindConnections.problem.keyAllowed": "「{key}」は線に書けないキーです（書けるのは {allowed}）",
+  "kindConnections.problem.lineMissing": "line（線の種類）がありません",
+  "kindConnections.problem.lineUnknown": "「{name}」という線の種類はありません（あるのは {names}）",
+  "kindConnections.problem.list": "線の並びです",
+  "kindConnections.problem.listShape": "線の並びです（[{line, from, to, at, description, fields}]）",
+  "kindConnections.problem.object": "線はオブジェクトです",
+  "kindConnections.problem.string": "{key} は文字列です",
+  "kindConnections.problem.toMissing": "to（相手のカード）がありません"
+}

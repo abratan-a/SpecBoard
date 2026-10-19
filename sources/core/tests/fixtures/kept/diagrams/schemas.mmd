@@ -1,0 +1,29 @@
+classDiagram
+    namespace Docs {
+        class Docs__Overview["Docs:Overview"]
+    }
+    namespace Schemas {
+        class Schemas__Customer["Schemas:Customer"]
+        class Schemas__Orders["Schemas:Orders"]
+        class Schemas__Rule["Schemas:Rule"]
+    }
+    namespace Schemas_Ordering {
+        class Schemas_Ordering__Order["Schemas/Ordering:Order"]
+    }
+    namespace Charts_Shop {
+        class Charts_Shop__Checkout["Charts/Shop:Checkout"]
+        class Charts_Shop__Refund["Charts/Shop:Refund"]
+    }
+    <<flow>> Charts_Shop__Checkout
+    <<flow>> Charts_Shop__Refund
+    <<freedoc>> Docs__Overview
+    <<store>> Schemas__Orders
+    <<note>> Schemas__Rule
+    Charts_Shop__Checkout ..> Schemas__Orders : write ＃n.save.1
+    Charts_Shop__Refund ..> Schemas__Customer : read ＃n.a.0 ← name
+    Charts_Shop__Refund ..> Schemas__Orders : write ＃n.ask.2
+    Docs__Overview ..> Schemas__Customer : mentions ＃m7
+    Schemas__Rule ..> Schemas_Ordering__Order : mentions ＃b0 ← total
+    Schemas__Rule ..> Schemas_Ordering__Order : mentions ＃b2
+    Schemas_Ordering__Order ..> Schemas__Customer : signedBy ← id
+    Schemas_Ordering__Order "N" o-- "1" Schemas__Customer : customer_id

@@ -1,0 +1,7 @@
+{
+  "paging.after.gone": "after \"{after}\" is not in the list (it was removed or renamed). The answer goes on from what comes next in the order",
+  "paging.after.goneFromTop": "after \"{after}\" is not in the list (it was removed, renamed or moved). The answer starts from the top (it includes what was read before)",
+  "paging.after.shape": "after must be the next of the previous answer (a string or a number; the answer goes on from the one after it)",
+  "paging.limit.count": "limit must be a count from 1 to {most}",
+  "paging.limit.range": "limit must be between 1 and {most} ({f})"
+}

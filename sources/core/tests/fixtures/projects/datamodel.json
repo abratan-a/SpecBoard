@@ -1,0 +1,1178 @@
+{
+  "format": "specboard/project",
+  "version": 28,
+  "project": {
+    "id": "fd0ad89f-221b-5f4c-9505-88a5f38d3258",
+    "name": "データモデルの見本",
+    "slug": "データモデルの見本",
+    "description": "図書館の貸し出しを例にした小さなデータモデル（作り物）。列挙 4 つと entity 5 つで、入れ子・自分を指す参照・履歴の記録を持つ。",
+    "created_at": "2026-01-15T09:00:00.000Z",
+    "tag_groups": [
+      {
+        "name": "分類",
+        "exclusive": false,
+        "tags": [
+          "履歴",
+          "中核",
+          "語彙"
+        ]
+      }
+    ],
+    "export_dirs": [
+      {
+        "id": "2871d8ec-a014-5c67-8bae-011e935b6656",
+        "name": "ts"
+      },
+      {
+        "id": "7b78a410-160e-5fa4-a012-f92fd8324855",
+        "name": "zod"
+      },
+      {
+        "id": "db2f5b7e-fb5e-5867-8a2b-763c61dbc172",
+        "name": "schema"
+      }
+    ],
+    "kinds": {
+      "project_tree": {
+        "main_sections": [
+          {
+            "type": "document",
+            "name": "Docs"
+          },
+          {
+            "type": "schema",
+            "name": "Schemas"
+          },
+          {
+            "type": "chart",
+            "name": "Charts"
+          },
+          {
+            "type": "free",
+            "name": "Free"
+          },
+          {
+            "type": "workdir",
+            "name": "ts",
+            "directory": "2871d8ec-a014-5c67-8bae-011e935b6656"
+          },
+          {
+            "type": "workdir",
+            "name": "zod",
+            "directory": "7b78a410-160e-5fa4-a012-f92fd8324855"
+          },
+          {
+            "type": "workdir",
+            "name": "schema",
+            "directory": "db2f5b7e-fb5e-5867-8a2b-763c61dbc172"
+          }
+        ],
+        "board_sections": [
+          {
+            "type": "goals",
+            "name": "Goals"
+          }
+        ]
+      }
+    },
+    "exports": [
+      {
+        "id": "9a40435d-a500-51e6-9066-626adabd4705",
+        "name": "ts",
+        "entries": [
+          {
+            "from": "9664697b-1920-5abd-981c-a8b0b1657661",
+            "to": "types.ts"
+          },
+          {
+            "from": "84640133-8b63-5ecc-ac30-10da673f4785",
+            "to": "types.ts"
+          },
+          {
+            "from": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8",
+            "to": "types.ts"
+          },
+          {
+            "from": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd",
+            "to": "types.ts"
+          },
+          {
+            "from": "e99e15bc-5b19-5935-9b13-8f050e2837a8",
+            "to": "types.ts"
+          },
+          {
+            "from": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a",
+            "to": "types.ts"
+          },
+          {
+            "from": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb",
+            "to": "types.ts"
+          },
+          {
+            "from": "2981b59a-b9bf-5d72-be53-846c5b95a0c8",
+            "to": "types.ts"
+          },
+          {
+            "from": "258be6d5-796d-5302-af9c-60e13d8aac50",
+            "to": "types.ts"
+          }
+        ]
+      },
+      {
+        "id": "04e700c2-a314-55e4-8854-9af22da8caff",
+        "name": "zod",
+        "entries": [
+          {
+            "from": "9664697b-1920-5abd-981c-a8b0b1657661",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "84640133-8b63-5ecc-ac30-10da673f4785",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "e99e15bc-5b19-5935-9b13-8f050e2837a8",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "2981b59a-b9bf-5d72-be53-846c5b95a0c8",
+            "to": "types.zod.ts",
+            "format": "zod"
+          },
+          {
+            "from": "258be6d5-796d-5302-af9c-60e13d8aac50",
+            "to": "types.zod.ts",
+            "format": "zod"
+          }
+        ]
+      },
+      {
+        "id": "db5092d9-d35c-56e2-9ff2-f30ad2cc9c10",
+        "name": "schema",
+        "entries": [
+          {
+            "from": "9664697b-1920-5abd-981c-a8b0b1657661",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "84640133-8b63-5ecc-ac30-10da673f4785",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "e99e15bc-5b19-5935-9b13-8f050e2837a8",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "2981b59a-b9bf-5d72-be53-846c5b95a0c8",
+            "to": "types.schema.json"
+          },
+          {
+            "from": "258be6d5-796d-5302-af9c-60e13d8aac50",
+            "to": "types.schema.json"
+          }
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "Main",
+      "created_at": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "Schemas",
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "schema"
+    },
+    {
+      "id": "36be2c35-e22d-541f-b5d8-1876d13a94bb",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "Docs",
+      "sort_order": 1,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "document"
+    },
+    {
+      "id": "1cc4e194-c080-51f2-bb90-24949b1cc67a",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "Charts",
+      "sort_order": 2,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "chart"
+    },
+    {
+      "id": "69fca626-b29e-5afa-afd8-694f9bb4dca8",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "Free",
+      "sort_order": 3,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "free"
+    },
+    {
+      "id": "dir:2871d8ec-a014-5c67-8bae-011e935b6656",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "ts",
+      "sort_order": 4,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:7b78a410-160e-5fa4-a012-f92fd8324855",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "zod",
+      "sort_order": 5,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:db2f5b7e-fb5e-5867-8a2b-763c61dbc172",
+      "parent_id": "4580c565-adf2-52b1-a6e7-38bf9dc0e7e9",
+      "name": "schema",
+      "sort_order": 6,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    }
+  ],
+  "cards": [
+    {
+      "id": "9664697b-1920-5abd-981c-a8b0b1657661",
+      "kind": "enum",
+      "name": "ItemKind",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "fields": {
+        "label": "資料の種別",
+        "tags": [
+          "語彙"
+        ]
+      },
+      "rows": {
+        "values": [
+          {
+            "id": "55b9cd0e-0a6c-5f75-a132-6c9e1dc03e63",
+            "fields": {
+              "value": "book",
+              "label": "図書"
+            }
+          },
+          {
+            "id": "5f57c86a-c249-59c6-8956-3f77def8be85",
+            "fields": {
+              "value": "magazine",
+              "label": "雑誌"
+            }
+          },
+          {
+            "id": "4b94b1bc-4f91-52ae-9d6f-074da8143a93",
+            "fields": {
+              "value": "disc",
+              "label": "ディスク"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "84640133-8b63-5ecc-ac30-10da673f4785",
+      "kind": "enum",
+      "name": "ItemGenre",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 1,
+      "fields": {
+        "label": "ジャンル",
+        "tags": [
+          "語彙"
+        ]
+      },
+      "rows": {
+        "values": [
+          {
+            "id": "bfdcbd43-83af-59f0-b0ae-b3c42fa46cd7",
+            "fields": {
+              "value": "novel",
+              "label": "小説"
+            }
+          },
+          {
+            "id": "00425f20-762d-5d62-8102-0e3000ba8429",
+            "fields": {
+              "value": "essay",
+              "label": "随筆"
+            }
+          },
+          {
+            "id": "8e8e3fb4-18eb-5c11-bf47-196daf4f56f4",
+            "fields": {
+              "value": "poetry",
+              "label": "詩"
+            }
+          },
+          {
+            "id": "ccbc0004-8052-5819-ad6b-f945f2018812",
+            "fields": {
+              "value": "history",
+              "label": "歴史"
+            }
+          },
+          {
+            "id": "bc2dd2f8-ad07-5a52-a795-8402880f9682",
+            "fields": {
+              "value": "science",
+              "label": "科学"
+            }
+          },
+          {
+            "id": "d8216474-bd7b-5839-9f5c-26a6c79d5de0",
+            "fields": {
+              "value": "art",
+              "label": "美術"
+            }
+          },
+          {
+            "id": "5d7e265e-94b0-5a28-a4b7-8904f0800bfd",
+            "fields": {
+              "value": "music",
+              "label": "音楽"
+            }
+          },
+          {
+            "id": "517ea361-6787-5fa7-b0d0-10db29c90069",
+            "fields": {
+              "value": "travel",
+              "label": "旅行"
+            }
+          },
+          {
+            "id": "2782e63f-ae15-544c-8e70-05ee5509f25d",
+            "fields": {
+              "value": "cooking",
+              "label": "料理"
+            }
+          },
+          {
+            "id": "1c3339f8-8fc7-5bef-8861-d97c1b9b6f8b",
+            "fields": {
+              "value": "children",
+              "label": "児童"
+            }
+          },
+          {
+            "id": "d7a4a453-dbb6-5112-8168-29c4fbeec354",
+            "fields": {
+              "value": "comics",
+              "label": "まんが"
+            }
+          },
+          {
+            "id": "be4d2fd5-36b6-5c81-a38b-fe9926415442",
+            "fields": {
+              "value": "reference",
+              "label": "参考図書"
+            }
+          },
+          {
+            "id": "c1c028f2-c43c-557c-84af-b252e3041cde",
+            "fields": {
+              "value": "language",
+              "label": "語学"
+            }
+          },
+          {
+            "id": "244369da-baea-50d0-880a-241fc0b7f004",
+            "fields": {
+              "value": "sports",
+              "label": "スポーツ"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8",
+      "kind": "enum",
+      "name": "ShelfSize",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 2,
+      "fields": {
+        "label": "棚の大きさ",
+        "tags": [
+          "語彙"
+        ]
+      },
+      "rows": {
+        "values": [
+          {
+            "id": "fd05f1c8-63da-5ba8-a10f-2033ca739da3",
+            "fields": {
+              "value": "small"
+            }
+          },
+          {
+            "id": "f2c73fc9-e4a4-5963-b26d-f111be717155",
+            "fields": {
+              "value": "medium"
+            }
+          },
+          {
+            "id": "0d274ea6-7da1-58c6-bd6c-edba0e2eec6b",
+            "fields": {
+              "value": "large"
+            }
+          },
+          {
+            "id": "821082a0-db60-5584-9374-2f05427f60d2",
+            "fields": {
+              "value": "oversize"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd",
+      "kind": "enum",
+      "name": "LogTarget",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 3,
+      "fields": {
+        "label": "記録の対象の種別",
+        "tags": [
+          "語彙",
+          "履歴"
+        ]
+      },
+      "rows": {
+        "values": [
+          {
+            "id": "73df74ad-59a3-5b61-8584-96b6c0e2ed35",
+            "fields": {
+              "value": "library",
+              "label": "図書館"
+            }
+          },
+          {
+            "id": "79ffc863-9b3b-5f98-87a8-8088d2975037",
+            "fields": {
+              "value": "branch",
+              "label": "分館"
+            }
+          },
+          {
+            "id": "1c31c48c-a3aa-5abd-b0d3-6573491da6cb",
+            "fields": {
+              "value": "item",
+              "label": "資料"
+            }
+          },
+          {
+            "id": "5a767ff4-cc6c-5a1d-aa54-c62bbaffa497",
+            "fields": {
+              "value": "member",
+              "label": "利用者"
+            }
+          },
+          {
+            "id": "b4cef85e-b5a0-5e8f-a3a1-1cb1f5f5a281",
+            "fields": {
+              "value": "loan",
+              "label": "貸出"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "e99e15bc-5b19-5935-9b13-8f050e2837a8",
+      "kind": "entity",
+      "name": "Library",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 4,
+      "fields": {
+        "label": "図書館",
+        "description": "分館をまとめる単位。資料の貸し借りは図書館をまたげない。",
+        "tags": [
+          "中核"
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "32cd92c9-7633-58e3-b925-30e8e002adc0",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "c858013b-43ca-5d99-8e92-2eecd7b9f072",
+            "fields": {
+              "name": "name",
+              "label": "館の名前",
+              "required": true
+            }
+          },
+          {
+            "id": "793f8da6-9110-5008-9c81-57895bf56c88",
+            "fields": {
+              "name": "slug",
+              "description": "名前から作る",
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "id": "d98a63e0-fc0c-5d24-baa1-6b8f075413ff",
+            "fields": {
+              "name": "description",
+              "type": "text"
+            }
+          },
+          {
+            "id": "57bbdb3d-70e2-5020-bb4b-403ee08dae1b",
+            "fields": {
+              "name": "openedAt",
+              "type": "datetime",
+              "required": true
+            }
+          },
+          {
+            "id": "bdacf506-340c-56f2-9dc5-264ce6f0aec5",
+            "fields": {
+              "name": "updatedAt",
+              "description": "変わるたびに書き直す",
+              "type": "datetime",
+              "required": true
+            }
+          },
+          {
+            "id": "cc7542ca-7c8a-5a2b-824e-5d910e139f91",
+            "fields": {
+              "name": "branches",
+              "label": "分館",
+              "array": true
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "69f8b87ca9bcb2cc1ea60662",
+          "line": "embed",
+          "from": "branches",
+          "to": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a"
+        }
+      ]
+    },
+    {
+      "id": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a",
+      "kind": "entity",
+      "name": "Branch",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 5,
+      "fields": {
+        "label": "分館",
+        "description": "図書館の中のひとつの館。得意な資料の種別を一つ持つ。",
+        "tags": [
+          "中核"
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "d85a80aa-7d7c-5ceb-aff7-80107bcd4913",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "8c60c8dd-51bf-5000-af3f-28e61ce895fe",
+            "fields": {
+              "name": "library",
+              "required": true
+            }
+          },
+          {
+            "id": "0a2bd874-5ed6-5a8c-b979-eb10a86b02a1",
+            "fields": {
+              "name": "name",
+              "description": "図書館の中で一意。館の札の名前になる",
+              "required": true
+            }
+          },
+          {
+            "id": "5d034925-aefd-5716-b007-3865a27357af",
+            "fields": {
+              "name": "label",
+              "label": "表示名"
+            }
+          },
+          {
+            "id": "754ccec1-eeb3-514d-aad8-1257bc0a2dc6",
+            "fields": {
+              "name": "focus",
+              "required": true
+            }
+          },
+          {
+            "id": "59e779e4-6e01-5eac-bd9b-46a37930a587",
+            "fields": {
+              "name": "description",
+              "type": "text"
+            }
+          },
+          {
+            "id": "23e0c5ae-3439-5608-80a0-b4e91d44029a",
+            "fields": {
+              "name": "mapPosition",
+              "label": "地図での位置",
+              "description": "案内図の表示のためだけに持ち、変更の記録に残さない",
+              "type": "object"
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "1f411c19-fc79-5d93-8b45-765e7a7139ff",
+                  "fields": {
+                    "name": "posX",
+                    "type": "float"
+                  }
+                },
+                {
+                  "id": "cb83f677-614f-5e82-84e3-e3d671b3e0da",
+                  "fields": {
+                    "name": "posY",
+                    "type": "float"
+                  }
+                },
+                {
+                  "id": "5018798b-70cf-58c1-a328-a3dbab0bccca",
+                  "fields": {
+                    "name": "pinned",
+                    "description": "手で置いた。自動の配置で動かさない",
+                    "type": "bool"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "2c510907-507b-5ba9-aeb4-e5247fd21b61",
+            "fields": {
+              "name": "sortOrder",
+              "type": "int",
+              "required": true
+            }
+          },
+          {
+            "id": "a863b9d4-965f-5254-abb5-096ac4b25f6b",
+            "fields": {
+              "name": "items",
+              "label": "資料",
+              "array": true
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "e7263015183562d77998b23b",
+          "line": "embed",
+          "from": "library",
+          "to": "e99e15bc-5b19-5935-9b13-8f050e2837a8"
+        },
+        {
+          "id": "c8951a48e1b172140072cc73",
+          "line": "embed",
+          "from": "focus",
+          "to": "9664697b-1920-5abd-981c-a8b0b1657661"
+        },
+        {
+          "id": "ba63ef05cb54709760190f63",
+          "line": "embed",
+          "from": "items",
+          "to": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb"
+        }
+      ]
+    },
+    {
+      "id": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb",
+      "kind": "entity",
+      "name": "Item",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 6,
+      "fields": {
+        "label": "資料",
+        "description": "分館の持ち物。parent でまとめ物（全集・セット）の中の一冊を表し、入れ子の深さに限りはない。",
+        "tags": [
+          "中核"
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "14d12e24-d5f1-5820-93b3-9d242eecc602",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "928f949a-0e92-55f6-ba04-8de16d4ce9fb",
+            "fields": {
+              "name": "branch",
+              "description": "入れ子の深さによらず、置いてある館を指す",
+              "required": true
+            }
+          },
+          {
+            "id": "6d5b8265-3577-58a8-8864-f43e2cb96476",
+            "fields": {
+              "name": "parent",
+              "label": "まとめ物",
+              "description": "null なら単独の資料。全集の一冊はこれで表す"
+            }
+          },
+          {
+            "id": "ee8a012b-8005-5821-a9c4-0cb387a760c7",
+            "fields": {
+              "name": "title",
+              "description": "同じ館で一意",
+              "required": true
+            }
+          },
+          {
+            "id": "6a8c589a-c3c9-5ba8-a886-34d1e8be6217",
+            "fields": {
+              "name": "label",
+              "label": "表示名"
+            }
+          },
+          {
+            "id": "895462be-9b85-53dd-b8a0-5a4b92d47d2f",
+            "fields": {
+              "name": "genre",
+              "required": true
+            }
+          },
+          {
+            "id": "50e47a4d-d8ba-5aa1-8693-245a17f2f04b",
+            "fields": {
+              "name": "homeBranch",
+              "label": "返す館",
+              "description": "ほかの館から借りたときだけ持つ"
+            }
+          },
+          {
+            "id": "af868f56-2469-5499-8921-05b6160c05ff",
+            "fields": {
+              "name": "size"
+            }
+          },
+          {
+            "id": "bd7f8306-51cf-5aaa-9965-12d4b5d4ca6e",
+            "fields": {
+              "name": "loanTerms",
+              "label": "貸出の条件",
+              "type": "object"
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "9728b8b2-a4e7-5d1a-a62f-c0d39466c1cb",
+                  "fields": {
+                    "name": "isReference",
+                    "type": "bool"
+                  }
+                },
+                {
+                  "id": "959c793e-4740-5ee0-912a-c679e3845276",
+                  "fields": {
+                    "name": "isRenewable",
+                    "type": "bool"
+                  }
+                },
+                {
+                  "id": "7d0120ce-3952-54ea-bb8e-542bf1f1faaf",
+                  "fields": {
+                    "name": "isReservable",
+                    "type": "bool"
+                  }
+                },
+                {
+                  "id": "5c3cb96e-bd1b-53e3-be78-46d9371ef369",
+                  "fields": {
+                    "name": "isOversize",
+                    "type": "bool"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "4c7bcb8a-95e6-5fdf-a9ab-4e91afa73270",
+            "fields": {
+              "name": "note",
+              "label": "備考",
+              "type": "text"
+            }
+          },
+          {
+            "id": "cbb14f8f-23e2-5700-b9af-5ca9676cce40",
+            "fields": {
+              "name": "sortOrder",
+              "type": "int",
+              "required": true
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "21131912fd53ef6badf429a2",
+          "line": "embed",
+          "from": "branch",
+          "to": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a"
+        },
+        {
+          "id": "c02623837fb0d35600d6f9a0",
+          "line": "embed",
+          "from": "parent",
+          "to": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb"
+        },
+        {
+          "id": "9fe63ac234248698ceb15b39",
+          "line": "embed",
+          "from": "genre",
+          "to": "84640133-8b63-5ecc-ac30-10da673f4785"
+        },
+        {
+          "id": "7d9a95cfd18872830dae14f3",
+          "line": "embed",
+          "from": "homeBranch",
+          "to": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a"
+        },
+        {
+          "id": "c1a2238066b6beee23ca89ee",
+          "line": "embed",
+          "from": "size",
+          "to": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8"
+        }
+      ]
+    },
+    {
+      "id": "2981b59a-b9bf-5d72-be53-846c5b95a0c8",
+      "kind": "entity",
+      "name": "Member",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 7,
+      "fields": {
+        "label": "利用者",
+        "description": "分館で登録した利用者。",
+        "tags": [
+          "中核",
+          "語彙"
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "ffef8b2e-38ae-57bb-8f5b-3618c3eaa5ef",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "0fca8054-8fcc-526c-831d-6f92bc80e251",
+            "fields": {
+              "name": "branch",
+              "required": true
+            }
+          },
+          {
+            "id": "50147f31-73fa-5fd5-a26f-00c7f24aca5c",
+            "fields": {
+              "name": "cardNumber",
+              "required": true
+            }
+          },
+          {
+            "id": "8d01b0a5-58d6-5813-9169-44acf7248afb",
+            "fields": {
+              "name": "name"
+            }
+          },
+          {
+            "id": "e3df51b6-266c-5896-a1ad-a280f0108a3c",
+            "fields": {
+              "name": "sortOrder",
+              "type": "int",
+              "required": true
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "85e4018a17eef5ca2171c1fb",
+          "line": "embed",
+          "from": "branch",
+          "to": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a"
+        }
+      ]
+    },
+    {
+      "id": "258be6d5-796d-5302-af9c-60e13d8aac50",
+      "kind": "entity",
+      "name": "ActivityLog",
+      "section": "438b97e3-b734-59c4-a127-a6102b67ea79",
+      "v": 7,
+      "order": 8,
+      "fields": {
+        "label": "活動の記録",
+        "description": "貸し出しや登録のたびに一行ずつ足す記録。書き換えず、消さない。",
+        "tags": [
+          "履歴"
+        ]
+      },
+      "rows": {
+        "fields": [
+          {
+            "id": "3b945ad7-1974-5dee-9cc9-4d926a469484",
+            "fields": {
+              "name": "id",
+              "type": "uuid",
+              "required": true,
+              "primaryKey": true
+            }
+          },
+          {
+            "id": "97f14629-f05d-582f-86d0-94b4e1fb4c07",
+            "fields": {
+              "name": "library",
+              "required": true
+            }
+          },
+          {
+            "id": "f62931f6-8620-5a0e-bfc5-e0494bb645e4",
+            "fields": {
+              "name": "at",
+              "type": "datetime",
+              "required": true
+            }
+          },
+          {
+            "id": "51010b54-8f49-56d2-9e6e-a7e9d009f81a",
+            "fields": {
+              "name": "kind",
+              "description": "item.lend / member.register など",
+              "required": true
+            }
+          },
+          {
+            "id": "7274a7ad-f785-59ab-aa61-38daef856577",
+            "fields": {
+              "name": "target",
+              "label": "記録の対象",
+              "type": "object"
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "edaa5e88-0595-525b-9cba-2373919f3238",
+                  "fields": {
+                    "name": "type",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "717f65df-c284-5731-9517-49fd60b164ad",
+                  "fields": {
+                    "name": "id",
+                    "type": "uuid"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "9da505ef-7912-57d2-8d88-0c8e48c64850",
+            "fields": {
+              "name": "summary",
+              "description": "画面にそのまま出す一行",
+              "required": true
+            }
+          },
+          {
+            "id": "0b8d7728-969e-59c9-97c8-c9d03ee137e8",
+            "fields": {
+              "name": "payload",
+              "description": "そのときの中身の写し",
+              "type": "json"
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "84f6b66cfc5f633a67aaddf8",
+          "line": "embed",
+          "from": "library",
+          "to": "e99e15bc-5b19-5935-9b13-8f050e2837a8"
+        },
+        {
+          "id": "c5f36aa5f6dbe6365c31cd52",
+          "line": "embed",
+          "from": "target.type",
+          "to": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd"
+        }
+      ]
+    }
+  ],
+  "board": {
+    "sections": [
+      {
+        "id": "240d573b-6779-5313-9b2b-90b882b5733f",
+        "name": "Board",
+        "created_at": "2026-01-15T09:00:00.000Z"
+      },
+      {
+        "id": "3400a55f-9a7d-5536-9946-0302b97a5956",
+        "parent_id": "240d573b-6779-5313-9b2b-90b882b5733f",
+        "name": "Goals",
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "goals"
+      },
+      {
+        "id": "9540a152-a489-5517-9a47-d9c163ad126d",
+        "parent_id": "3400a55f-9a7d-5536-9946-0302b97a5956",
+        "name": "Complete",
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "complete"
+      },
+      {
+        "id": "3df92b84-db7b-59dc-97af-cc70a76744c5",
+        "parent_id": "3400a55f-9a7d-5536-9946-0302b97a5956",
+        "name": "Cancelled",
+        "sort_order": 1,
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "cancelled"
+      }
+    ],
+    "cards": []
+  },
+  "places": [
+    {
+      "item_kind": "card",
+      "item": "258be6d5-796d-5302-af9c-60e13d8aac50",
+      "x": 113,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "2981b59a-b9bf-5d72-be53-846c5b95a0c8",
+      "x": 99,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "5e26f277-0cdc-531e-9e50-c4dc355a8fdd",
+      "x": 43,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "84640133-8b63-5ecc-ac30-10da673f4785",
+      "x": 15,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "943d3913-7ada-5b7f-b2b4-f40c53e91ea8",
+      "x": 29,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "9664697b-1920-5abd-981c-a8b0b1657661",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "b3ea6e7f-9e2f-5c91-b35d-948d5f6fa4bb",
+      "x": 85,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "e04e10d6-2ed5-5b7a-9213-7a06d91c105a",
+      "x": 71,
+      "y": 1
+    },
+    {
+      "item_kind": "card",
+      "item": "e99e15bc-5b19-5935-9b13-8f050e2837a8",
+      "x": 57,
+      "y": 1
+    }
+  ]
+}

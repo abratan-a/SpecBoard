@@ -1,0 +1,17 @@
+{
+  "lineMove.error.sql": "Cannot move the line syntax: {e}",
+  "lineMove.line.inCard": "{name}: {line}",
+  "lineMove.line.kindsMade": "Created the line kinds {kinds} in the project (from the as of pointsAt and the keys of payloads)",
+  "lineMove.line.landingOutside": "The landing \"{at}\" of the {kind} line is outside the partner and has no card there, so it cannot be a line and was copied to the end of the description",
+  "lineMove.line.landingOutsideFrom": "The landing \"{at}\" of the {kind} line from {from} is outside the partner and has no card there, so it cannot be a line and was copied to the end of the description",
+  "lineMove.line.moved": "Moved {total} card lines to connections ({kinds})",
+  "lineMove.line.pathWithoutPlace": "{key} \"{path}\" has no place to land, so it cannot be a line and was copied to the end of the description",
+  "lineMove.line.payloadKeyWithoutPlace": "The key {keys} of payload \"{payload}\" has no place to land, so it cannot be a line and was copied to the end of the description",
+  "lineMove.line.payloadWithoutKey": "payload \"{payload}\" has no key, so it cannot be a line and was copied to the end of the description",
+  "lineMove.line.pointerWithoutTarget": "{path}: pointsAt (as: {word}) has neither a partner nor a discriminator, so it cannot be a line",
+  "lineMove.line.refWithoutTarget": "{path}: type ref has no partner, so the type was set back to string",
+  "lineMove.line.split": "Split {count} of the {what} into two lines each: one to the partner and one \"link\" to where the values are ({cards})",
+  "lineMove.part.splitLandings": "lines whose landing was outside the partner",
+  "lineMove.part.splitPointers": "pointsAt lines whose in was in a card other than the partner",
+  "lineMove.problem.base": " (base)"
+}

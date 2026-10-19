@@ -1,0 +1,4 @@
+{
+  "detail.error.branchMissing": "Branch \"{b}\" does not exist",
+  "detail.error.projectMissing": "Project \"{project_id}\" does not exist"
+}

@@ -1,0 +1,14 @@
+Shop — module namespace — line 3 — 3-42
+  Shop.Order — type class — line 7 — 5-30
+    Shop.Order.Most — constant const — line 10 — 9-10
+    Shop.Order.Order — method constructor — line 15 — 14-15
+    Shop.Order.'Order (2)' — method constructor — line 17 — 17-17
+    Shop.Order.Price — method method — line 19 — 19-19 — calls Total, Help
+    Shop.Order.Total — method method — line 21 — 21-25 — calls Local
+    Shop.Order.Line — type struct — line 29 — 29-29
+  Shop.IPriced — type interface — line 32 — 32-35
+    Shop.IPriced.Price — method method — line 34 — 34-34
+  Shop.State — type enum — line 37 — 37-37
+  Shop.Point — type record — line 39 — 39-39
+  Shop.Changed — type delegate — line 41 — 41-41
+'Shop.Inner' — module namespace — line 44 — 44-44

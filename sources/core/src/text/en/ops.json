@@ -1,0 +1,16 @@
+{
+  "ops.error.branchNotFound": "Branch \"{tree}\" was not found",
+  "ops.error.landing": "landing is replace or copy ({other} cannot be read)",
+  "ops.error.needs": "{op} needs {key} ({what})",
+  "ops.error.notProjectFile": "It cannot be read as a project file",
+  "ops.error.projectNotFound": "The project was not found",
+  "ops.what.aiMergeOn": "whether to merge without approval",
+  "ops.what.bundle": "the answer of project_bundle",
+  "ops.what.commitSeq": "the number of the commit",
+  "ops.what.copyName": "the name of the copied project",
+  "ops.what.cutBefore": "the number of the oldest commit to keep",
+  "ops.what.fileText": "the contents of the file",
+  "ops.what.lockOn": "whether to lock",
+  "ops.what.projectId": "the project's id",
+  "ops.what.revertTo": "the number of the commit to go back to"
+}

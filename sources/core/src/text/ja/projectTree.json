@@ -1,0 +1,13 @@
+{
+  "projectTree.branch.hasIt": "project_tree の {tree}[{at}]: branch に、根の直下の {name} がもうあります（その branch で名前を変えるか、main へ入れてから）",
+  "projectTree.kind.cannotChange": "project_tree の {tree}[{at}]: {name} は今 {kind} のセクションです。種類（type）だけを変えることはできません（別の名前で足して、中身を移します）",
+  "projectTree.kind.none": "種類なし",
+  "projectTree.line.changed": "{tree}（{parts}）",
+  "projectTree.line.created": "作成 {names}",
+  "projectTree.line.deleted": "削除 {names}",
+  "projectTree.line.evacuated": "{evacuation} へ退避 {names}",
+  "projectTree.line.renamed": "改名 {names}",
+  "projectTree.line.then": "{head} / {rest}",
+  "projectTree.rename.sourceStays": "renames の top_section {from} → {to}: project_tree にまだ {from} があります",
+  "projectTree.rename.targetMissing": "renames の top_section {from} → {to}: project_tree に {to} がありません（名前を変えるときは、project_tree の name も {to} にします）"
+}

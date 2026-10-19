@@ -1,0 +1,492 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "close.help" : {
+      "comment" : "Tooltip of the Close button of the settings screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close settings and go back to where you were (Esc)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を閉じて、開く前の画面に戻る（Esc）"
+          }
+        }
+      }
+    },
+    "language.note" : {
+      "comment" : "The note under the screen language choice on the General settings page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The language of the screen. System follows the Mac's language, or English when that is not in this list."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の文字の言語。システムは Mac の言語で、この一覧に無い言語なら English です。"
+          }
+        }
+      }
+    },
+    "language.system" : {
+      "comment" : "The choice that follows the machine's language.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム"
+          }
+        }
+      }
+    },
+    "language.title" : {
+      "comment" : "The heading of the screen language section on the General settings page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語"
+          }
+        }
+      }
+    },
+    "lineRouting.avoid" : {
+      "comment" : "Switch that makes lines go around cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lines avoid cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線がカードを避ける"
+          }
+        }
+      }
+    },
+    "lineRouting.avoidNote" : {
+      "comment" : "Explains the line routing switch while it is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horizontal and vertical lines along the grid around the cards, never over other cards. Redrawn when a card is placed; curves while one is being moved."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードのまわりのマスを通る縦横の線で、ほかのカードの上を通らない。カードを置いたときに引き直し、動かしている間は曲線"
+          }
+        }
+      }
+    },
+    "lineRouting.curveNote" : {
+      "comment" : "Explains the line routing switch while it is off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One curve from the row to the other card's header. It runs under the cards in between."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行から相手の頭まで 1 本の曲線。間のカードの下を通る"
+          }
+        }
+      }
+    },
+    "lineRouting.help" : {
+      "comment" : "Tooltip of the line routing setting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How lines are drawn in the section map and the flow contents map (a setting of this Mac; not saved in the project)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップと flow のコンテンツマップの線の引き方（この Mac の設定。プロジェクトには入らない）"
+          }
+        }
+      }
+    },
+    "lineRouting.title" : {
+      "comment" : "Heading of the line routing setting, in the settings and in the diagram filter popover.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line routing"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の引き方"
+          }
+        }
+      }
+    },
+    "notices.shownList" : {
+      "comment" : "Choice: a kind of notification goes only to the bell's list in the header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only in the bell's list"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ベルの一覧だけ"
+          }
+        }
+      }
+    },
+    "notices.shownNote" : {
+      "comment" : "Note under the per-kind choices on the Notifications settings page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every notification also goes to the bell's list in the header, newest first (the newest 100, until the window is closed)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれも、ヘッダーのベルの一覧に新しい順に残ります（新しい 100 件。ウィンドウを閉じるまで）。"
+          }
+        }
+      }
+    },
+    "notices.shownTitle" : {
+      "comment" : "Heading of the choice, per kind, between a bubble and only the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where notifications appear"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知の出し方"
+          }
+        }
+      }
+    },
+    "notices.stayFive" : {
+      "comment" : "Choice: a bubble goes away after 5 seconds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 seconds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 秒"
+          }
+        }
+      }
+    },
+    "notices.stayNote" : {
+      "comment" : "Note under how long a bubble stays.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For the error, notice and AI merge bubbles. A bubble does not go away while the pointer is over it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エラー・知らせ・AI の merge の吹き出しに効きます。ポインタを載せているあいだは消えません。"
+          }
+        }
+      }
+    },
+    "notices.stayTen" : {
+      "comment" : "Choice: a bubble goes away after 10 seconds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 seconds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 秒"
+          }
+        }
+      }
+    },
+    "notices.stayTitle" : {
+      "comment" : "Heading of the choice of how long a bubble stays before it goes away by itself.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How long a bubble stays"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吹き出しを出しておく時間"
+          }
+        }
+      }
+    },
+    "notices.stayUntilClosed" : {
+      "comment" : "Choice: a bubble stays until it is closed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Until closed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じるまで"
+          }
+        }
+      }
+    },
+    "page.diagram" : {
+      "comment" : "Settings screen sidebar item for diagram settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図"
+          }
+        }
+      }
+    },
+    "page.general" : {
+      "comment" : "Settings screen sidebar item for general settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一般"
+          }
+        }
+      }
+    },
+    "page.licenses" : {
+      "comment" : "Settings screen sidebar item for third-party licenses.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licenses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンス"
+          }
+        }
+      }
+    },
+    "page.notifications" : {
+      "comment" : "Item of the settings screen: how notifications are shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
+          }
+        }
+      }
+    },
+    "page.update" : {
+      "comment" : "Settings screen sidebar item for app updates.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート"
+          }
+        }
+      }
+    },
+    "textSize.default" : {
+      "comment" : "Button that resets the text size.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定"
+          }
+        }
+      }
+    },
+    "textSize.larger" : {
+      "comment" : "Button that makes the text larger.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Larger"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きく"
+          }
+        }
+      }
+    },
+    "textSize.smaller" : {
+      "comment" : "Button that makes the text smaller.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smaller"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小さく"
+          }
+        }
+      }
+    },
+    "textSize.title" : {
+      "comment" : "Heading of the text size setting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text size"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字の大きさ"
+          }
+        }
+      }
+    },
+    "notices.shownBubble" : {
+      "comment" : "Choice: a kind of notification is shown in a bubble in the header, pointing at the bell.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a bubble"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吹き出しに出す"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

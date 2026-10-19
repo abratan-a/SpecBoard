@@ -1,0 +1,6 @@
+{
+  "keyMove.error.sql": "goal の欄の名前を移せません: {e}",
+  "keyMove.line.goalKeys": "goal {count} 枚の欄 状態・優先度・期限 を status・priority・due にした（値はそのまま。{cards}）",
+  "keyMove.line.goalMr": "goal {count} 枚の欄 PR を MR にした（値はそのまま。{cards}）",
+  "keyMove.line.goalWorkBranch": "goal {count} 枚の欄 branch を workBranch にした（値はそのまま。{cards}）"
+}

@@ -1,0 +1,5 @@
+# The Rust version the core is built with. Keep it in step with the Rust of the CI image
+[toolchain]
+channel = "1.90.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

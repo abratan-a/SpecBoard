@@ -1,0 +1,8 @@
+{
+  "pathText.error.bracketInSection": "A section's name in \"{path}\" cannot have [ ] (a name holding [ ] is wrapped in single quotes: 'a[0]')",
+  "pathText.error.empty": "The path is empty",
+  "pathText.error.emptyName": "\"{path}\" has an empty name (a separator / : . is doubled, or at the end)",
+  "pathText.error.stray": "\"{path}\" has characters right after a quoted name or a [ ] (write a ' inside a name as '' and wrap the whole name in single quotes)",
+  "pathText.error.unclosedBracket": "The [ ] in \"{path}\" is not closed",
+  "pathText.error.unclosedQuote": "The single quote in \"{path}\" is not closed (write a ' inside a name as '')"
+}

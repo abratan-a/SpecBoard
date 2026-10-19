@@ -1,0 +1,6 @@
+{
+  "frames.refused": "{card} cannot be written: {why}",
+  "frames.target.circle": "Following the frames leads back to its own section ({chain}). Frames that go round cannot be written",
+  "frames.target.notUi": "What it points at, {path}, is not a ui section ({kind}). Only a ui section can be framed",
+  "frames.target.self": "What it points at, {path}, is its own section. A frame cannot hold its own section"
+}

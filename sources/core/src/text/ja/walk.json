@@ -1,0 +1,19 @@
+{
+  "walk.miss.customRow": "「{path}」が見つかりません。{at} の下にある行は: {there}",
+  "walk.miss.enumValue": "「{path}」が見つかりません。{at} の値は: {there}",
+  "walk.miss.field": "「{path}」が見つかりません。{at} の直下にあるのは: {there}",
+  "walk.miss.inner": "「{path}」が見つかりません。{at} の中にあるのは: {there}",
+  "walk.miss.noFields": "（フィールドなし）",
+  "walk.miss.noRows": "（行なし）",
+  "walk.miss.noSteps": "（手なし）",
+  "walk.miss.noValues": "（値なし）",
+  "walk.miss.none": "（なし）",
+  "walk.miss.notItemRow": "「{path}」は指せません。{at} は項目ではない行で、その中に名前はありません",
+  "walk.miss.pick": "「{path}」は指せません。{hint}",
+  "walk.miss.rows": "「{path}」が見つかりません。{at} の中にある行は: {there}",
+  "walk.miss.step": "「{path}」が見つかりません。{at} の手は {count} 個: {there}",
+  "walk.path.empty": "パスが空です。例: Schemas:User または Schemas:User.profile",
+  "walk.value.isArray": "「{path}」は指せません。{at} は並び（配列）で、その中は要素を選んでから指します（{at}[欄=値,…] か {at}[0]。値そのものの並びは {at}[=値]）",
+  "walk.value.missing": "「{path}」が見つかりません。{at} の下にあるフィールドは: {there}",
+  "walk.value.noShape": "「{path}」は指せません。{at} に形（of の先の entity・value）がありません"
+}

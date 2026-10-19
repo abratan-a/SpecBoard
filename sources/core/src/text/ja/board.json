@@ -1,0 +1,5 @@
+{
+  "board.fields.shape": "fields は {欄の名前: 値} です（値を並びにすると、そのどれか）",
+  "board.in.at": "in の「{path}」: {why}",
+  "board.in.notContainer": "in は入れ物（goal・flow）のパスです（{path} は {kind}）"
+}

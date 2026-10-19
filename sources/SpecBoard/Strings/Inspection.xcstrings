@@ -1,0 +1,648 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "item.markAsDesignedHelp" : {
+      "comment" : "Tooltip of the Mark as designed button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark it as by design, with a reason (it leaves To fix and Info)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計どおりのものとして、理由を添えて印を付ける（直すもの・情報から外れる）"
+          }
+        }
+      }
+    },
+    "item.markAsDesignedMenu" : {
+      "comment" : "Button on an inspection item that opens the form for marking it as by design.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark as designed…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計どおりにする…"
+          }
+        }
+      }
+    },
+    "item.markedBy" : {
+      "comment" : "A reason an item was marked as by design, followed by who said so.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "item.putBack" : {
+      "comment" : "Button on an item marked as by design: take the mark off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put back"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻す"
+          }
+        }
+      }
+    },
+    "item.putBackHelp" : {
+      "comment" : "Tooltip of the Put back button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove the as-designed mark and put the item back in its group"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計どおりの印を外し、元の組に戻す"
+          }
+        }
+      }
+    },
+    "item.wasAsDesigned" : {
+      "comment" : "Under an inspection item that was marked as by design before it changed; the argument is the earlier reason and who gave it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was as designed: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前は設計どおり: %@"
+          }
+        }
+      }
+    },
+    "list.nothingToFix" : {
+      "comment" : "Shown under the To fix heading of the Inspection page when the tree has nothing to put right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to fix"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直すものはありません"
+          }
+        }
+      }
+    },
+    "list.reading" : {
+      "comment" : "Shown on the Inspection page while the tree is first being read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んでいます…"
+          }
+        }
+      }
+    },
+    "mark.asDesigned" : {
+      "comment" : "Title and confirm button of the form for marking an inspection item as by design.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark as designed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計どおりにする"
+          }
+        }
+      }
+    },
+    "mark.reason" : {
+      "comment" : "Placeholder of the reason field of the form for marking an item as by design.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "理由"
+          }
+        }
+      }
+    },
+    "names.more" : {
+      "comment" : "End of a long list of names, after the first dozen: how many more there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "… and %lld more"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "…ほか %lld 件"
+          }
+        }
+      }
+    },
+    "names.nearProject" : {
+      "comment" : "Help after a card name that matches nothing, listing the closest names of the whole project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There is %lld card in this project. Closest: %@. Search with card_list's query"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There are %lld cards in this project. Closest: %@. Search with card_list's query"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近いのは: %2$@（このプロジェクトには全 %1$lld 件。card_list の query で探せます）"
+          }
+        }
+      }
+    },
+    "names.nearSection" : {
+      "comment" : "Help after a card name that matches nothing, listing the closest names of one section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There is %lld card in section %@. Closest: %@. Search with card_list's query"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There are %lld cards in section %@. Closest: %@. Search with card_list's query"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近いのは: %3$@（セクション %2$@ には全 %1$lld 件。card_list の query で探せます）"
+          }
+        }
+      }
+    },
+    "names.noCard" : {
+      "comment" : "Message when a card name matches nothing; the second argument is the help that follows (the closest names, or how to look).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no card “%@”. %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード「%@」がありません。%@"
+          }
+        }
+      }
+    },
+    "names.noneCloseProject" : {
+      "comment" : "Help after a card name that matches nothing close, when the names are the whole project's.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There is %lld card in this project. Search with card_list's query"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There are %lld cards in this project. Search with card_list's query"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトには %lld 件あります。card_list の query で探してください"
+          }
+        }
+      }
+    },
+    "names.noneCloseSection" : {
+      "comment" : "Help after a card name that matches nothing close, when the names are one section's.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There is %lld card in section %@. Search with card_list's query"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "There are %lld cards in section %@. Search with card_list's query"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション %2$@ には %1$lld 件あります。card_list の query で探してください"
+          }
+        }
+      }
+    },
+    "page.title" : {
+      "comment" : "Title at the top of the Inspection page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インスペクション"
+          }
+        }
+      }
+    },
+    "page.treeHelp" : {
+      "comment" : "Tooltip of the tree picker at the top of the Inspection page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tree to inspect. Pressing a row opens that tree and shows where it is"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インスペクションで見る木。行を押すと、その木を開いて場所を見せる"
+          }
+        }
+      }
+    },
+    "part.accepted" : {
+      "comment" : "Heading of the part of the Inspection page that lists items marked as by design.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As designed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設計どおりにしたもの"
+          }
+        }
+      }
+    },
+    "part.fix" : {
+      "comment" : "Heading of the part of the Inspection page that lists what to put right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To fix"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直すもの"
+          }
+        }
+      }
+    },
+    "part.info" : {
+      "comment" : "Heading of the part of the Inspection page that lists what is only to know.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Info"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "情報"
+          }
+        }
+      }
+    },
+    "path.empty" : {
+      "comment" : "Hint when a path is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスが空です"
+          }
+        }
+      }
+    },
+    "path.fieldsUnder" : {
+      "comment" : "Hint when a path names a field that doesn't exist; the arguments are where and the fields there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directly under %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の直下にあるのは: %@"
+          }
+        }
+      }
+    },
+    "path.isANode" : {
+      "comment" : "Hint when a path points inside a flow node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is a node, so nothing inside it can be pointed at"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ はノードで、その中は指せません"
+          }
+        }
+      }
+    },
+    "path.noFields" : {
+      "comment" : "Stands for the list of fields when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no fields)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（フィールドなし）"
+          }
+        }
+      }
+    },
+    "path.noNodes" : {
+      "comment" : "Stands for the list of nodes when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no nodes)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（ノードなし）"
+          }
+        }
+      }
+    },
+    "path.noRows" : {
+      "comment" : "Stands for the list of rows when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no rows)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（行なし）"
+          }
+        }
+      }
+    },
+    "path.noSection" : {
+      "comment" : "Hint when a link names a section that is not there.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section \"%@\" is not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション「%@」が見つかりません"
+          }
+        }
+      }
+    },
+    "path.nodesIn" : {
+      "comment" : "Hint when a path names a flow node that doesn't exist; the arguments are where and the nodes there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The nodes of %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ のノードは: %@"
+          }
+        }
+      }
+    },
+    "path.notAnItem" : {
+      "comment" : "Hint when a path points inside a formatdoc row that is not an item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is a row that isn't an item, so nothing inside it can be pointed at"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は項目ではない行で、その中は指せません"
+          }
+        }
+      }
+    },
+    "path.rowsInside" : {
+      "comment" : "Hint when a path points inside a formatdoc item that doesn't have the row; the arguments are where and the rows there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rows in %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の中にある行は: %@"
+          }
+        }
+      }
+    },
+    "path.rowsUnder" : {
+      "comment" : "Hint when a path names a row of a custom card that doesn't exist; the arguments are where and the rows there are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rows under %@ are: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の下にある行は: %@"
+          }
+        }
+      }
+    },
+    "path.sectionColon" : {
+      "comment" : "Hint when a link names a section without the colon after it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write a section with a colon: [[%@:]]"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションは「[[%@:]]」と「:」を付けて書きます"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

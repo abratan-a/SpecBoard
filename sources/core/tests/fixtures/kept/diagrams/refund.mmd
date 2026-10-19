@@ -1,0 +1,21 @@
+flowchart LR
+    n_start(["開始: Charts/Shop:Checkout から受ける（Schemas/Ordering:Order.total）"])
+    n_ask["問い合わせ<br/>処理<br/>call payment-gateway: Schemas/Ordering:Order.total<br/>send Charts/Shop:Checkout: Schemas/Ordering:Order.id<br/>write Schemas:Orders"]
+    n_a["処理<br/>read Schemas:Customer.name"]
+    n_b{{"待つ: approval（1日 まで）"}}
+    n_meet[["合流（all）"]]
+    n_again["実行: Charts/Shop:Checkout"]
+    n_check{"判断: Schemas/Ordering:Order.status"}
+    n_done(["終了: success（呼んだ側 に返す: Schemas/Ordering:Order.id）"])
+    n_failed(["終了: failure"])
+    n_start --> n_ask
+    n_ask --> n_a
+    n_ask --> n_b
+    n_a --> n_meet
+    n_b --> n_meet
+    n_b -.->|"時間切れ"| n_failed
+    n_meet --> n_again
+    n_again --> n_check
+    n_again -.->|"失敗時"| n_failed
+    n_check -->|"Schemas:Status が paid"| n_done
+    n_check -->|"else"| n_ask

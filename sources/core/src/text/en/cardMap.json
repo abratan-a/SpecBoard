@@ -1,0 +1,9 @@
+{
+  "cardMap.card.missing": "The card does not exist",
+  "cardMap.places.at": "places \"{path}\": {why}",
+  "cardMap.places.needTopLeft": "Write topLeft in places \"{path}\"",
+  "cardMap.places.outside": "places \"{path}\": it is not inside {goal} (only cards inside a goal can be placed on the contents map)",
+  "cardMap.places.shape": "places is a {top_left} for each path of a card inside the goal (example: {\"Goals:Design\": {\"topLeft\": {\"x\": 0, \"y\": 0}}})",
+  "cardMap.places.sizeNotHere": "places \"{path}\": write only topLeft in places of the contents map (change the size of {kind} with size in the value of card_update on that card)",
+  "cardMap.places.stray": "places \"{path}\" has keys that cannot be used: {keys}. Only topLeft can be used"
+}

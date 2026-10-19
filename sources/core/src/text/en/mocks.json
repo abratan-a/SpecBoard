@@ -1,0 +1,4 @@
+{
+  "mocks.facesOnlyMock": "faces is written only with as: mock (each part's own page of a ui section)",
+  "mocks.notUi": "{path} is not a ui section ({kind}). Only a ui section has a mock. Read this section's map with as: picture (PNG) or as: diagram (mermaid)"
+}

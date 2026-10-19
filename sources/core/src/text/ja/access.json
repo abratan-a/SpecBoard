@@ -1,0 +1,21 @@
+{
+  "access.keyItemUnknown": "アクセスキーの項目「{item}」はありません",
+  "access.keyItemUnknownAmong": "アクセスキーの項目「{item}」はありません（ある: {known}）",
+  "access.keyNameEmpty": "アクセスキーの名前 を入力してください",
+  "access.keyNameTooLong": "アクセスキーの名前 は 80 文字以内です",
+  "access.keyNeeded": "MCP の接続にはアクセスキーが要ります（Authorization: Bearer <アクセスキー>）。プロジェクト一覧の場所の設定の「アクセスキー」で作ります",
+  "access.keyNotFound": "アクセスキーが見つかりません",
+  "access.levelWord": "level は read か write です（{value} は読めません）",
+  "access.needs": "{op} には {key}（{what}）が要ります",
+  "access.noProject": "そのプロジェクトはありません",
+  "access.noRandom": "乱数が取れません",
+  "access.permitsNeeded": "{op} には permits（{項目: allow・ask・deny}。項目は {known}）が要ります",
+  "access.permitsShape": "{op} の permits は {項目: allow・ask・deny} です（{other} ではなく）",
+  "access.permitsState": "{op} の permits の {item} は allow・ask・deny のどれかです（{said} ではなく）",
+  "access.projectNotFound": "プロジェクトが見つかりません",
+  "access.readOnly": "プロジェクト「{project}」は、このアクセスキーでは読むだけです（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）",
+  "access.what.keyId": "アクセスキーの id",
+  "access.what.keyName": "アクセスキーの名前",
+  "access.what.on": "公開にするか",
+  "access.what.projectId": "プロジェクトの id"
+}

@@ -1,0 +1,1026 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "delete.message" : {
+      "comment" : "Message of the confirmation before a project is deleted; how many cards it has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This project's %lld card will be deleted with it. This can't be undone."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This project's %lld cards will be deleted with it. This can't be undone."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトの %lld 件のカードも一緒に消えます。元に戻せません。"
+          }
+        }
+      }
+    },
+    "delete.title" : {
+      "comment" : "Title of the confirmation before a project is deleted; the project's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete project “%@”?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」を削除しますか？"
+          }
+        }
+      }
+    },
+    "details.created" : {
+      "comment" : "Label of the creation time in a project's details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作成"
+          }
+        }
+      }
+    },
+    "details.delete" : {
+      "comment" : "Button in a project's details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this project…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトを削除…"
+          }
+        }
+      }
+    },
+    "details.nameField" : {
+      "comment" : "Placeholder of the name field in a project's details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト名"
+          }
+        }
+      }
+    },
+    "details.sections" : {
+      "comment" : "Fact in a project's details: how many sections a project that is not open has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld section (open the project to edit)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sections (open the project to edit)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個（開くと編集できます）"
+          }
+        }
+      }
+    },
+    "details.size" : {
+      "comment" : "Label of a project's size in its details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きさ"
+          }
+        }
+      }
+    },
+    "details.sizeCards" : {
+      "comment" : "Size of a project that is not open in its details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card (details when you open it)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards (details when you open it)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %lld（詳しくは開いたときに）"
+          }
+        }
+      }
+    },
+    "details.sizeFull" : {
+      "comment" : "Size of the open project in its details: cards, fields, references, deepest nesting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards %lld / Fields %lld / References %lld / Max nesting %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %lld / フィールド %lld / 参照 %lld / 最大ネスト %lld"
+          }
+        }
+      }
+    },
+    "details.slugHelp" : {
+      "comment" : "Explanation under the slug field in a project's details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The folder name of the export records, and the name used when exporting to a file. It does not change when the project is renamed. If you change it, each export's remembered default destination follows."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートの記録のフォルダ名と、ファイルにエクスポートするときの名前。名前を変えても変わりません。変えると、エクスポートごとの既定の先の記録が付いて行きます"
+          }
+        }
+      }
+    },
+    "details.updated" : {
+      "comment" : "Label of the last update time in a project's details.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
+    },
+    "empty.create" : {
+      "comment" : "Button shown when the place has no project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a new project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいプロジェクトを作る"
+          }
+        }
+      }
+    },
+    "empty.import" : {
+      "comment" : "Button shown when this Mac has no project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import a project file…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトのファイルを読み込む…"
+          }
+        }
+      }
+    },
+    "empty.noMatch" : {
+      "comment" : "Shown when the filter matches no project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一致するプロジェクトがありません"
+          }
+        }
+      }
+    },
+    "empty.none" : {
+      "comment" : "Shown when the place has no project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトがありません"
+          }
+        }
+      }
+    },
+    "header.filter" : {
+      "comment" : "Placeholder of the filter field at the head of the projects' home.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトを絞り込む"
+          }
+        }
+      }
+    },
+    "header.importHelp" : {
+      "comment" : "Tooltip of the import button at the head of the projects' home.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import a project file (.json) onto this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトのファイル（.json）を読み込む（この Mac に入ります）"
+          }
+        }
+      }
+    },
+    "header.projects" : {
+      "comment" : "Segment at the head of the projects' home that shows the place's projects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト一覧"
+          }
+        }
+      }
+    },
+    "list.archive" : {
+      "comment" : "Heading of the archive group in the list of projects; how many projects it holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archive %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アーカイブ %lld"
+          }
+        }
+      }
+    },
+    "list.archiveHelp" : {
+      "comment" : "Tooltip of the archive group heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects kept whole. They are read-only; restoring one makes it editable again"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "丸ごと残したプロジェクト。読むだけで、元に戻すと書き換えられます"
+          }
+        }
+      }
+    },
+    "menu.archive" : {
+      "comment" : "Context menu item of a project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to archive"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アーカイブに移す"
+          }
+        }
+      }
+    },
+    "menu.delete" : {
+      "comment" : "Context menu item of a project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除…"
+          }
+        }
+      }
+    },
+    "menu.editNameDescription" : {
+      "comment" : "Context menu item of a project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit name and description…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前と説明を編集…"
+          }
+        }
+      }
+    },
+    "menu.exportFile" : {
+      "comment" : "Context menu item that saves a project as a file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export to file…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルにエクスポート…"
+          }
+        }
+      }
+    },
+    "menu.makePrivate" : {
+      "comment" : "Context menu item of a public project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make private"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非公開にする"
+          }
+        }
+      }
+    },
+    "menu.makePublic" : {
+      "comment" : "Context menu item of a project kept by an agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make public (readable with any access key)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開にする（どのアクセスキーからも読める）"
+          }
+        }
+      }
+    },
+    "menu.openReadOnly" : {
+      "comment" : "Context menu item of an archived project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open (read-only)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開く（読むだけ）"
+          }
+        }
+      }
+    },
+    "menu.restore" : {
+      "comment" : "Context menu item that takes a project out of the archive.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元に戻す"
+          }
+        }
+      }
+    },
+    "menu.runExports" : {
+      "comment" : "Context menu item that runs the project's exports.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export as configured"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定どおりにエクスポート"
+          }
+        }
+      }
+    },
+    "move.confirm" : {
+      "comment" : "Confirm button of the move-project confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移す"
+          }
+        }
+      }
+    },
+    "move.message" : {
+      "comment" : "Message of the confirmation before a project is moved; the place it comes from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves main, branches, the board, history, MRs, diagram positions and the project's settings, and removes the project from %@ (the project file from before the move is kept on this Mac). Working-directory folder bindings, the default export destinations, access-key permissions and public settings are not moved."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main・branch・ボード・履歴・MR・図の位置・プロジェクトの設定ごと移し、%@からは消します（移す前のプロジェクトのファイルをこの Mac に残します）。作業ディレクトリのフォルダの結び付け・エクスポートの既定のエクスポート先・アクセスキーの許可・公開は移りません。"
+          }
+        }
+      }
+    },
+    "move.title" : {
+      "comment" : "Title of the confirmation before a project is moved; the project's name and the place it goes to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move project “%@” to %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」を%@へ移しますか？"
+          }
+        }
+      }
+    },
+    "move.toAgent" : {
+      "comment" : "Context menu of a project kept on this Mac: lists the agents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to an agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントへ移す"
+          }
+        }
+      }
+    },
+    "move.toOtherAgent" : {
+      "comment" : "Context menu of a project kept by an agent: lists the other agents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to another agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのエージェントへ移す"
+          }
+        }
+      }
+    },
+    "move.toThisMac" : {
+      "comment" : "Context menu item of a project kept by an agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to this Mac…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac へ移す…"
+          }
+        }
+      }
+    },
+    "new.description" : {
+      "comment" : "Placeholder of the description field in the new project form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明（省略可）"
+          }
+        }
+      }
+    },
+    "new.name" : {
+      "comment" : "Placeholder of the name field in the new project form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project name (any language)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト名（日本語可）"
+          }
+        }
+      }
+    },
+    "new.titleIn" : {
+      "comment" : "Tooltip of the new project button and title of its form; the place the project goes to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New project (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいプロジェクト（%@）"
+          }
+        }
+      }
+    },
+    "notReached.connect" : {
+      "comment" : "Button that connects a disabled agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋ぐ"
+          }
+        }
+      }
+    },
+    "notReached.settings" : {
+      "comment" : "Button that opens an agent's connection settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続の設定"
+          }
+        }
+      }
+    },
+    "notReached.text" : {
+      "comment" : "Shown in place of the projects of an agent that is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected to this agent yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントには、まだ繋がっていません"
+          }
+        }
+      }
+    },
+    "read.asCopy" : {
+      "comment" : "Button that imports the file as another project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import as a separate project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別のプロジェクトとして読み込む"
+          }
+        }
+      }
+    },
+    "read.cantRead" : {
+      "comment" : "Error when a chosen project file can't be read; the file's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't read the file: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルを読めませんでした: %@"
+          }
+        }
+      }
+    },
+    "read.exists" : {
+      "comment" : "Title of the question when an imported project file is of a project that is here already; the project's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project “%@” already exists"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」はもうあります"
+          }
+        }
+      }
+    },
+    "read.existsMessage" : {
+      "comment" : "Message of the question when an imported project file is of a project that is here already.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file was exported earlier from the same project. Even if you replace it, the current project is kept whole in the archive."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じプロジェクトを前にエクスポートしたファイルです。置き換えても、今のプロジェクトは丸ごとアーカイブに残ります。"
+          }
+        }
+      }
+    },
+    "read.notProject" : {
+      "comment" : "Error when a chosen file is not a project file; the file's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a project file: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトのファイルではありません: %@"
+          }
+        }
+      }
+    },
+    "read.panelMessage" : {
+      "comment" : "Message of the open panel for a project file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the project file (.json) to import."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込むプロジェクトのファイル（.json）を選んでください"
+          }
+        }
+      }
+    },
+    "read.replace" : {
+      "comment" : "Button that replaces the project with the imported file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace (the current one goes to the archive)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き換える（今のものはアーカイブへ）"
+          }
+        }
+      }
+    },
+    "row.infoHelp" : {
+      "comment" : "Tooltip of the info button on a project's row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name, description, info, delete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前・説明・情報・削除"
+          }
+        }
+      }
+    },
+    "row.isOpen" : {
+      "comment" : "Badge on the row of the project that is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いています"
+          }
+        }
+      }
+    },
+    "row.loading" : {
+      "comment" : "Shown on a project's row while it is being opened.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込んでいます…"
+          }
+        }
+      }
+    },
+    "row.publicHelp" : {
+      "comment" : "Tooltip of the globe icon on a public project's row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public: readable with any access key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開: どのアクセスキーからも読めます"
+          }
+        }
+      }
+    },
+    "row.stats" : {
+      "comment" : "Facts on a project's row: how many cards and when it was updated.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card · updated %@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards · updated %@"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %lld・更新 %@"
+          }
+        }
+      }
+    },
+    "write.failed" : {
+      "comment" : "Error when a project file can't be written; the system's reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't export: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートできませんでした: %@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

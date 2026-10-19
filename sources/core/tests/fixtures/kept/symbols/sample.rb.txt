@@ -1,0 +1,10 @@
+Shop — module module — line 4 — 3-29
+  Shop.MOST — constant constant — line 6 — 6-6
+  Shop.Order — type class — line 9 — 8-28 — calls attr_reader
+    Shop.Order.initialize — method def — line 13 — 12-15
+    Shop.Order.total — method def — line 17 — 17-19 — calls sum, helper
+    Shop.Order.of — method def — line 21 — 21-23 — calls tap, lines, concat
+    Shop.Order.== — method def — line 25 — 25-27 — calls total
+'Shop::Order' — type class — line 31 — 31-35
+  'Shop::Order'.cheap? — method def — line 32 — 32-34
+helper — function def — line 40 — 39-42

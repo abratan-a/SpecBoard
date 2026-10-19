@@ -1,0 +1,1003 @@
+{
+ "about": "Paths as they are written and the names they are read into, for the core (src/pathtext.rs) and the app to read alike. paths: text is a path as written; tree is the name before an @ written before the sections (main@Store:Order, of before; absent when none); sections are the sections' names from the top (before the :, or the whole of a path with a / and no :); colon is whether a : was written (absent: false); names are the names after the : (or of a path with neither : nor /), the card's first; picks, when present, says for each name what is written inside its [...] (\"\" for [], null for none; absent: none for every name); written is the path as it is kept, each name quoted only when it needs it (absent: the same as text); refused instead says why the path cannot be read (empty, unclosedQuote, stray, emptyName, unclosedBracket, bracketInSection). names: name is a name; written is how it is written in a path; problem, when present, is why it cannot be a name (empty, tooLong, control, spaces). A name is quoted when it holds whitespace or one of / : . [ ] ' @ | { } # \" ` and a ' inside is doubled; a pick's key is quoted as a name is, and also when it holds = or ,. refs: text is a piece of Markdown; refs are the references the scanner finds in it, in order, each with its kind (place, value, embed), path, and shown (a place's |text) and option (an embed's |option) when present; renamed, when present, is the text again with each reference to from naming to instead (the shown text kept). sectionOnly: text is a path; section is the sections it names when it names a section alone (a : with nothing after it), null when it does not.",
+ "paths": [
+  {
+   "text": "Core:User",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "User"
+   ]
+  },
+  {
+   "text": "Core:User.profile.avatar.url",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "User",
+    "profile",
+    "avatar",
+    "url"
+   ]
+  },
+  {
+   "text": "Store/Ordering:Order.lines[].sku",
+   "sections": [
+    "Store",
+    "Ordering"
+   ],
+   "colon": true,
+   "names": [
+    "Order",
+    "lines",
+    "sku"
+   ],
+   "picks": [
+    null,
+    "",
+    null
+   ]
+  },
+  {
+   "text": "Store/Ordering:Order.lines.sku",
+   "sections": [
+    "Store",
+    "Ordering"
+   ],
+   "colon": true,
+   "names": [
+    "Order",
+    "lines",
+    "sku"
+   ]
+  },
+  {
+   "text": "Docs:Spec.auth",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "Spec",
+    "auth"
+   ]
+  },
+  {
+   "text": "Behavior:Checkout.review",
+   "sections": [
+    "Behavior"
+   ],
+   "colon": true,
+   "names": [
+    "Checkout",
+    "review"
+   ]
+  },
+  {
+   "text": "Goals:Launch.Spec.Review",
+   "sections": [
+    "Goals"
+   ],
+   "colon": true,
+   "names": [
+    "Launch",
+    "Spec",
+    "Review"
+   ]
+  },
+  {
+   "text": "Data/Hosts:vault.ports[number=8200,protocol=tcp]",
+   "sections": [
+    "Data",
+    "Hosts"
+   ],
+   "colon": true,
+   "names": [
+    "vault",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "number=8200,protocol=tcp"
+   ]
+  },
+  {
+   "text": "Data/Hosts:vault.ports[0].number",
+   "sections": [
+    "Data",
+    "Hosts"
+   ],
+   "colon": true,
+   "names": [
+    "vault",
+    "ports",
+    "number"
+   ],
+   "picks": [
+    null,
+    "0",
+    null
+   ]
+  },
+  {
+   "text": "Data/Hosts:vault.ports[number=8200, protocol=tcp]",
+   "sections": [
+    "Data",
+    "Hosts"
+   ],
+   "colon": true,
+   "names": [
+    "vault",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "number=8200,protocol=tcp"
+   ],
+   "written": "Data/Hosts:vault.ports[number=8200,protocol=tcp]"
+  },
+  {
+   "text": "Data:Host1.groups[=web]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "Host1",
+    "groups"
+   ],
+   "picks": [
+    null,
+    "=web"
+   ]
+  },
+  {
+   "text": "Data:Host1.hosts[ip=192.0.2.1].name",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "Host1",
+    "hosts",
+    "name"
+   ],
+   "picks": [
+    null,
+    "ip=192.0.2.1",
+    null
+   ]
+  },
+  {
+   "text": "Data:Host1.tags[=\"a,b\"]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "Host1",
+    "tags"
+   ],
+   "picks": [
+    null,
+    "=\"a,b\""
+   ]
+  },
+  {
+   "text": "Data:Host1.items[name=\"x]y.z\"].id",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "Host1",
+    "items",
+    "id"
+   ],
+   "picks": [
+    null,
+    "name=\"x]y.z\"",
+    null
+   ]
+  },
+  {
+   "text": "Data/Core",
+   "sections": [
+    "Data",
+    "Core"
+   ]
+  },
+  {
+   "text": "Main",
+   "names": [
+    "Main"
+   ]
+  },
+  {
+   "text": "Data/Tenant:",
+   "sections": [
+    "Data",
+    "Tenant"
+   ],
+   "colon": true
+  },
+  {
+   "text": "main@Store:Order",
+   "tree": "main",
+   "sections": [
+    "Store"
+   ],
+   "colon": true,
+   "names": [
+    "Order"
+   ]
+  },
+  {
+   "text": "main@",
+   "tree": "main"
+  },
+  {
+   "text": "main@:Order",
+   "tree": "main",
+   "colon": true,
+   "names": [
+    "Order"
+   ]
+  },
+  {
+   "text": "User.email",
+   "names": [
+    "User",
+    "email"
+   ]
+  },
+  {
+   "text": "subjects[]",
+   "names": [
+    "subjects"
+   ],
+   "picks": [
+    ""
+   ]
+  },
+  {
+   "text": " Core : User ",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "User"
+   ],
+   "written": "Core:User"
+  },
+  {
+   "text": "仕様/画面:注文書.明細",
+   "sections": [
+    "仕様",
+    "画面"
+   ],
+   "colon": true,
+   "names": [
+    "注文書",
+    "明細"
+   ]
+  },
+  {
+   "text": "Core:注文.e-mail",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "注文",
+    "e-mail"
+   ]
+  },
+  {
+   "text": "Docs:A&B+C-D",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "A&B+C-D"
+   ]
+  },
+  {
+   "text": "Docs:Évite",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "Évite"
+   ]
+  },
+  {
+   "text": "repo/docs/design:'CardKinds.md'",
+   "sections": [
+    "repo",
+    "docs",
+    "design"
+   ],
+   "colon": true,
+   "names": [
+    "CardKinds.md"
+   ]
+  },
+  {
+   "text": "repo/'.claude'/rules:'ci.md'",
+   "sections": [
+    "repo",
+    ".claude",
+    "rules"
+   ],
+   "colon": true,
+   "names": [
+    "ci.md"
+   ]
+  },
+  {
+   "text": "repo/'.claude'",
+   "sections": [
+    "repo",
+    ".claude"
+   ]
+  },
+  {
+   "text": "'.claude'",
+   "names": [
+    ".claude"
+   ]
+  },
+  {
+   "text": "Notes:'Owner''s guide'",
+   "sections": [
+    "Notes"
+   ],
+   "colon": true,
+   "names": [
+    "Owner's guide"
+   ]
+  },
+  {
+   "text": "Docs:'release notes.md'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "release notes.md"
+   ]
+  },
+  {
+   "text": "Docs/'設計/詳細'",
+   "sections": [
+    "Docs",
+    "設計/詳細"
+   ]
+  },
+  {
+   "text": "Docs/'Q&A 2026':'a:b'",
+   "sections": [
+    "Docs",
+    "Q&A 2026"
+   ],
+   "colon": true,
+   "names": [
+    "a:b"
+   ]
+  },
+  {
+   "text": "Docs:'a]]b'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "a]]b"
+   ]
+  },
+  {
+   "text": "Docs:'a}}b'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "a}}b"
+   ]
+  },
+  {
+   "text": "Docs:'{{a}}'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "{{a}}"
+   ]
+  },
+  {
+   "text": "Docs:'a|sequence'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "a|sequence"
+   ]
+  },
+  {
+   "text": "Docs:'user@example.com'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "user@example.com"
+   ]
+  },
+  {
+   "text": "Docs:'#top'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "#top"
+   ]
+  },
+  {
+   "text": "Docs:'say \"hi\"'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "say \"hi\""
+   ]
+  },
+  {
+   "text": "Docs:'a`b'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "a`b"
+   ]
+  },
+  {
+   "text": "Docs:'[[x]]'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "[[x]]"
+   ]
+  },
+  {
+   "text": "Docs:''''",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "'"
+   ]
+  },
+  {
+   "text": "Docs:'a:b'.'c.d'.e",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "a:b",
+    "c.d",
+    "e"
+   ]
+  },
+  {
+   "text": "Behavior:'Check out'.'pay now'",
+   "sections": [
+    "Behavior"
+   ],
+   "colon": true,
+   "names": [
+    "Check out",
+    "pay now"
+   ]
+  },
+  {
+   "text": "Docs:'User'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "User"
+   ],
+   "written": "Docs:User"
+  },
+  {
+   "text": "'Docs':'User'.'email'",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "User",
+    "email"
+   ],
+   "written": "Docs:User.email"
+  },
+  {
+   "text": "'Docs'/'Core'",
+   "sections": [
+    "Docs",
+    "Core"
+   ],
+   "written": "Docs/Core"
+  },
+  {
+   "text": "Docs:Owner's",
+   "sections": [
+    "Docs"
+   ],
+   "colon": true,
+   "names": [
+    "Owner's"
+   ],
+   "written": "Docs:'Owner''s'"
+  },
+  {
+   "text": "Core:X.'user list'[0].name",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "user list",
+    "name"
+   ],
+   "picks": [
+    null,
+    "0",
+    null
+   ]
+  },
+  {
+   "text": "Core:X.'user list'[].name",
+   "sections": [
+    "Core"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "user list",
+    "name"
+   ],
+   "picks": [
+    null,
+    "",
+    null
+   ]
+  },
+  {
+   "text": "Data:X.ports['a b'=1]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "'a b'=1"
+   ]
+  },
+  {
+   "text": "Data:X.ports['a'=1]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "a=1"
+   ],
+   "written": "Data:X.ports[a=1]"
+  },
+  {
+   "text": "Data:X.ports['a=b'=1,'c,d'=\"2\"]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "'a=b'=1,'c,d'=\"2\""
+   ]
+  },
+  {
+   "text": "Data:X.ports[name=O'Brien]",
+   "sections": [
+    "Data"
+   ],
+   "colon": true,
+   "names": [
+    "X",
+    "ports"
+   ],
+   "picks": [
+    null,
+    "name=O'Brien"
+   ]
+  },
+  {
+   "text": "",
+   "refused": "empty"
+  },
+  {
+   "text": "   ",
+   "refused": "empty"
+  },
+  {
+   "text": "Docs:'abc",
+   "refused": "unclosedQuote"
+  },
+  {
+   "text": "'Docs:abc",
+   "refused": "unclosedQuote"
+  },
+  {
+   "text": "Docs:'a'b",
+   "refused": "stray"
+  },
+  {
+   "text": "Docs:''",
+   "refused": "emptyName"
+  },
+  {
+   "text": "Core:User..email",
+   "refused": "emptyName"
+  },
+  {
+   "text": "Core:User.",
+   "refused": "emptyName"
+  },
+  {
+   "text": "Store//Order",
+   "refused": "emptyName"
+  },
+  {
+   "text": "Store/:Order",
+   "refused": "emptyName"
+  },
+  {
+   "text": "Data:X.ports[0",
+   "refused": "unclosedBracket"
+  },
+  {
+   "text": "Data:X.ports[name=\"x]",
+   "refused": "unclosedBracket"
+  },
+  {
+   "text": "Data:X.ports[0]x",
+   "refused": "stray"
+  },
+  {
+   "text": "Data:X.ports[0][1]",
+   "refused": "stray"
+  },
+  {
+   "text": "Store[0]:Order",
+   "refused": "bracketInSection"
+  }
+ ],
+ "names": [
+  {
+   "name": "User",
+   "written": "User"
+  },
+  {
+   "name": "CardKinds.md",
+   "written": "'CardKinds.md'"
+  },
+  {
+   "name": "release notes.md",
+   "written": "'release notes.md'"
+  },
+  {
+   "name": ".claude",
+   "written": "'.claude'"
+  },
+  {
+   "name": "e-mail",
+   "written": "e-mail"
+  },
+  {
+   "name": "注文",
+   "written": "注文"
+  },
+  {
+   "name": "Owner's guide",
+   "written": "'Owner''s guide'"
+  },
+  {
+   "name": "'",
+   "written": "''''"
+  },
+  {
+   "name": "a]]b",
+   "written": "'a]]b'"
+  },
+  {
+   "name": "a}}b",
+   "written": "'a}}b'"
+  },
+  {
+   "name": "a|b",
+   "written": "'a|b'"
+  },
+  {
+   "name": "user@example",
+   "written": "'user@example'"
+  },
+  {
+   "name": "a/b",
+   "written": "'a/b'"
+  },
+  {
+   "name": "a:b",
+   "written": "'a:b'"
+  },
+  {
+   "name": "a[0]",
+   "written": "'a[0]'"
+  },
+  {
+   "name": "#top",
+   "written": "'#top'"
+  },
+  {
+   "name": "a\"b",
+   "written": "'a\"b'"
+  },
+  {
+   "name": "a`b",
+   "written": "'a`b'"
+  },
+  {
+   "name": "{x}",
+   "written": "'{x}'"
+  },
+  {
+   "name": "Q&A 2026",
+   "written": "'Q&A 2026'"
+  },
+  {
+   "name": "A&B+C-D",
+   "written": "A&B+C-D"
+  },
+  {
+   "name": "Évite",
+   "written": "Évite"
+  },
+  {
+   "name": "v0_2_21",
+   "written": "v0_2_21"
+  },
+  {
+   "name": "設計 詳細",
+   "written": "'設計 詳細'"
+  },
+  {
+   "name": "全角　空白",
+   "written": "'全角　空白'"
+  },
+  {
+   "name": "",
+   "written": "''",
+   "problem": "empty"
+  },
+  {
+   "name": "a\nb",
+   "written": "'a\nb'",
+   "problem": "control"
+  },
+  {
+   "name": "a\tb",
+   "written": "'a\tb'",
+   "problem": "control"
+  },
+  {
+   "name": " a",
+   "written": "' a'",
+   "problem": "spaces"
+  },
+  {
+   "name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "written": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "written": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "problem": "tooLong"
+  },
+  {
+   "name": "注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注",
+   "written": "注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注注"
+  }
+ ],
+ "refs": [
+  {
+   "text": "see [[Core:User|the user]] here",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Core:User",
+     "shown": "the user"
+    }
+   ],
+   "renamed": {
+    "from": "Core:User",
+    "to": "Core:Member",
+    "text": "see [[Core:Member|the user]] here"
+   }
+  },
+  {
+   "text": "[[Core:User | 利用者 の 名前 ]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Core:User",
+     "shown": "利用者 の 名前"
+    }
+   ]
+  },
+  {
+   "text": "[[Docs:'a|b'|it's v1.2 (draft)]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Docs:'a|b'",
+     "shown": "it's v1.2 (draft)"
+    }
+   ]
+  },
+  {
+   "text": "[[Core:User|]] [[Core:User| ]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Core:User"
+    },
+    {
+     "kind": "place",
+     "path": "Core:User"
+    }
+   ]
+  },
+  {
+   "text": "[[Store/Ordering:|注文]] [[Store/Ordering:]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Store/Ordering:",
+     "shown": "注文"
+    },
+    {
+     "kind": "place",
+     "path": "Store/Ordering:"
+    }
+   ],
+   "renamed": {
+    "from": "Store/Ordering:",
+    "to": "Store/Orders:",
+    "text": "[[Store/Orders:|注文]] [[Store/Orders:]]"
+   }
+  },
+  {
+   "text": "[[Core:User|a]] and ]] later",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "Core:User",
+     "shown": "a"
+    }
+   ]
+  },
+  {
+   "text": "[[Core:User|no close\n]]",
+   "refs": []
+  },
+  {
+   "text": "[[subjects[]|件名]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "subjects[]",
+     "shown": "件名"
+    }
+   ]
+  },
+  {
+   "text": "[[not a path|x]] `[[Core:User|x]]`",
+   "refs": []
+  },
+  {
+   "text": "[[A|B]]",
+   "refs": [
+    {
+     "kind": "place",
+     "path": "A",
+     "shown": "B"
+    }
+   ]
+  },
+  {
+   "text": "![[Ordering:Checkout|sequence]] {{Ordering:Status}}",
+   "refs": [
+    {
+     "kind": "embed",
+     "path": "Ordering:Checkout",
+     "option": "sequence"
+    },
+    {
+     "kind": "value",
+     "path": "Ordering:Status"
+    }
+   ]
+  }
+ ],
+ "sectionOnly": [
+  {
+   "text": "Store/Ordering:",
+   "section": "Store/Ordering"
+  },
+  {
+   "text": " Docs : ",
+   "section": "Docs"
+  },
+  {
+   "text": "'a:b':",
+   "section": "'a:b'"
+  },
+  {
+   "text": "Core:User",
+   "section": null
+  },
+  {
+   "text": "Schemas",
+   "section": null
+  },
+  {
+   "text": "Schemas/Ordering",
+   "section": null
+  },
+  {
+   "text": ":",
+   "section": null
+  }
+ ]
+}

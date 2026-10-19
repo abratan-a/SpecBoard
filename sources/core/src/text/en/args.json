@@ -1,0 +1,18 @@
+{
+  "args.actionGone": "action is gone. What a part does is written as a flow. A flow is a container card: put node cards inside it and join them with lines: begin (kind: begin; trigger: receive to receive) → process (kind: process; rows of read, write, sign, verify, call, send, receive and compute in steps; where a row reads and writes, the lines reads and writes) → end (kind: end; what it returns in return), joined by next lines. Calling another flow and waiting for it to end is a run (kind: run and the line runs). The shape is in guide with about: flow. For example (one call with card_create's target left out and value given by path): {\"Behavior:Order\": {\"kind\": \"flow\"}, \"Behavior:Order.start\": {\"kind\": \"begin\", \"trigger\": \"receive\", \"program\": \"Claude Code\", \"carries\": [\"Data:Order\"], \"connections\": [{\"line\": \"next\", \"to\": \"work\"}]}, \"Behavior:Order.work\": {\"kind\": \"process\", \"steps\": [{\"do\": \"read\"}, {\"do\": \"write\"}], \"connections\": [{\"line\": \"reads\", \"from\": \"steps[0]\", \"to\": \"Data:Order\"}, {\"line\": \"writes\", \"from\": \"steps[1]\", \"to\": \"Data:Order\", \"at\": \"total\"}, {\"line\": \"next\", \"to\": \"done\"}]}, \"Behavior:Order.done\": {\"kind\": \"end\", \"outcome\": \"success\", \"return\": {\"carries\": [\"Data:Order.total\"]}}}",
+  "args.cardKeyGone": "A card's {key} is not used. {gone}",
+  "args.guideAbout": "guide with about: {tool})",
+  "args.oldClauses": "clauses (a note's clauses) are gone. A document written with items and rows is a kind: formatdoc card's rows; a note and a freedoc have only body (the shape is in guide with about: rows)",
+  "args.pairsValueShape": "Without target, value is an object by path (value.{key} is not an object)",
+  "args.refusals.count": "Nothing was written: {count} error(s) found",
+  "args.refusals.more": "and {count} more",
+  "args.required": "{name} is required (a string)",
+  "args.targetEmpty": "target is empty",
+  "args.targetListShape": "A target array lists one or more non-empty strings",
+  "args.targetNeeded": "target is required",
+  "args.targetNeededForPairs": "target is required (to pass different values at once, leave target out and make value an object by path)",
+  "args.targetOne": "This tool takes one target (not an array)",
+  "args.targetType": "target is a string or an array of strings",
+  "args.valueObject": "value is an object (its shape is in guide)",
+  "args.valueShape": " (the shape of value is in guide with about: {tool})"
+}

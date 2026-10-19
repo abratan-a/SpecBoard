@@ -1,0 +1,9 @@
+{
+  "merges.broken.item": "{via} \"{path}\" of {at}",
+  "merges.places.shape": "places must be true or false",
+  "merges.take.noConflict": "take names {wrong}, which are not conflicts (the conflicts are {there}; see them with against of branch_read)",
+  "merges.take.noConflictNone": "none",
+  "merges.take.shape": "take \"{path}\" must be {\"<unit>\": \"source\" | \"target\"}",
+  "merges.take.side": "take \"{path}\" \"{unit}\" must be source or target",
+  "merges.take.unitOf": "{unit} of {path}"
+}

@@ -1,0 +1,1320 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "alert.failedTitle" : {
+      "comment" : "Alert title when checking failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check for updates"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認できませんでした"
+          }
+        }
+      }
+    },
+    "alert.later" : {
+      "comment" : "Alert button that leaves the new version for later.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後で"
+          }
+        }
+      }
+    },
+    "alert.readyMessage" : {
+      "comment" : "Alert text. The argument is the installed version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing quits the app and relaunches it. The current version is %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ替えるとアプリを終了して起動し直します。今の版は %@ です。"
+          }
+        }
+      }
+    },
+    "alert.readyTitle" : {
+      "comment" : "Alert title after a manual check found a new version. The argument is the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@ is ready"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい版 %@ を用意しました"
+          }
+        }
+      }
+    },
+    "alert.relaunch" : {
+      "comment" : "Alert button that replaces the app now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaunch and update"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再起動して入れ替える"
+          }
+        }
+      }
+    },
+    "alert.upToDate" : {
+      "comment" : "Alert text after a manual check found nothing new. The argument is the installed version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is the latest release."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ が最新のリリースです。"
+          }
+        }
+      }
+    },
+    "error.devBuild" : {
+      "comment" : "Update problem shown when the app is not installed in Applications.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Development builds don't update. Only a copy installed in /Applications updates itself"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発ビルドなので更新しません。/Applications に入れた版だけが自分で更新します"
+          }
+        }
+      }
+    },
+    "error.downloadFailed" : {
+      "comment" : "Update problem: the DMG download failed. Arguments: the file name, the HTTP status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't download %@ (%lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を取得できませんでした（%lld）"
+          }
+        }
+      }
+    },
+    "error.githubRefused" : {
+      "comment" : "Update problem: GitHub answered 401 or 403 for another reason than its request limit. The argument is the HTTP status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub refused the request (%lld). The token is wrong, or the repository isn't public"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub に断られました（%lld）。トークンが違うか、このリポジトリが公開されていません"
+          }
+        }
+      }
+    },
+    "error.noRelease" : {
+      "comment" : "Update problem: the server answered 404. The argument is the repository (owner/name).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No release found. It isn't published yet, or the token can't see %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リリースが見つかりません。まだ公開されていないか、トークンから %@ が見えていません"
+          }
+        }
+      }
+    },
+    "error.noSource" : {
+      "comment" : "Update problem shown when no update source exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no update source. Add one under “Update source” in Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得元がありません。設定の「取得元」で足してください"
+          }
+        }
+      }
+    },
+    "error.noTeam" : {
+      "comment" : "Update problem: the running app has no signing team to compare with.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't tell whether the update may replace this app, because the team that signed this app is unknown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリの署名のチームが分からないので、入れ替えられるか判断できません"
+          }
+        }
+      }
+    },
+    "error.rateLimited" : {
+      "comment" : "Update problem: GitHub answered 429, or 403 with no requests left in the hour. The argument is the HTTP status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub's request limit was reached. Will check again later (%lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub の問い合わせの上限に達しました。しばらくしてからもう一度確かめます（%lld）"
+          }
+        }
+      }
+    },
+    "error.refused" : {
+      "comment" : "Update problem: a Forgejo or Gitea server answered 401 or 403. The argument is the HTTP status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgejo refused the request (%lld). This update source needs a token, or the token is wrong. Enter a token with the read:repository permission under “Update source” in Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgejo に断られました（%lld）。この取得元はトークンが要るか、入れたトークンが違います。設定の「取得元」で read:repository の権限のあるトークンを入れてください"
+          }
+        }
+      }
+    },
+    "error.serverStatus" : {
+      "comment" : "Update problem: an unexpected HTTP status from the update source. The argument is the status.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The update source returned %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得元が %lld を返しました"
+          }
+        }
+      }
+    },
+    "error.swapNotStarted" : {
+      "comment" : "Update problem: the script that replaces the app did not start. The argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't start the replacement: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ替えを始められませんでした: %@"
+          }
+        }
+      }
+    },
+    "feed.fallbackName" : {
+      "comment" : "Stands in a sentence for the update source's name while none is chosen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the update source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得元"
+          }
+        }
+      }
+    },
+    "feed.public" : {
+      "comment" : "Name of the update source built into the app: the public distribution.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public release"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開版"
+          }
+        }
+      }
+    },
+    "feedForm.nameEmpty" : {
+      "comment" : "Error under the update source form: the name is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を入れてください"
+          }
+        }
+      }
+    },
+    "feedForm.publicLocked" : {
+      "comment" : "Error when the built-in update source is edited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The public release can't be changed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開版は変えられません"
+          }
+        }
+      }
+    },
+    "feedForm.repoShape" : {
+      "comment" : "Error under the update source form: the repository is not owner/name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The repository must be in the form owner/name (for example owner/SpecBoard)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リポジトリは 持ち主/名前 の形にしてください（例: owner/SpecBoard）"
+          }
+        }
+      }
+    },
+    "feedForm.tokenNotSaved" : {
+      "comment" : "Error under the update source form. The argument is the system status code.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save the token to the Keychain (%lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トークンをキーチェーンに保存できませんでした（%lld）"
+          }
+        }
+      }
+    },
+    "feedForm.urlShape" : {
+      "comment" : "Error under the update source form: the URL is not an https URL.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The URL must be in the form https://host (for example https://github.com or https://git.example.org)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL は https://ホスト名 の形にしてください（例: https://github.com・https://git.example.org）"
+          }
+        }
+      }
+    },
+    "form.name" : {
+      "comment" : "Placeholder of the update source form's name field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (e.g. Closed beta)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前（例: クローズドベータ）"
+          }
+        }
+      }
+    },
+    "form.removeToken" : {
+      "comment" : "Toggle in the update source form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete the saved token"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存してあるトークンを削除"
+          }
+        }
+      }
+    },
+    "form.repo" : {
+      "comment" : "Placeholder of the update source form's repository field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repository (owner/name)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リポジトリ（持ち主/名前）"
+          }
+        }
+      }
+    },
+    "form.save" : {
+      "comment" : "Button that saves an edited update source.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        }
+      }
+    },
+    "form.tokenKeep" : {
+      "comment" : "Placeholder of the token field when the source already has a saved token.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token (leave empty to keep it)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トークン（変えないなら空のまま）"
+          }
+        }
+      }
+    },
+    "form.tokenNew" : {
+      "comment" : "Placeholder of the token field for a source without a saved token.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token (only if the source needs one; read:repository)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トークン（要る取得元だけ。read:repository）"
+          }
+        }
+      }
+    },
+    "form.url" : {
+      "comment" : "Placeholder of the update source form's URL field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL (e.g. https://git.example.org)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL（例: https://git.example.org）"
+          }
+        }
+      }
+    },
+    "menu.checkForUpdates" : {
+      "comment" : "App menu item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデートを確認…"
+          }
+        }
+      }
+    },
+    "notice.failed" : {
+      "comment" : "Shown in the toolbar after a failed replacement. The argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The update failed: %@. The previous version is running"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新できませんでした: %@。前の版のまま起動しています"
+          }
+        }
+      }
+    },
+    "pill.check" : {
+      "comment" : "Toolbar button that checks for a new version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデートを確認"
+          }
+        }
+      }
+    },
+    "pill.checkHelp" : {
+      "comment" : "Tooltip of the Check for updates button. The argument is the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checks %@ for a new version now. It also checks every 6 hours."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に新しい版があるかを今すぐ確認します。6 時間ごとにも確認しています"
+          }
+        }
+      }
+    },
+    "pill.readyHelp" : {
+      "comment" : "Tooltip of the Update now button. Arguments: the current version, the new version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ → %@. The app quits and relaunches. The selected card and the window's state come back as they were, and MCP sessions reconnect."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ → %@。アプリを終了して起動し直します。選択中のカードとウィンドウの状態はそのまま戻り、MCP のセッションは繋ぎ直します。"
+          }
+        }
+      }
+    },
+    "pill.upToDate" : {
+      "comment" : "Shown for a few seconds in the toolbar after a manual check found nothing new.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新です"
+          }
+        }
+      }
+    },
+    "pill.updateNow" : {
+      "comment" : "Toolbar button that replaces the app with the new version. The argument is the source and version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update now (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐアップデート（%@）"
+          }
+        }
+      }
+    },
+    "problem.noDiskImage" : {
+      "comment" : "Update error: the release has no disk image. The argument is the release tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release %@ has no DMG attached"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リリース %@ に DMG が添付されていません"
+          }
+        }
+      }
+    },
+    "problem.tag" : {
+      "comment" : "Update error: a release tag is not in a form the app understands. The argument is the tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read a version from the tag %@ (use the form v<version>, v<version>-internal or v<version>-<build number>)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ %@ から版を読めません（v<版>・v<版>-internal・v<版>-<ビルド番号> のどれかの形にしてください）"
+          }
+        }
+      }
+    },
+    "problem.unreadable" : {
+      "comment" : "Update error: the release answer could not be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't read the release information"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リリースの情報を読めませんでした"
+          }
+        }
+      }
+    },
+    "settings.addSource" : {
+      "comment" : "Settings > Updates: button that opens the form for a new update source.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add update source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得元を追加"
+          }
+        }
+      }
+    },
+    "settings.checkNow" : {
+      "comment" : "Settings > Updates: button that checks for a new version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ確認"
+          }
+        }
+      }
+    },
+    "settings.sourceChooseHelp" : {
+      "comment" : "Tooltip of an unselected update source's radio button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to this source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この取得元に切り替える"
+          }
+        }
+      }
+    },
+    "settings.sourceChosenHelp" : {
+      "comment" : "Tooltip of the selected update source's radio button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates come from this source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この取得元から更新しています"
+          }
+        }
+      }
+    },
+    "settings.sources" : {
+      "comment" : "Settings > Updates: heading of the list of places updates come from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update source"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得元"
+          }
+        }
+      }
+    },
+    "settings.tokenSavedHelp" : {
+      "comment" : "Tooltip of the key icon beside an update source that has a token.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token saved (Keychain)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トークンを保存しています（キーチェーン）"
+          }
+        }
+      }
+    },
+    "settings.updateNow" : {
+      "comment" : "Settings > Updates: button that replaces the app with the new version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐアップデート"
+          }
+        }
+      }
+    },
+    "settings.version" : {
+      "comment" : "Settings > Updates: the installed version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This version %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この版 %@"
+          }
+        }
+      }
+    },
+    "stage.buildDiffers" : {
+      "comment" : "Update error. Arguments: the release's build number, the one found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The build number doesn't match the release (release %lld, contents %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ビルド番号がリリースと合いません（リリース %lld・中身 %@）"
+          }
+        }
+      }
+    },
+    "stage.bundleIdDiffers" : {
+      "comment" : "Update error. The argument is the bundle ID found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The bundle ID doesn't match (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バンドル ID が違います（%@）"
+          }
+        }
+      }
+    },
+    "stage.contentsUnreadable" : {
+      "comment" : "Update error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded app's version or build number cannot be read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取ってきたアプリの版かビルド番号が読めません"
+          }
+        }
+      }
+    },
+    "stage.dmgOpen" : {
+      "comment" : "Update error. The argument is the system tool's message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the DMG. The download is damaged, or what was received isn't a DMG (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DMG を開けませんでした。ダウンロードが壊れているか、DMG ではないものを受け取っています（%@）"
+          }
+        }
+      }
+    },
+    "stage.extract" : {
+      "comment" : "Update error. The argument is the system tool's message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't extract the app (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリを取り出せませんでした（%@）"
+          }
+        }
+      }
+    },
+    "stage.noApp" : {
+      "comment" : "Update error. The argument is the bundle ID.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The DMG has no app with the bundle ID %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DMG の中に %@ のアプリがありません"
+          }
+        }
+      }
+    },
+    "stage.notNewer" : {
+      "comment" : "Update error. Arguments: the downloaded app's version and build, the running app's.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded app (%@) is not newer than this one (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取ってきたアプリ（%@）は、今のアプリ（%@）より新しくありません"
+          }
+        }
+      }
+    },
+    "stage.requirement" : {
+      "comment" : "Update error. The argument is the team ID.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't build the signature requirement (team %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名の条件を組み立てられませんでした（チーム %@）"
+          }
+        }
+      }
+    },
+    "stage.signatureInvalid" : {
+      "comment" : "Update error. Arguments: the team ID, the system's reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't verify the signature. It isn't signed by team %@, or the contents were altered (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名を確かめられませんでした。チーム %@ の署名ではないか、中身が書き換わっています（%@）"
+          }
+        }
+      }
+    },
+    "stage.signatureUnreadable" : {
+      "comment" : "Update error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't read the signature"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名を読めませんでした"
+          }
+        }
+      }
+    },
+    "stage.toolTimeout" : {
+      "comment" : "Update error. The argument is the system tool's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ didn't finish within 10 minutes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ が 10 分で終わりませんでした"
+          }
+        }
+      }
+    },
+    "stage.versionDiffers" : {
+      "comment" : "Update error. Arguments: the release's version, the one found.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The version doesn't match the release (release %@, contents %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版がリリースと合いません（リリース %@・中身 %@）"
+          }
+        }
+      }
+    },
+    "stage.versionUnknown" : {
+      "comment" : "Update error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The release's version is unknown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リリースの版が分かりません"
+          }
+        }
+      }
+    },
+    "status.checkedAt" : {
+      "comment" : "Appended directly after a sentence: when the last check was made. The English starts with a space.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (checked at %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（%@ に確認）"
+          }
+        }
+      }
+    },
+    "status.checking" : {
+      "comment" : "Update status while checking.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認しています…"
+          }
+        }
+      }
+    },
+    "status.devBuild" : {
+      "comment" : "Update status in Settings for a build outside Applications.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Development builds don't update. Only a copy installed in /Applications updates itself."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発ビルドなので更新しません。/Applications に入れた版だけが自分で更新します。"
+          }
+        }
+      }
+    },
+    "status.downloading" : {
+      "comment" : "Update status while the new version downloads. The argument is the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading %@…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を取得しています…"
+          }
+        }
+      }
+    },
+    "status.idle" : {
+      "comment" : "Update status in Settings. The argument is the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checks the releases of %@ every 6 hours."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のリリースを 6 時間ごとに確認します。"
+          }
+        }
+      }
+    },
+    "status.installing" : {
+      "comment" : "Update status while the app is being replaced. The argument is the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing %@…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に入れ替えています…"
+          }
+        }
+      }
+    },
+    "status.ready" : {
+      "comment" : "Update status in Settings when a new version is ready. The argument is the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is ready. Install it with “Update now” in the bar above, or with the button here."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を用意しました。上のバーの「今すぐアップデート」か、ここのボタンで入れ替えます"
+          }
+        }
+      }
+    },
+    "status.upToDate" : {
+      "comment" : "Update status and alert title when the installed version is the latest.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're up to date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新の版です"
+          }
+        }
+      }
+    },
+    "swap.asideFailed" : {
+      "comment" : "Written to the update result file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't move the current version aside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今の版をどけられませんでした"
+          }
+        }
+      }
+    },
+    "swap.copyFailed" : {
+      "comment" : "Written to the update result file. The argument is the folder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't put the new version in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい版を %@ に置けませんでした"
+          }
+        }
+      }
+    },
+    "swap.placeFailed" : {
+      "comment" : "Written to the update result file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't put the new version in place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい版を置けませんでした"
+          }
+        }
+      }
+    },
+    "swap.timeout" : {
+      "comment" : "Written to the update result file when the old app did not quit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app didn't quit within 30 seconds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリが 30 秒たっても終了しませんでした"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

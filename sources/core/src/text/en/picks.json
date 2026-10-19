@@ -1,0 +1,11 @@
+{
+  "picks.lit.aroundValue": "The \" in \"{name}\" goes before and after the value",
+  "picks.lit.unclosed": "The \" in \"{name}\" is not closed",
+  "picks.notOne.many": "{count} elements match ({places})",
+  "picks.notOne.none": "No element matches",
+  "picks.notOne.out": "{at} has {len} elements",
+  "picks.step.indexTooBig": "The index of \"{name}\" is too large",
+  "picks.step.keyTwice": "The condition of \"{name}\" has {key} twice",
+  "picks.step.shape": "The [ ] of \"{name}\" is written as one of: a condition on the values of fields [field=value,…] (e.g. ports[number=8200,protocol=tcp]), the value itself [=value] (e.g. groups[=web]), or an index [0]",
+  "picks.step.unclosed": "The [ ] of \"{name}\" is not closed"
+}

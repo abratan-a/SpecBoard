@@ -1,0 +1,15 @@
+MOST — constant const — line 6 — 5-6
+Order — type class — line 10 — 8-26
+  Order.constructor — method constructor — line 12 — 11-12 — calls emptyList
+  Order.price — method fun — line 14 — 14-14 — calls total, helper
+  Order.total — method fun — line 16 — 16-19 — calls sum, local
+  Order.of — method fun — line 22 — 22-22 — calls Order, toList
+  Order.Line — type class — line 25 — 25-25
+Priced — type interface — line 28 — 28-30
+  Priced.price — method fun — line 29 — 29-29
+State — type enum — line 32 — 32-32
+Registry — type object — line 34 — 34-36
+  Registry.register — method fun — line 35 — 35-35
+Lines — type typealias — line 38 — 38-38
+cheap — function fun — line 40 — 40-40 — calls total
+helper — function fun — line 45 — 44-45 — calls max

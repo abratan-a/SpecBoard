@@ -1,0 +1,2814 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "archived.banner" : {
+      "comment" : "Banner above the window when the open project is archived.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This project is archived (read-only). Restore it to make changes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アーカイブのプロジェクトです（読むだけ）。書き換えるには元に戻してください"
+          }
+        }
+      }
+    },
+    "archived.restore" : {
+      "comment" : "Button in the archived-project banner that restores the project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元に戻す"
+          }
+        }
+      }
+    },
+    "ask.cut" : {
+      "comment" : "Title of the confirmation for discarding old history; arguments are the number of commits, the commit number and the size saved.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Discard the %lld commit before commit #%@ (the history shrinks by %@)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Discard the %lld commits before commit #%@ (the history shrinks by %@)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%2$@ より前の %1$lld 件を捨てます（履歴が %3$@ 減ります）"
+          }
+        }
+      }
+    },
+    "ask.cutMessage" : {
+      "comment" : "Message of the confirmation for discarding old history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You will not be able to go back to before the discarded commits. Merges and inspections stay as they are."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捨てた所より前には戻せなくなります。merge とインスペクションは変わりません"
+          }
+        }
+      }
+    },
+    "ask.revertBranch" : {
+      "comment" : "Title of the revert confirmation on a branch; arguments are the number of newer commits and the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Undo the newest %lld commit by going back to just after commit #%@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Undo the newest %lld commits by going back to just after commit #%@"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%2$@ のすぐあとまで戻します（新しい %1$lld 件を取り消します）"
+          }
+        }
+      }
+    },
+    "ask.revertMain" : {
+      "comment" : "Title of the revert confirmation on main; arguments are the number of newer commits and the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Create a branch with the newest %lld commit undone: main as it was just after commit #%@ (main itself stays as it is; you merge it in)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Create a branch with the newest %lld commits undone: main as it was just after commit #%@ (main itself stays as it is; you merge it in)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%2$@ のすぐあとの main を branch に作ります（新しい %1$lld 件を取り消した形。main はそのままで、merge で入れます）"
+          }
+        }
+      }
+    },
+    "ask.revertMessage" : {
+      "comment" : "Message of the revert confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The undone changes stay as a “Revert” commit, and going back to the one before it undoes the revert too."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消したことは「戻す」のコミットとして残り、その前を選べば戻したことも戻せます"
+          }
+        }
+      }
+    },
+    "ask.undoBranch" : {
+      "comment" : "Title of the undo-one-commit confirmation on a branch or the board; the argument is the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo only the changes of commit #%@ (the changes of later commits stay)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%@ の変更だけを取り消します（あとのコミットの変更は残します）"
+          }
+        }
+      }
+    },
+    "ask.undoMain" : {
+      "comment" : "Title of the undo-one-commit confirmation on main; the argument is the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a branch with only the changes of commit #%@ undone (main itself stays as it is; you merge it in)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%@ の変更だけを取り消した形の branch を作ります（main はそのままで、merge で入れます）"
+          }
+        }
+      }
+    },
+    "ask.undoMessage" : {
+      "comment" : "Message of the undo-one-commit confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The undo stays as a “Revert” commit, and that can be undone too. If a later commit changed the same place, nothing is written and that place is shown."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消したことは「戻す」のコミットとして残り、それも取り消せます。あとのコミットも同じ所を変えていれば、何も書かずにその所を見せます"
+          }
+        }
+      }
+    },
+    "change.added" : {
+      "comment" : "Label of a change in an opened commit: something was added.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "足した"
+          }
+        }
+      }
+    },
+    "change.deleted" : {
+      "comment" : "Label of a change in an opened commit: something was deleted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消した"
+          }
+        }
+      }
+    },
+    "change.edited" : {
+      "comment" : "Label of a change in an opened commit: something was edited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edited"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直した"
+          }
+        }
+      }
+    },
+    "commit.addName" : {
+      "comment" : "Menu item of an unnamed commit that names it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add name…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を付ける…"
+          }
+        }
+      }
+    },
+    "commit.badgeBatch" : {
+      "comment" : "Badge on a commit made by a batch of writes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて"
+          }
+        }
+      }
+    },
+    "commit.badgeForm" : {
+      "comment" : "Badge on a commit that changed a section's structure and cannot be reverted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section structure edit (can't be reverted)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの形の直し（戻せない）"
+          }
+        }
+      }
+    },
+    "commit.badgeMerge" : {
+      "comment" : "Badge on a commit made by a merge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge"
+          }
+        }
+      }
+    },
+    "commit.badgeRecord" : {
+      "comment" : "Badge on a commit that only records something and cannot be reverted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record (can't be reverted)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録（戻せない）"
+          }
+        }
+      }
+    },
+    "commit.cut" : {
+      "comment" : "Destructive button of the confirmation for discarding old history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捨てる"
+          }
+        }
+      }
+    },
+    "commit.cutBefore" : {
+      "comment" : "Menu item of a commit that discards the history before it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard what is before this…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これより前を捨てる…"
+          }
+        }
+      }
+    },
+    "commit.hideChanges" : {
+      "comment" : "Button on a commit that closes what it changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide changes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差を閉じる"
+          }
+        }
+      }
+    },
+    "commit.nameConfirm" : {
+      "comment" : "Button that decides a commit's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付ける"
+          }
+        }
+      }
+    },
+    "commit.nameMessage" : {
+      "comment" : "Message of the sheet that asks for a commit's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A named commit stands out in the history and marks a break."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前の付いたコミットは履歴で目立ち、区切りになります"
+          }
+        }
+      }
+    },
+    "commit.namePlaceholder" : {
+      "comment" : "Placeholder of the commit name field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (leave empty to remove it)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前（空で外す）"
+          }
+        }
+      }
+    },
+    "commit.nameQuoted" : {
+      "comment" : "A commit's name shown in quotation marks in the history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」"
+          }
+        }
+      }
+    },
+    "commit.nameTitle" : {
+      "comment" : "Title of the sheet that asks for a commit's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name the commit"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミットに名前を付ける"
+          }
+        }
+      }
+    },
+    "commit.revert" : {
+      "comment" : "Button of the revert confirmation, and the badge of a revert commit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revert"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻す"
+          }
+        }
+      }
+    },
+    "commit.revertToHere" : {
+      "comment" : "Menu item of a commit that goes back to right after it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revert to just after this…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このすぐあとまで戻す…"
+          }
+        }
+      }
+    },
+    "commit.reverted" : {
+      "comment" : "Mark on a commit that has been reverted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverted"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻した"
+          }
+        }
+      }
+    },
+    "commit.showChanges" : {
+      "comment" : "Button on a commit that opens what it changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show changes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差を見る"
+          }
+        }
+      }
+    },
+    "commit.undo" : {
+      "comment" : "Button of the undo-one-commit confirmation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
+          }
+        }
+      }
+    },
+    "commit.undoOne" : {
+      "comment" : "Menu item of a commit that takes back that commit alone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo only this commit…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このコミットだけ取り消す…"
+          }
+        }
+      }
+    },
+    "conflict.absent" : {
+      "comment" : "Shown in place of a conflict side's text when that side has none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(none)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（無い）"
+          }
+        }
+      }
+    },
+    "conflict.base" : {
+      "comment" : "Label of the common ancestor's text in a conflict.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基点"
+          }
+        }
+      }
+    },
+    "conflict.keptMain" : {
+      "comment" : "Says which side an MR took for a conflict: main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kept main's version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を残した"
+          }
+        }
+      }
+    },
+    "conflict.title" : {
+      "comment" : "Line naming a conflict in an opened MR; arguments are the path, the conflicting part and what was taken.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflict in %@ (%@): %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突 %@ の %@: %@"
+          }
+        }
+      }
+    },
+    "conflict.tookBranch" : {
+      "comment" : "Says which side an MR took for a conflict: the branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Took the branch's version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch を取った"
+          }
+        }
+      }
+    },
+    "diff.changedCards" : {
+      "comment" : "Heading in a branch's diff for cards it changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変えたカード"
+          }
+        }
+      }
+    },
+    "diff.changedSections" : {
+      "comment" : "Heading in a branch's diff for sections it changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変えたセクション"
+          }
+        }
+      }
+    },
+    "diff.clean" : {
+      "comment" : "Shown in a branch's diff when it matches main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No differences from main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main との違いはありません"
+          }
+        }
+      }
+    },
+    "diff.head" : {
+      "comment" : "Line above the branch's diff against main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diff against main (same content as branch_read)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main との差分（branch_read と同じ中身）"
+          }
+        }
+      }
+    },
+    "diff.madeCards" : {
+      "comment" : "Heading in a branch's diff for cards it made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったカード"
+          }
+        }
+      }
+    },
+    "diff.madeSections" : {
+      "comment" : "Heading in a branch's diff for sections it made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったセクション"
+          }
+        }
+      }
+    },
+    "diff.merge" : {
+      "comment" : "Button in a branch's diff that opens the merge window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge…"
+          }
+        }
+      }
+    },
+    "diff.mergeHelp" : {
+      "comment" : "Tooltip of the merge button in a branch's diff.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the window to merge this branch's changes into main (or another branch)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で変えたことを main（か、ほかの branch）に入れる窓を開く"
+          }
+        }
+      }
+    },
+    "diff.needsBranch" : {
+      "comment" : "Shown in the diff tab of main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The diff against main is shown when a branch is open."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差分は、branch を開いたときに main と比べて出します"
+          }
+        }
+      }
+    },
+    "diff.removedCards" : {
+      "comment" : "Heading in a branch's diff for cards it removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消したカード"
+          }
+        }
+      }
+    },
+    "diff.removedSections" : {
+      "comment" : "Heading in a branch's diff for sections it removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消したセクション"
+          }
+        }
+      }
+    },
+    "diff.takeInMain" : {
+      "comment" : "Button at the head of a branch's diff that merges main into the branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge main in…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を取り込む…"
+          }
+        }
+      }
+    },
+    "diff.takeInMainHelp" : {
+      "comment" : "Tooltip of the button that merges main into the branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring main's changes into the cards this branch has edited (opens the merge window)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main の変更を、この branch で直したカードに入れます（merge の窓を開く）"
+          }
+        }
+      }
+    },
+    "document.empty" : {
+      "comment" : "Markdown shown on the diagram for a document card that has no text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*Nothing written yet*"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*まだ何も書かれていません*"
+          }
+        }
+      }
+    },
+    "filter.active" : {
+      "comment" : "Label of the filter button while a kind filter is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtering"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "絞り込み中"
+          }
+        }
+      }
+    },
+    "filter.activeHelp" : {
+      "comment" : "Tooltip of the filter button while a kind filter is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtering by kind is on. Click to change it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種別の絞り込みが効いています。押すと変えられます"
+          }
+        }
+      }
+    },
+    "filter.help" : {
+      "comment" : "Tooltip of the filter button while no filter is on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line routing, and filtering by cards outside the section and by kind (line kinds are switched on the diagram)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の引き方と、セクション外のカード・種別の絞り込み（線の種類は図の上で切り替える）"
+          }
+        }
+      }
+    },
+    "filter.kind" : {
+      "comment" : "Heading in the filter popover above the card kinds that can be switched on and off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種別"
+          }
+        }
+      }
+    },
+    "filter.otherSections" : {
+      "comment" : "Heading in the filter popover for the switches about cards in other sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのセクション"
+          }
+        }
+      }
+    },
+    "filter.outsideConsumers" : {
+      "comment" : "Switch in the filter popover for cards in other sections that point to this section's cards; followed by a count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Users in other sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使っているセクション外"
+          }
+        }
+      }
+    },
+    "filter.outsideConsumersHelp" : {
+      "comment" : "Tooltip of the switch for cards in other sections that point to this section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show faintly the cards in other sections that point to this section's cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションのカードを指している、ほかのセクションのカードを薄く出す"
+          }
+        }
+      }
+    },
+    "filter.outsideReferences" : {
+      "comment" : "Switch in the filter popover for cards in other sections that this section's cards point to; followed by a count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Targets in other sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照先のセクション外"
+          }
+        }
+      }
+    },
+    "filter.outsideReferencesHelp" : {
+      "comment" : "Tooltip of the switch for cards in other sections that this section points to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show faintly the cards in other sections that this section's cards point to"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションのカードが指している、ほかのセクションのカードを薄く出す"
+          }
+        }
+      }
+    },
+    "filter.projectKinds" : {
+      "comment" : "Chip in the filter popover standing for all the kinds the project defines itself.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project kinds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの種類"
+          }
+        }
+      }
+    },
+    "filter.title" : {
+      "comment" : "Button on the diagram bar that opens the filter popover.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィルター"
+          }
+        }
+      }
+    },
+    "frameTarget.title" : {
+      "comment" : "Label beside the picker of the UI section a new frame card puts in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UI section to put in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はめ込む UI のセクション"
+          }
+        }
+      }
+    },
+    "history.allSections" : {
+      "comment" : "Menu item of the history's section filter that does not narrow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのセクション"
+          }
+        }
+      }
+    },
+    "history.empty" : {
+      "comment" : "Shown in the history when no commit matches or none exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No changes recorded"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更の記録はありません"
+          }
+        }
+      }
+    },
+    "history.fold" : {
+      "comment" : "Button that folds or unfolds a run of plain commits; arguments are the count and the first and last commit numbers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld commit (#%@–#%@)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld commits (#%@–#%@)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット %lld 件（#%@〜#%@）"
+          }
+        }
+      }
+    },
+    "history.menuHint" : {
+      "comment" : "Hint beside the history's filter.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the … at the right of a commit: go back to just after it, undo only it, name it, or discard what is before it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミットの右の … から、そのすぐあとまで戻す・そのコミットだけ取り消す・名前を付ける・それより前を捨てる"
+          }
+        }
+      }
+    },
+    "history.noDocumentChanges" : {
+      "comment" : "Shown under an opened commit that changed no document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No document changes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書の変わった所はありません"
+          }
+        }
+      }
+    },
+    "history.pruned" : {
+      "comment" : "Note at the head of the history when old commits were discarded as the project was opened.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On opening, %lld old commit was discarded (it was beyond the newest %@ commits and older than %@ days)"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On opening, %lld old commits were discarded (those beyond the newest %@ commits and older than %@ days)"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いたときに、古いコミット %lld 件を捨てました（新しいほうから %@ 件より古く、かつ %@ 日より古いもの）"
+          }
+        }
+      }
+    },
+    "history.queryPlaceholder" : {
+      "comment" : "Placeholder of the history's text filter.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter by card name or content"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの名前・内容で絞る"
+          }
+        }
+      }
+    },
+    "item.sectionSuffix" : {
+      "comment" : "Added after a path to say that it names a section; the English starts with a space.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (section)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（セクション）"
+          }
+        }
+      }
+    },
+    "menu.textActual" : {
+      "comment" : "View menu item that resets the text size; the argument is the current scale such as 100%.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actual size (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実際の大きさ（%@）"
+          }
+        }
+      }
+    },
+    "menu.textBigger" : {
+      "comment" : "View menu item that enlarges the text of the whole app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make text bigger"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字を大きく"
+          }
+        }
+      }
+    },
+    "menu.textSmaller" : {
+      "comment" : "View menu item that shrinks the text of the whole app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make text smaller"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字を小さく"
+          }
+        }
+      }
+    },
+    "mr.intro" : {
+      "comment" : "Note at the head of the MR tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review the result of the merge the AI tried, then approve or reject it. Approving puts it into main exactly as tried (even a locked main)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI が試した merge の結果を見て、承認するか拒否します。承認すると試したとおりに main に入ります（ロック中の main にも）"
+          }
+        }
+      }
+    },
+    "mr.none" : {
+      "comment" : "Shown in the MR tab when there is no merge request.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No MRs (while main is locked, when an AI tries to put something into main with the MCP tool branch_merge, it submits an MR (merge request) instead of merging)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR はありません（main がロック中のとき、AI が MCP の branch_merge で main へ入れようとすると、merge せずに MR（merge request）を出します）"
+          }
+        }
+      }
+    },
+    "mr.openResultHelp" : {
+      "comment" : "Tooltip of a card path in an opened MR.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open this card in main as it would be after the merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge したあとの main で、このカードを開く"
+          }
+        }
+      }
+    },
+    "mr.seeAtMain" : {
+      "comment" : "Shown in the MR tab while a branch is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MRs are viewed on main's dashboard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR は main のダッシュボードで見ます"
+          }
+        }
+      }
+    },
+    "navPanel.close" : {
+      "comment" : "Accessibility label of the navigator toggle while the navigator is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close navigator"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを閉じる"
+          }
+        }
+      }
+    },
+    "navPanel.closeHelp" : {
+      "comment" : "Tooltip of the navigator toggle while the navigator is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close navigator (⌃⌘S)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを閉じる（⌃⌘S）"
+          }
+        }
+      }
+    },
+    "navPanel.dragHelp" : {
+      "comment" : "Tooltip of the navigator's edge strip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close navigator (⌃⌘S). Drag to resize"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを閉じる（⌃⌘S）。ドラッグで幅を変える"
+          }
+        }
+      }
+    },
+    "navPanel.open" : {
+      "comment" : "Accessibility label of the navigator toggle while the navigator is shut.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open navigator"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを開く"
+          }
+        }
+      }
+    },
+    "navPanel.openHelp" : {
+      "comment" : "Tooltip of the navigator toggle while the navigator is shut.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open navigator (⌃⌘S; the tree of sections and cards)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネルを開く（⌃⌘S。セクションとカードの木）"
+          }
+        }
+      }
+    },
+    "newCard.inSection" : {
+      "comment" : "Line in the new-card popover naming the section the card goes in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will be placed in section %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション %@ に置きます"
+          }
+        }
+      }
+    },
+    "newCard.labelPlaceholder" : {
+      "comment" : "Placeholder of the new card's display name field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名（任意）"
+          }
+        }
+      }
+    },
+    "newCard.namePlaceholder" : {
+      "comment" : "Placeholder of the new card's name field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード名"
+          }
+        }
+      }
+    },
+    "newCard.title" : {
+      "comment" : "Heading of the popover that makes a new card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを追加"
+          }
+        }
+      }
+    },
+    "notice.elsewhere" : {
+      "comment" : "Heading in a branch's diff for paths that other branches also have.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards at the same path in other branches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかの branch にも同じパスのカード"
+          }
+        }
+      }
+    },
+    "notice.mainChanged" : {
+      "comment" : "Heading in a branch's diff for cards main changed after the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards main changed since this branch was made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったあと main が変わったカード"
+          }
+        }
+      }
+    },
+    "notice.mainMade" : {
+      "comment" : "Heading in a branch's diff for cards main added after the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards main added since this branch was made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったあと main で増えたカード"
+          }
+        }
+      }
+    },
+    "notice.mainRemoved" : {
+      "comment" : "Heading in a branch's diff for cards main removed after the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards main removed since this branch was made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったあと main で消えたカード"
+          }
+        }
+      }
+    },
+    "notice.overlaps" : {
+      "comment" : "Heading in a branch's diff for paths that now exist in main too.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main now has something at the same path (the branch's is shown)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main にも同じパスのものができた（branch のものを見せています）"
+          }
+        }
+      }
+    },
+    "noticeKind.aiMerge" : {
+      "comment" : "Kind of notification: an AI merged into a locked main. Mark tooltip in the bell's list and a row of the Notifications settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI merges"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI の merge"
+          }
+        }
+      }
+    },
+    "noticeKind.error" : {
+      "comment" : "Kind of notification: an error. Mark tooltip in the bell's list and a row of the Notifications settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errors"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エラー"
+          }
+        }
+      }
+    },
+    "noticeKind.notice" : {
+      "comment" : "Kind of notification: a notice (something done). Mark tooltip in the bell's list and a row of the Notifications settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notices"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知らせ"
+          }
+        }
+      }
+    },
+    "notices.clear" : {
+      "comment" : "Button at the foot of the bell's list that empties it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて削除"
+          }
+        }
+      }
+    },
+    "notices.empty" : {
+      "comment" : "Shown in the bell's list when there is nothing in it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notifications"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知はありません"
+          }
+        }
+      }
+    },
+    "properties.closeHelp" : {
+      "comment" : "Tooltip of the open properties panel's edge strip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close properties panel (⌃⌘P). Drag to resize"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロパティパネルを閉じる（⌃⌘P）。ドラッグで幅を変える"
+          }
+        }
+      }
+    },
+    "properties.openHelp" : {
+      "comment" : "Tooltip of the shut properties panel's edge strip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open properties panel (⌃⌘P; attributes of the selection)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロパティパネルを開く（⌃⌘P。選んだものの属性）"
+          }
+        }
+      }
+    },
+    "request.approve" : {
+      "comment" : "Button that approves an MR and merges it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approve and merge"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "承認して merge"
+          }
+        }
+      }
+    },
+    "request.byAI" : {
+      "comment" : "Added to the places toggle's label when the AI asked for the places; the English starts with a space.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (requested by the AI)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（AI が頼んだ）"
+          }
+        }
+      }
+    },
+    "request.placesHelp" : {
+      "comment" : "Tooltip of the toggle that takes moved positions into main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overwrite main's positions with the ones moved in the branch. When the AI asked for this with places in branch_merge, it starts as asked (the count is from when the AI tried; the positions that go in are the branch's at the time of approval)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で動かした位置を、main の位置に上書きして入れます。AI が branch_merge の places で頼んだときは入れた形で始まります（数は AI が試したときのもの。入るのは承認したときの branch の位置）"
+          }
+        }
+      }
+    },
+    "request.reason" : {
+      "comment" : "Line in an opened MR giving the reason it was rejected or withdrawn.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "理由: %@"
+          }
+        }
+      }
+    },
+    "request.reject" : {
+      "comment" : "Button that starts rejecting an MR.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否…"
+          }
+        }
+      }
+    },
+    "request.rejectConfirm" : {
+      "comment" : "Button that rejects the MR.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否する"
+          }
+        }
+      }
+    },
+    "request.rejectMessage" : {
+      "comment" : "Message of the sheet that asks why an MR is rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends it back with a reason, without changing its content. The AI fixes it and submits it again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中身は直さず、理由を添えて返します。AI が直して出し直します"
+          }
+        }
+      }
+    },
+    "request.rejectPlaceholder" : {
+      "comment" : "Placeholder of the rejection reason field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason (the AI reads it and fixes the MR)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "理由（AI が読んで直します）"
+          }
+        }
+      }
+    },
+    "request.rejectTitle" : {
+      "comment" : "Title of the sheet that asks why an MR is rejected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject the MR"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MR を拒否する"
+          }
+        }
+      }
+    },
+    "request.stale" : {
+      "comment" : "Line in an MR whose branch or main moved after it was tried.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch or main has moved. The AI will retry and submit it again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch か main が動きました。AI に試し直して出し直してもらいます"
+          }
+        }
+      }
+    },
+    "request.view" : {
+      "comment" : "Button that opens main as it would be after the merge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open to view"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いて見る"
+          }
+        }
+      }
+    },
+    "request.viewHelp" : {
+      "comment" : "Tooltip of the button that opens the merge result.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open main as it would be after the merge, as a diagram and cards (read-only; approve, reject or close in the banner above)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "merge したあとの main を図とカードで開く（読むだけ。上の帯で承認・拒否・閉じる）"
+          }
+        }
+      }
+    },
+    "request.warning" : {
+      "comment" : "Line in an opened MR naming a path the merge would leave broken.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path that would break: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "壊れるパス: %@"
+          }
+        }
+      }
+    },
+    "shape.help" : {
+      "comment" : "Tooltip of the shape picker in the new-card popover.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the entity or value that gives the data card (instance) its shape, or that shapes the data a table collects. The card editor opens when it is created."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データ（instance）の形か、表（table）が集めるデータの形にする entity か value。作るとカードエディタが開きます"
+          }
+        }
+      }
+    },
+    "shape.none" : {
+      "comment" : "Shown beside the shape picker when the project has no entity or value to choose.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No entity or value yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "entity・value がまだありません"
+          }
+        }
+      }
+    },
+    "shape.title" : {
+      "comment" : "Label before the picker of the entity or value that shapes a new data card or table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形"
+          }
+        }
+      }
+    },
+    "size.cutLink" : {
+      "comment" : "Button next to the project size that opens the history of the branch with the biggest one.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@'s history (to cut it down)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の履歴へ（足を切る）"
+          }
+        }
+      }
+    },
+    "size.help" : {
+      "comment" : "Tooltip of the project size line at the head of the history.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A rough size of what the project takes up in the DB (the total length of the rows' contents). Content is the cards and sections of main and the branches; history is what each branch's commits held before the change."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトが DB の中で使っている大きさの目安（行の中身の長さの合計）。中身は main と branch のカード・セクション、履歴は branch ごとのコミットの変える前の中身"
+          }
+        }
+      }
+    },
+    "status.failed" : {
+      "comment" : "Heading of the window when the project could not be loaded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込めませんでした"
+          }
+        }
+      }
+    },
+    "status.loading" : {
+      "comment" : "Shown in the middle of the window while the project loads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込んでいます…"
+          }
+        }
+      }
+    },
+    "tab.diff" : {
+      "comment" : "The tab of a root that shows the differences against main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diff"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差分"
+          }
+        }
+      }
+    },
+    "tab.goals" : {
+      "comment" : "The tab of the Project Board's root that lists the goals.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goals"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標"
+          }
+        }
+      }
+    },
+    "tab.history" : {
+      "comment" : "The tab of a root that shows the history of commits.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴"
+          }
+        }
+      }
+    },
+    "tab.tags" : {
+      "comment" : "The tab of a root that lists the tags.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tags"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグ"
+          }
+        }
+      }
+    },
+    "tagGroup.exclusive" : {
+      "comment" : "Badge on a tag group from which a card takes exactly one tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exactly one"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ちょうど 1 つ"
+          }
+        }
+      }
+    },
+    "tags.groups" : {
+      "comment" : "Heading in the tags tab above the tag groups.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag groups"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タググループ"
+          }
+        }
+      }
+    },
+    "tags.none" : {
+      "comment" : "Shown in the tags tab when there are no tags.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tags yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグはまだありません"
+          }
+        }
+      }
+    },
+    "temporary.clearHelp" : {
+      "comment" : "Tooltip of the button that puts away the temporarily shown cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put away all the cards shown temporarily (nothing stays in the project)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時的に出したカードを全部しまう（プロジェクトには何も残りません）"
+          }
+        }
+      }
+    },
+    "temporary.count" : {
+      "comment" : "Button on the diagram bar showing how many cards are shown temporarily.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporary %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時 %lld"
+          }
+        }
+      }
+    },
+    "topBar.backHelp" : {
+      "comment" : "Tooltip of the top bar's back button over the project list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to the open project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いているプロジェクトに戻る"
+          }
+        }
+      }
+    },
+    "topBar.export" : {
+      "comment" : "Top bar button that runs the project's exports.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
+          }
+        }
+      }
+    },
+    "topBar.exportHelp" : {
+      "comment" : "Tooltip of the top bar's export button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export main to each export's default destination folder, as the exports are set up (set them up in the navigator, under “Export” on the “Directory” dashboard)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main を、エクスポートごとの既定のエクスポート先のフォルダへ、設定どおりに書きます（エクスポートは、ナビパネルの「ディレクトリ」のダッシュボードの「エクスポート」で決めます）"
+          }
+        }
+      }
+    },
+    "topBar.group" : {
+      "comment" : "Top bar button that starts a group edit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group edit"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まとめて直す"
+          }
+        }
+      }
+    },
+    "topBar.groupHelp" : {
+      "comment" : "Tooltip of the group edit button on a branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make everything changed until you close it one commit. Until then, MCP writes to this branch are refused."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じるまでの直しを 1 つのコミットにします。その間、この branch への MCP の書き込みは断ります"
+          }
+        }
+      }
+    },
+    "topBar.groupLockedHelp" : {
+      "comment" : "Tooltip of the group edit button while a locked main is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit the locked main. When you close the group edit, everything changed goes into main as one merge. Until then, MCP writes and merges are refused."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック中の main を直します。閉じると、直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は断ります"
+          }
+        }
+      }
+    },
+    "topBar.notices" : {
+      "comment" : "Accessibility name of the bell in the header, which opens the list of notifications.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
+          }
+        }
+      }
+    },
+    "topBar.noticesHelp" : {
+      "comment" : "Tooltip of the bell in the header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications in this window, newest first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このウィンドウの通知（新しい順）"
+          }
+        }
+      }
+    },
+    "topBar.noticesUnseen" : {
+      "comment" : "Accessibility value of the bell: how many notifications came since the list was last opened.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld new notification"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld new notifications"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい通知 %lld 件"
+          }
+        }
+      }
+    },
+    "topBar.projectsHelp" : {
+      "comment" : "Tooltip of the project name in the top bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to the project list (choose another project or create one)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト一覧へ（プロジェクトを選び直す・作る）"
+          }
+        }
+      }
+    },
+    "topBar.settingsHelp" : {
+      "comment" : "Tooltip of the top bar's settings button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings (⌘,)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定（⌘,）"
+          }
+        }
+      }
+    },
+    "uiNotes.help" : {
+      "comment" : "Tooltip of the notes toggle on a UI section's bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show or hide the notes the parts carry, as sticky notes over the map. The orange review dots stay."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品のノートを、マップに付箋で重ねる・隠す。橙の見直しの点は出たまま"
+          }
+        }
+      }
+    },
+    "uiNotes.title" : {
+      "comment" : "Label of the toggle on a UI section's bar that shows or hides the parts' notes over the map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ノート"
+          }
+        }
+      }
+    },
+    "uiTags.help" : {
+      "comment" : "Tooltip of the tags toggle on a UI section's bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show or hide each part's tag (name | label | kind) at the corner its Header place names."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品ごとの札（名前 | 表示名 | 種類）を、見出しの位置の角に出す・隠す"
+          }
+        }
+      }
+    },
+    "uiTags.title" : {
+      "comment" : "Label of the toggle on a UI section's bar that shows or hides each part's tag (its name, label and kind) over the map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Headers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見出し"
+          }
+        }
+      }
+    },
+    "noticeBubble.more" : {
+      "comment" : "Under a notification bubble in the header: how many more are waiting behind it; the argument is the count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほか %lld 件"
+          }
+        }
+      }
+    },
+    "noticeBubble.openHelp" : {
+      "comment" : "Tooltip of a notification bubble in the header: pressing it opens the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the list of notifications"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知の一覧を開きます"
+          }
+        }
+      }
+    },
+    "undo.after" : {
+      "comment" : "Label of a unit's value right after the commit being undone; the argument is the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After #%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#%@ の後"
+          }
+        }
+      }
+    },
+    "undo.before" : {
+      "comment" : "Label of a unit's value before the commit being undone; the argument is the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before #%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#%@ の前"
+          }
+        }
+      }
+    },
+    "undo.conflictsMessage" : {
+      "comment" : "Explanation under the title of the undo conflicts window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A later commit changed the same places, so nothing was written."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あとのコミットも同じ所を変えているので、何も書いていません"
+          }
+        }
+      }
+    },
+    "undo.conflictsTitle" : {
+      "comment" : "Title of the window that lists where an undo of one commit clashes with later commits; the argument is the commit number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit #%@ cannot be undone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミット #%@ は取り消せません"
+          }
+        }
+      }
+    },
+    "undo.later" : {
+      "comment" : "Line under the undo conflicts; the argument is the list of commit numbers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later commits that changed the same places: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じ所を変えたあとのコミット: %@"
+          }
+        }
+      }
+    },
+    "undo.listSeparator" : {
+      "comment" : "Joins the commit numbers in the line under the undo conflicts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "、"
+          }
+        }
+      }
+    },
+    "undo.now" : {
+      "comment" : "Label of a unit's value as it is now, in the undo conflicts window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

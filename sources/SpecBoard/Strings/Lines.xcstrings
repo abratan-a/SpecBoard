@@ -1,0 +1,1092 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.connect" : {
+      "comment" : "Title of the connect popover and its button for one kind of line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つなぐ"
+          }
+        }
+      }
+    },
+    "action.connectMenu" : {
+      "comment" : "Menu item and button that start drawing a line by hand from a card, field, row or node.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つなぐ…"
+          }
+        }
+      }
+    },
+    "bar.direction" : {
+      "comment" : "Bar of the connections map: what leads to the card is on the left, what it leads to on the right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "← Incoming   Outgoing →"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "← 入ってくる　出ていく →"
+          }
+        }
+      }
+    },
+    "bar.helpDepth" : {
+      "comment" : "Tooltip of the picker that sets how far the connections map reaches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How far to follow lines: one line out, two lines out, or as far as they go"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どこまでたどるか: 線 1 本先まで・2 本先まで・たどれる所まで全部"
+          }
+        }
+      }
+    },
+    "bar.helpOpenEditor" : {
+      "comment" : "Tooltip of the Open button in the connections map bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open this card's card editor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードのカードエディタを開く"
+          }
+        }
+      }
+    },
+    "bar.joined" : {
+      "comment" : "Bar of the connections map: how many other cards the card is connected to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Connected to %lld card"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Connected to %lld cards"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚とつながる"
+          }
+        }
+      }
+    },
+    "connect.currentCount" : {
+      "comment" : "Small note beside a kind of line in the connect popover: how many lines of that kind there already are.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld line now"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lines now"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いま %lld 本"
+          }
+        }
+      }
+    },
+    "connect.fullKind" : {
+      "comment" : "Shown beside a kind of line the connect popover does not offer because the source already has as many as the kind allows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Limit from here: %lld; already drawn: %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（ここからは %lld 本まで。もう %lld 本あります）"
+          }
+        }
+      }
+    },
+    "connect.noKinds" : {
+      "comment" : "Shown in the connect popover when no kind of line fits the source and the picked partner.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No kind of line can be drawn from here to this partner (no line kind definition allows this source and partner)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここからこの相手へ引ける線の種類はありません（線の種類の定義の、出せる所と相手に合いません）"
+          }
+        }
+      }
+    },
+    "connect.pickAgain" : {
+      "comment" : "Link in the connect popover that goes back to picking the other end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‹ Pick another partner"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‹ 相手を選び直す"
+          }
+        }
+      }
+    },
+    "connect.pickKind" : {
+      "comment" : "Heading above the kinds of line the connect popover offers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a kind of line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の種類を選ぶ"
+          }
+        }
+      }
+    },
+    "connect.pickTarget" : {
+      "comment" : "Prompt in the connect popover before the other end of the line is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick the partner (card, field, row or node)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手を選ぶ（カード・欄・行・ノード）"
+          }
+        }
+      }
+    },
+    "depth.all" : {
+      "comment" : "Choice in the connections map: follow lines as far as they go.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
+          }
+        }
+      }
+    },
+    "depth.one" : {
+      "comment" : "Choice in the connections map: follow lines one step out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 level"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 段"
+          }
+        }
+      }
+    },
+    "depth.two" : {
+      "comment" : "Choice in the connections map: follow lines two steps out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 levels"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2 段"
+          }
+        }
+      }
+    },
+    "field.oneOnEachLine" : {
+      "comment" : "Placeholder of a line field that holds a list, one item on each line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One per line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 行に 1 つ"
+          }
+        }
+      }
+    },
+    "group.decide" : {
+      "comment" : "Button that keeps what was written in a line field group.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決める"
+          }
+        }
+      }
+    },
+    "group.fieldLabel" : {
+      "comment" : "Label of a field inside a line field group: its name and what it is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "group.helpWrite" : {
+      "comment" : "Tooltip of the button that opens a line field group; the argument is the group's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を書く"
+          }
+        }
+      }
+    },
+    "group.separator" : {
+      "comment" : "Joins the fields written in a line field group (name = value, name = value).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "、"
+          }
+        }
+      }
+    },
+    "incoming.empty" : {
+      "comment" : "Shown in the property panel when no line reaches the selected place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No lines arrive here."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここへ来る線はありません"
+          }
+        }
+      }
+    },
+    "incoming.helpSelect" : {
+      "comment" : "Tooltip of an incoming line in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select this line (its settings appear in the Properties panel). Remove it on the card it leaves from."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この線を選ぶ（線の設定をプロパティパネルに）。外すのは出元のカードで"
+          }
+        }
+      }
+    },
+    "incoming.helpShowSource" : {
+      "comment" : "Tooltip of the button beside an incoming line that shows the card it leaves from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the source card on its diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出元のカードをその図で見る"
+          }
+        }
+      }
+    },
+    "incoming.title" : {
+      "comment" : "Property panel category listing the lines that reach the selected place from elsewhere.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incoming lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入ってくる線"
+          }
+        }
+      }
+    },
+    "leaving.from" : {
+      "comment" : "Heading above the lines leaving a field or row of a card; the argument is its path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から"
+          }
+        }
+      }
+    },
+    "leaving.row" : {
+      "comment" : "Heading above the lines leaving a process node's row; the number counts rows from 1.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from row %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 行目から"
+          }
+        }
+      }
+    },
+    "line.codeChanged" : {
+      "comment" : "Under an implementation line in the Properties panel whose code changed since it was recorded; the argument is when it was recorded (a date and a time).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code changed since linked · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覚えたあとでコードが変わった · %@"
+          }
+        }
+      }
+    },
+    "line.codeChangedNoTime" : {
+      "comment" : "Under an implementation line in the Properties panel whose code changed since it was recorded, when the time is not known.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code changed since linked"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覚えたあとでコードが変わった"
+          }
+        }
+      }
+    },
+    "line.codeUnrecorded" : {
+      "comment" : "Under an implementation line in the Properties panel whose code was never recorded on this machine.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code not recorded yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードをまだ覚えていません"
+          }
+        }
+      }
+    },
+    "line.helpRemove" : {
+      "comment" : "Tooltip of the minus button on a line in the outgoing lines list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この線を外す"
+          }
+        }
+      }
+    },
+    "line.helpSelect" : {
+      "comment" : "Tooltip of a line in the outgoing lines list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select this line (its settings appear in the Properties panel)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この線を選ぶ（線の設定をプロパティパネルに）"
+          }
+        }
+      }
+    },
+    "line.targetGone" : {
+      "comment" : "Shown in place of where a line lands when the card at its other end no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(partner is gone)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（相手が消えています）"
+          }
+        }
+      }
+    },
+    "link.cantOpen" : {
+      "comment" : "Error when a specboard:// link cannot be read; the argument is the link.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't open this link (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開けないリンクです（%@）"
+          }
+        }
+      }
+    },
+    "link.noBranch" : {
+      "comment" : "Error when a link names a branch the project does not have.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The branch “%@” named in the link doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクの branch「%@」がありません"
+          }
+        }
+      }
+    },
+    "link.noPlace" : {
+      "comment" : "Error when a link names a section or card the project does not have.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The place “%@” named in the link doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクの先「%@」がありません"
+          }
+        }
+      }
+    },
+    "link.noProject" : {
+      "comment" : "Error when a link names a project that is not in the project list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project “%@” named in the link doesn't exist"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクのプロジェクト「%@」がありません"
+          }
+        }
+      }
+    },
+    "outgoing.empty" : {
+      "comment" : "Shown in the property panel when nothing leaves the selected place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No lines leave from here."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここから出ている線はありません"
+          }
+        }
+      }
+    },
+    "outgoing.helpConnect" : {
+      "comment" : "Tooltip of the Connect… button in the outgoing lines list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw a line from here: pick the partner, then a kind of line it can take"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここから線を引く: 相手を選び、引ける線の種類から選ぶ"
+          }
+        }
+      }
+    },
+    "outgoing.title" : {
+      "comment" : "Property panel category listing the lines that leave the selected place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outgoing lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出ていく線"
+          }
+        }
+      }
+    },
+    "props.gone" : {
+      "comment" : "Shown in the property panel when the selected line has been removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This line no longer exists"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この線はもうありません"
+          }
+        }
+      }
+    },
+    "props.helpAt" : {
+      "comment" : "Help of the at row in a selected line's properties.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where the line lands inside the partner (where the value is). A full path when it lands outside the partner. Press to show the partner's card on the diagram and select it there."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手の中の着く所（値がある場所）。相手の外にあるときはフルパス。押すと、相手のカードを図で見せてそこを選ぶ"
+          }
+        }
+      }
+    },
+    "props.helpFrom" : {
+      "comment" : "Help of the from row in a selected line's properties.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where the line leaves (a card's header, field, row or a process node's row). Press to show that card on the diagram and select it there (double-click to open the editor)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線が出る所（カードの頭・欄・行・処理ノードの行）。押すと、そのカードを図で見せてそこを選ぶ（エディタはダブルクリックで開く）"
+          }
+        }
+      }
+    },
+    "props.helpTo" : {
+      "comment" : "Help of the to row in a selected line's properties.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The partner card (a card ghost if the line goes through one). Press to show the card on the diagram and select it (double-click to open the editor)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手のカード（カードゴーストを通したものは、そのカードゴースト）。押すと、そのカードを図で見せて選ぶ（エディタはダブルクリックで開く）"
+          }
+        }
+      }
+    },
+    "props.removeLine" : {
+      "comment" : "Button in a selected line's properties that removes the line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線を外す"
+          }
+        }
+      }
+    },
+    "props.sentenceSeparator" : {
+      "comment" : "Joins a line field's label and its description in its help text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
+    },
+    "props.targetGone" : {
+      "comment" : "Shown in a selected line's properties when the card at its other end no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The partner is gone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手が消えています"
+          }
+        }
+      }
+    },
+    "removal.embedTitle" : {
+      "comment" : "Title of the alert asked before an embedding line is removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove the embedding line?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包の線を外しますか"
+          }
+        }
+      }
+    },
+    "removal.embedWarning" : {
+      "comment" : "Message of the alert asked before an embedding line is removed; the arguments are the field and the partner.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removes the embedding line from %@ to %@. The type becomes string."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から %@ への内包の線を外します。型は string になります"
+          }
+        }
+      }
+    },
+    "removal.partner" : {
+      "comment" : "Stands for the line's other end in the embedding line warning when its card cannot be named.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "partner"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手"
+          }
+        }
+      }
+    },
+    "source.deletedCard" : {
+      "comment" : "Names a card that a line arriving somewhere leaves from when that card no longer exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(deleted card)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（消えたカード）"
+          }
+        }
+      }
+    },
+    "source.row" : {
+      "comment" : "Names the place a line is drawn from: a process node's row, counted from 1, and the node's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row %lld of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$@ の %1$lld 行目"
+          }
+        }
+      }
+    },
+    "switches.empty" : {
+      "comment" : "Shown under a diagram that draws no lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This diagram has no lines."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この図に線はありません"
+          }
+        }
+      }
+    },
+    "switches.helpHide" : {
+      "comment" : "Tooltip of a shown kind of line under a diagram; the arguments are its label, its name and what it means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): %@ (press to hide)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）: %@（押すと隠す）"
+          }
+        }
+      }
+    },
+    "switches.helpShow" : {
+      "comment" : "Tooltip of a hidden kind of line under a diagram; the arguments are its label, its name and what it means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@): %@ (press to show)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）: %@（押すと表示する）"
+          }
+        }
+      }
+    },
+    "value.no" : {
+      "comment" : "Read-only value of an unchecked line field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いいえ"
+          }
+        }
+      }
+    },
+    "value.yes" : {
+      "comment" : "Read-only value of a checked line field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はい"
+          }
+        }
+      }
+    },
+    "work.empty" : {
+      "comment" : "Shown in the property panel when no unfinished board card reaches the selected place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No unfinished board card points here."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここを指している、済んでいないボードのカードはありません"
+          }
+        }
+      }
+    },
+    "work.helpShow" : {
+      "comment" : "Tooltip of a board card in the list of related to-dos.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show this card on the board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードでこのカードを見る"
+          }
+        }
+      }
+    },
+    "work.title" : {
+      "comment" : "Property panel category listing the unfinished board cards that reach the selected place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Related to-dos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関わるやること"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

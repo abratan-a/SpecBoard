@@ -1,0 +1,9 @@
+{
+  "revs.at.path": "{path} の ",
+  "revs.given.shape": "{at}rev は読んだときのカードの rev（card_read の答えの rev。文字列）です",
+  "revs.stale.changed": "{path} は読んだあと（rev {rev}）に変わっています（今は rev {now}{last}）。読み直してから書きます",
+  "revs.stale.lastBy": "。最後に変えたのは {said}",
+  "revs.stale.notBefore": "{path} はこの呼び出しの前にはありません。rev は読んだカードを書くときに添えます（同じ呼び出しで作るカード・名前を変えた先のパスには添えません）",
+  "revs.writer.at": "{who}、{at}",
+  "revs.writer.thisKey": "このアクセスキー（{named}）"
+}

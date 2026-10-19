@@ -1,0 +1,1458 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "ask.always" : {
+      "comment" : "Sentence in the permission request; the argument is the list of what they change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Always allow” and “Always deny” change %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常に許可・常に拒否は、%@を変えます"
+          }
+        }
+      }
+    },
+    "ask.alwaysJoin" : {
+      "comment" : "Joins the things Always allow and Always deny change.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", and "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "と"
+          }
+        }
+      }
+    },
+    "ask.alwaysKey" : {
+      "comment" : "What Always allow and Always deny change, for an item of a key; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the settings of access key “%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセスキー「%@」の設定"
+          }
+        }
+      }
+    },
+    "ask.alwaysProject" : {
+      "comment" : "What Always allow and Always deny change, for an item of a project; the argument is the project as the request names it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the settings of %@, which apply to every access key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の設定（どのアクセスキーにも効く）"
+          }
+        }
+      }
+    },
+    "ask.alwaysTimeout" : {
+      "comment" : "Last line of the permission request; the arguments are the sentence about Always allow and the minutes to answer.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. If there is no answer in %lld min, it is withdrawn."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@。%lld 分で答えが無ければ取り下げます。"
+          }
+        }
+      }
+    },
+    "ask.answerAlways" : {
+      "comment" : "Button that allows the call and sets the item to Allow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always allow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常に許可"
+          }
+        }
+      }
+    },
+    "ask.answerNever" : {
+      "comment" : "Button that denies the call and sets the item to Deny.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always deny"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常に拒否"
+          }
+        }
+      }
+    },
+    "ask.answerOnce" : {
+      "comment" : "Button that allows only the one call that asked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow once"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今回だけ許可"
+          }
+        }
+      }
+    },
+    "ask.calling" : {
+      "comment" : "First line of the permission request; the arguments are the access key's name and the tool.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access key “%@” is calling %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセスキー「%@」が %@ を呼んでいます。"
+          }
+        }
+      }
+    },
+    "ask.errorMainThread" : {
+      "comment" : "Error returned to the core when a permission request is made on the main thread.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't ask for permission from the main thread"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面のスレッドからは許可を求められません"
+          }
+        }
+      }
+    },
+    "ask.errorUnreadable" : {
+      "comment" : "Error returned to the core when a permission request cannot be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read the permission request"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可の求めが読めません"
+          }
+        }
+      }
+    },
+    "ask.more" : {
+      "comment" : "Heading of the permission request when others wait; the argument is how many.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほか %lld 件"
+          }
+        }
+      }
+    },
+    "ask.panelTitle" : {
+      "comment" : "Title of the permission request window (kept hidden on screen).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP permission"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP の許可"
+          }
+        }
+      }
+    },
+    "ask.title" : {
+      "comment" : "Heading of the permission request window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP is asking for permission"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP が許可を求めています"
+          }
+        }
+      }
+    },
+    "ask.whoseKey" : {
+      "comment" : "Whose setting an item is, in the permission request; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "key “%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キー「%@」"
+          }
+        }
+      }
+    },
+    "ask.whoseProject" : {
+      "comment" : "Whose setting an item is, in the permission request; the argument is the project's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "project “%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」"
+          }
+        }
+      }
+    },
+    "ask.whoseProjectSlug" : {
+      "comment" : "Same, with the project's slug as the second argument.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "project “%@” (slug %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクト「%@」（slug %@）"
+          }
+        }
+      }
+    },
+    "keys.chooseHint" : {
+      "comment" : "Shown in the key detail when no key is chosen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a key on the left"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左でキーを選びます"
+          }
+        }
+      }
+    },
+    "keys.copiedCommand" : {
+      "comment" : "Short note after the registration command was copied.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Command copied. Run it on the host where the agent runs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コマンドをコピーしました。エージェントを置いたホストで実行します"
+          }
+        }
+      }
+    },
+    "keys.copiedKey" : {
+      "comment" : "Short note after the key was copied.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key copied"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーをコピーしました"
+          }
+        }
+      }
+    },
+    "keys.copyCommand" : {
+      "comment" : "Button that copies the registration command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy command"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コマンドをコピー"
+          }
+        }
+      }
+    },
+    "keys.copyKey" : {
+      "comment" : "Button in the made-key panel that copies the key's value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーをコピー"
+          }
+        }
+      }
+    },
+    "keys.createKey" : {
+      "comment" : "Button that starts making a new access key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create key…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーを作る…"
+          }
+        }
+      }
+    },
+    "keys.created" : {
+      "comment" : "Panel shown right after a key is made; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created “%@”. The key can't be shown again once you leave this page (if you need it, “Regenerate…” makes a new value). Next, choose below which projects this key may touch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」を作りました。キーはこのページを離れると二度と出せません（要るなら「作り直す…」で値を作り直せます）。次に、下でこのキーに触れてよいプロジェクトを選びます。"
+          }
+        }
+      }
+    },
+    "keys.createdOn" : {
+      "comment" : "Line in the key list; the argument is a date and time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作った日 %@"
+          }
+        }
+      }
+    },
+    "keys.empty" : {
+      "comment" : "Shown in the list of access keys when there are none.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No keys yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーはまだありません"
+          }
+        }
+      }
+    },
+    "keys.emptyHint" : {
+      "comment" : "Shown in the key detail when there are no keys.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create one with “Create key…”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「キーを作る…」で作ります"
+          }
+        }
+      }
+    },
+    "keys.hideCommand" : {
+      "comment" : "Button in the made-key panel that hides the registration command.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide registration command"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登録のコマンドを隠す"
+          }
+        }
+      }
+    },
+    "keys.intro" : {
+      "comment" : "Explanation at the top of the access keys page.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To connect over MCP, you need an access key on the host where the agent runs. Make one key for each development session (project) and decide which projects it may touch. Public projects can be read with any key."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP で繋ぐには、エージェントを置いたホストでアクセスキーが要ります。開発のセッション（プロジェクト）ごとに 1 本作り、触れるプロジェクトを決めます。公開のプロジェクトは、どのキーからも読めます。"
+          }
+        }
+      }
+    },
+    "keys.lastUsed" : {
+      "comment" : "Line in the key list; the argument is a date and time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last used %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に使った %@"
+          }
+        }
+      }
+    },
+    "keys.levelRead" : {
+      "comment" : "Choice of a key's access to a project: it may read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読む"
+          }
+        }
+      }
+    },
+    "keys.levelWrite" : {
+      "comment" : "Choice of a key's access to a project: it may read and write.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read & write"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み書き"
+          }
+        }
+      }
+    },
+    "keys.namePlaceholder" : {
+      "comment" : "Placeholder of the field that names a new access key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (e.g. Shop development)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前（例: Shop の開発）"
+          }
+        }
+      }
+    },
+    "keys.neverUsed" : {
+      "comment" : "Line in the key list for a key never used.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not used yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ使っていません"
+          }
+        }
+      }
+    },
+    "keys.permitCapture" : {
+      "comment" : "Label of the permission that lets a key capture the app's screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take a picture of the screen (app_control capture)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面を撮る（app_control の capture）"
+          }
+        }
+      }
+    },
+    "keys.permitControl" : {
+      "comment" : "Label of the permission that lets a key drive the app's screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the screen and change how it looks (app_control state, select, view, windows)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面を選ぶ・見え方を変える（app_control の state・select・view・windows）"
+          }
+        }
+      }
+    },
+    "keys.permitCreate" : {
+      "comment" : "Label of the permission that lets a key create projects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create projects (project_create)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトを作る（project_create）"
+          }
+        }
+      }
+    },
+    "keys.placeNote" : {
+      "comment" : "Note under the explanation on the access keys page; the argument is the agent's MCP port.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keys for this agent's projects. The AI on that host connects with one of these keys to the MCP the agent receives itself (127.0.0.1:%@)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントのプロジェクトのキー。そのホストの AI は、エージェントが自分で受ける MCP（127.0.0.1:%@）に、このキーで繋ぎます。"
+          }
+        }
+      }
+    },
+    "keys.projectsNote" : {
+      "comment" : "Note under the project-creation permission in the key's detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projects it creates can be read and written with this key. Which writing tools MCP may use inside a project is decided per project in the “MCP” tab of Project Settings."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ったプロジェクトは、このキーで読み書きできます。プロジェクトの中で MCP が使ってよい書くツールは、プロジェクトごとにプロジェクト設定の「MCP」のタブで決めます。"
+          }
+        }
+      }
+    },
+    "keys.publicNote" : {
+      "comment" : "Small label beside a public project in the per-project permissions.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public (readable even with None)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開（なしでも読める）"
+          }
+        }
+      }
+    },
+    "keys.regenerate" : {
+      "comment" : "Destructive button of the regenerate dialog.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作り直す"
+          }
+        }
+      }
+    },
+    "keys.regenerateButton" : {
+      "comment" : "Button that opens the regenerate dialog for the chosen key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作り直す…"
+          }
+        }
+      }
+    },
+    "keys.regenerateHelp" : {
+      "comment" : "Tooltip of the Regenerate button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the key's value is renewed; its name, permissions and projects stay the same (the current value stops working)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前・許可・プロジェクトはそのままで、キーの値だけを新しくします（今の値は使えなくなります）"
+          }
+        }
+      }
+    },
+    "keys.regenerateMessage" : {
+      "comment" : "Message of the dialog that asks whether to make an access key's value again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the key's value is renewed; its name, permissions and projects stay the same. Sessions connected with the current value will be refused from their next request, so replace the key wherever it is registered. This can't be undone."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前・許可・プロジェクトはそのままで、キーの値だけを新しくします。今の値で繋いでいるセッションは次の要求から断られるので、登録しているところを新しいキーに替えます。元には戻せません。"
+          }
+        }
+      }
+    },
+    "keys.regenerateTitle" : {
+      "comment" : "Title of the dialog that asks whether to make an access key's value again; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate the key of “%@”?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」のキーを作り直しますか？"
+          }
+        }
+      }
+    },
+    "keys.regenerated" : {
+      "comment" : "Panel shown right after a key's value was made again; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The key “%@” was regenerated. The previous value no longer works. The new key can't be shown again once you leave this page either. Replace the key where it is registered (the AI session's settings, wherever the key is stored)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」のキーを作り直しました。前の値はもう使えません。新しいキーもこのページを離れると二度と出せません。登録しているところ（AI のセッションの設定・キーの置き場）を新しいキーに替えます。"
+          }
+        }
+      }
+    },
+    "keys.revoke" : {
+      "comment" : "Destructive button of the revoke dialog.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revoke"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す"
+          }
+        }
+      }
+    },
+    "keys.revokeButton" : {
+      "comment" : "Button that opens the revoke dialog for the chosen key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revoke…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消す…"
+          }
+        }
+      }
+    },
+    "keys.revokeMessage" : {
+      "comment" : "Message of the dialog that asks whether to revoke an access key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions connected with this key will be refused from their next request. This can't be undone."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このキーで繋いでいるセッションは、次の要求から断られます。元には戻せません。"
+          }
+        }
+      }
+    },
+    "keys.revokeTitle" : {
+      "comment" : "Title of the dialog that asks whether to revoke an access key; the argument is the key's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revoke “%@”?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」を取り消しますか？"
+          }
+        }
+      }
+    },
+    "keys.screenNote" : {
+      "comment" : "Note under the screen permissions in the key's detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window can show private projects too, so this is decided apart from the project permissions. “Ask each time” asks for permission on the screen when the call carries request: true."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窓には非公開のプロジェクトも写るので、プロジェクトの許可とは別に決めます。都度承認は、呼び出しが request: true を付けたときに画面で許可を求めます。"
+          }
+        }
+      }
+    },
+    "keys.sectionProjects" : {
+      "comment" : "Section title in the key's detail.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permissions by project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトごとの許可"
+          }
+        }
+      }
+    },
+    "keys.sectionScreen" : {
+      "comment" : "Section title in the key's detail for what the key may do with the app's screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面"
+          }
+        }
+      }
+    },
+    "keys.showCommand" : {
+      "comment" : "Button in the made-key panel that shows the command that registers the key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show registration command"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登録のコマンドを表示"
+          }
+        }
+      }
+    },
+    "keys.summaryCapture" : {
+      "comment" : "Part of the key list line when the key's capture permission differs from the default; the argument is the permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capture: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撮る %@"
+          }
+        }
+      }
+    },
+    "keys.summaryControl" : {
+      "comment" : "Part of the key list line when the key's screen permission differs from the default; the argument is the permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screen: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面 %@"
+          }
+        }
+      }
+    },
+    "keys.summaryCreate" : {
+      "comment" : "Part of the key list line when the key's project-creation permission differs from the default; the argument is the permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作る %@"
+          }
+        }
+      }
+    },
+    "keys.summaryProjects" : {
+      "comment" : "Line in the key list: how many projects the key was given.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld allowed project"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld allowed projects"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許したプロジェクト %lld"
+          }
+        }
+      }
+    },
+    "light.listening" : {
+      "comment" : "Line in the MCP light's tooltip; the argument is the port.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening for MCP on 127.0.0.1:%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "127.0.0.1:%@ で MCP を受けています"
+          }
+        }
+      }
+    },
+    "light.noAgents" : {
+      "comment" : "Tooltip of the MCP light when there is no agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No agents (MCP doesn't reach this Mac's projects)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがありません（この Mac のプロジェクトには MCP が届きません）"
+          }
+        }
+      }
+    },
+    "light.notConnected" : {
+      "comment" : "Line in the MCP light's tooltip for an agent that is not connected; the agent's name comes first.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋がっていません"
+          }
+        }
+      }
+    },
+    "light.notListening" : {
+      "comment" : "Line in the MCP light's tooltip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not listening for MCP"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP を受けていません"
+          }
+        }
+      }
+    },
+    "light.notListeningWhy" : {
+      "comment" : "Same, with the reason as the argument.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not listening for MCP (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP を受けていません（%@）"
+          }
+        }
+      }
+    },
+    "light.unknown" : {
+      "comment" : "Line in the MCP light's tooltip before the agent has said anything.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP status isn't known yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP の様子はまだ分かりません"
+          }
+        }
+      }
+    },
+    "settings.fromAgents" : {
+      "comment" : "Switch in the MCP settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept screen operations from agents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントからの画面の操作を受ける"
+          }
+        }
+      }
+    },
+    "settings.fromAgentsNote" : {
+      "comment" : "Explanation under the switch in the MCP settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This window accepts app_control of the MCP that each connected agent receives itself (read, select and capture the screen). It works only while an agent's project is open, and only for projects its access key can read. When this is off, agents can't see this window."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繋いでいるエージェントが自分で受ける MCP の app_control（画面を読む・選ぶ・撮る）を、この窓で受けます。エージェントのプロジェクトを開いているときだけで、そのアクセスキーで読めるプロジェクトに限ります。切ると、エージェントにはこの窓が見えません。"
+          }
+        }
+      }
+    },
+    "settings.intro" : {
+      "comment" : "Explanation at the top of the MCP page of the app's settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP is received by the agent on the host where the AI session runs, on that host's 127.0.0.1, and answers for that agent's projects. The app itself listens for nothing, so MCP doesn't reach this Mac's projects (to let an AI read a project, move it to an agent). Connecting needs that agent's access key; make keys under “Access keys” in a place's settings in the project list."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP は、AI のセッションが動くホストのエージェントが、そのホストの 127.0.0.1 で受け、そのエージェントのプロジェクトに答えます。アプリ自身は何も待ち受けないので、この Mac のプロジェクトには MCP が届きません（AI に読ませるときはエージェントへ移します）。繋ぐにはそのエージェントのアクセスキーが要り、キーはプロジェクト一覧の場所の設定の「アクセスキー」で作ります。"
+          }
+        }
+      }
+    },
+    "settings.registerNote" : {
+      "comment" : "Line beside the button that goes to the access keys.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The registration command appears when you create a key."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登録のコマンドは、キーを作ると出ます。"
+          }
+        }
+      }
+    },
+    "settings.toKeys" : {
+      "comment" : "Button that goes to the access keys.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to access keys"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクセスキーへ"
+          }
+        }
+      }
+    },
+    "state.allow" : {
+      "comment" : "Name of the MCP permission that lets a call through.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可"
+          }
+        }
+      }
+    },
+    "state.ask" : {
+      "comment" : "Name of the MCP permission that asks a person every time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask each time"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "都度承認"
+          }
+        }
+      }
+    },
+    "state.deny" : {
+      "comment" : "Name of the MCP permission that turns a call away, and the answer that denies one call.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deny"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒否"
+          }
+        }
+      }
+    },
+    "writes.collapse" : {
+      "comment" : "Tooltip of an open group of tools in the MCP tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "畳む"
+          }
+        }
+      }
+    },
+    "writes.defaultIs" : {
+      "comment" : "Small label beside an item whose default is not Allow; the argument is that permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定は%@"
+          }
+        }
+      }
+    },
+    "writes.expand" : {
+      "comment" : "Tooltip of a folded group of tools in the MCP tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View item by item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目ごとに見る"
+          }
+        }
+      }
+    },
+    "writes.groupHelp" : {
+      "comment" : "Tooltip of a group's permission choice; the argument is the group's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set every item of %@ to the same state"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の項目を全部同じにする"
+          }
+        }
+      }
+    },
+    "writes.intro" : {
+      "comment" : "Explanation at the top of the project settings' MCP tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For each tool that writes in this project, choose whether MCP (an AI) may use it: Allow, Ask each time or Deny. “Ask each time” asks for permission on the screen when the call carries request: true (without it, the call is refused). “Deny” refuses without writing anything (a batch is judged step by step). An AI can read the items set to “Ask each time” and “Deny” with project_read, but only a person can change them. They don't apply to writes from the screen. Which projects a key can read and write, and whether it can drive the screen, are decided under “Access keys” in a place's settings in the project list."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトで、MCP（AI）が書くツールを使うのを、ツールごとに許可・都度承認・拒否から選びます。都度承認は、呼び出しが request: true を付けたときに画面で許可を求めます（付けなければ断ります）。拒否は、何も書かずに断ります（batch は手ごとに）。AI は project_read で都度承認と拒否の項目を読めますが、変えられるのは人だけです。画面からの書き込みには効きません。どのプロジェクトを読み書きできるかと、画面を動かせるかは、プロジェクト一覧の場所の設定の「アクセスキー」で決めます"
+          }
+        }
+      }
+    },
+    "writes.perItem" : {
+      "comment" : "Small label on a group whose items are not all in the same state.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目ごと"
+          }
+        }
+      }
+    },
+    "writes.thisMac" : {
+      "comment" : "Notice at the top of the project settings' MCP tab for a project of this Mac.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP doesn't reach this Mac's projects. To let an AI read a project, move it to an agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac のプロジェクトには MCP が届きません。AI に読ませるときはエージェントへ移します"
+          }
+        }
+      }
+    },
+    "writes.title" : {
+      "comment" : "Heading of the project settings' MCP tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes from MCP"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP からの書き込み"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

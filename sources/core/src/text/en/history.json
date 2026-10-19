@@ -1,0 +1,22 @@
+{
+  "history.author.mcpNamed": "MCP: {name}",
+  "history.author.screen": "Screen",
+  "history.commit.nameTooLong": "A commit name is at most 80 characters",
+  "history.commit.none": "There is no commit {seq}",
+  "history.commit.noneAfter": "There is nothing newer than commit {seq}",
+  "history.commit.noneOrCut": "There is no commit {seq} (no such number, or before where the history was cut)",
+  "history.revert.line": "Revert ({count} commits, back to right after commit {seq})",
+  "history.revert.locked": "main is locked, so it cannot be reverted (revert once a person unlocks it in the app)",
+  "history.revert.otherCommit": "{seq} ({who})",
+  "history.revert.othersIn": "Not reverted, as it includes commits by other writers: {commits}. Other writers' commits can be undone one at a time with undo of branch_revert, with request: true",
+  "history.revertIntoBranch.line": "main as of right after commit {seq} ({count} commits undone; it goes into main by merge)",
+  "history.undo.already": "What commit {seq} changed is already as it was before it",
+  "history.undo.holderGone": "{path} cannot come back, as {holder} it was in is gone",
+  "history.undo.line": "Undo what commit {seq} ({who}) changed",
+  "history.undo.lineAsked": "Undo what commit {seq} ({who}) changed (allowed on the screen)",
+  "history.undo.others": "Commit {seq} is another writer's ({who}), so it is not undone (MCP undoes it only through the item branch_revert.others)",
+  "history.undo.taken": "{path} cannot come back, as something else is there now (rename or delete one of them first)",
+  "history.undo.wroteNothing": "Commit {seq} changed no document, so there is nothing to undo",
+  "history.undoIntoBranch.line": "main with what commit {seq} ({who}) changed undone (it goes into main by merge)",
+  "history.undoIntoBranch.lineAsked": "main with what commit {seq} ({who}) changed undone (allowed on the screen; it goes into main by merge)"
+}

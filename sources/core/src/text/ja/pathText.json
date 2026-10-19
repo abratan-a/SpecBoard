@@ -1,0 +1,8 @@
+{
+  "pathText.error.bracketInSection": "「{path}」のセクションの名前に [ ] は書けません（[ ] を含む名前は一重引用符で囲みます: 'a[0]'）",
+  "pathText.error.empty": "パスが空です",
+  "pathText.error.emptyName": "「{path}」に空の名前があります（区切りの / : . が続いているか、末尾にあります）",
+  "pathText.error.stray": "「{path}」の囲んだ名前か [ ] のすぐあとに字があります（名前の中の ' は '' と書き、名前全体を一重引用符で囲みます）",
+  "pathText.error.unclosedBracket": "「{path}」の [ ] が閉じていません",
+  "pathText.error.unclosedQuote": "「{path}」の一重引用符が閉じていません（名前の中の ' は '' と書きます）"
+}

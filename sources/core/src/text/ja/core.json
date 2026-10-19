@@ -1,0 +1,7 @@
+{
+  "core.error.badRequest": "頼みの JSON が読めません: {e}",
+  "core.error.closed": "閉じています",
+  "core.error.noOp": "頼みに op がありません",
+  "core.error.noPlace": "データの置き場が空です",
+  "core.error.notYet": "「{other}」はまだ使えません"
+}

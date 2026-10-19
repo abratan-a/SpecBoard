@@ -1,0 +1,77 @@
+{
+  "project": "見本",
+  "description": "コアのテストの見本のプラン",
+  "counts": {
+    "entity": 2,
+    "value": 1,
+    "enum": 1,
+    "note": 2,
+    "flow": 2,
+    "store": 1,
+    "freedoc": 1,
+    "formatdoc": 1,
+    "stackdoc": 0,
+    "instance": 0,
+    "table": 0,
+    "svg": 0,
+    "html": 0,
+    "frame": 0
+  },
+  "tags": [
+    {
+      "tag": "中核",
+      "count": 1
+    }
+  ],
+  "projectTree": {
+    "main_sections": [
+      {
+        "type": "document",
+        "name": "Docs"
+      },
+      {
+        "type": "schema",
+        "name": "Schemas"
+      },
+      {
+        "type": "chart",
+        "name": "Charts"
+      },
+      {
+        "type": "free",
+        "name": "Free"
+      },
+      {
+        "type": "workdir",
+        "name": "ts",
+        "directory": "83798b1e-eb4c-4a7d-be58-5467fb615273"
+      },
+      {
+        "type": "workdir",
+        "name": "zod",
+        "directory": "c38cf5ef-6db9-4368-a08a-352676f9d2c5"
+      },
+      {
+        "type": "workdir",
+        "name": "schema",
+        "directory": "7e1f9772-4287-45fe-9902-cc6f85880578"
+      },
+      {
+        "type": "workdir",
+        "name": "charts_2",
+        "directory": "1b7ca0b9-1f00-45c3-96a9-c5a4b0fba5ce"
+      },
+      {
+        "type": "workdir",
+        "name": "docs_2",
+        "directory": "f6881a19-de3c-43fb-8a8e-01ac15a3035b"
+      }
+    ],
+    "board_sections": [
+      {
+        "type": "goals",
+        "name": "Goals"
+      }
+    ]
+  }
+}

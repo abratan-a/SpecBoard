@@ -1,0 +1,8 @@
+MOST — constant const — line 4 — 3-4
+Order — type class — line 7 — 6-22
+  Order.constructor — method constructor — line 9 — 8-13 — calls local
+  Order.total — method method — line 15 — 15-17 — calls reduce, helper
+  Order.of — method method — line 19 — 19-21 — calls Order
+helper — function function — line 27 — 26-30 — calls f
+late — function function — line 32 — 32-32
+gen — function function — line 34 — 34-36

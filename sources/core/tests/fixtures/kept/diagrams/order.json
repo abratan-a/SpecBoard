@@ -1,0 +1,19 @@
+{
+  "project": "見本",
+  "branch": "main",
+  "roots": "Schemas/Ordering:Order",
+  "depth": 1,
+  "kinds": [
+    "embed",
+    "points",
+    "signedBy",
+    "reads",
+    "writes",
+    "next",
+    "mentions",
+    "run"
+  ],
+  "fields": false,
+  "direction": "out",
+  "rev": "3089a5f10b9b"
+}

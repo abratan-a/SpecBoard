@@ -1,0 +1,17 @@
+{
+  "lineMove.error.sql": "線の書き方を移せません: {e}",
+  "lineMove.line.inCard": "{name} の {line}",
+  "lineMove.line.kindsMade": "線の種類 {kinds} をプロジェクトに作った（pointsAt の as と payloads の鍵から）",
+  "lineMove.line.landingOutside": "線 {kind} の着く所「{at}」は相手の外で、そこにカードが無いので線にできず、説明の末尾に書き写した",
+  "lineMove.line.landingOutsideFrom": "{from} から出る線 {kind} の着く所「{at}」は相手の外で、そこにカードが無いので線にできず、説明の末尾に書き写した",
+  "lineMove.line.moved": "カードの線 {total} 本を connections に移した（{kinds}）",
+  "lineMove.line.pathWithoutPlace": "{key} の「{path}」は着く所が無いので線にできず、説明の末尾に書き写した",
+  "lineMove.line.payloadKeyWithoutPlace": "payload「{payload}」の鍵 {keys} は着く所が無いので線にできず、説明の末尾に書き写した",
+  "lineMove.line.payloadWithoutKey": "payload「{payload}」は鍵が無いので線にできず、説明の末尾に書き写した",
+  "lineMove.line.pointerWithoutTarget": "{path}: pointsAt（as: {word}）は相手も判別子も無いので線にできない",
+  "lineMove.line.refWithoutTarget": "{path}: 型 ref の相手が無いので、型を string に戻した",
+  "lineMove.line.split": "{what} {count} 本を、相手への線と、値のある所への「つながる」線の 2 本ずつに分けた（{cards}）",
+  "lineMove.part.splitLandings": "着く所が相手の外にあった線",
+  "lineMove.part.splitPointers": "pointsAt の in が相手とは別のカードにあった線",
+  "lineMove.problem.base": "（基点）"
+}

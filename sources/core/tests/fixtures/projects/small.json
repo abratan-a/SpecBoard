@@ -1,0 +1,270 @@
+{
+  "format": "specboard/project",
+  "version": 28,
+  "project": {
+    "id": "f949d36e-35c6-5464-a7ec-933d1dbff394",
+    "name": "最小の見本",
+    "slug": "最小の見本",
+    "created_at": "2026-01-15T09:00:00.000Z",
+    "tag_groups": [],
+    "export_dirs": [
+      {
+        "id": "3fbe8969-ec4a-548e-aee1-a5579d2c9324",
+        "name": "ts"
+      },
+      {
+        "id": "9c8ce023-9496-5ddf-96f2-576216a00751",
+        "name": "zod"
+      },
+      {
+        "id": "4e4097a8-5cde-54c4-8da0-2563047608cc",
+        "name": "schema"
+      }
+    ],
+    "kinds": {
+      "project_tree": {
+        "main_sections": [
+          {
+            "type": "document",
+            "name": "Docs"
+          },
+          {
+            "type": "schema",
+            "name": "Schemas"
+          },
+          {
+            "type": "chart",
+            "name": "Charts"
+          },
+          {
+            "type": "free",
+            "name": "Free"
+          },
+          {
+            "type": "workdir",
+            "name": "ts",
+            "directory": "3fbe8969-ec4a-548e-aee1-a5579d2c9324"
+          },
+          {
+            "type": "workdir",
+            "name": "zod",
+            "directory": "9c8ce023-9496-5ddf-96f2-576216a00751"
+          },
+          {
+            "type": "workdir",
+            "name": "schema",
+            "directory": "4e4097a8-5cde-54c4-8da0-2563047608cc"
+          }
+        ],
+        "board_sections": [
+          {
+            "type": "goals",
+            "name": "Goals"
+          }
+        ]
+      }
+    },
+    "exports": [
+      {
+        "id": "6603aab3-ff60-5e04-b6a6-7ba8d49f726e",
+        "name": "ts",
+        "entries": [
+          {
+            "from": "3c9b37cd-be0b-5abd-b276-1090534a09b1",
+            "to": "types.ts"
+          }
+        ]
+      },
+      {
+        "id": "210949e1-f939-50da-b6f1-32fb02d30585",
+        "name": "zod",
+        "entries": [
+          {
+            "from": "3c9b37cd-be0b-5abd-b276-1090534a09b1",
+            "to": "types.zod.ts",
+            "format": "zod"
+          }
+        ]
+      },
+      {
+        "id": "5381ce9c-b412-5f84-a41a-e681428b34b4",
+        "name": "schema",
+        "entries": [
+          {
+            "from": "3c9b37cd-be0b-5abd-b276-1090534a09b1",
+            "to": "types.schema.json"
+          }
+        ]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "Main",
+      "created_at": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "60f91139-2d18-5bfb-bc7e-d88f7c1bb8ac",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "Schemas",
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "schema"
+    },
+    {
+      "id": "193dc22a-3490-5ca2-9863-93fd7d30d32e",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "Docs",
+      "sort_order": 1,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "document"
+    },
+    {
+      "id": "7e7ba48b-fe97-5c33-84d0-5b6bc006bdfc",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "Charts",
+      "sort_order": 2,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "chart"
+    },
+    {
+      "id": "ea6faf82-85b8-5be6-a962-9fe3dd68dd58",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "Free",
+      "sort_order": 3,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "free"
+    },
+    {
+      "id": "dir:3fbe8969-ec4a-548e-aee1-a5579d2c9324",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "ts",
+      "sort_order": 4,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:9c8ce023-9496-5ddf-96f2-576216a00751",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "zod",
+      "sort_order": 5,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    },
+    {
+      "id": "dir:4e4097a8-5cde-54c4-8da0-2563047608cc",
+      "parent_id": "b9316883-37c7-5495-9cbf-111ab85510c8",
+      "name": "schema",
+      "sort_order": 6,
+      "created_at": "2026-01-15T09:00:00.000Z",
+      "kind": "workdir"
+    }
+  ],
+  "cards": [
+    {
+      "id": "3c9b37cd-be0b-5abd-b276-1090534a09b1",
+      "kind": "entity",
+      "name": "Memo",
+      "section": "60f91139-2d18-5bfb-bc7e-d88f7c1bb8ac",
+      "v": 7,
+      "rows": {
+        "fields": [
+          {
+            "id": "174ac77e-d3d4-567b-b859-3fe07f6f8937",
+            "fields": {
+              "name": "field1",
+              "type": "object"
+            },
+            "rows": {
+              "fields": [
+                {
+                  "id": "86ba75be-ae5b-5d09-aac2-6e2e9ec85910",
+                  "fields": {
+                    "name": "field1"
+                  }
+                },
+                {
+                  "id": "67f4e5d8-edff-5c6e-a646-388afee92097",
+                  "fields": {
+                    "name": "field2"
+                  }
+                },
+                {
+                  "id": "71b72a0c-8a9b-5ac0-a8ab-0631a0c85ad6",
+                  "fields": {
+                    "name": "field3",
+                    "type": "object"
+                  },
+                  "rows": {
+                    "fields": [
+                      {
+                        "id": "d55fac64-cd66-54b7-bdf5-05241ee479ec",
+                        "fields": {
+                          "name": "field1"
+                        }
+                      },
+                      {
+                        "id": "c5b90ada-bd89-5ef2-8d56-44cd300a2daf",
+                        "fields": {
+                          "name": "field2"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "connections": [
+        {
+          "id": "d3cfd38ee098802740e6499a",
+          "line": "embed",
+          "from": "field1.field1",
+          "to": "3c9b37cd-be0b-5abd-b276-1090534a09b1"
+        }
+      ]
+    }
+  ],
+  "board": {
+    "sections": [
+      {
+        "id": "99ea50d4-dc18-56b9-8e06-07615e9facc7",
+        "name": "Board",
+        "created_at": "2026-01-15T09:00:00.000Z"
+      },
+      {
+        "id": "3fcfd669-c330-563b-a0b4-132c8f9a53e6",
+        "parent_id": "99ea50d4-dc18-56b9-8e06-07615e9facc7",
+        "name": "Goals",
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "goals"
+      },
+      {
+        "id": "5e1abedd-b2a1-53ed-9972-04e2f903f59e",
+        "parent_id": "3fcfd669-c330-563b-a0b4-132c8f9a53e6",
+        "name": "Complete",
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "complete"
+      },
+      {
+        "id": "1d336bf1-3689-5d1d-b267-bc0703736321",
+        "parent_id": "3fcfd669-c330-563b-a0b4-132c8f9a53e6",
+        "name": "Cancelled",
+        "sort_order": 1,
+        "created_at": "2026-01-15T09:00:00.000Z",
+        "kind": "cancelled"
+      }
+    ],
+    "cards": []
+  },
+  "places": [
+    {
+      "item_kind": "card",
+      "item": "3c9b37cd-be0b-5abd-b276-1090534a09b1",
+      "x": 1,
+      "y": 1
+    }
+  ]
+}

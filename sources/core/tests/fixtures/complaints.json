@@ -1,0 +1,101 @@
+[
+  {
+    "tool": "card_read",
+    "arguments": {
+      "target": "Data:Order",
+      "paths": [
+        "x"
+      ],
+      "extra": 1,
+      "project": "カタログ"
+    },
+    "complaints": [
+      "paths はありません。パスは target に配列で書きます（card_read の value の as: exists）",
+      "受け付けない引数です: extra。このツールが取るのは: project / branch / target / value"
+    ]
+  },
+  {
+    "tool": "card_create",
+    "arguments": {
+      "value": {
+        "Data:Order": {
+          "kind": "banana",
+          "fields": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "whn": 1,
+              "pointsAt": [
+                {
+                  "as": "id",
+                  "when": {
+                    "field": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "project": "カタログ"
+    },
+    "complaints": []
+  },
+  {
+    "tool": "card_list",
+    "arguments": {
+      "value": {
+        "kinds": [
+          "entity",
+          "nope"
+        ],
+        "query": 3
+      }
+    },
+    "complaints": [
+      "project は必須です"
+    ]
+  },
+  {
+    "tool": "section_create",
+    "arguments": {
+      "target": [
+        1,
+        "A"
+      ],
+      "project": null
+    },
+    "complaints": [
+      "target[0] は string で指定してください（渡されたのは 数値）",
+      "project に null は渡せません（変えないなら省いてください）"
+    ]
+  },
+  {
+    "tool": "batch",
+    "arguments": {
+      "steps": [
+        {
+          "tool": "card_create",
+          "arguments": {}
+        }
+      ],
+      "project": "カタログ"
+    },
+    "complaints": [
+      "受け付けない引数です: steps。このツールが取るのは: project / branch / target / value / execute / request"
+    ]
+  },
+  {
+    "tool": "project_list",
+    "arguments": {
+      "path": "a",
+      "mode": "b",
+      "nested": true
+    },
+    "complaints": [
+      "path はありません。対象は target に書きます（例: Core:User.email）",
+      "mode はありません。見え方を変えるのは app_control の op: view で、target に動かし方を書きます",
+      "nested はありません。value と enum はいつも持っているカードの中に出ます"
+    ]
+  }
+]

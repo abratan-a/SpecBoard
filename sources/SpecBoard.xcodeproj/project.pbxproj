@@ -1,0 +1,584 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02DD0070302B6A000036FF9E /* cmark-gfm in Frameworks */ = {isa = PBXBuildFile; productRef = 02DD0071302B6A000036FF9E /* cmark-gfm */; };
+		02DD0072302B6A000036FF9E /* cmark-gfm-extensions in Frameworks */ = {isa = PBXBuildFile; productRef = 02DD0073302B6A000036FF9E /* cmark-gfm-extensions */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		02DD0036302B685F0036FF9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02DD001E302B685E0036FF9E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 02DD0025302B685E0036FF9E;
+			remoteInfo = SpecBoard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02DD0026302B685E0036FF9E /* SpecBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpecBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02DD0035302B685F0036FF9E /* SpecBoardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpecBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		02DD0090302B6C000036FF9E /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		02DD0060302B69000036FF9E /* Exceptions for "SpecBoard" folder in "SpecBoard" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 02DD0025302B685E0036FF9E /* SpecBoard */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		02DD0028302B685E0036FF9E /* SpecBoard */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				02DD0060302B69000036FF9E /* Exceptions for "SpecBoard" folder in "SpecBoard" target */,
+			);
+			path = SpecBoard;
+			sourceTree = "<group>";
+		};
+		02DD0038302B685F0036FF9E /* SpecBoardTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SpecBoardTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		02DD0023302B685E0036FF9E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02DD0070302B6A000036FF9E /* cmark-gfm in Frameworks */,
+				02DD0072302B6A000036FF9E /* cmark-gfm-extensions in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02DD0032302B685F0036FF9E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		02DD001D302B685E0036FF9E = {
+			isa = PBXGroup;
+			children = (
+				02DD0091302B6C000036FF9E /* Config */,
+				02DD0028302B685E0036FF9E /* SpecBoard */,
+				02DD0038302B685F0036FF9E /* SpecBoardTests */,
+				02DD0027302B685E0036FF9E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		02DD0027302B685E0036FF9E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				02DD0026302B685E0036FF9E /* SpecBoard.app */,
+				02DD0035302B685F0036FF9E /* SpecBoardTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		02DD0091302B6C000036FF9E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				02DD0090302B6C000036FF9E /* Signing.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		02DD0025302B685E0036FF9E /* SpecBoard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02DD0049302B685F0036FF9E /* Build configuration list for PBXNativeTarget "SpecBoard" */;
+			buildPhases = (
+				02DD0082302B6B000036FF9E /* コアを作る */,
+				02DD0022302B685E0036FF9E /* Sources */,
+				02DD0023302B685E0036FF9E /* Frameworks */,
+				02DD0024302B685E0036FF9E /* Resources */,
+				02DD0080302B6B000036FF9E /* エージェントを作る */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				02DD0028302B685E0036FF9E /* SpecBoard */,
+			);
+			name = SpecBoard;
+			packageProductDependencies = (
+				02DD0071302B6A000036FF9E /* cmark-gfm */,
+				02DD0073302B6A000036FF9E /* cmark-gfm-extensions */,
+			);
+			productName = SpecBoard;
+			productReference = 02DD0026302B685E0036FF9E /* SpecBoard.app */;
+			productType = "com.apple.product-type.application";
+		};
+		02DD0034302B685F0036FF9E /* SpecBoardTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02DD004C302B685F0036FF9E /* Build configuration list for PBXNativeTarget "SpecBoardTests" */;
+			buildPhases = (
+				02DD0031302B685F0036FF9E /* Sources */,
+				02DD0032302B685F0036FF9E /* Frameworks */,
+				02DD0033302B685F0036FF9E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				02DD0037302B685F0036FF9E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				02DD0038302B685F0036FF9E /* SpecBoardTests */,
+			);
+			name = SpecBoardTests;
+			packageProductDependencies = (
+			);
+			productName = SpecBoardTests;
+			productReference = 02DD0035302B685F0036FF9E /* SpecBoardTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		02DD001E302B685E0036FF9E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					02DD0025302B685E0036FF9E = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					02DD0034302B685F0036FF9E = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 02DD0025302B685E0036FF9E;
+					};
+				};
+			};
+			buildConfigurationList = 02DD0021302B685E0036FF9E /* Build configuration list for PBXProject "SpecBoard" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ja,
+			);
+			mainGroup = 02DD001D302B685E0036FF9E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				02DD0074302B6A000036FF9E /* XCRemoteSwiftPackageReference "swift-cmark" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 02DD0027302B685E0036FF9E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				02DD0025302B685E0036FF9E /* SpecBoard */,
+				02DD0034302B685F0036FF9E /* SpecBoardTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		02DD0024302B685E0036FF9E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02DD0033302B685F0036FF9E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		02DD0082302B6B000036FF9E /* コアを作る */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "コアを作る";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)/libspecboard_ffi.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "bash \"$SRCROOT/../tools/build-core-lib.sh\" \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH\"\n";
+		};
+		02DD0080302B6B000036FF9E /* エージェントを作る */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "エージェントを作る";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_FOLDER_PATH)/specboard-agent",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/specboard-agent-linux-x86_64",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "bash \"$SRCROOT/../tools/build-agent.sh\" \"$TARGET_BUILD_DIR/$EXECUTABLE_FOLDER_PATH/specboard-agent\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/specboard-agent-linux-x86_64\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		02DD0022302B685E0036FF9E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02DD0031302B685F0036FF9E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		02DD0037302B685F0036FF9E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 02DD0025302B685E0036FF9E /* SpecBoard */;
+			targetProxy = 02DD0036302B685F0036FF9E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		02DD0047302B685F0036FF9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 02DD0090302B6C000036FF9E /* Signing.xcconfig */;
+			buildSettings = {
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CoreFFI";
+				ARCHS = arm64;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		02DD0048302B685F0036FF9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 02DD0090302B6C000036FF9E /* Signing.xcconfig */;
+			buildSettings = {
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CoreFFI";
+				ARCHS = arm64;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		02DD004A302B685F0036FF9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpecBoard/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Masato Osone. Licensed under MIT OR Apache-2.0.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.7;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)",
+					"-lspecboard_ffi",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.m-osone.SpecBoard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SPECBOARD_UPDATE_FEED_REPO = "";
+				SPECBOARD_UPDATE_FEED_URL = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		02DD004B302B685F0036FF9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SpecBoard/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Masato Osone. Licensed under MIT OR Apache-2.0.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.7;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(TARGET_BUILD_DIR)/$(FRAMEWORKS_FOLDER_PATH)",
+					"-lspecboard_ffi",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.m-osone.SpecBoard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SPECBOARD_UPDATE_FEED_REPO = "";
+				SPECBOARD_UPDATE_FEED_URL = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		02DD004D302B685F0036FF9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 0.1.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.m-osone.SpecBoardTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpecBoard.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SpecBoard";
+			};
+			name = Debug;
+		};
+		02DD004E302B685F0036FF9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 0.1.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.m-osone.SpecBoardTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpecBoard.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SpecBoard";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		02DD0021302B685E0036FF9E /* Build configuration list for PBXProject "SpecBoard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02DD0047302B685F0036FF9E /* Debug */,
+				02DD0048302B685F0036FF9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		02DD0049302B685F0036FF9E /* Build configuration list for PBXNativeTarget "SpecBoard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02DD004A302B685F0036FF9E /* Debug */,
+				02DD004B302B685F0036FF9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		02DD004C302B685F0036FF9E /* Build configuration list for PBXNativeTarget "SpecBoardTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02DD004D302B685F0036FF9E /* Debug */,
+				02DD004E302B685F0036FF9E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		02DD0074302B6A000036FF9E /* XCRemoteSwiftPackageReference "swift-cmark" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftlang/swift-cmark.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		02DD0071302B6A000036FF9E /* cmark-gfm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02DD0074302B6A000036FF9E /* XCRemoteSwiftPackageReference "swift-cmark" */;
+			productName = "cmark-gfm";
+		};
+		02DD0073302B6A000036FF9E /* cmark-gfm-extensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02DD0074302B6A000036FF9E /* XCRemoteSwiftPackageReference "swift-cmark" */;
+			productName = "cmark-gfm-extensions";
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 02DD001E302B685E0036FF9E /* Project object */;
+}

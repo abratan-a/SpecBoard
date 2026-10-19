@@ -1,0 +1,15 @@
+Most — constant const — line 7 — 6-7
+Open — constant const — line 10 — 10-10
+Shut — constant const — line 11 — 11-11
+Order — type struct — line 17 — 16-19
+  Order.Total — method func — line 22 — 21-26 — calls local, sum, helper
+  Order.String — method func — line 28 — 28-30 — calls Sprintf, Total
+Ghost — type receiver — line 32 — 32-34 — parts 32-32, 34-34 — made
+  Ghost.Appear — method func — line 32 — 32-32
+  Ghost.Vanish — method func — line 34 — 34-34
+Priced — type interface — line 36 — 36-38
+  Priced.Price — method func — line 37 — 37-37
+Lines — type type — line 41 — 41-41
+State — type type — line 42 — 42-42
+helper — function func — line 48 — 47-50
+sum — function func — line 52 — 52-55

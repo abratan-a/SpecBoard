@@ -1,0 +1,28 @@
+{
+  "checked": 4,
+  "unresolved": 2,
+  "results": [
+    {
+      "path": "Schemas/Ordering:Order.total",
+      "resolved": true,
+      "kind": "field",
+      "type": "decimal"
+    },
+    {
+      "path": "Schemas:Status",
+      "resolved": true,
+      "kind": "card",
+      "type": "enum"
+    },
+    {
+      "path": "Nope:Gone",
+      "resolved": false,
+      "hint": "セクション「Nope」がありません。あるのは: Docs / Schemas / Schemas/Ordering / Charts / Charts/Shop / Free / ts / zod / schema / charts_2 / docs_2"
+    },
+    {
+      "path": "Schemas/Ordering:Order.nothing",
+      "resolved": false,
+      "hint": "Order の直下にあるのは: id / total / status / lines / customer_id / shipping / kind"
+    }
+  ]
+}

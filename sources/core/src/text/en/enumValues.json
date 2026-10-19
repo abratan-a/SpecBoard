@@ -1,0 +1,18 @@
+{
+  "enumValues.error.descriptionShape": "description is a string, or null for none",
+  "enumValues.error.labelShape": "label is a string, or null for none",
+  "enumValues.error.missing": "{full} has no value {name}",
+  "enumValues.error.nameFromPath": "The value's name is {name}, as its path says (leave name out of value, or give the same; rename with name in card_update)",
+  "enumValues.error.nameShape": "name is a string",
+  "enumValues.error.noEnum": "{path} is not the path of an enum's value (<enum path>.<value>)",
+  "enumValues.error.path": "An enum's value is made at the path <enum path>.<value> ({path})",
+  "enumValues.error.position": "position is a whole number from 0",
+  "enumValues.error.valueKey": "Elements of values are written with name and label (name is what value was). use holds the call written that way",
+  "enumValues.line.added": "Added the value {name} to {full}",
+  "enumValues.line.changed": "Changed the value {name} of {full}",
+  "enumValues.line.dataFollowed": "Wrote the new name {value} over the old one in {count} values of {card}",
+  "enumValues.line.removed": "Removed the value {name} from {full}",
+  "enumValues.line.renamed": "Renamed the value {name} of {full} to {now}",
+  "enumValues.warn.held": "The data at {paths} still has {name}: it is not changed, and the inspection lists it under cardProblems",
+  "enumValues.warn.heldOpen": "The data at {paths} still has {name}: it is not changed (the enum is open, so it passes as a value it does not know)"
+}

@@ -1,0 +1,2646 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "badge.also" : {
+      "comment" : "Small badge on a field that lists the other kinds it may hold; the argument is the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "also: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他: %@"
+          }
+        }
+      }
+    },
+    "badge.nullable" : {
+      "comment" : "Small badge on a field that may be null.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nullable"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "null可"
+          }
+        }
+      }
+    },
+    "description.empty" : {
+      "comment" : "Shown in the description pane of the Properties panel when the project is read-only and the description is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing written"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いていません"
+          }
+        }
+      }
+    },
+    "description.linePlaceholder" : {
+      "comment" : "Faint text in the description box of the Properties panel when a line is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A description of just this line (goes into the notes and comments of the export)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この線 1 本だけの説明（エクスポートの注記・コメントに載る）"
+          }
+        }
+      }
+    },
+    "description.none" : {
+      "comment" : "Shown in the description pane of the Properties panel when what is picked has no description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What is picked has no description"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んでいるものは説明を持ちません"
+          }
+        }
+      }
+    },
+    "editor.shape" : {
+      "comment" : "Label in the editor bar of a table or data card; the argument is the name of the card that gives the shape.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形 %@"
+          }
+        }
+      }
+    },
+    "empty.nothing" : {
+      "comment" : "Shown in the Properties panel when nothing is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a section or pick a card or row, and its properties appear here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションを開くか、カードや行を選ぶと、その属性がここに出ます"
+          }
+        }
+      }
+    },
+    "file.languageHelp" : {
+      "comment" : "Help for a file's language in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file's language, from its name and the working directory's parsers. Its functions and types are read with it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの言語。名前と作業ディレクトリの parsers で決まり、関数と型はこの言語で読む"
+          }
+        }
+      }
+    },
+    "file.parseErrorsHelp" : {
+      "comment" : "Help for the count of parts of a file that could not be parsed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many parts of the file could not be parsed. What could be read is shown."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解けなかった所の数。拾えた分は出しています"
+          }
+        }
+      }
+    },
+    "file.symbolsProblemHelp" : {
+      "comment" : "Help for why a file's functions and types are missing or partial.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Why its functions and types could not all be read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関数と型を拾えなかった（全部は拾えなかった）わけ"
+          }
+        }
+      }
+    },
+    "fold.collapse" : {
+      "comment" : "Tooltip of the arrow that closes a field's children in a card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "たたむ"
+          }
+        }
+      }
+    },
+    "fold.expand" : {
+      "comment" : "Tooltip of the arrow that opens a field's children in a card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開く"
+          }
+        }
+      }
+    },
+    "frameTarget.gone" : {
+      "comment" : "Picker of a frame card's target, when the section it held is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section is gone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先のセクションがありません"
+          }
+        }
+      }
+    },
+    "frameTarget.help" : {
+      "comment" : "Tooltip of a frame card's target picker.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The UI section whose mock this frame puts in its box, at full size (cut at the box). A section that would lead back to this one can't be chosen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この箱に 1:1 ではめ込む UI のセクション（はみ出す所は切る）。たどると自分のいるセクションに戻るものは選べません"
+          }
+        }
+      }
+    },
+    "frameTarget.noUi" : {
+      "comment" : "Tooltip of a frame card's target picker when there is no other UI section to choose.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no other UI section to put in. Make one first."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はめ込めるほかの UI のセクションがありません。先に作ってください"
+          }
+        }
+      }
+    },
+    "frameTarget.none" : {
+      "comment" : "Picker of a frame card's target, when none is chosen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not chosen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んでいません"
+          }
+        }
+      }
+    },
+    "ghost.retarget" : {
+      "comment" : "Button that points a card ghost at another card, in the Properties panel of a section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retarget"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付け替え"
+          }
+        }
+      }
+    },
+    "header.cardGhost" : {
+      "comment" : "What the top of the Properties panel says a picked card ghost is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト"
+          }
+        }
+      }
+    },
+    "header.cardOf" : {
+      "comment" : "Item of the menu at the top of the Properties panel that picks the card itself; the argument is the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (card)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（カード）"
+          }
+        }
+      }
+    },
+    "header.menuHelp" : {
+      "comment" : "Tooltip of the menu at the top of the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to another row of the same card (fields, values, rows, nodes)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じカードのほかの行（フィールド・値・行・ノード）へ"
+          }
+        }
+      }
+    },
+    "header.properties" : {
+      "comment" : "The top of the Properties panel when nothing is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Properties"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロパティ"
+          }
+        }
+      }
+    },
+    "input.decimal" : {
+      "comment" : "Faint text in the box of a decimal field of a data card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decimal number (e.g. 12.50)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 進の数（例 12.50）"
+          }
+        }
+      }
+    },
+    "input.integerProblem" : {
+      "comment" : "Problem shown under an integer field when what was typed is not an integer; the argument is what was typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter an integer (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整数で書きます（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "input.jsonList" : {
+      "comment" : "Faint text in the box of a data field that holds a list and is written as JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[…] (JSON list)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "[…]（JSON の並び）"
+          }
+        }
+      }
+    },
+    "input.jsonObject" : {
+      "comment" : "Faint text in the box of a data field that holds an object and is written as JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "{…} (JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "{…}（JSON）"
+          }
+        }
+      }
+    },
+    "input.jsonProblem" : {
+      "comment" : "Problem shown under a field written as JSON when what was typed is not JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read this as JSON"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON として読めません"
+          }
+        }
+      }
+    },
+    "input.number" : {
+      "comment" : "Faint text in the box of a number field of a data card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数"
+          }
+        }
+      }
+    },
+    "input.numberProblem" : {
+      "comment" : "Problem shown under a number field when what was typed is not a number; the argument is what was typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a number (not %@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数で書きます（%@ ではなく）"
+          }
+        }
+      }
+    },
+    "input.text" : {
+      "comment" : "Faint text in the box of a text field of a data card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字"
+          }
+        }
+      }
+    },
+    "instance.badge" : {
+      "comment" : "The kind badge at the left of a data card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "instance (data)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "instance（データ）"
+          }
+        }
+      }
+    },
+    "instance.noShape" : {
+      "comment" : "Shown in a data card's editor when it has no shape.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no shape (of). In the Properties panel, choose the entity or value that gives the shape."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形（of）がありません。プロパティパネルで形にする entity か value を選びます"
+          }
+        }
+      }
+    },
+    "instance.noShapeValue" : {
+      "comment" : "Value of the shape property of a read-only data card that has no shape.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no shape)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（形なし）"
+          }
+        }
+      }
+    },
+    "instance.ofHelp" : {
+      "comment" : "Explanation of the shape property of a data card in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shape of this data (entity or value). If you choose it again, values that the new shape does not have remain under “Values not in the shape”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデータの形（entity か value）。選び直すと、新しい形に無い値は「形に無い値」に残ります"
+          }
+        }
+      }
+    },
+    "instance.ofHelpTable" : {
+      "comment" : "Explanation of the shape property of a table card in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shape of the data this table collects (entity or value). If you choose it again, it becomes a table of the data of that shape."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この表が集めるデータの形（entity か value）。選び直すと、その形のデータの表になります"
+          }
+        }
+      }
+    },
+    "instance.requiredMissing" : {
+      "comment" : "Tooltip of the orange dot beside a required field of a data card that has no value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required, and has no value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必須で、値がありません"
+          }
+        }
+      }
+    },
+    "instance.shapeHelp" : {
+      "comment" : "Tooltip of the shape label in a data card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shape of this data (of). You can choose it again in the Properties panel."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデータの形（of）。プロパティパネルで選び直せます"
+          }
+        }
+      }
+    },
+    "instance.shapeTitle" : {
+      "comment" : "Heading of the group in the Properties panel of a data card that chooses its shape.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形"
+          }
+        }
+      }
+    },
+    "instance.strayHelp" : {
+      "comment" : "Explanation of the values a data card holds that its shape no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values of fields removed from the shape, or taken out without being renamed. Keep them, or delete them if they are not needed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形から消したフィールド・名前を変えずに外したフィールドの値です。残しておけ、要らなければ消します"
+          }
+        }
+      }
+    },
+    "instance.strays" : {
+      "comment" : "Heading of the group of values a data card holds that its shape no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values not in the shape"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形に無い値"
+          }
+        }
+      }
+    },
+    "kind.enumValue" : {
+      "comment" : "What the top of the Properties panel says a picked value of an enum is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "enum value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "enum の値"
+          }
+        }
+      }
+    },
+    "kind.formatdocRow" : {
+      "comment" : "What the top of the Properties panel says a picked row of a formatdoc is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc の行"
+          }
+        }
+      }
+    },
+    "kind.node" : {
+      "comment" : "What the top of the Properties panel says a picked node of a flow is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ノード"
+          }
+        }
+      }
+    },
+    "kind.processRow" : {
+      "comment" : "What the top of the Properties panel says a picked row of a process node is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Process node row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "処理ノードの行"
+          }
+        }
+      }
+    },
+    "kind.rowOf" : {
+      "comment" : "What the top of the Properties panel says a picked row of a custom card is; the argument is the row kind's label or name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の行"
+          }
+        }
+      }
+    },
+    "longText.read" : {
+      "comment" : "Tooltip of the … button beside a long text in the Properties panel when it is read-only.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部を読む"
+          }
+        }
+      }
+    },
+    "longText.write" : {
+      "comment" : "Tooltip of the … button beside a long text in the Properties panel when it can be edited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write in a larger box"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大きな欄で書く"
+          }
+        }
+      }
+    },
+    "menu.addFieldInside" : {
+      "comment" : "Context menu item of an object field in a card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a field inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この中にフィールドを追加"
+          }
+        }
+      }
+    },
+    "menu.deleteField" : {
+      "comment" : "Context menu item of a field in a card editor; the argument is the field's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を削除"
+          }
+        }
+      }
+    },
+    "op.contains" : {
+      "comment" : "Name of the contains comparison in a table's filter condition.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "contains"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "含む"
+          }
+        }
+      }
+    },
+    "op.eq" : {
+      "comment" : "Name of the equals comparison in a table's filter condition.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "="
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "＝"
+          }
+        }
+      }
+    },
+    "op.exists" : {
+      "comment" : "Name of the has-a-value test in a table's filter condition.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "has a value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値がある"
+          }
+        }
+      }
+    },
+    "op.ge" : {
+      "comment" : "Name of the greater-than-or-equal comparison in a table's filter condition.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≧"
+          }
+        }
+      }
+    },
+    "op.le" : {
+      "comment" : "Name of the less-than-or-equal comparison in a table's filter condition.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≤"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≦"
+          }
+        }
+      }
+    },
+    "path.cutOff" : {
+      "comment" : "Last item of the Copy path menu when the list of paths is longer than shown; the argument is how many are shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(cut off at %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（%lld 件で打ち切り）"
+          }
+        }
+      }
+    },
+    "row.holds" : {
+      "comment" : "What a picked entry of a store's holds is called at the top of the Properties panel, and the title of such an entry whose path is missing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの"
+          }
+        }
+      }
+    },
+    "rule.addColumn" : {
+      "comment" : "Button that adds a column to a table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add column"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列を追加"
+          }
+        }
+      }
+    },
+    "rule.addCondition" : {
+      "comment" : "Button that adds a condition to a table's filter rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add condition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件を追加"
+          }
+        }
+      }
+    },
+    "rule.addSort" : {
+      "comment" : "Button that adds a key to a table's order rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add order"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "並べ方を追加"
+          }
+        }
+      }
+    },
+    "rule.all" : {
+      "comment" : "Faint text in the field that names the section a table reads, when it is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(all)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（全部）"
+          }
+        }
+      }
+    },
+    "rule.columns" : {
+      "comment" : "Heading of the table rule that lists its columns.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Columns"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列"
+          }
+        }
+      }
+    },
+    "rule.columnsHelp" : {
+      "comment" : "Tooltip of the heading of the table's columns rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If empty, the data's name and the first field of the shape. For a field marked [], the values of the elements are joined with “, ”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空なら、データの名前と形の一番上の欄。[] の付いた欄は要素ごとの値を「, 」でつなぎます"
+          }
+        }
+      }
+    },
+    "rule.earlier" : {
+      "comment" : "Tooltip of the up button that moves a table column earlier.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move earlier"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前へ"
+          }
+        }
+      }
+    },
+    "rule.exists" : {
+      "comment" : "Check box of a filter condition that tests whether a value exists; checked, the value must be present.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Present"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ある"
+          }
+        }
+      }
+    },
+    "rule.heading" : {
+      "comment" : "Faint text in the field that names a table column's heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heading"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見出し"
+          }
+        }
+      }
+    },
+    "rule.later" : {
+      "comment" : "Tooltip of the down button that moves a table column later.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move later"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後ろへ"
+          }
+        }
+      }
+    },
+    "rule.reverse" : {
+      "comment" : "Check box of a table's order key; checked, that key orders backwards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逆順"
+          }
+        }
+      }
+    },
+    "rule.sort" : {
+      "comment" : "Heading of the table rule that orders its rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Order"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "並べ方"
+          }
+        }
+      }
+    },
+    "rule.sortHelp" : {
+      "comment" : "Tooltip of the heading of the table's order rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If empty, in the order of the data's names. Those without a value come last"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空ならデータの名前の順。値の無いものは最後"
+          }
+        }
+      }
+    },
+    "rule.unnest" : {
+      "comment" : "Heading of the table rule that makes one row for each element of an array.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One row per element"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要素ごとの行"
+          }
+        }
+      }
+    },
+    "rule.unnestHelp" : {
+      "comment" : "Tooltip of the heading of the table's one row per element rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Makes one row for each element of the array you choose. Data without elements does not become a row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだ並びの要素ごとに 1 行にします。要素の無いデータは行になりません"
+          }
+        }
+      }
+    },
+    "rule.unnestNone" : {
+      "comment" : "Menu choice that turns the one row per element rule off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(none)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（しない）"
+          }
+        }
+      }
+    },
+    "rule.where" : {
+      "comment" : "Heading of the table rule that keeps only the data that meet conditions.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "絞り込み"
+          }
+        }
+      }
+    },
+    "rule.whereHelp" : {
+      "comment" : "Tooltip of the heading of the table's filter rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data that meets all the conditions becomes a row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部の条件に合うデータが行になります"
+          }
+        }
+      }
+    },
+    "rule.within" : {
+      "comment" : "Heading of the rule that names the section a table reads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section to read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読むセクション"
+          }
+        }
+      }
+    },
+    "rule.withinHelp" : {
+      "comment" : "Tooltip of the heading of the rule that names the section a table reads.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reads only the data of that section and the sections inside it. If empty, all data of that shape in the tree"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのセクションと中のセクションのデータだけを読みます。空なら木の中のその形のデータ全部"
+          }
+        }
+      }
+    },
+    "section.cardCount" : {
+      "comment" : "Value of the card count property of a section; the argument is the number of cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚"
+          }
+        }
+      }
+    },
+    "section.cardCountHelp" : {
+      "comment" : "Explanation of the card count property of a section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of cards placed directly in this section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションに直に置いたカードの数"
+          }
+        }
+      }
+    },
+    "section.pathHelp" : {
+      "comment" : "Explanation of the path property of a section in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The start of a path that includes the section. A card is addressed as path:card-name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション付きのパスの頭。カードは パス:カード名 で指す"
+          }
+        }
+      }
+    },
+    "section.typeValue" : {
+      "comment" : "Value of the type property of a section: the kind's label and then its key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "separator.sentence" : {
+      "comment" : "Put between a field's label and its description when they are joined into one tooltip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ". "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "。"
+          }
+        }
+      }
+    },
+    "strays.deleteAll" : {
+      "comment" : "Button that deletes all the values a data card holds that its shape no longer has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部削除"
+          }
+        }
+      }
+    },
+    "symbol.callHelp" : {
+      "comment" : "Tooltip of a called name that is a function of the same file; the argument is its path in the file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to %@ in this file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルの %@ へ移る"
+          }
+        }
+      }
+    },
+    "symbol.callsApprox" : {
+      "comment" : "Note above the names a function calls: they are matched by name only.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read by name only, so this is approximate. The ones in this file are buttons."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前だけで見た見当です。同じファイルにあるものはボタンで、押すとそこへ移ります"
+          }
+        }
+      }
+    },
+    "symbol.callsTitle" : {
+      "comment" : "Property panel group listing the names a function calls.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼んでいる関数"
+          }
+        }
+      }
+    },
+    "symbol.declarationHelp" : {
+      "comment" : "Help for the declaration line of a function or type in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The line that declares it, as written in the file."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宣言の 1 行（ファイルに書いてあるとおり）"
+          }
+        }
+      }
+    },
+    "symbol.gone" : {
+      "comment" : "Shown in the property panel when the picked function or type is no longer in its file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not in the file now. A line to it shows in the inspection; draw it again to the current name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまのファイルにありません。この名前への線は点検に出ます（今の名前へ引き直してください）"
+          }
+        }
+      }
+    },
+    "symbol.lines" : {
+      "comment" : "A function's or type's lines in the property panel; the arguments are its first and last line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lines %lld–%lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld〜%lld 行"
+          }
+        }
+      }
+    },
+    "symbol.linesHelp" : {
+      "comment" : "Help for a function's or type's lines in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its lines in the file, the comments and attributes above it included."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの行の番号。前に付く説明のコメントと属性も含む"
+          }
+        }
+      }
+    },
+    "symbol.ofHelp" : {
+      "comment" : "Help for what a function or type is, in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it is, as its language calls it (fn, struct, protocol), and the language. The mark is the same in every language: ƒ function or method, T type, M module, C constant, # macro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その言語での呼び方（fn・struct・protocol など）と言語。札はどの言語でも同じで、ƒ が関数とメソッド、T が型、M がモジュール、C が定数、# がマクロ"
+          }
+        }
+      }
+    },
+    "symbol.open" : {
+      "comment" : "Button in the property panel that opens a function's or type's file at it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Code"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードを開く"
+          }
+        }
+      }
+    },
+    "symbol.openHelp" : {
+      "comment" : "Tooltip of the button that opens a function's or type's file at it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the file's text, scrolled to it with its lines tinted"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの中身を、この関数と型までスクロールして範囲を色付けして出す"
+          }
+        }
+      }
+    },
+    "symbol.pathHelp" : {
+      "comment" : "Help for a function's or type's path in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its file's path and its own names in the file. A line to it is written to this path."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルのパスに、ファイルの中の名前を続けたもの。線はこのパスへ引く"
+          }
+        }
+      }
+    },
+    "symbol.reading" : {
+      "comment" : "Shown while the declaration of a function or type is being read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読んでいます…"
+          }
+        }
+      }
+    },
+    "symbol.title" : {
+      "comment" : "Property panel group for a function or type of a file.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Function or type"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関数と型"
+          }
+        }
+      }
+    },
+    "symbols.title" : {
+      "comment" : "Property panel group of a file whose functions and types are listed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Functions and types"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関数と型"
+          }
+        }
+      }
+    },
+    "table.badge" : {
+      "comment" : "The kind badge at the left of a table card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "table"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "table（表）"
+          }
+        }
+      }
+    },
+    "table.noShape" : {
+      "comment" : "Shown in a table card's editor when it has no shape.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no shape (of). In the Properties panel, choose the entity or value whose data the table shows."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形（of）がありません。プロパティパネルで、表にするデータの形の entity か value を選びます"
+          }
+        }
+      }
+    },
+    "table.shapeHelp" : {
+      "comment" : "Tooltip of the shape label in a table card's editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shape of the data this table collects (of). You can choose it again in the Properties panel."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この表が集めるデータの形（of）。プロパティパネルで選び直せます"
+          }
+        }
+      }
+    },
+    "validate.absentNeedsName" : {
+      "comment" : "Message when an absentFields entry has no name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each element of absentFields needs a name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "absentFields の要素には name が必要です"
+          }
+        }
+      }
+    },
+    "validate.absentNeedsReason" : {
+      "comment" : "Message when an absentFields entry has no reason; the argument is the entry's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "absentFields “%@” needs a reason. The reason for leaving it out is the point of recording it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "absentFields「%@」には reason が必要です。置かない理由が記録の目的です"
+          }
+        }
+      }
+    },
+    "validate.constBool" : {
+      "comment" : "Message when a boolean is set as the fixed value of a non-boolean field; the argument is the field's type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A field of type %@ can't have a boolean fixed value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 型のフィールドに真偽値の固定値は指定できません"
+          }
+        }
+      }
+    },
+    "validate.constInt" : {
+      "comment" : "Message when a fixed value that is not an integer is set on an int field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The fixed value of an int field must be an integer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "int 型のフィールドの固定値は整数で指定してください"
+          }
+        }
+      }
+    },
+    "validate.constNumber" : {
+      "comment" : "Message when a number is set as the fixed value of a non-numeric field; the argument is the field's type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A field of type %@ can't have a numeric fixed value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 型のフィールドに数値の固定値は指定できません"
+          }
+        }
+      }
+    },
+    "validate.constObjectRef" : {
+      "comment" : "Message when a fixed value is set on an object or reference field; the argument is the field's type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A field of type %@ can't have a fixed value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 型のフィールドに固定値は指定できません"
+          }
+        }
+      }
+    },
+    "validate.constScalar" : {
+      "comment" : "Message when a fixed value is an array or an object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A fixed value must be a scalar value (string, number or boolean)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "固定値はスカラー値（文字列・数値・真偽値）で指定してください"
+          }
+        }
+      }
+    },
+    "validate.constString" : {
+      "comment" : "Message when a string is set as the fixed value of a numeric or boolean field; the argument is the field's type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A field of type %@ can't have a string fixed value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 型のフィールドに文字列の固定値は指定できません"
+          }
+        }
+      }
+    },
+    "validate.enter" : {
+      "comment" : "Message when a value was left empty; the argument is the name of what was left empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is required"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を入力してください"
+          }
+        }
+      }
+    },
+    "validate.enumEmpty" : {
+      "comment" : "Message when an enum has an empty value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An enum value is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列挙値が空です"
+          }
+        }
+      }
+    },
+    "validate.enumLabelTooLong" : {
+      "comment" : "Message when an enum value's display name is too long; the argument is the value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The display name of enum value “%@” must be 120 characters or fewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列挙値「%@」の表示名は 120 文字以内です"
+          }
+        }
+      }
+    },
+    "validate.enumTooLong" : {
+      "comment" : "Message when an enum value is too long; the argument is the value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The enum value “%@” must be 80 characters or fewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列挙値「%@」は 80 文字以内です"
+          }
+        }
+      }
+    },
+    "validate.groupCycle" : {
+      "comment" : "Message when tag groups contain each other in a loop; the argument is the chain of group names.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groups form a loop: %@. A group can't contain itself"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループが循環しています: %@。グループは自分自身を含められません"
+          }
+        }
+      }
+    },
+    "validate.listDuplicate" : {
+      "comment" : "Message when a list has the same entry twice; the arguments are the name of the list and the entry.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has the same entry (%@) twice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に同じもの（%@）が 2 回あります"
+          }
+        }
+      }
+    },
+    "validate.listTooMany" : {
+      "comment" : "Message when a list of paths has more than 64 entries; the argument is the name of the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is limited to 64 entries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は 64 件までです"
+          }
+        }
+      }
+    },
+    "validate.metadataKeyTooLong" : {
+      "comment" : "Message when a metadata key is too long.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A metadata key must be 80 characters or fewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "metadata のキーは 80 文字以内です"
+          }
+        }
+      }
+    },
+    "validate.metadataTooMany" : {
+      "comment" : "Message when a card's metadata has more than 64 entries.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "metadata is limited to 64 entries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "metadata は 64 件までです"
+          }
+        }
+      }
+    },
+    "validate.metadataValueTooLong" : {
+      "comment" : "Message when a metadata value is too long; the argument is its key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "metadata.%@ must be 2000 characters or fewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "metadata.%@ は 2000 文字以内です"
+          }
+        }
+      }
+    },
+    "validate.monotonicKeys" : {
+      "comment" : "Message when the keys of a monotonicPerKey rule are not an array.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The keys of rule “monotonicPerKey” must be an array"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rule「monotonicPerKey」の keys は配列で指定してください"
+          }
+        }
+      }
+    },
+    "validate.nameControl" : {
+      "comment" : "Message when a name holds a control character; the argument is the name of what was typed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ cannot have a line break, a tab or another control character"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に改行・タブなどの制御文字は使えません"
+          }
+        }
+      }
+    },
+    "validate.nextDuplicate" : {
+      "comment" : "Message when an action's next names the same action twice; the argument is the action's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next has the same action (%@) twice. Put the conditions into one sentence"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next に同じ action（%@）が 2 回あります。条件は 1 つの文にまとめてください"
+          }
+        }
+      }
+    },
+    "validate.nextPathEmpty" : {
+      "comment" : "Message when an entry in an action's next has no path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path of an entry in next is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next の path が空です"
+          }
+        }
+      }
+    },
+    "validate.nextTooMany" : {
+      "comment" : "Message when an action's next has more than 64 entries.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next is limited to 64 entries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next は 64 件までです"
+          }
+        }
+      }
+    },
+    "validate.nextWhen" : {
+      "comment" : "Name of an entry's condition in an action's next, used in the message when it is too long.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "when in next"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "next の when"
+          }
+        }
+      }
+    },
+    "validate.pathEmpty" : {
+      "comment" : "Message when a path in a list is empty; the argument is the name of the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A path in %@ is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のパスが空です"
+          }
+        }
+      }
+    },
+    "validate.patternRegex" : {
+      "comment" : "Message when the regex of a pattern rule does not compile; the argument is the regex.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The regex of rule “pattern” is not a valid regular expression: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rule「pattern」の regex が正規表現として不正です: %@"
+          }
+        }
+      }
+    },
+    "validate.ruleNeeds" : {
+      "comment" : "Message when a known rule lacks parameters; the arguments are the rule's kind, the missing parameters and a note on the rule.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rule “%@” needs %@ (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rule「%@」には %@ が必要です（%@）"
+          }
+        }
+      }
+    },
+    "validate.ruleNeedsKind" : {
+      "comment" : "Message when a rule has no kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A rule needs a kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rule には kind が必要です"
+          }
+        }
+      }
+    },
+    "validate.ruleParamSeparator" : {
+      "comment" : "Put between the names of the parameters a rule lacks.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " and "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " と "
+          }
+        }
+      }
+    },
+    "validate.rulesTooMany" : {
+      "comment" : "Message when a field has more than 64 rules.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rules is limited to 64 entries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rules は 64 件までです"
+          }
+        }
+      }
+    },
+    "validate.sortedByOrder" : {
+      "comment" : "Message when the order of a sortedBy rule is neither asc nor desc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The order of rule “sortedBy” must be asc or desc"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rule「sortedBy」の order は asc / desc のいずれかです"
+          }
+        }
+      }
+    },
+    "validate.tagComma" : {
+      "comment" : "Message when a tag contains a comma; the argument is the tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tag can't contain a comma: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグにカンマは使えません: %@"
+          }
+        }
+      }
+    },
+    "validate.tagTooLong" : {
+      "comment" : "Message when a tag is too long; the arguments are the name of the tags, the limit and the tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ must be %lld characters or fewer: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は %lld 文字以内です: %@"
+          }
+        }
+      }
+    },
+    "validate.tagTooMany" : {
+      "comment" : "Message when there are too many tags; the arguments are the name of the tags, the limit and how many there would be.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: at most %lld are allowed (this would make %lld)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は %lld 個までです（%lld 個になります）"
+          }
+        }
+      }
+    },
+    "validate.tooLong" : {
+      "comment" : "Message when a text is too long; the arguments are the name of what is too long and the limit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ must be %lld characters or fewer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は %lld 文字以内です"
+          }
+        }
+      }
+    },
+    "validate.usesDuplicate" : {
+      "comment" : "Message when an action's uses has the same entry twice; the arguments are the role's label and the path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses has the same entry (%@ %@) twice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses に同じもの（%@ %@）が 2 回あります"
+          }
+        }
+      }
+    },
+    "validate.usesNote" : {
+      "comment" : "Name of an entry's note in an action's uses, used in the message when it is too long.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note in uses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses の note"
+          }
+        }
+      }
+    },
+    "validate.usesPathEmpty" : {
+      "comment" : "Message when an entry in an action's uses has no path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path of an entry in uses is empty"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses の path が空です"
+          }
+        }
+      }
+    },
+    "validate.usesTooMany" : {
+      "comment" : "Message when an action's uses has more than 400 entries.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses is limited to 400 entries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uses は 400 件までです"
+          }
+        }
+      }
+    },
+    "workDir.excludeHelp" : {
+      "comment" : "Help of the exclude row of a working directory's properties.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What is left out besides, one per line: a directory ending in / (target/), a file, an extension (.png). The same in every branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかに外すもの（1 行に 1 つ）: / で終わるディレクトリ（target/）・ファイル・拡張子（.png）。どの branch でも同じ"
+          }
+        }
+      }
+    },
+    "workDir.filesHelp" : {
+      "comment" : "Help of the files row of a working directory's properties.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many directories and files reading the folder found, or why it could not be read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを読んで見つけたディレクトリとファイルの数か、読めなかったわけ"
+          }
+        }
+      }
+    },
+    "workDir.folderHelp" : {
+      "comment" : "Help of the folder row of a working directory's properties; the argument names the place (This Mac or an agent).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linked folder: the folder on %@ this working directory is read from. It stays on that machine and is not in the project, its branches or its history"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結び付けたフォルダ: この作業ディレクトリを読む %@ のフォルダ。その機械にだけ残り、プロジェクトにも branch にも履歴にも入りません"
+          }
+        }
+      }
+    },
+    "workDir.folderPathHelp" : {
+      "comment" : "Help of the path row of a working directory's folder in the property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The folder's path from the working directory. Read from the folder: renamed and removed there, not here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリからのフォルダのパス。フォルダから読むもので、名前を変えるのも消すのもフォルダの側で"
+          }
+        }
+      }
+    },
+    "workDir.missing" : {
+      "comment" : "Said in the property panel for a working directory's folder that reading no longer finds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This folder is no longer there. It is kept for the notes in it: move them to another folder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このフォルダは今はありません。中のメモのために残しています。メモをほかのフォルダへ移してください"
+          }
+        }
+      }
+    },
+    "workDir.missingHelp" : {
+      "comment" : "Help of the row saying a working directory's folder is gone.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A folder a note is in that reading the folder no longer finds (renamed or removed). Inspection says it too"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモを置いたフォルダが、読んだフォルダに無くなった（名前が変わったか消えた）もの。インスペクションにも出ます"
+          }
+        }
+      }
+    },
+    "workDir.read" : {
+      "comment" : "Action that reads a working directory's folder again (property panel, Actions menus).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込む"
+          }
+        }
+      }
+    },
+    "workDir.readHelp" : {
+      "comment" : "Tooltip of the Read action.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read the folder again: files added, changed or removed since show in main and in every branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを読み直します。足した・変えた・消したファイルが main とどの branch にも出ます"
+          }
+        }
+      }
+    },
+    "workDir.title" : {
+      "comment" : "Heading of the property panel's group for a working directory's section or a folder in it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working directory"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリ"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

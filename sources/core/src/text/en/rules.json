@@ -1,0 +1,11 @@
+{
+  "rules.default.cardDescription": "Say what the card is in the first sentence, then write the rules that hold for the whole card. Put long reasons and background in a note and point to it with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works)",
+  "rules.default.documentBody": "The body of a design or specification document: rules that span several cards, and the reasons and background of the design. Point to the cards concerned with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works). Do not write in prose what the fields of rules and absentFields, or lines (connections), can say",
+  "rules.default.fieldDescription": "The rules of that value (format, unit, range, what empty or null means, notes on what it points to). Why it is so, and rules that span other cards, go in a note",
+  "rules.default.nodeDescription": "A supplement for that node only",
+  "rules.default.noteBody": "Memos, change history and open questions (sticky notes) about the cards beside it. Point to the cards concerned with [[ ]] (for one in another section, write the section too, or place a card ghost in this section so the name alone works)",
+  "rules.default.projectDescription": "What the project is, how its sections are divided, and where to start reading (the map of the project). Write each individual rule at its own place",
+  "rules.default.sectionDescription": "What the section (a part) is responsible for, and where it ends and other sections begin",
+  "rules.default.stepDescription": "A supplement for that row (trigger, route) only",
+  "rules.place.unknown": "Unknown place to write ({place}). The places: {places}"
+}

@@ -1,0 +1,22 @@
+MOST — constant const — line 6 — 5-6
+COUNT — constant static — line 7 — 7-7
+Order — type struct — line 11 — 9-13 — parts 15-26, 28-32, 34-38
+  Order.new — method fn — line 17 — 16-21 — calls local, new
+  Order.total — method fn — line 23 — 23-25 — calls iter, sum, helper
+  Order.fmt — method fn — line 29 — 29-31 — calls write
+  Order.'fmt (2)' — method fn — line 35 — 35-37 — calls Ok
+Ghost — type impl — line 40 — 40-48 — parts 40-44, 46-48 — made
+  Ghost.fmt — method fn — line 41 — 41-43 — calls Ok
+  Ghost.appear — method fn — line 47 — 47-47
+State — type enum — line 50 — 50-53
+Priced — type trait — line 55 — 55-60
+  Priced.price — method fn — line 56 — 56-56
+  Priced.cheap — method fn — line 57 — 57-59 — calls price
+Lines — type type — line 62 — 62-62
+twice — macro macro_rules — line 64 — 64-68
+inner — module mod — line 70 — 70-78
+  inner.Deep — type struct — line 71 — 71-71 — parts 73-75
+    inner.Deep.go — method fn — line 74 — 74-74
+  inner.helper2 — function fn — line 77 — 77-77
+helper — function fn — line 83 — 82-86 — calls twice
+abs — function fn — line 89 — 89-89

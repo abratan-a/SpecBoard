@@ -1,0 +1,6 @@
+{
+  "keyMove.error.sql": "Cannot move the field names of goals: {e}",
+  "keyMove.line.goalKeys": "Renamed the fields 状態, 優先度 and 期限 of {count} goals to status, priority and due (values kept as they are: {cards})",
+  "keyMove.line.goalMr": "Renamed the field PR of {count} goals to MR (values kept as they are: {cards})",
+  "keyMove.line.goalWorkBranch": "Renamed the field branch of {count} goals to workBranch (values kept as they are: {cards})"
+}

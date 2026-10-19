@@ -1,0 +1,9 @@
+{
+  "merges.broken.item": "{at} の {via}「{path}」",
+  "merges.places.shape": "places は true か false です",
+  "merges.take.noConflict": "take の {wrong} は衝突にありません（衝突は {there}。branch_read の against で見ます）",
+  "merges.take.noConflictNone": "ありません",
+  "merges.take.shape": "take の「{path}」は {\"<単位>\": \"source\" | \"target\"} です",
+  "merges.take.side": "take の「{path}」の「{unit}」は source か target です",
+  "merges.take.unitOf": "{path} の {unit}"
+}

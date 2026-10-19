@@ -1,0 +1,2580 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.deleteNamed" : {
+      "comment" : "Context menu item of an enum value row; the argument is the value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を削除"
+          }
+        }
+      }
+    },
+    "action.removeNamed" : {
+      "comment" : "Context menu item of a hold row and tooltip of a tag chip; the argument is the path or tag.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を外す"
+          }
+        }
+      }
+    },
+    "adder.newField" : {
+      "comment" : "Placeholder of the field that adds a field to a card in the card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New field name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいフィールド名"
+          }
+        }
+      }
+    },
+    "adder.newHold" : {
+      "comment" : "Placeholder of the field that adds a held card to a store in the card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card to hold (path)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの（カードのパス）"
+          }
+        }
+      }
+    },
+    "adder.newValue" : {
+      "comment" : "Placeholder of the field that adds a value to an enum in the card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい値"
+          }
+        }
+      }
+    },
+    "badge.freedoc" : {
+      "comment" : "Badge in the card editor bar of a freedoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "freedoc (free document)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "freedoc（自由文書）"
+          }
+        }
+      }
+    },
+    "badge.goal" : {
+      "comment" : "Badge in the card editor bar of a goal.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal（目標）"
+          }
+        }
+      }
+    },
+    "badge.note" : {
+      "comment" : "Badge in the card editor bar of a note.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note (sticky note)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note（付箋）"
+          }
+        }
+      }
+    },
+    "badge.openEnum" : {
+      "comment" : "Small badge in the card editor header of an enum whose values are not exhaustive.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open enum"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いた列挙型"
+          }
+        }
+      }
+    },
+    "badge.task" : {
+      "comment" : "Badge in the card editor bar of a task.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "task（タスク）"
+          }
+        }
+      }
+    },
+    "branch.madeHere" : {
+      "comment" : "Note in the history window about a card made in the branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This card was created in the branch (it isn't in main)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で作ったカードです（main にはありません）"
+          }
+        }
+      }
+    },
+    "branch.mainChanged" : {
+      "comment" : "Heading in the history window of what main changed after the branch was made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed in main since the branch was made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch を作ったあと main で変わったこと"
+          }
+        }
+      }
+    },
+    "branch.mainContentChanged" : {
+      "comment" : "Note in the history window when main changed the card but no line says how.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The content changed in main"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main で中身が変わりました"
+          }
+        }
+      }
+    },
+    "button.insertDiagram" : {
+      "comment" : "Button in a note's card editor bar that inserts a diagram at the cursor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を入れる"
+          }
+        }
+      }
+    },
+    "button.insertLink" : {
+      "comment" : "Button in a note's card editor bar that inserts a link to a card at the cursor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insert link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクを入れる"
+          }
+        }
+      }
+    },
+    "button.openReal" : {
+      "comment" : "Button in the properties panel of a card ghost that opens the card it reaches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the real card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物を開く"
+          }
+        }
+      }
+    },
+    "button.resetSize" : {
+      "comment" : "Button in the properties panel that lets go of a card's own size: the project's width again, its height from its contents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset to default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定に戻す"
+          }
+        }
+      }
+    },
+    "button.viewIn" : {
+      "comment" : "Button in the connections window that opens the connections map; the argument is the map's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@で見る"
+          }
+        }
+      }
+    },
+    "button.write" : {
+      "comment" : "Button in the card editor of a note with an empty body that starts writing it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く"
+          }
+        }
+      }
+    },
+    "category.cardGhost" : {
+      "comment" : "Section of the properties panel of a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card ghost"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト"
+          }
+        }
+      }
+    },
+    "category.openVersion" : {
+      "comment" : "Section of the properties panel of a stackdoc with the version that is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開いている版"
+          }
+        }
+      }
+    },
+    "deletion.message" : {
+      "comment" : "Message of the confirmation before a card is deleted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its fields are deleted with it. Fields that refer to this card stay as rows, and their target becomes unresolved."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールドも一緒に消えます。このカードを参照しているフィールドは、行としては残り、参照先が未解決になります。"
+          }
+        }
+      }
+    },
+    "deletion.title" : {
+      "comment" : "Title of the confirmation before a card is deleted; the argument is the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete card %@?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード %@ を削除しますか？"
+          }
+        }
+      }
+    },
+    "docView.document" : {
+      "comment" : "How a formatdoc looks on the diagram: as the exported document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View as document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文書で見る"
+          }
+        }
+      }
+    },
+    "docView.projectDefault" : {
+      "comment" : "Choice that follows the project's setting for how a document is viewed; the argument is that setting.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project default (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの既定（%@）"
+          }
+        }
+      }
+    },
+    "docView.rows" : {
+      "comment" : "How a formatdoc looks on the diagram: as one row per item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View as rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行で見る"
+          }
+        }
+      }
+    },
+    "empty.noActionUses" : {
+      "comment" : "Shown in the connections window of a shape card that no action uses.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No action reads or writes this."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの action も読み書きしていません"
+          }
+        }
+      }
+    },
+    "empty.noFields" : {
+      "comment" : "Shown in the card editor of an entity or value with no fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No fields yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールドがまだありません"
+          }
+        }
+      }
+    },
+    "empty.noHolds" : {
+      "comment" : "Shown in the card editor of a store that holds nothing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing held yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くものがまだありません"
+          }
+        }
+      }
+    },
+    "empty.noValues" : {
+      "comment" : "Shown in the card editor of an enum with no values.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No values yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値がまだありません"
+          }
+        }
+      }
+    },
+    "empty.nothingWritten" : {
+      "comment" : "Shown in the card editor of a note with an empty body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing is written yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ何も書かれていません"
+          }
+        }
+      }
+    },
+    "empty.nothingYet" : {
+      "comment" : "Shown in the history window when the card has no changes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだありません"
+          }
+        }
+      }
+    },
+    "fact.fields" : {
+      "comment" : "Count label in the card editor header: how many fields the card has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールド"
+          }
+        }
+      }
+    },
+    "fact.incoming" : {
+      "comment" : "Count label in the card editor header: references pointing at the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incoming refs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被参照"
+          }
+        }
+      }
+    },
+    "fact.maxDepth" : {
+      "comment" : "Count label in the card editor header: the deepest level of nested fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max nesting"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大ネスト"
+          }
+        }
+      }
+    },
+    "fact.nested" : {
+      "comment" : "Count label in the card editor header: how many fields are objects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nested"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ子"
+          }
+        }
+      }
+    },
+    "fact.outgoing" : {
+      "comment" : "Count label in the card editor header: references leaving the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outgoing refs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外向き参照"
+          }
+        }
+      }
+    },
+    "field.embeds" : {
+      "comment" : "Type of a field that embeds a card; the argument is the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (embedded)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（内包）"
+          }
+        }
+      }
+    },
+    "field.embedsNothing" : {
+      "comment" : "Type of a field with an embed line that reaches no card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Embedded (no target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包（相手なし）"
+          }
+        }
+      }
+    },
+    "field.objectNested" : {
+      "comment" : "Choice of field type for a nested object.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "object (nested)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "object（入れ子）"
+          }
+        }
+      }
+    },
+    "flag.no" : {
+      "comment" : "A flag that is off; the argument is the flag's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: No"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: いいえ"
+          }
+        }
+      }
+    },
+    "ghost.kindOf" : {
+      "comment" : "Kind of a card ghost; the argument is the kind of the real card it reaches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ghost (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ghost（%@）"
+          }
+        }
+      }
+    },
+    "ghost.noTarget" : {
+      "comment" : "Shown as the target of a card ghost that points to nothing.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no target)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（指す先なし）"
+          }
+        }
+      }
+    },
+    "ghost.unreachable" : {
+      "comment" : "Shown when a card ghost's target does not lead to a real card and nothing says why.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doesn't reach a real card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "着きません"
+          }
+        }
+      }
+    },
+    "help.also" : {
+      "comment" : "Help of the also row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other types it also accepts: string, integer, number, boolean, object. array also accepts an array of this type (“one, or a list of them”). Separate them with a comma."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかにも受ける型。string・integer・number・boolean・object。array は、この型の配列も受ける（「1 つか、その並び」）。, で区切る"
+          }
+        }
+      }
+    },
+    "help.array" : {
+      "comment" : "Help of the array row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Array. The value is an array of this type."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配列。値がこの型の配列"
+          }
+        }
+      }
+    },
+    "help.cardLabel" : {
+      "comment" : "Help of the label row in the properties panel of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name: the human-readable name shown beside the name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名。名前の横に出す、人が読む名前"
+          }
+        }
+      }
+    },
+    "help.cardName" : {
+      "comment" : "Help of the name row in the properties panel of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card name. Used in paths (section:card; a name holding a space or a separator such as . is wrapped in single quotes there, like 'release notes.md'). Renaming it updates the paths written in the project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード名。パスに使う（セクション:カード名。空白や . などの区切りの字を含む名前は、パスでは 'release notes.md' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+          }
+        }
+      }
+    },
+    "help.cardPath" : {
+      "comment" : "Help of the path row in the properties panel of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path including the section. Other cards and documents refer to this card by it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション付きのパス。ほかのカードや文書からこの名前で指す"
+          }
+        }
+      }
+    },
+    "help.cardSize" : {
+      "comment" : "Help of the size row in the properties panel of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size of the card on the diagram (in cells: a width alone, or width × height). Change it by dragging the card's bottom-right corner on the diagram. Leave the height where it is and only the width is set; the height follows the contents. It is only how it looks, so it isn't kept in history."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図のカードの大きさ（マス。幅だけか、幅×高さ）。図でカードの右下をドラッグして変える。高さを動かさなければ幅だけが決まり、高さは中身に合う。見かけなので履歴に残らない"
+          }
+        }
+      }
+    },
+    "help.connectionsAndHistory" : {
+      "comment" : "Tooltip of the menu in a narrow card editor header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connections (cards it refers to and is referred by, places that mention it) and history"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つながり（参照している・されているカード、言及している所）と履歴"
+          }
+        }
+      }
+    },
+    "help.connectionsButton" : {
+      "comment" : "Tooltip of the connections button in the card editor header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards it refers to and is referred by, actions that use it, notes that mention it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照している・されているカード、使っている action、言及している note"
+          }
+        }
+      }
+    },
+    "help.customKind" : {
+      "comment" : "Help of the kind row for a card of a kind the project defines; the argument is the kind's meaning.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A kind of this project (the “Kinds” tab of Project Settings). %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの種類（プロジェクト設定の「種類」のタブ）。%@"
+          }
+        }
+      }
+    },
+    "help.docView" : {
+      "comment" : "Help of the view row in the properties panel of a formatdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How the card looks on the diagram. As a document (the same picture of the document as in the export; lines start from the top of the card) or as rows (one row per item; lines start from the item's row). If not chosen, the project's setting applies."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図のカードでの見え方。文書で見る（エクスポートと同じ文書の絵。線はカードの頭から）か行で見る（項目ごとの行。線は項目の行から）。決めなければプロジェクトの設定に従う"
+          }
+        }
+      }
+    },
+    "help.enumDescription" : {
+      "comment" : "Help of the description row in the properties panel of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description: what the value stands for, in one line. Shown when the pointer rests on the value's row; not drawn on the map."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明。その値が何を表すか（1 行）。値の行にポインタを止めると出る。マップのカードには出さない"
+          }
+        }
+      }
+    },
+    "help.enumLabel" : {
+      "comment" : "Help of the label row in the properties panel of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name: the human-readable name shown beside the value (any language)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名。値の横に出す、人が読む名前（日本語可）"
+          }
+        }
+      }
+    },
+    "help.enumValue" : {
+      "comment" : "Help of the value row in the properties panel of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The enum's value. It is exported as this exact string."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "enum の値。エクスポートするとそのままの文字列になる"
+          }
+        }
+      }
+    },
+    "help.fieldLabel" : {
+      "comment" : "Help of the label row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name: the human-readable name shown beside the name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名。名前の横に出す、人が読む名前"
+          }
+        }
+      }
+    },
+    "help.fieldName" : {
+      "comment" : "Help of the name row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field name. Used in paths (section:card.field; a name holding a separator is wrapped in single quotes there, like 'e mail'). Renaming it updates the paths written in the project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールド名。パスに使う（セクション:カード.フィールド。区切りの字を含む名前は、パスでは 'e mail' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+          }
+        }
+      }
+    },
+    "help.fieldPath" : {
+      "comment" : "Help of the path row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The path of the field within the card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの中のフィールドのパス"
+          }
+        }
+      }
+    },
+    "help.fieldType" : {
+      "comment" : "Help of the type row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The type of the value. object means nested. A field that takes another card's shape as it is uses an embed line, and its type is the card at the other end."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値の型。object は入れ子。ほかのカードの形をそのまま持つのは内包の線（embed）で、そのときの型は相手のカード"
+          }
+        }
+      }
+    },
+    "help.flowDiagram" : {
+      "comment" : "Help of the diagram row in the properties panel of a flow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default shape of the diagram. It is drawn in this shape when opened, exported, and embedded in a document (flowchart: contents map, sequence: sequence diagram)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図の形の既定。開いたとき・エクスポート・文書への埋め込みはこの形で描く（flowchart: コンテンツマップ、sequence: シーケンス図）"
+          }
+        }
+      }
+    },
+    "help.ghostKind" : {
+      "comment" : "Help of the kind row in the properties panel of a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The kind of the real card it reaches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "たどり着く本物の種類"
+          }
+        }
+      }
+    },
+    "help.ghostName" : {
+      "comment" : "Help of the name row in the properties panel of a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card ghost's name. In the section it is placed in, write it by this name alone; from elsewhere, write section:name (a name holding a separator is wrapped in single quotes in a path)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストの名前。置いたセクションの中ではこの名前だけで書け、ほかからは セクション:名前 で書ける（区切りの字を含む名前は、パスでは一重引用符で囲む）"
+          }
+        }
+      }
+    },
+    "help.ghostPath" : {
+      "comment" : "Help of the path row in the properties panel of a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card ghost's path. A path through the card ghost starts with this."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴーストのパス。カードゴーストを通したパスはこの頭で書く"
+          }
+        }
+      }
+    },
+    "help.historyButton" : {
+      "comment" : "Tooltip of the history button in the card editor header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This card's change history and what changed in the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードの変更履歴と、branch で変えたこと"
+          }
+        }
+      }
+    },
+    "help.holdCard" : {
+      "comment" : "Help of the card row in the properties panel of a hold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card the path points to. Press it to show that card in the diagram (in the properties panel; the editor opens with a double-click)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスが指しているカード。押すとそのカードを図で見せる（プロパティパネルで。エディタはダブルクリックで開く）"
+          }
+        }
+      }
+    },
+    "help.holdPath" : {
+      "comment" : "Help of the path row in the properties panel of a hold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card this store holds (holds). To reorder or remove it, right-click the row in the middle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この store に置くカード（holds）。並べ替えと外すのは、真ん中の行の右クリック"
+          }
+        }
+      }
+    },
+    "help.insertDiagram" : {
+      "comment" : "Tooltip of the insert diagram button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserts ![[path]] on a line of its own at the cursor. It becomes a diagram when viewed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルの所に ![[パス]] を 1 行で入れます。表示で図になります"
+          }
+        }
+      }
+    },
+    "help.insertLink" : {
+      "comment" : "Tooltip of the insert link button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserts [[path]] at the cursor. It becomes a link when viewed."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルの所に [[パス]] を入れます。表示でリンクになります"
+          }
+        }
+      }
+    },
+    "help.mode" : {
+      "comment" : "Tooltip of the view/edit switch in a note's card editor bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View: read with diagrams drawn / Edit: write Markdown, with a preview on the right (saves when you go back to View)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示: 図を描いて読む／編集: Markdown を書き、右にプレビュー（表示に戻すと保存します）"
+          }
+        }
+      }
+    },
+    "help.nullable" : {
+      "comment" : "Help of the nullable row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nullable. null is a valid value (a different question from required)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "null 可。null が正当な値（required とは別の問い）"
+          }
+        }
+      }
+    },
+    "help.openEnum" : {
+      "comment" : "Tooltip of the open enum badge in the card editor header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The listed values are the known ones, not necessarily all of them"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列挙した値は既知の値であって網羅ではありません"
+          }
+        }
+      }
+    },
+    "help.ownFieldShown" : {
+      "comment" : "Help of a goal's or task's field in the properties panel; the arguments are the field's label and its description.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@。%@"
+          }
+        }
+      }
+    },
+    "help.pathNotFound" : {
+      "comment" : "Tooltip of a path that points to no card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This path can't be found (it may have broken after a rename)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスは見つかりません（改名で切れた可能性があります）"
+          }
+        }
+      }
+    },
+    "help.pickTag" : {
+      "comment" : "Tooltip of the menu that lists the tags used in the project.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose from the tags used in this project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトで使われているタグから選ぶ"
+          }
+        }
+      }
+    },
+    "help.primaryKey" : {
+      "comment" : "Help of the primaryKey row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary key. The key that points to a row of this card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主キー。このカードの行を指す鍵"
+          }
+        }
+      }
+    },
+    "help.required" : {
+      "comment" : "Help of the required row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required. The key is always there."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必須。キーが必ずある"
+          }
+        }
+      }
+    },
+    "help.resolvesTo" : {
+      "comment" : "Help of the resolvesTo row in the properties panel of a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The real card reached by following what it points to"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先をたどって着く本物のカード"
+          }
+        }
+      }
+    },
+    "help.retargetButton" : {
+      "comment" : "Tooltip of the button that picks a new target for a card ghost.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retarget (a card or card ghost of the same kind)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付け替える（同じ種類のカードかカードゴースト）"
+          }
+        }
+      }
+    },
+    "help.rowDone" : {
+      "comment" : "Help of the done row in the properties panel of a row of a custom card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check it when it is finished. It counts toward the progress of the parent row and the card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終わったら入れる。親の行とカードの進み具合に数える"
+          }
+        }
+      }
+    },
+    "help.rowName" : {
+      "comment" : "Help of the name row in the properties panel of a row of a custom card; the argument is the row's path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row name. One per card. The MCP target refers to this row by it (<card>.%@)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の名前。カードの中で 1 つ。MCP の target でこの行を指す（<カード>.%@）"
+          }
+        }
+      }
+    },
+    "help.rowText" : {
+      "comment" : "Help of the text row in the properties panel of a row of a custom card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What the row says"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行に書くこと"
+          }
+        }
+      }
+    },
+    "help.unique" : {
+      "comment" : "Help of the unique row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unique. The value does not repeat in other rows."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一意。値がほかの行と重ならない"
+          }
+        }
+      }
+    },
+    "help.valueIndex" : {
+      "comment" : "Help of the index row in the properties panel of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its position in the list. To reorder or delete it, right-click the row in the middle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "並びの何番目か。並べ替えと削除は、真ん中の行の右クリック"
+          }
+        }
+      }
+    },
+    "help.versionHeading" : {
+      "comment" : "Help of the heading row of the open version of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heading of the version. If left out, the version (key) is used. e.g. 0.2.21 (2026-10-10)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版の見出し。省くと版（key）。例 0.2.21 (2026-10-10)"
+          }
+        }
+      }
+    },
+    "help.versionKey" : {
+      "comment" : "Help of the key row of the open version of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The version name shown in the selector (one per version in the card, e.g. 0.2.21)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セレクタに出す版の名前（カードの中で 1 つずつ。例 0.2.21）"
+          }
+        }
+      }
+    },
+    "help.versionName" : {
+      "comment" : "Help of the name row of the open version of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version name. Used in paths (<card>.<version name>; a name holding a separator is wrapped in single quotes there). Renaming it updates the paths written in the project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版の名前。パスに使う（<カード>.<版の name>。区切りの字を含む名前は、パスでは一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+          }
+        }
+      }
+    },
+    "help.viewConnectionsMap" : {
+      "comment" : "Tooltip of the button in the connections window that opens the connections map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lay out the connected cards in a diagram, this card in the middle, incoming ones on the left and outgoing ones on the right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードを真ん中に、入ってくる側を左、出ていく側を右に、つながっているカードを図に並べる"
+          }
+        }
+      }
+    },
+    "help.written" : {
+      "comment" : "Help of the written row in the properties panel of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The type as exported, with required, nullable, array and also combined."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "required・nullable・array・also を合わせた、エクスポートしたときの型"
+          }
+        }
+      }
+    },
+    "hit.encloses" : {
+      "comment" : "Under an action or note in the connections window: it uses the whole of the path in the argument.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contains all of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を丸ごと含む"
+          }
+        }
+      }
+    },
+    "hold.cardNotFound" : {
+      "comment" : "Shown in the properties panel of a hold whose path points to no card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No card found at this path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスのカードが見つかりません"
+          }
+        }
+      }
+    },
+    "hold.notFound" : {
+      "comment" : "Mark on a hold row whose path points to no card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not found"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見つからない"
+          }
+        }
+      }
+    },
+    "mode.view" : {
+      "comment" : "Segment of the switch in a note's card editor bar for reading the body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
+          }
+        }
+      }
+    },
+    "note.jsonShape" : {
+      "comment" : "Note under the embedded card of a field; the argument is the card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This value's JSON has the shape of %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この値の JSON は %@ の形です"
+          }
+        }
+      }
+    },
+    "note.literalType" : {
+      "comment" : "Note under the fixed value of a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This type becomes a literal."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この型はリテラルになります"
+          }
+        }
+      }
+    },
+    "note.usesEmpty" : {
+      "comment" : "Note in the connections window of an action with no places read or written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None yet. Write them in steps rows (read / write)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだありません。steps の行（read / write）で書きます"
+          }
+        }
+      }
+    },
+    "note.usesUnused" : {
+      "comment" : "Note in the connections window of an action that still has the old uses field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This field isn't used for impact and lines because there are steps rows. Pass uses: [] in the value of the MCP card_update to clear it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "steps の行があるので、この欄は影響と線に使われていません。MCP の card_update の value に uses: [] を渡すと消えます"
+          }
+        }
+      }
+    },
+    "page.notText" : {
+      "comment" : "Error when a file chosen for an SVG or HTML card is not UTF-8 text; the file’s name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read the file as UTF-8 text: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTF-8 の文字として読めませんでした: %@"
+          }
+        }
+      }
+    },
+    "page.readFile" : {
+      "comment" : "Button in the bar of an SVG or HTML card editor: replaces the body with a file chosen on this Mac.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read from File"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルから読み込む"
+          }
+        }
+      }
+    },
+    "page.readFileHelp" : {
+      "comment" : "Help of the read-from-file button of an SVG or HTML card editor, and the open panel’s message.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace the body with the text of a file on this Mac (kept in the history and can be undone)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac のファイルの中身で本文を置き換えます（履歴に残り、戻せます）"
+          }
+        }
+      }
+    },
+    "page.save" : {
+      "comment" : "Button in the bar of an SVG or HTML card editor: writes the body as edited.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        }
+      }
+    },
+    "page.saveHelp" : {
+      "comment" : "Help of the save button of an SVG or HTML card editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write the body as edited (also when the editor is closed)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直した本文を書き込みます（エディタを閉じたときも書き込みます）"
+          }
+        }
+      }
+    },
+    "placeholder.addTag" : {
+      "comment" : "Placeholder of the field that adds a tag to a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add tag"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タグを追加"
+          }
+        }
+      }
+    },
+    "placeholder.cardName" : {
+      "comment" : "Placeholder of the card name field in the properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード名"
+          }
+        }
+      }
+    },
+    "placeholder.cardPath" : {
+      "comment" : "Placeholder of the path field of a hold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card path (e.g. Core:Order)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードのパス（例: Core:Order）"
+          }
+        }
+      }
+    },
+    "placeholder.displayNameAnyLanguage" : {
+      "comment" : "Placeholder of the display name field of a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名（任意）"
+          }
+        }
+      }
+    },
+    "placeholder.fieldName" : {
+      "comment" : "Placeholder of the field name field in the properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールド名"
+          }
+        }
+      }
+    },
+    "placeholder.valueDescription" : {
+      "comment" : "Placeholder of the description field of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description (one line)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明（1 行）"
+          }
+        }
+      }
+    },
+    "placeholder.valueLabel" : {
+      "comment" : "Placeholder of the display name field of an enum value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name (any language)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示名（日本語可）"
+          }
+        }
+      }
+    },
+    "placeholder.versionHeading" : {
+      "comment" : "Placeholder of the version heading field of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heading (defaults to the version)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見出し（省くと版）"
+          }
+        }
+      }
+    },
+    "placeholder.versionKey" : {
+      "comment" : "Placeholder of the version key field of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version (e.g. 0.2.21)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版（例 0.2.21）"
+          }
+        }
+      }
+    },
+    "placeholder.versionName" : {
+      "comment" : "Placeholder of the version name field of a stackdoc.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版の名前"
+          }
+        }
+      }
+    },
+    "preview.title" : {
+      "comment" : "Placeholder of the preview pane while the body being written is empty.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビュー"
+          }
+        }
+      }
+    },
+    "retarget.message" : {
+      "comment" : "Explanation in the sheet that points a card ghost elsewhere.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what it points to. Only cards or card ghosts of the same kind as the real card it reaches now are offered (the name doesn't change)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指す先を選びます。今たどり着く本物と同じ種類のカードかカードゴーストだけが出ます（名前は変わりません）"
+          }
+        }
+      }
+    },
+    "retarget.title" : {
+      "comment" : "Title of the sheet that points a card ghost elsewhere; the argument is the ghost's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retarget card ghost %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト %@ を付け替える"
+          }
+        }
+      }
+    },
+    "rule.unknown" : {
+      "comment" : "Mark on a validation rule of a kind the app does not know.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未知"
+          }
+        }
+      }
+    },
+    "section.absentFields" : {
+      "comment" : "Section of the properties panel listing fields the card deliberately does not have.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields deliberately absent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意図的に持たないフィールド"
+          }
+        }
+      }
+    },
+    "section.branchChanges" : {
+      "comment" : "Section of the history window listing what the branch changed in the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changed in the branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で変えたこと"
+          }
+        }
+      }
+    },
+    "section.changeHistory" : {
+      "comment" : "Section of the history window with the changes made to the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change history"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更履歴"
+          }
+        }
+      }
+    },
+    "section.constValue" : {
+      "comment" : "Section of the properties panel of a field with a fixed value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixed value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "固定値"
+          }
+        }
+      }
+    },
+    "section.discriminator" : {
+      "comment" : "Section of the properties panel with the field that tells the variants of a card apart.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discriminator"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "判別子"
+          }
+        }
+      }
+    },
+    "section.embeddedCard" : {
+      "comment" : "Section of the properties panel of a field showing the card it embeds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Embedded card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包しているカード"
+          }
+        }
+      }
+    },
+    "section.mentionedBy" : {
+      "comment" : "Section of the connections window listing the notes and documents that mention the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes and documents that mention it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言及している note と文書"
+          }
+        }
+      }
+    },
+    "section.mentions" : {
+      "comment" : "Section of the connections window listing the places a note's text names.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places mentioned"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言及している場所"
+          }
+        }
+      }
+    },
+    "section.metadata" : {
+      "comment" : "Section of the properties panel listing a card's metadata.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metadata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メタデータ"
+          }
+        }
+      }
+    },
+    "section.referencedBy" : {
+      "comment" : "Section of the connections window listing the cards that refer to this card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Referenced by"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照されている"
+          }
+        }
+      }
+    },
+    "section.refersTo" : {
+      "comment" : "Section of the connections window listing the cards this card refers to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refers to"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "参照している"
+          }
+        }
+      }
+    },
+    "section.rules" : {
+      "comment" : "Section of the properties panel listing the validation rules of a card or field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Validation rules"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検証ルール"
+          }
+        }
+      }
+    },
+    "section.usedByActions" : {
+      "comment" : "Section of the connections window listing the actions that read or write the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actions that use it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使っている action"
+          }
+        }
+      }
+    },
+    "section.uses" : {
+      "comment" : "Section of the connections window of an action listing where it reads and writes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places it reads and writes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み書きする場所"
+          }
+        }
+      }
+    },
+    "section.usesOld" : {
+      "comment" : "Section of the connections window of an action whose steps rows replaced the old uses field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Places it reads and writes (old field, unused)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み書きする場所（古い欄・使われていません）"
+          }
+        }
+      }
+    },
+    "section.variantOnly" : {
+      "comment" : "Section of the properties panel of a field listing the variants it exists in.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Present only for this variant"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この variant のときだけ存在"
+          }
+        }
+      }
+    },
+    "size.cells" : {
+      "comment" : "The size of a card on the diagram, in cells; the arguments are width and height.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld × %lld cells"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld × %lld マス"
+          }
+        }
+      }
+    },
+    "size.default" : {
+      "comment" : "Shown as the size of a card with no size of its own: the project's width, its height from its contents.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定"
+          }
+        }
+      }
+    },
+    "size.width" : {
+      "comment" : "The size of a card on the diagram that has its own width alone, in cells; the argument is the width.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cells wide (height from contents)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅 %lld マス（高さは中身から）"
+          }
+        }
+      }
+    },
+    "type.optional" : {
+      "comment" : "The written type of an optional field; the argument is the type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (省略可)"
+          }
+        }
+      }
+    },
+    "type.optionalNullable" : {
+      "comment" : "The written type of an optional nullable field; the argument is the type.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ | null (optional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ | null (省略可)"
+          }
+        }
+      }
+    },
+    "word.connections" : {
+      "comment" : "Button of the card editor header and window title for what a card is connected to.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つながり"
+          }
+        }
+      }
+    },
+    "word.holds" : {
+      "comment" : "Label of the cards a store holds, in the card editor header and the properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの"
+          }
+        }
+      }
+    },
+    "word.mention" : {
+      "comment" : "Short label before a path that a note's text names or an action's text mentions; narrow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refs"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言及"
+          }
+        }
+      }
+    },
+    "word.no" : {
+      "comment" : "Value of a flag that is off, shown where nothing can be changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いいえ"
+          }
+        }
+      }
+    },
+    "word.yes" : {
+      "comment" : "Value of a flag that is on, shown where nothing can be changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はい"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

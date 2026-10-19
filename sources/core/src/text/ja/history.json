@@ -1,0 +1,22 @@
+{
+  "history.author.mcpNamed": "MCP・{name}",
+  "history.author.screen": "画面",
+  "history.commit.nameTooLong": "コミットの名前は 80 文字までです",
+  "history.commit.none": "コミット {seq} はありません",
+  "history.commit.noneAfter": "コミット {seq} より新しいものはありません",
+  "history.commit.noneOrCut": "コミット {seq} はありません（無い番号か、足を切ったより前です）",
+  "history.revert.line": "戻す（{count} 件。コミット {seq} のすぐあとへ）",
+  "history.revert.locked": "main はロック中なので戻せません（戻すのは、人が画面でロックを外してから）",
+  "history.revert.otherCommit": "{seq}（{who}）",
+  "history.revert.othersIn": "ほかの書き手のコミットを含むので戻しません: {commits}。ほかの書き手のコミットは、branch_revert の undo で 1 つずつ、request: true を付けて取り消せます",
+  "history.revertIntoBranch.line": "main をコミット {seq} のすぐあとへ戻した形（{count} 件を戻す。merge で main に入る）",
+  "history.undo.already": "コミット {seq} の変更は、今はもう前の形です",
+  "history.undo.holderGone": "{path} の入っていた {holder} がもう無いので戻せません",
+  "history.undo.line": "コミット {seq}（{who}）の変更を取り消す",
+  "history.undo.lineAsked": "コミット {seq}（{who}）の変更を取り消す（画面で許可を得て）",
+  "history.undo.others": "コミット {seq} はほかの書き手（{who}）のコミットなので取り消しません（MCP にさせることの項目 branch_revert.others を通ったときだけ取り消せます）",
+  "history.undo.taken": "{path} は今ほかのものがあるので戻せません（どちらかの名前を変えるか消してから）",
+  "history.undo.wroteNothing": "コミット {seq} は文書を変えていないので、取り消すものがありません",
+  "history.undoIntoBranch.line": "main のコミット {seq}（{who}）の変更を取り消した形（merge で main に入る）",
+  "history.undoIntoBranch.lineAsked": "main のコミット {seq}（{who}）の変更を取り消した形（画面で許可を得て。merge で main に入る）"
+}

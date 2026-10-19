@@ -1,0 +1,19 @@
+most — constant let — line 4 — 3-4
+Order — type class — line 8 — 6-28 — parts 30-32, 34-37
+  Order.init — method init — line 12 — 11-15 — calls local
+  Order.'init (2)' — method init — line 17 — 17-19
+  Order.total — method func — line 21 — 21-23 — calls reduce
+  Order.Line — type struct — line 25 — 25-27
+  Order.cheap — method func — line 31 — 31-31 — calls total
+  Order.== — method func — line 36 — 36-36 — calls total
+Ghost — type extension — line 39 — 39-41 — parts 39-41 — made
+  Ghost.appear — method func — line 40 — 40-40
+Priced — type protocol — line 43 — 43-45
+  Priced.price — method func — line 44 — 44-44
+State — type enum — line 47 — 47-51
+  State.flipped — method func — line 50 — 50-50
+Point — type struct — line 53 — 53-55
+Lines — type typealias — line 57 — 57-57
+Counter — type actor — line 59 — 59-61
+  Counter.bump — method func — line 60 — 60-60
+helper — function func — line 66 — 65-69 — calls f

@@ -1,0 +1,14 @@
+{
+  "workdir.read.linkOutside": "{path} is a symbolic link that leads outside the working directory's folder: what it points at is not read",
+  "workdir.read.noFolder": "The folder {root} is not there (or cannot be read)",
+  "workdir.read.none": "This working directory is not read (readType: none)",
+  "workdir.read.notGit": "The folder {root} of the working directory {name} is not a git repository (it has no .git). For readType: git, only the .gitignore files inside that folder were read",
+  "workdir.read.notYet": "Not read yet",
+  "workdir.read.overLimit": "Reading stopped at the limit of what is read ({limit}). Add what to leave out to exclude in how it is read",
+  "workdir.read.unbound": "No folder is bound to it on this machine",
+  "workdir.text.notAFile": "\"{id}\" is not a file of a working directory",
+  "workdir.text.notText": "Not a text file",
+  "workdir.text.outside": "\"{path}\" is not a path inside the working directory",
+  "workdir.text.unreadable": "Cannot read the file {path} (it is not there, or cannot be read)",
+  "workdir.unreadable": "Cannot read the working directory: {e}"
+}
