@@ -62,19 +62,22 @@ final class Updater {
     /// spend the day failing to reach it.
     static let interval: Duration = .seconds(6 * 60 * 60)
 
-    init(bundle: Bundle = .main) {
+    init(bundle: Bundle = .main, defaults: UserDefaults = .standard) {
         version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         build = Int(bundle.infoDictionary?["CFBundleVersion"] as? String ?? "") ?? 0
         installed = bundle.bundleURL.deletingLastPathComponent().lastPathComponent == "Applications"
         feedsBundle = bundle
+        feedsDefaults = defaults
         reloadFeeds()
-        selectedFeedId = UserDefaults.standard.string(forKey: UpdateFeeds.selectedKey)
+        selectedFeedId = defaults.string(forKey: UpdateFeeds.selectedKey)
     }
 
     @ObservationIgnored private let feedsBundle: Bundle
+    /// Passed in so a test keeps its places and its choice out of the app's own preferences.
+    @ObservationIgnored private let feedsDefaults: UserDefaults
 
     private func reloadFeeds() {
-        feeds = UpdateFeeds.all(feedsBundle)
+        feeds = UpdateFeeds.all(feedsBundle, feedsDefaults)
         tokenIds = Set(feeds.filter { !$0.isBuiltin && UpdateTokens.has($0.id) }.map(\.id))
     }
 
@@ -85,7 +88,7 @@ final class Updater {
     func selectFeed(_ id: String) {
         guard id != selectedFeed?.id, feeds.contains(where: { $0.id == id }), !busy else { return }
         selectedFeedId = id
-        UserDefaults.standard.set(id, forKey: UpdateFeeds.selectedKey)
+        feedsDefaults.set(id, forKey: UpdateFeeds.selectedKey)
         staged = nil
         phase = .idle
         Task { await check() }
@@ -100,13 +103,19 @@ final class Updater {
         } else if removeToken {
             UpdateTokens.remove(feed.id)
         }
-        var added = UpdateFeeds.added()
+        var added = UpdateFeeds.added(feedsDefaults)
         if let index = added.firstIndex(where: { $0.id == feed.id }) {
             added[index] = feed
         } else {
+            // Without a choice of its own, the place in use follows the list, and a new place
+            // would change it: keep the one in use as the choice before the list grows.
+            if !feeds.contains(where: { $0.id == selectedFeedId }), let inUse = selectedFeed {
+                selectedFeedId = inUse.id
+                feedsDefaults.set(inUse.id, forKey: UpdateFeeds.selectedKey)
+            }
             added.append(feed)
         }
-        UpdateFeeds.save(added)
+        UpdateFeeds.save(added, feedsDefaults)
         reloadFeeds()
         // What was fetched from the old address of this place no longer stands.
         if feed.id == selectedFeed?.id, !busy { staged = nil; phase = .idle }
@@ -115,12 +124,12 @@ final class Updater {
     func removeFeed(_ id: String) {
         guard id != UpdateFeed.builtinId, !busy else { return }
         UpdateTokens.remove(id)
-        UpdateFeeds.save(UpdateFeeds.added().filter { $0.id != id })
+        UpdateFeeds.save(UpdateFeeds.added(feedsDefaults).filter { $0.id != id }, feedsDefaults)
         let wasSelected = selectedFeed?.id == id
         reloadFeeds()
         if wasSelected {
             selectedFeedId = nil
-            UserDefaults.standard.removeObject(forKey: UpdateFeeds.selectedKey)
+            feedsDefaults.removeObject(forKey: UpdateFeeds.selectedKey)
             staged = nil
             phase = .idle
         }

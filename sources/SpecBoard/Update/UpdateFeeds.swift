@@ -58,9 +58,12 @@ nonisolated enum UpdateFeeds {
         (builtin(bundle).map { [$0] } ?? []) + added(defaults)
     }
 
-    /// The chosen one, or the first when the choice is gone (removed, or never made).
+    /// The chosen one; when the choice is gone (removed, or never made), the first one the person
+    /// added, and only then the build's own. Somebody who has only ever used a place they added
+    /// never made a choice, and a later build that gains a place of its own at the head of the
+    /// list must not move them off it: they would stop seeing what that place does not publish.
     static func selected(in feeds: [UpdateFeed], id: String?) -> UpdateFeed? {
-        feeds.first { $0.id == id } ?? feeds.first
+        feeds.first { $0.id == id } ?? feeds.first { !$0.isBuiltin } ?? feeds.first
     }
 
     /// Checks what somebody typed. The URL must be https: a token for it would

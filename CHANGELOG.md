@@ -4,6 +4,11 @@
 
 Changes in each public release of SpecBoard that people using it can see (newest first).
 
+## 0.3.2
+
+- Update sources: when you have not chosen one (or the one you chose was removed), the app uses the first source you added, and this repository's releases only when you have added none. Adding a source no longer changes the one in use.
+- The Code of Conduct gives an e-mail address for reports: specboard@moapp-lab.org.
+
 ## 0.3.0
 
 The first public release of SpecBoard.
