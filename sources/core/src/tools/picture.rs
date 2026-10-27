@@ -64,6 +64,8 @@ enum Picture {
     ContentMap,
     /// A ui section's mock: the page its parts make (`export::mock`), drawn as the screen shows it.
     Mock,
+    /// An actor section's chart (`shape: sequence`): a frame for each flow it provides.
+    Sequence,
 }
 
 impl Picture {
@@ -74,6 +76,7 @@ impl Picture {
             Picture::FlowDiagram => "flowDiagram",
             Picture::ContentMap => "contentMap",
             Picture::Mock => "mock",
+            Picture::Sequence => "sequence",
         }
     }
 
@@ -84,6 +87,7 @@ impl Picture {
             Picture::FlowDiagram => text!("picture.map.flowDiagram"),
             Picture::ContentMap => text!("picture.map.contentMap"),
             Picture::Mock => text!("picture.map.mock"),
+            Picture::Sequence => text!("picture.map.sequence"),
         }
     }
 
@@ -95,7 +99,10 @@ impl Picture {
 
     /// Whether it takes `kinds`: a flow's chart draws its own lines (so does its `as: diagram`).
     fn takes_kinds(self) -> bool {
-        !matches!(self, Picture::FlowDiagram | Picture::Mock)
+        !matches!(
+            self,
+            Picture::FlowDiagram | Picture::Mock | Picture::Sequence
+        )
     }
 }
 
@@ -161,6 +168,29 @@ fn resolve(store: &Store, tool: &str, args: &Args) -> Result<Asked, String> {
             _ if ui => Picture::Mock,
             _ => Picture::SectionMap,
         };
+        // An actor's chart, when its sequence is asked for.
+        let picture = match given.get("shape").and_then(Value::as_str) {
+            Some("sequence") => {
+                if project.section_kind(&id) != Some(crate::kinds::ACTOR) {
+                    return Err(text!(
+                        "diagram.actorChart.notActor",
+                        path = project.directory.full_section(&id),
+                        kind = project
+                            .section_kind(&id)
+                            .map(|k| project.defs.section_label(k))
+                            .unwrap_or_default()
+                    ));
+                }
+                Picture::Sequence
+            }
+            Some("map") | None => {
+                if given.contains_key("lifelines") {
+                    return Err(text!("diagram.lifelines.sequenceOnly"));
+                }
+                picture
+            }
+            Some(other) => return Err(text!("diagram.section.shape", shape = other)),
+        };
         (picture, "section", id)
     } else {
         let list = args
@@ -197,6 +227,13 @@ fn resolve(store: &Store, tool: &str, args: &Args) -> Result<Asked, String> {
         request.insert("html".into(), mock.html.into());
         request.insert("width".into(), mock.width.into());
         request.insert("height".into(), mock.height.into());
+    }
+    if picture == Picture::Sequence {
+        let chosen = super::diagram::lifelines(&project, &given)?;
+        request.insert(
+            "lifelines".into(),
+            Value::Array(chosen.into_iter().map(Value::from).collect()),
+        );
     }
     if picture == Picture::ConnectionsMap {
         let depth = a.int("depth", 1);
@@ -369,7 +406,14 @@ fn checked_area(area: &Value) -> Result<Value, String> {
     let (Some(top_left), Some(bottom_right)) = (corner("topLeft"), corner("bottomRight")) else {
         return Err(text!("picture.area"));
     };
-    if top_left.0 > bottom_right.0 || top_left.1 > bottom_right.1 {
+    // Within the grid's reach, as a card's place is: the app works the cells out in whole numbers.
+    let reach = crate::wire::GRID_REACH as f64;
+    let within = |(x, y): (f64, f64)| x.abs() <= reach && y.abs() <= reach;
+    if top_left.0 > bottom_right.0
+        || top_left.1 > bottom_right.1
+        || !within(top_left)
+        || !within(bottom_right)
+    {
         return Err(text!("picture.area"));
     }
     let point = |(x, y): (f64, f64)| json!({ "x": x.floor() as i64, "y": y.floor() as i64 });

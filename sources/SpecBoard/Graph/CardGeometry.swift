@@ -12,23 +12,30 @@ enum CardGeometry {
     /// Border-box, so the header's own bottom border is already inside this.
     static let headerHeight: CGFloat = 40
     static let listPadding: CGFloat = 12    // 6 top + 6 bottom
-    /// The strip saying rows are out of sight: one row of the grid, so a
-    /// card with one ends on a grid line as one without does.
+    /// The strip saying a document's text goes on past its picture: one row of the grid, so a card with one
+    /// ends on a grid line as one without does.
     static let moreHeight: CGFloat = 27
+    /// Half a row, kept above and below the rows of a card with a window whether rows are out of sight that way
+    /// or not: the count of those that are goes in it, so the window holds as many rows and the card is as tall
+    /// wherever it is scrolled, and the two halves make one row of the grid.
+    static let bandHeight: CGFloat = 13.5
+    /// The fewest grid rows a card whose rows scroll inside a height of its own is drawn in: its border, header
+    /// and padding take two, one row and the half rows above and below it the other two.
+    static let leastGridRows = 4
     /// The card's own 1px border, top and bottom.
     static let cardBorder: CGFloat = 1
     /// How many rows a card draws before the rest goes out of the window.
     ///
-    /// Fifteen, which with the two strips puts the tallest card at 499 points.
+    /// Fifteen, which with the half rows above and below them puts the tallest card at 486 points.
     /// Height is what decides how many cards can be arranged side by side and
     /// still be worth zooming into, and a card is not a fixed window on its
     /// schema: what falls outside can be scrolled to, and a deep branch can be
     /// folded away.
     static let standardRows = 15
-    /// The most lines of a note's body its card shows.
-    static let noteLines = 200
     /// Set by the canvas from the layout on screen (`LayoutSettings`, §12).
     static var maxRows = standardRows
+    /// Where a list face's row's disclosure mark starts, from the card's left edge: past the code dot.
+    static let listDiscloseLeft: CGFloat = 12
     /// The disclosure mark's box, in the gap the indent leaves to a name's left.
     /// Also the width of the strip a click has to land in to fold a row.
     static let discloseWidth: CGFloat = 11
@@ -83,12 +90,16 @@ struct CardRow: Identifiable, Hashable {
     var datum: InstanceDatum? = nil
     /// A working directory's file's row: one of its functions or types, its mark, its name and its line.
     var symbol: CodeSymbol? = nil
+    /// A data card's row drawn by its shape's list face: an element's, or a line its fold opens to (`ListFaceRows`).
+    var listed: ListedRow? = nil
 
     var id: String { path }
 
     /// Where its disclosure mark's box starts, across, in a card whose left edge is at `minX`. The
     /// drawing and the click on it read this one place.
     func discloseLeft(from minX: CGFloat) -> CGFloat {
+        // An element's row: right of the dot that marks its code changed, which sits at the card's edge.
+        if case .entry? = listed { return minX + CardGeometry.listDiscloseLeft }
         let indent = 12 + CGFloat(depth) * 13
         if disclosesInNumbers {
             return minX + 12 + (CardGeometry.numberWidth - CardGeometry.discloseWidth) / 2
@@ -100,31 +111,67 @@ struct CardRow: Identifiable, Hashable {
 struct CardContent: Hashable {
     /// What the card draws — at most `maxRows`.
     var rows: [CardRow]
-    /// How many fell past the cut, above and below together. Zero when everything
-    /// fits, which is what decides whether the card reserves a strip for saying so —
-    /// so scrolling never changes a card's height.
+    /// How many fell past the cut, above and below together. Zero when everything fits.
     var hidden: Int
     /// Index in `all` of the first drawn row. Zero unless the card is scrolled.
     var first: Int
     /// Every row, cut or not. Edges are read off *this*.
     var all: [CardRow]
-    /// How many rows the window holds: the project's `maxRows`, or as many as fit a
-    /// writing card of its own size.
+    /// How many rows the window holds wherever it is: the project's `maxRows`, or as many as fit a card of its own
+    /// height between its half rows.
     var fit: Int = CardGeometry.maxRows
     /// Drawn as the document it is — a picture of its whole text — rather than as
     /// rows: `rows` is empty, `all` still holds what its lines are read off,
     /// and those lines leave from the header.
     var document = false
+    /// Whether the rows sit between half rows kept for the counts (`CardGeometry.bandHeight`): a card of its own
+    /// height always, whether its rows fit or not, since its height is set; any other card once it has more rows than
+    /// the project's `maxRows`, and so a window, while one whose rows fit grows to hold them and keeps none.
+    var bands = false
 
     /// Rows out of sight above and below. `hidden` is their sum.
     var above: Int { first }
     var below: Int { document ? 0 : all.count - (first + rows.count) }
     /// The furthest a card may be scrolled: enough to bring the last row into view.
     var maxScroll: Int { document ? 0 : max(0, all.count - fit) }
-    /// Whether a strip is drawn at each end. Only for a direction that has rows out
-    /// of sight: an empty band is 20 points of nothing, and the card is already tall.
+    /// Whether a count is drawn in the half row at each end: only for a direction that has rows out of sight.
     var hasAboveStrip: Bool { above > 0 }
     var hasBelowStrip: Bool { below > 0 }
+
+    /// The rows of `all` the window holds with its first row at `from`, kept in range.
+    func window(from: Int) -> Range<Int> {
+        guard !document else { return 0..<0 }
+        guard all.count > fit else { return 0..<all.count }
+        let first = min(max(0, from), all.count - fit)
+        return first..<(first + fit)
+    }
+
+    /// The same rows windowed from `from`.
+    func scrolled(to from: Int) -> CardContent {
+        guard !document else { return self }
+        let shown = window(from: from)
+        var out = self
+        out.rows = Array(all[shown])
+        out.first = shown.lowerBound
+        out.hidden = all.count - shown.count
+        return out
+    }
+
+    /// Where the window starts so that the row at `index` and the rows it opened, to `last`, show as far as
+    /// they fit: the row pressed stays in the window, and of the starts that show as many of its rows, the one
+    /// that moves least — none when they already show.
+    func first(showing index: Int, through last: Int) -> Int {
+        guard !document, all.indices.contains(index), last > index else { return first }
+        var best = first, most = -1
+        for from in min(first, index)...max(first, index) {
+            let shown = window(from: from)
+            guard shown.contains(index) else { continue }
+            let seen = min(last, shown.upperBound - 1) - index
+            if seen > most { (best, most) = (shown.lowerBound, seen) }
+            if seen == last - index { break }
+        }
+        return best
+    }
 }
 
 typealias SchemaLookup = (String) -> SchemaNode?
@@ -183,7 +230,7 @@ func cardRows(
             return row
         }
         if form.document { return CardContent(rows: [], hidden: 0, first: 0, all: shown, fit: 0, document: true) }
-        return cardWindow(shown, from: from, fit: form.size.map { rowsFitting($0.height, count: shown.count) })
+        return cardWindow(shown, from: from, height: form.drawnHeight)
     }
 
     // A working directory's file, and a folder's box: its mark and its name, nothing under them.
@@ -204,7 +251,7 @@ func cardRows(
     if schema.kind == .stackdoc {
         let top = StackRows.rows(schema)
         if form.document { return CardContent(rows: top, hidden: 0, first: 0, all: top, fit: top.count, document: true) }
-        return cardWindow(top, from: from, fit: form.size.map { rowsFitting($0.height, count: top.count) })
+        return cardWindow(top, from: from, height: form.drawnHeight)
     }
     // A card whose kind says how it is drawn (`face`; a task): its fields
     // above, each a control pressed on the diagram, and below them its Markdown, drawn as a
@@ -216,7 +263,7 @@ func cardRows(
             return row
         }
         if form.document { return CardContent(rows: top, hidden: 0, first: 0, all: top, fit: top.count, document: true) }
-        return cardWindow(top, from: from, fit: form.size.map { rowsFitting($0.height, count: top.count) })
+        return cardWindow(top, from: from, height: form.drawnHeight)
     }
     // A task on its goal's card map, its kind's face not read: its title with its check. A goal
     // there is drawn as everywhere (below).
@@ -294,8 +341,9 @@ func cardRows(
     }
 
     // An action's and a flow's rows are their steps, top to bottom and nested as
-    // written, after what starts them; a flow's its nodes, then its rules; a store's
-    // what it holds — a row each of its lines of that kind, its line leaving from there.
+    // written, after what starts them; a flow's its nodes (its rules leave its head, with no
+    // row); a store's what it holds — a row each of its lines of that kind, its line leaving
+    // from there.
     if schema.kind.hasSteps || schema.kind == .store {
         if let trigger = schema.trigger {
             all.append(CardRow(path: "#t", depth: 0, field: nil, value: nil, fromType: nil,
@@ -326,17 +374,11 @@ func cardRows(
                                    step: StepRow(step)))
             }
         }
-        let own = schema.connections.filter { $0.from.isEmpty }
-        if schema.kind == .flow {
-            for (index, line) in own.filter({ $0.line == Line.notes }).enumerated() {
-                all.append(CardRow(path: "#d\(index)", depth: 0, field: nil, value: nil, fromType: nil,
-                                   step: StepRow(label: L10n[.Diagram.rowRules], text: reached(line), detail: nil)))
-            }
-        }
         if schema.kind == .store {
+            let own = schema.connections.filter { $0.from.isEmpty }
             for (index, line) in own.filter({ $0.line == Line.holds }).enumerated() {
                 all.append(CardRow(path: "#h\(index)", depth: 0, field: nil, value: nil, fromType: nil,
-                                   step: StepRow(label: "holds", text: reached(line), detail: nil)))
+                                   step: StepRow(label: BuiltinWords.line(Line.holds), text: reached(line), detail: nil)))
             }
         }
         return window(all, from: from)
@@ -349,25 +391,24 @@ func cardRows(
     // cards inside it — numbered in the order they are done in (their place in it).
     if let custom = CustomKind.of(schema.kind) {
         // Its fields as its kind's definition says them (the built-in `goal`'s, read from the project's
-        // kinds): a choice a row of buttons whether or not it is chosen, the rest
-        // a row each when written but those in its header — as written here before the definitions.
+        // kinds), a row each when written but those in its header, which the head says
+        // (`customKindWord`): a choice a row of buttons, the rest its text.
         let fields: [(name: String, label: String, fieldtype: String, options: [String], labels: [String: String])] =
             schema.definition.map { def in
                 def.ownFields.filter { $0.show != "editor" }.map {
                     ($0.name, $0.label.isEmpty ? $0.name : $0.label, $0.fieldtype, $0.options, $0.optionLabels)
                 }
             } ?? custom.fields.map { ($0.name, $0.shown, $0.fieldtype, $0.options, $0.optionLabels) }
+        let header = schema.definition?.header ?? custom.header
         for field in fields {
-            // A choice is a form row of its own, pressed to change; the rest a
-            // line each when written.
+            guard !header.contains(field.name), let value = schema.customFields[field.name], !value.isEmpty else { continue }
             if field.fieldtype == "radio" {
                 all.append(CardRow(path: "#f.\(field.name)", depth: 0, field: nil, value: nil, fromType: nil,
                                    step: StepRow(label: field.label, text: "", detail: nil),
                                    form: .segments(field: field.name, options: field.options,
-                                                   chosen: schema.customFields[field.name] ?? "", labels: field.labels)))
+                                                   chosen: value, labels: field.labels)))
                 continue
             }
-            guard !custom.header.contains(field.name), let value = schema.customFields[field.name], !value.isEmpty else { continue }
             all.append(CardRow(path: "#f.\(field.name)", depth: 0, field: nil, value: nil, fromType: nil,
                                step: StepRow(label: field.label, text: value, detail: nil)))
         }
@@ -396,27 +437,6 @@ func cardRows(
             }
         }
         emit(schema.rows, 0, "")
-        return window(all, from: from)
-    }
-
-    // A note: its body, a row a line — a memo on the diagram — what a line names
-    // leaving from it.
-    if schema.kind == .note {
-        let body = schema.body.components(separatedBy: "\n")
-        var shown = 0
-        for (index, line) in body.enumerated() {
-            let text = line.trimmingCharacters(in: .whitespaces)
-            guard !text.isEmpty else { continue }
-            // A note sized by hand shows every line, scrolled inside it.
-            if form.size == nil, shown == CardGeometry.noteLines {
-                all.append(CardRow(path: "#more", depth: 0, field: nil, value: nil, fromType: nil,
-                                   step: StepRow(label: "", text: "…", detail: nil)))
-                break
-            }
-            shown += 1
-            all.append(CardRow(path: "#b\(index)", depth: 0, field: nil, value: nil, fromType: nil,
-                               step: StepRow(label: "", text: text, detail: nil)))
-        }
         return window(all, from: from)
     }
 
@@ -484,25 +504,26 @@ func cardRows(
 /// carrying it fell out of the window — a card can easily hide more rows than it
 /// shows, and the only line it has may live in one of them. The card says how many
 /// are out of sight; the relationships stay whole.
-private func cardWindow(_ all: [CardRow], from: Int, fit given: Int? = nil) -> CardContent {
-    let fit = max(1, given ?? CardGeometry.maxRows)
-    guard all.count > fit else {
-        return CardContent(rows: all, hidden: 0, first: 0, all: all, fit: fit)
-    }
-    // Clamped here rather than at the caller, so a stored offset survives the card
+///
+/// `height`: a card of its own height, which holds as many rows as fit between its half rows.
+private func cardWindow(_ all: [CardRow], from: Int, height: CGFloat? = nil) -> CardContent {
+    let fit = max(1, height.map { rowsFitting($0, count: all.count) } ?? CardGeometry.maxRows)
+    // Clamped in `scrolled`, not by the caller, so a stored offset survives the card
     // getting shorter — a filter change or an edit can take rows away underneath it.
-    let first = min(max(0, from), all.count - fit)
-    return CardContent(rows: Array(all[first..<(first + fit)]),
-                       hidden: all.count - fit,
-                       first: first, all: all, fit: fit)
+    return CardContent(rows: [], hidden: 0, first: 0, all: all, fit: fit,
+                       bands: height != nil || all.count > fit).scrolled(to: from)
 }
 
-/// How many rows a card of its own `height` holds: all of them when they fit,
-/// or as many as leave room for the strips that say what is out of sight.
+/// How many of `count` rows a card of its own `height` draws: as many as fit between the half rows it always
+/// keeps above and below them, so a card just tall enough for its rows draws all but the last, which its count
+/// stands for.
 func rowsFitting(_ height: CGFloat, count: Int) -> Int {
-    let room = height - CardGeometry.cardBorder * 2 - CardGeometry.headerHeight - CardGeometry.listPadding
-    if CGFloat(count) * CardGeometry.rowHeight <= room { return max(1, count) }
-    return max(1, Int((room - 2 * CardGeometry.moreHeight) / CardGeometry.rowHeight))
+    min(max(1, count), max(1, Int((rowRoom(height) - 2 * CardGeometry.bandHeight) / CardGeometry.rowHeight)))
+}
+
+/// The points a card of `height` has for its rows and half rows: inside its border, under its header and padding.
+private func rowRoom(_ height: CGFloat) -> CGFloat {
+    height - CardGeometry.cardBorder * 2 - CardGeometry.headerHeight - CardGeometry.listPadding
 }
 
 /// How a card is drawn (overview §12): its own size in points — a card with a height of its own,
@@ -514,6 +535,19 @@ struct CardForm: Equatable {
     var document = false
     /// Its own width with no height of its own: as tall as its rows.
     var width: CGFloat? = nil
+    /// Drawn at the height set whatever it holds — a frame, which draws no rows — rather than at least as tall as
+    /// a row and its half rows need (`drawnHeight`). A note draws its lines as rows, so it is not one: a note too
+    /// short for a line and its half rows would draw them past its edge.
+    var exactHeight = false
+
+    /// How tall it is drawn when it has a size of its own: the height set, but a card whose rows scroll inside it
+    /// never shorter than `CardGeometry.leastGridRows` — a row, and the half rows that say how many rows are out of
+    /// sight and where the lines to those rows land, stay inside it. The size kept is the one set.
+    var drawnHeight: CGFloat? {
+        guard let size else { return nil }
+        guard !document, !exactHeight else { return size.height }
+        return max(size.height, CGFloat(CardGeometry.leastGridRows) * CGFloat(Grid.unitHeight))
+    }
 
     /// What a custom card's row is pressed as.
     enum Control: Hashable {
@@ -631,7 +665,8 @@ func cardForm(_ schema: SchemaNode, settings: LayoutSettings, cardWidth: CGFloat
     if let face = schema.face {
         let document = schema.facePage != nil || (face.markdown != nil && (schema.faceDrawsMarkdown || own?.h != nil))
         if let width, let h = own?.h {
-            return CardForm(size: CGSize(width: width, height: CGFloat(h) * down), document: document)
+            return CardForm(size: CGSize(width: width, height: CGFloat(h) * down), document: document,
+                            exactHeight: schema.kind == .frame)
         }
         // A frame is the box another screen is put into: as big as the core places it.
         if schema.kind == .frame {
@@ -645,7 +680,8 @@ func cardForm(_ schema: SchemaNode, settings: LayoutSettings, cardWidth: CGFloat
     // A table is drawn as the table it builds, as a document is.
     let document = (schema.kind.isWriting || schema.kind == .table) && drawnAsDocument(schema, docView: settings.docView)
     if let width, let h = own?.h {
-        return CardForm(size: CGSize(width: width, height: CGFloat(h) * down), document: document)
+        return CardForm(size: CGSize(width: width, height: CGFloat(h) * down), document: document,
+                        exactHeight: schema.kind == .frame)
     }
     guard document else { return CardForm(width: width) }
     return CardForm(size: CGSize(width: width ?? cardWidth, height: wholeCard), document: true)
@@ -678,7 +714,14 @@ func cardGridRows(_ schema: SchemaNode, lookup: @escaping SchemaLookup, rows: In
     // the project's whole card. So too a card its kind's face draws: its height, or with its
     // Markdown as tall as the core places it. Its width alone leaves its height to its rows.
     if CompactBox.isCompact(schema) { return CompactBox.rows }
-    if schema.sizable, let h = schema.size?.h { return h }
+    if schema.sizable, let h = schema.size?.h {
+        // As tall as it is drawn: a card whose rows scroll inside it never shorter than a row and its half rows need.
+        var settings = LayoutSettings.standard
+        settings.docView = docView
+        guard let drawn = cardForm(schema, settings: settings, cardWidth: CardGeometry.cardWidth).drawnHeight
+        else { return h }
+        return max(h, Grid.rows(forHeight: Double(drawn)))
+    }
     if drawnAsDocument(schema, docView: docView) { return Grid.rows(forRows: rows) }
     if schema.face != nil, schema.faceDrawsPage || schema.kind == .frame { return schema.faceRows ?? Grid.rows(forRows: rows) }
     let saved = CardGeometry.maxRows
@@ -690,30 +733,25 @@ func cardGridRows(_ schema: SchemaNode, lookup: @escaping SchemaLookup, rows: In
 func cardHeight(_ content: CardContent) -> CGFloat {
     CardGeometry.cardBorder * 2 + CardGeometry.headerHeight + CardGeometry.listPadding
         + CGFloat(content.rows.count) * CardGeometry.rowHeight
-        + CGFloat((content.hasAboveStrip ? 1 : 0) + (content.hasBelowStrip ? 1 : 0))
-        * CardGeometry.moreHeight
+        + (content.bands ? 2 * CardGeometry.bandHeight : 0)
 }
 
-/// Where the drawn rows begin, relative to the card's top edge.
-///
-/// A strip appears at each end that has rows out of sight, so a card at its top has
-/// only the one at the foot — the same shape it had before it could scroll at all.
-/// The card therefore grows by a strip when it leaves the top and shrinks again at
-/// the end; `scrollCard` moves its box to match.
+/// Where the drawn rows begin, relative to the card's top edge: under the half row kept above them, when the
+/// card keeps them, whether or not rows are out of sight above — so the rows do not move as the card scrolls.
 func listTop(_ content: CardContent) -> CGFloat {
     CardGeometry.cardBorder + CardGeometry.headerHeight + CardGeometry.listPadding / 2
-        + (content.hasAboveStrip ? CardGeometry.moreHeight : 0)
+        + (content.bands ? CardGeometry.bandHeight : 0)
 }
 
-/// The middle of the strip standing in for everything above, and below.
+/// The middle of the half row standing in for everything above, and below.
 func aboveStripOffset(_ content: CardContent) -> CGFloat {
     CardGeometry.cardBorder + CardGeometry.headerHeight + CardGeometry.listPadding / 2
-        + CardGeometry.moreHeight / 2
+        + CardGeometry.bandHeight / 2
 }
 
 func belowStripOffset(_ content: CardContent) -> CGFloat {
     listTop(content) + CGFloat(content.rows.count) * CardGeometry.rowHeight
-        + CardGeometry.moreHeight / 2
+        + CardGeometry.bandHeight / 2
 }
 
 /// Vertical centre of one drawn row, relative to the card's top edge. The index is
@@ -728,8 +766,13 @@ func rowOffset(_ index: Int, in content: CardContent) -> CGFloat {
 /// A row that is a step, a trigger or a held record: the word for what it does,
 /// what it does it to, and how it travels.
 struct StepRow: Hashable {
-    /// Whoever called, when a row names no one to hear from or answer.
-    static var caller: String { L10n[.Common.wordCaller] }
+    /// The one a row or an end that names no one deals with: whom the flow's start receives from.
+    static var startPartner: String { L10n[.Charts.partnerStart] }
+
+    /// Whom a receiving start that names no one receives from: anyone, or not written (a gap).
+    static func beginPartner(_ node: FlowNode) -> String {
+        node.anyCaller ? L10n[.Charts.partnerAnyone] : L10n[.Charts.partnerNotWritten]
+    }
 
     var label: String
     var text: String
@@ -757,7 +800,7 @@ struct StepRow: Hashable {
         case "begin":
             switch node.trigger {
             case "event": what = L10n[.Diagram.flowEventOutcome(node.event?.outcome ?? "", node.event?.flow ?? "")]
-            case "receive": what = "receive ← \(FlowNode.partners(node.peers, node.program) ?? StepRow.caller)"
+            case "receive": what = "receive ← \(FlowNode.partners(node.peers, node.program) ?? StepRow.beginPartner(node))"
             default: what = node.trigger ?? ""
             }
         case "process": what = L10n[.Diagram.rowRows(node.steps.count)]
@@ -766,7 +809,7 @@ struct StepRow: Hashable {
         case "eval": what = node.value ?? node.branches.map(\.when).joined(separator: " / ")
         case "wait": what = node.waitFor ?? ""
         default:
-            what = (node.outcome ?? "") + (node.reply.map { " → \(FlowNode.partners($0.peers, $0.program) ?? StepRow.caller)" } ?? "")
+            what = (node.outcome ?? "") + (node.reply.map { " → \(FlowNode.partners($0.peers, $0.program) ?? StepRow.startPartner)" } ?? "")
         }
         text = "\(node.name): \(what)"
         // Where each way goes, and the short word for how: a branch's condition is
@@ -779,8 +822,8 @@ struct StepRow: Hashable {
 
     init(_ step: Step) {
         label = step.op
-        // Receiving or answering with no one named: whoever called.
-        let other = FlowNode.partners(step.peers, step.program) ?? (["receive", "return"].contains(step.op) ? StepRow.caller : "")
+        // Receiving or answering with no one named: whom the start receives from.
+        let other = FlowNode.partners(step.peers, step.program) ?? (["receive", "return"].contains(step.op) ? StepRow.startPartner : "")
         let carried = step.carries.joined(separator: ", ")
         switch step.op {
         case "receive":
@@ -819,7 +862,7 @@ struct StepRow: Hashable {
         switch trigger.on {
         case "receive":
             let carried = trigger.carries.joined(separator: ", ")
-            let other = FlowNode.partners(trigger.peers, trigger.program) ?? StepRow.caller
+            let other = FlowNode.partners(trigger.peers, trigger.program) ?? L10n[.Charts.partnerNotWritten]
             text = carried.isEmpty ? "← \(other)" : "← \(other): \(carried)"
         case "schedule":
             text = trigger.every ?? "schedule"

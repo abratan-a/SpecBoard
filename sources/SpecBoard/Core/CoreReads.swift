@@ -94,14 +94,20 @@ extension CoreClient {
     }
 
     /// Section → what stands there for another section → its cell: other sections' cards by
-    /// id, section ghosts by their id on the diagram (`SectionGhosts.prefix` and the section).
-    nonisolated func sectionPositions(_ project: String, branch: String?) throws -> [String: [String: CGPoint]] {
+    /// id, section ghosts by their id on the diagram (`SectionGhosts.prefix` and the section); and the
+    /// groups on every diagram, a section's map or a container's card map, by the diagram's id.
+    nonisolated func sectionPositions(_ project: String, branch: String?) throws -> MapPlaces {
         let read = try request(PositionsRow.self, "section_positions", ["project": project, "branch": branch ?? ""])
-        var out = read.positions.mapValues { $0.mapValues { CGPoint(x: $0.x, y: $0.y) } }
+        var out = MapPlaces()
+        out.positions = read.positions.mapValues { $0.mapValues { CGPoint(x: $0.x, y: $0.y) } }
         for (view, ghosts) in read.sectionGhosts ?? [:] {
             for (section, at) in ghosts {
-                out[view, default: [:]][SectionGhosts.prefix + section] = CGPoint(x: at.x, y: at.y)
+                out.positions[view, default: [:]][SectionGhosts.prefix + section] = CGPoint(x: at.x, y: at.y)
+                if at.pinned == true { out.pinned[view, default: []].insert(SectionGhosts.prefix + section) }
             }
+        }
+        for (view, named) in read.groups ?? [:] {
+            out.groups[view] = named.map { $0.value.group($0.key) }.sorted { $0.name < $1.name }
         }
         return out
     }
@@ -336,8 +342,36 @@ nonisolated private struct GoneRow: Decodable {
 
 nonisolated private struct PositionsRow: Decodable {
     struct Point: Decodable { var x, y: Double }
+    /// A group's frame and how it looks where that is not the default.
+    struct Group: Decodable {
+        var x, y, w, h: Int
+        var label: String?
+        var headerPlace: String?
+        var color: String?
+        var fill: String?
+
+        func group(_ name: String) -> MapGroup {
+            MapGroup(name: name, cells: GridRect(x: x, y: y, w: w, h: h), label: label,
+                     headerPlace: headerPlace.flatMap(MapGroup.HeaderPlace.init(rawValue:)) ?? .topLeft,
+                     color: color.flatMap(MapGroup.Color.init(rawValue:)),
+                     fill: fill.flatMap(MapGroup.Fill.init(rawValue:)) ?? .none)
+        }
+    }
+    /// A section ghost's cell, and whether a hand put it there (or tidying did): the screen stacks again
+    /// only what it put itself.
+    struct Ghost: Decodable { var x, y: Double; var pinned: Bool? }
     var positions: [String: [String: Point]]
-    var sectionGhosts: [String: [String: Point]]?
+    var sectionGhosts: [String: [String: Ghost]]?
+    var groups: [String: [String: Group]]?
+}
+
+/// What the diagrams keep beside the cards' own places (`section_positions`): where each section's map puts
+/// what stands there for another section, and the groups on each diagram.
+nonisolated struct MapPlaces: Sendable {
+    var positions: [String: [String: CGPoint]] = [:]
+    /// Of the section ghosts in `positions`, by the diagram, the ones put by a hand or by tidying.
+    var pinned: [String: Set<String>] = [:]
+    var groups: [String: [MapGroup]] = [:]
 }
 
 nonisolated private struct CommitRow: Decodable {

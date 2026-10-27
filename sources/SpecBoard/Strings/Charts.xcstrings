@@ -1,78 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "aside" : {
-      "comment" : "The same words as the core's flow diagrams (charts.aside); arguments 1: comment.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(%@)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "（%@）"
-          }
-        }
-      }
-    },
-    "caller" : {
-      "comment" : "The same words as the core's flow diagrams (charts.caller).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "caller"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "呼んだ側"
-          }
-        }
-      }
-    },
-    "event.of" : {
-      "comment" : "The same words as the core's flow diagrams (charts.event.of); arguments 1: flow, 2: outcome.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ends with %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ の %2$@"
-          }
-        }
-      }
-    },
-    "flow.noNodes" : {
-      "comment" : "The same words as the core's flow diagrams (charts.flow.noNodes).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No nodes yet"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ノードがまだありません"
-          }
-        }
-      }
-    },
     "node.begin" : {
       "comment" : "The same words as the core's flow diagrams (charts.node.begin).",
       "extractionState" : "manual",
@@ -199,96 +127,6 @@
         }
       }
     },
-    "note.back" : {
-      "comment" : "The same words as the core's flow diagrams (charts.note.back); arguments 1: name.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "→ back to %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "→ %@ へ"
-          }
-        }
-      }
-    },
-    "note.check" : {
-      "comment" : "The same words as the core's flow diagrams (charts.note.check); arguments 1: text.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "確かめる: %@"
-          }
-        }
-      }
-    },
-    "note.noRows" : {
-      "comment" : "The same words as the core's flow diagrams (charts.note.noRows).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No rows yet"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "行がまだありません"
-          }
-        }
-      }
-    },
-    "note.nothing" : {
-      "comment" : "The same words as the core's flow diagrams (charts.note.nothing).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do nothing"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "何もしない"
-          }
-        }
-      }
-    },
-    "note.waitUntil" : {
-      "comment" : "The same words as the core's flow diagrams (charts.note.waitUntil); arguments 1: what, 2: timeout.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "wait %1$@ (until %2$@)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "wait %1$@（%2$@ まで）"
-          }
-        }
-      }
-    },
     "op.fetch" : {
       "comment" : "The same words as the core's flow diagrams (charts.op.fetch).",
       "extractionState" : "manual",
@@ -361,362 +199,56 @@
         }
       }
     },
-    "participant.card" : {
-      "comment" : "The same words as the core's flow diagrams (charts.participant.card); arguments 1: place, 2: name.",
+    "partner.anyone" : {
+      "comment" : "The same words as the core's flow diagrams (charts.partner.anyone).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ (%2$@)"
+            "value" : "anyone"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@（%2$@）"
+            "value" : "誰からでも"
           }
         }
       }
     },
-    "participant.store" : {
-      "comment" : "The same words as the core's flow diagrams (charts.participant.store); arguments 1: name.",
+    "partner.notWritten" : {
+      "comment" : "The same words as the core's flow diagrams (charts.partner.notWritten).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ (store)"
+            "value" : "(partner not written)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（store）"
+            "value" : "（相手が書かれていない）"
           }
         }
       }
     },
-    "title.endReply" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.endReply); arguments 1: head, 2: outcome, 3: to, 4: carries.",
+    "partner.start" : {
+      "comment" : "The same words as the core's flow diagrams (charts.partner.start).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (returns to %3$@%4$@)"
+            "value" : "the start's partner"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@（%3$@ に返す%4$@）"
-          }
-        }
-      }
-    },
-    "title.event" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.event); arguments 1: flow, 2: outcome.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ends with %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ が %2$@"
-          }
-        }
-      }
-    },
-    "title.join" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.join); arguments 1: head, 2: join.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ (%2$@)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@（%2$@）"
-          }
-        }
-      }
-    },
-    "title.manual" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.manual); arguments 1: head.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ (manual)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@（手動）"
-          }
-        }
-      }
-    },
-    "title.moreRows" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.moreRows); arguments 1: count.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "and %@ more"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほか %@ 行"
-          }
-        }
-      }
-    },
-    "title.periodic" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.periodic).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "periodic"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "定期"
-          }
-        }
-      }
-    },
-    "title.receive" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.receive); arguments 1: head, 2: from.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: receives from %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %2$@ から受ける"
-          }
-        }
-      }
-    },
-    "title.receiveCarrying" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.receiveCarrying); arguments 1: head, 2: from, 3: carries.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: receives from %2$@ (%3$@)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %2$@ から受ける（%3$@）"
-          }
-        }
-      }
-    },
-    "title.runParallel" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.runParallel); arguments 1: head, 2: join, 3: targets.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ (parallel, %2$@): %3$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@（並列・%2$@）: %3$@"
-          }
-        }
-      }
-    },
-    "title.startup" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.startup); arguments 1: head.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ (on every startup)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@（起動のたび）"
-          }
-        }
-      }
-    },
-    "title.waitUntil" : {
-      "comment" : "The same words as the core's flow diagrams (charts.title.waitUntil); arguments 1: head, 2: what, 3: timeout.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %2$@ (until %3$@)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %2$@（%3$@ まで）"
-          }
-        }
-      }
-    },
-    "way.failure" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.failure).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On failure"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "失敗したとき"
-          }
-        }
-      }
-    },
-    "way.from" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.from); arguments 1: said.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ から"
-          }
-        }
-      }
-    },
-    "way.inTime" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.inTime).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In time"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間に合ったとき"
-          }
-        }
-      }
-    },
-    "way.otherwise" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.otherwise).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otherwise"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "それ以外"
-          }
-        }
-      }
-    },
-    "way.success" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.success).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On success"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功したとき"
-          }
-        }
-      }
-    },
-    "way.timeout" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.timeout).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On timeout"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間切れのとき"
-          }
-        }
-      }
-    },
-    "way.to" : {
-      "comment" : "The same words as the core's flow diagrams (charts.way.to); arguments 1: said.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ へ"
+            "value" : "開始の相手"
           }
         }
       }

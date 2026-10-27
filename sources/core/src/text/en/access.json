@@ -5,6 +5,7 @@
   "access.keyNameTooLong": "The access key name must be at most 80 characters",
   "access.keyNeeded": "Connecting to MCP needs an access key (Authorization: Bearer <access key>). Create one under \"Access key\" in the Place settings of the project list",
   "access.keyNotFound": "Access key not found",
+  "access.keyUnusable": "This access key cannot be used (it was revoked, or it is not a key of this place). Use a key from \"Access key\" in the Place settings of the project list, or make a new one there",
   "access.levelWord": "level must be read or write ({value} is not understood)",
   "access.needs": "{op} needs {key} ({what})",
   "access.noProject": "There is no such project",

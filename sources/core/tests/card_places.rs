@@ -4,7 +4,7 @@
 
 use crate::common;
 
-use common::{call, checked, script_store};
+use common::{call, checked, op, script_store};
 use serde_json::{Value, json};
 use specboard_core::Core;
 
@@ -280,8 +280,8 @@ fn a_value_folded_into_its_holder_blocks_nothing() {
 }
 
 /// A card that has come to lie over another — grown since it was put — is said by the check
-/// (`overlaps`: which, over what, and where it would go) and moved clear by `tidy`, nothing
-/// else touched.
+/// (`overlaps`: which, over what, and where tidying puts it) and moved down clear by `tidy`,
+/// nothing else touched.
 #[test]
 fn cards_that_overlap_are_said_and_tidied() {
     let core = Core::open(script_store()).unwrap();
@@ -325,6 +325,9 @@ fn cards_that_overlap_are_said_and_tidied() {
     assert_eq!(said[0]["at"], "Schemas/Shapes:Below");
     assert_eq!(said[0]["over"], json!(["Schemas/Shapes:Grows"]));
     let to = said[0]["moveTo"].clone();
+    // Straight down, under Grows (18 cells: the project's 15 rows and the count of those out of
+    // sight) and the margin.
+    assert_eq!(to, json!({"x": 0, "y": 19}));
     let tidied = mcp(
         &core,
         "section_update",
@@ -522,24 +525,24 @@ fn boxes_are_moved_together_by_or_to_and_kept_clear_as_a_group() {
 }
 
 #[test]
-fn boxes_are_arranged_in_columns_a_margin_apart() {
+fn boxes_are_arranged_in_order_in_columns_a_margin_apart() {
     let core = lab();
     let arranged = update(
         &core,
-        json!({"arrange": {"cards": ["Free/Lab:C", "Free/Lab:A", "Free/Lab:B"], "columns": 2, "at": {"x": 100, "y": 100}}}),
+        json!({"arrange": {"by": "order", "cards": ["Free/Lab:C", "Free/Lab:A", "Free/Lab:B"], "columns": 2, "at": {"x": 100, "y": 100}}}),
     )
     .unwrap();
     // In the order given, two columns 11 apart (a card 10 wide and the margin), each under the
-    // one above it in its column (a note a line long is 3 tall, then the margin).
+    // one above it in its column (a note a line long is 4 tall, then the margin).
     assert_eq!(
         (at(&core, "C"), at(&core, "A"), at(&core, "B")),
-        ((100, 100), (111, 100), (100, 104))
+        ((100, 100), (111, 100), (100, 105))
     );
     assert_eq!(arranged["arranged"].as_array().unwrap().len(), 3);
     // By a region, from the top down: from where the top left of them was, four columns.
     update(
         &core,
-        json!({"arrange": {"region": {"from": {"x": 100, "y": 100}, "to": {"x": 130, "y": 110}, "mode": "contain"}}}),
+        json!({"arrange": {"by": "order", "region": {"from": {"x": 100, "y": 100}, "to": {"x": 130, "y": 110}, "mode": "contain"}}}),
     )
     .unwrap();
     assert_eq!(
@@ -548,14 +551,451 @@ fn boxes_are_arranged_in_columns_a_margin_apart() {
     );
     let refused = update(
         &core,
-        json!({"arrange": {"cards": ["Free/Lab:A"], "columns": 0}}),
+        json!({"arrange": {"by": "order", "cards": ["Free/Lab:A"], "columns": 0}}),
     )
     .unwrap_err();
     assert!(refused.contains("columns は 1〜12 の整数"), "{refused}");
     let refused = update(
         &core,
-        json!({"arrange": {"cards": ["Free/Lab:A"], "gap": 2}}),
+        json!({"arrange": {"by": "order", "cards": ["Free/Lab:A"], "gap": 2}}),
     )
     .unwrap_err();
     assert!(refused.contains("gap"), "{refused}");
+}
+
+#[test]
+fn arrange_without_by_is_refused() {
+    let core = lab();
+    for value in [
+        json!({"cards": ["Free/Lab:B", "Free/Lab:A"]}),
+        json!({"by": "rows", "cards": ["Free/Lab:B", "Free/Lab:A"]}),
+    ] {
+        let refused = update(&core, json!({"arrange": value})).unwrap_err();
+        assert!(
+            refused.contains("lines") && refused.contains("order"),
+            "{refused}"
+        );
+    }
+    assert_eq!((at(&core, "A"), at(&core, "B")), ((0, 0), (11, 0)));
+}
+
+// MARK: - Tidying
+
+/// The id a section under Free is kept by, in main.
+fn free_section(core: &Core, name: &str) -> String {
+    rusqlite::Connection::open(core.place())
+        .unwrap()
+        .query_row(
+            "SELECT s.id FROM section_docs s JOIN section_docs p ON p.id = s.parent_id AND p.branch_id = ''
+              WHERE s.branch_id = '' AND p.name = 'Free' AND s.name = ?",
+            [name],
+            |r| r.get(0),
+        )
+        .unwrap()
+}
+
+/// The id a card (or a card ghost) of a section under Free is kept by, in main.
+fn card_in(core: &Core, section: &str, name: &str) -> String {
+    let section = free_section(core, section);
+    rusqlite::Connection::open(core.place())
+        .unwrap()
+        .query_row(
+            "SELECT id FROM card_docs WHERE branch_id = '' AND section_id = ? AND name = ?",
+            [section.as_str(), name],
+            |r| r.get(0),
+        )
+        .unwrap()
+}
+
+/// Boxes put on Free/Lab's map where they are said, over one another or not, as the window puts
+/// them: cards of Lab by name, section ghosts by `§` and the section's name under Free.
+fn put_on_lab(core: &Core, boxes: &[(&str, i64, i64)]) {
+    let lab = free_section(core, "Lab");
+    let boxes: Vec<Value> = boxes
+        .iter()
+        .map(|&(name, x, y)| match name.strip_prefix('§') {
+            Some(section) => {
+                json!({"view": lab, "kind": "section", "item": free_section(core, section), "x": x, "y": y})
+            }
+            None => json!({"item": card_in(core, "Lab", name), "x": x, "y": y}),
+        })
+        .collect();
+    let said = op(
+        core,
+        json!({"op": "places", "project": common::project_id(core), "boxes": boxes}),
+    );
+    assert!(said.get("error").is_none(), "{said}");
+}
+
+/// Notes of Free/Lab made far apart, each `lines` lines long.
+fn notes(core: &Core, notes: &[(&str, usize)]) {
+    for (n, &(name, lines)) in notes.iter().enumerate() {
+        let body: Vec<String> = (0..lines).map(|i| format!("{name} {i}")).collect();
+        mcp(
+            core,
+            "card_create",
+            json!({"target": format!("Free/Lab:{name}"),
+                   "value": {"kind": "note", "body": body.join("\n"), "topLeft": {"x": 500 + 20 * n as i64, "y": 500}}}),
+        );
+    }
+}
+
+/// A section Free/Lab with nothing in it.
+fn empty_lab() -> Core {
+    let core = Core::open(script_store()).unwrap();
+    mcp(&core, "section_create", json!({"target": "Free/Lab"}));
+    core
+}
+
+fn tidy(core: &Core) -> Value {
+    update(core, json!({"tidy": true})).unwrap()
+}
+
+/// The top-left of each box of Free/Lab's map named, by its path.
+fn lab_at(core: &Core, path: &str) -> (i64, i64) {
+    let place = &places(core, "Free/Lab")[path]["topLeft"];
+    (place["x"].as_i64().unwrap(), place["y"].as_i64().unwrap())
+}
+
+#[test]
+fn tidy_moves_boxes_only_down_to_clear_overlaps() {
+    let core = empty_lab();
+    notes(&core, &[("A", 3), ("B", 3), ("H", 1)]);
+    put_on_lab(&core, &[("A", 0, 0), ("B", 0, 3), ("H", 0, 9)]);
+    let tidied = tidy(&core);
+    assert_eq!(
+        (at(&core, "A"), at(&core, "B"), at(&core, "H")),
+        ((0, 0), (0, 6), (0, 12))
+    );
+    assert_eq!(
+        tidied["tidied"],
+        json!([{"card": "Free/Lab:B", "topLeft": {"x": 0, "y": 6}}, {"card": "Free/Lab:H", "topLeft": {"x": 0, "y": 12}}])
+    );
+}
+
+#[test]
+fn tidy_leaves_a_box_that_is_clear_where_it_is() {
+    let core = empty_lab();
+    notes(&core, &[("A", 6), ("B", 1), ("C", 1)]);
+    put_on_lab(&core, &[("A", 0, 5), ("B", 0, 6), ("C", 0, 0)]);
+    let tidied = tidy(&core);
+    assert_eq!(at(&core, "B"), (0, 13));
+    assert_eq!((at(&core, "C"), at(&core, "A")), ((0, 0), (0, 5)));
+    assert_eq!(
+        tidied["tidied"],
+        json!([{"card": "Free/Lab:B", "topLeft": {"x": 0, "y": 13}}])
+    );
+}
+
+/// An entity of four fields, one of them holding the value object Address, folded as it first
+/// shows: 6 cells tall, and it grows when the field is opened.
+fn growing(name: &str, x: i64, sized: bool) -> Value {
+    let mut value = json!({"kind": "entity", "topLeft": {"x": x, "y": 0},
+        "fields": [{"name": "id", "type": "string"}, {"name": "name", "type": "string"},
+                   {"name": "note", "type": "string"}, {"name": "address", "type": "string"}],
+        "connections": [{"line": "embed", "from": "address", "to": "Address"}]});
+    if sized {
+        value["size"] = json!({"w": 10, "h": 6});
+    }
+    json!({"target": format!("Free/Lab:{name}"), "value": value})
+}
+
+/// Free/Lab with the value object Address out of the way, for `growing` to hold.
+fn lab_with_address() -> Core {
+    let core = empty_lab();
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Lab:Address", "value": {"kind": "value", "topLeft": {"x": 300, "y": 300},
+            "fields": [{"name": "city", "type": "string"}]}}),
+    );
+    core
+}
+
+#[test]
+fn tidy_leaves_room_under_a_card_that_can_grow() {
+    let core = lab_with_address();
+    mcp(&core, "card_create", growing("Order", 0, false));
+    mcp(&core, "card_create", growing("Fixed", 11, true));
+    notes(&core, &[("N", 1), ("M", 1), ("Plain", 3), ("P", 1)]);
+    put_on_lab(
+        &core,
+        &[("N", 0, 7), ("M", 11, 7), ("Plain", 22, 0), ("P", 22, 6)],
+    );
+    assert_eq!(
+        places(&core, "Free/Lab")["Free/Lab:Order"]["bottomRight"]["y"],
+        5
+    );
+    let tidied = tidy(&core);
+    assert_eq!(at(&core, "N"), (0, 20));
+    assert_eq!((at(&core, "M"), at(&core, "P")), ((11, 7), (22, 6)));
+    assert_eq!(
+        tidied["tidied"],
+        json!([{"card": "Free/Lab:N", "topLeft": {"x": 0, "y": 20}}])
+    );
+}
+
+#[test]
+fn tidy_takes_card_ghosts_and_section_ghosts_as_boxes() {
+    let core = empty_lab();
+    mcp(
+        &core,
+        "section_create",
+        json!({"target": ["Free/Shop", "Free/Store", "Free/Old"]}),
+    );
+    for (path, fields) in [
+        ("Free/Shop:Item", 1),
+        ("Free/Shop:Bill", 1),
+        ("Free/Store:Stock", 2),
+    ] {
+        let fields: Vec<Value> = (0..fields)
+            .map(|i| json!({"name": format!("f{i}"), "type": "string"}))
+            .collect();
+        mcp(
+            &core,
+            "card_create",
+            json!({"target": path, "value": {"kind": "entity", "fields": fields}}),
+        );
+    }
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Lab:A", "value": {"kind": "entity", "topLeft": {"x": 0, "y": 0},
+            "fields": [{"name": "item", "type": "string"}, {"name": "bill", "type": "string"}, {"name": "memo", "type": "string"}],
+            "connections": [{"line": "points", "from": "item", "to": "Free/Shop:Item"},
+                            {"line": "points", "from": "bill", "to": "Free/Shop:Bill"}]}}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Lab:G", "value": {"kind": "ghost", "target": "Free/Store:Stock"}}),
+    );
+    put_on_lab(&core, &[("G", 0, 2), ("§Shop", 0, 5), ("§Old", 0, 6)]);
+    let boxes = places(&core, "Free/Lab");
+    assert_eq!(boxes["Free/Lab:G"]["bottomRight"], json!({"x": 9, "y": 5}));
+    assert_eq!(boxes["Free/Shop"]["bottomRight"], json!({"x": 9, "y": 8}));
+    let tidied = tidy(&core);
+    assert_eq!(lab_at(&core, "Free/Lab:G"), (0, 6));
+    assert_eq!(lab_at(&core, "Free/Shop"), (0, 11));
+    assert_eq!(
+        tidied["tidied"],
+        json!([{"card": "Free/Lab:G", "topLeft": {"x": 0, "y": 6}}, {"sectionGhost": "Free/Shop", "topLeft": {"x": 0, "y": 11}}])
+    );
+    assert_eq!(lab_at(&core, "Free/Old"), (0, 6));
+}
+
+#[test]
+fn tidy_twice_moves_nothing_the_second_time() {
+    let core = lab_with_address();
+    notes(&core, &[("A", 3), ("B", 3), ("H", 1), ("N", 1)]);
+    mcp(&core, "card_create", growing("Order", 40, false));
+    put_on_lab(
+        &core,
+        &[("A", 0, 0), ("B", 0, 3), ("H", 0, 9), ("N", 40, 7)],
+    );
+    let first = tidy(&core);
+    assert!(!first["tidied"].as_array().unwrap().is_empty(), "{first}");
+    let after = places(&core, "Free/Lab");
+    let second = tidy(&core);
+    assert_eq!(second["tidied"], json!([]));
+    assert_eq!(places(&core, "Free/Lab"), after);
+}
+
+#[test]
+fn tidy_is_refused_in_a_ui_section_and_a_working_directory() {
+    let core = empty_lab();
+    let mut tree = mcp(&core, "project_read", json!({}))["projectTree"].clone();
+    tree["main_sections"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"type": "ui", "name": "UI"}));
+    mcp(
+        &core,
+        "project_update",
+        json!({"value": {"project_tree": tree}}),
+    );
+    mcp(&core, "section_create", json!({"target": "UI/Home"}));
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "UI/Home:Title": {"kind": "html", "body": "<h1>a</h1>", "topLeft": {"x": 0, "y": 0}},
+            "UI/Home:Badge": {"kind": "html", "body": "<b>b</b>", "topLeft": {"x": 0, "y": 1}},
+        }}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "ts:One": {"kind": "note", "body": "one", "topLeft": {"x": 0, "y": 0}},
+            "ts:Two": {"kind": "note", "body": "two", "topLeft": {"x": 40, "y": 0}},
+        }}),
+    );
+    let two = rusqlite::Connection::open(core.place())
+        .unwrap()
+        .query_row(
+            "SELECT id FROM card_docs WHERE branch_id = '' AND name = 'Two' AND kind = 'note'",
+            [],
+            |r| r.get::<_, String>(0),
+        )
+        .unwrap();
+    let said = op(
+        &core,
+        json!({"op": "places", "project": common::project_id(&core), "boxes": [{"item": two, "x": 0, "y": 1}]}),
+    );
+    assert!(said.get("error").is_none(), "{said}");
+    for section in ["UI/Home", "ts"] {
+        let before = places(&core, section);
+        let (failed, text) = call(
+            &core,
+            "section_update",
+            json!({"project": "見本", "target": section, "value": {"tidy": true}}),
+        );
+        assert!(failed, "{section}: {text}");
+        assert_eq!(places(&core, section), before, "{section}");
+    }
+    let refused = update(&core, json!({"tidy": "yes"})).unwrap_err();
+    assert!(refused.contains("tidy は boolean"), "{refused}");
+}
+
+/// Free/Lab's entity A, and Free/Shop's Item, Bill (with a field total) and Customer: A's field b
+/// points at Bill's total, A points at Item, and Customer's field a points at A.
+fn lab_and_shop() -> Core {
+    let core = empty_lab();
+    mcp(
+        &core,
+        "section_create",
+        json!({"target": ["Free/Shop", "Free/Store", "Free/Old"]}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Free/Shop:Item": {"kind": "entity", "fields": [{"name": "name", "type": "string"}]},
+            "Free/Shop:Bill": {"kind": "entity", "fields": [{"name": "total", "type": "string"}]},
+        }}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Lab:A", "value": {"kind": "entity", "topLeft": {"x": 0, "y": 0},
+            "fields": [{"name": "b", "type": "string"}, {"name": "item", "type": "string"}],
+            "connections": [{"line": "points", "from": "b", "to": "Free/Shop:Bill", "at": "total"},
+                            {"line": "points", "from": "item", "to": "Free/Shop:Item"}]}}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Shop:Customer", "value": {"kind": "entity",
+            "fields": [{"name": "a", "type": "string"}],
+            "connections": [{"line": "points", "from": "a", "to": "Free/Lab:A"}]}}),
+    );
+    core
+}
+
+#[test]
+fn a_section_ghost_is_as_tall_as_the_rows_its_lines_land_on() {
+    let core = lab_and_shop();
+    put_on_lab(&core, &[("§Shop", 30, 0), ("§Old", 30, 20)]);
+    let boxes = places(&core, "Free/Lab");
+    // Bill, its total, Item and Customer: four rows.
+    assert_eq!(
+        boxes["Free/Shop"],
+        json!({"topLeft": {"x": 30, "y": 0}, "bottomRight": {"x": 39, "y": 5}})
+    );
+    assert_eq!(boxes["Free/Old"]["drawn"], json!(false));
+    update(
+        &core,
+        json!({"places": {"Free/Shop": {"size": {"w": 10, "h": 9}}}}),
+    )
+    .unwrap();
+    assert_eq!(
+        places(&core, "Free/Lab")["Free/Shop"]["bottomRight"],
+        json!({"x": 39, "y": 8})
+    );
+}
+
+/// Free/Lab's A pointing at two cards of Free/Shop and two of Free/Store: each section ghost two
+/// rows, 10 by 4.
+fn lab_pointing_at_two() -> Core {
+    let core = empty_lab();
+    mcp(
+        &core,
+        "section_create",
+        json!({"target": ["Free/Shop", "Free/Store"]}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Free/Shop:Item": {"kind": "entity"},
+            "Free/Shop:Bill": {"kind": "entity"},
+            "Free/Store:Stock": {"kind": "entity"},
+            "Free/Store:Lot": {"kind": "entity"},
+        }}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": "Free/Lab:A", "value": {"kind": "entity", "topLeft": {"x": 0, "y": 0},
+            "fields": [{"name": "item", "type": "string"}, {"name": "bill", "type": "string"},
+                       {"name": "stock", "type": "string"}, {"name": "lot", "type": "string"}],
+            "connections": [{"line": "points", "from": "item", "to": "Free/Shop:Item"},
+                            {"line": "points", "from": "bill", "to": "Free/Shop:Bill"},
+                            {"line": "points", "from": "stock", "to": "Free/Store:Stock"},
+                            {"line": "points", "from": "lot", "to": "Free/Store:Lot"}]}}),
+    );
+    core
+}
+
+#[test]
+fn the_inspection_says_section_ghosts_that_overlap() {
+    let core = lab_pointing_at_two();
+    put_on_lab(&core, &[("§Shop", 40, 0), ("§Store", 40, 3)]);
+    let overlapping = |core: &Core| -> Vec<Value> {
+        checked(core, "main")["overlaps"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
+            .into_iter()
+            .filter(|o| o["section"] == "Free/Lab")
+            .collect()
+    };
+    let said = overlapping(&core);
+    assert_eq!(said.len(), 1, "{said:?}");
+    assert_eq!(said[0]["at"], "Free/Store");
+    assert_eq!(said[0]["over"], json!(["Free/Shop"]));
+    assert_eq!(said[0]["moveTo"], json!({"x": 40, "y": 5}));
+    tidy(&core);
+    assert_eq!(lab_at(&core, "Free/Store"), (40, 5));
+    assert!(overlapping(&core).is_empty());
+}
+
+#[test]
+fn the_window_reads_whether_a_section_ghost_was_placed_by_hand() {
+    let core = lab_pointing_at_two();
+    update(
+        &core,
+        json!({"places": {"Free/Store": {"topLeft": {"x": 40, "y": 0}}}}),
+    )
+    .unwrap();
+    put_on_lab(&core, &[("§Shop", 40, 2)]);
+    let (lab, shop, store) = (
+        free_section(&core, "Lab"),
+        free_section(&core, "Shop"),
+        free_section(&core, "Store"),
+    );
+    let ghosts = |core: &Core| {
+        op(
+            core,
+            json!({"op": "section_positions", "project": common::project_id(core)}),
+        )["result"]["sectionGhosts"][&lab]
+            .clone()
+    };
+    let read = ghosts(&core);
+    assert_eq!(read[&store], json!({"x": 40, "y": 0, "pinned": true}));
+    assert_eq!(read[&shop], json!({"x": 40, "y": 2}));
+    tidy(&core);
+    let read = ghosts(&core);
+    assert_eq!(read[&shop], json!({"x": 40, "y": 5, "pinned": true}));
 }

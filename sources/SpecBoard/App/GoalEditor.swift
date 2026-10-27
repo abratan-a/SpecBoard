@@ -41,7 +41,7 @@ struct GoalEditor: View {
     var body: some View {
         let map = GoalCardMap.detail(goal, in: detail)
         VStack(spacing: 0) {
-            CardMapBar(model: model, card: goal, badge: L10n[.Board.goalBadge], editable: editable,
+            CardMapBar(model: model, card: goal, badge: BuiltinWords.badge(goal.kind.rawValue), editable: editable,
                        fit: { controller.fit() }) {
                 progress
             } tools: {
@@ -72,6 +72,7 @@ struct GoalEditor: View {
             case .map:
                 DiagramFrame(model: model, definition: DiagramDefinition(
                     detail: map,
+                    surroundings: Surroundings(groups: model.groups(on: goal.id)),
                     key: "goal:\(goal.id)",
                     controller: controller,
                     dataGeneration: model.dataGeneration,
@@ -89,7 +90,8 @@ struct GoalEditor: View {
                     onClickEmpty: { model.selectSchema(goal.id, follow: false) },
                     mermaid: { [path = detail.directory.full(goal)] kinds in
                         model.diagramMermaid("card_read", target: path, kinds: kinds)
-                    }),
+                    },
+                    groups: model.cardMapGroupHooks(goal.id)),
                     hint: L10n[.Board.goalMapHint])
             }
         }

@@ -28,7 +28,8 @@ pub use convert::{Names, Parts, from_wire, no_card, to_wire};
 pub use defs::{
     At, Base, DIRECTORY, Defs, EVACUATION, End, Export, ExportAs, FIELD_ROWS, KINDS_KEYS, LineDef,
     LinePlace, Look, ProjectTree, SECTION_ACTIONS, SectionDef, TopSection, Tree, WORKDIR,
-    builtin_defs, builtin_written, icon_over, is_record, project_tree_shape, reserved_name,
+    builtin_defs, builtin_written, icon_over, is_record, project_tree_shape, read_icon,
+    reserved_name,
 };
 
 use serde_json::{Map, Value};
@@ -839,10 +840,57 @@ pub const GOALS: &str = "goals";
 pub const COMPLETE: &str = "complete";
 pub const CANCELLED: &str = "cancelled";
 
+/// The kind of section that holds flows as one more part of the system: `chart` is the plain one,
+/// and `actor` (`specboard://SpecBoard/Docs/Design:Overview` §9「アクターのセクション」) one that
+/// provides and uses, nested in charts and actors alike.
+pub const CHART: &str = "chart";
+pub const ACTOR: &str = "actor";
+
+/// What an actor is (`figure`): a part the system is built of — when none is written —, a person,
+/// or something outside whose inside is not written.
+pub const FIGURES: [&str; 3] = ["system", "person", "outside"];
+
+/// Whether a section of `kind` holds flows as a chart does: a chart's or an actor's, where a
+/// section's flows are listed (`![[Section:]]`) and a document's `diagrams` row may point.
+pub fn holds_flows(kind: Option<&str>) -> bool {
+    matches!(kind, Some(CHART | ACTOR))
+}
+
+/// The mark an actor of `figure` is drawn with while the project leaves the kind's mark as built in.
+pub fn figure_mark(figure: Option<&str>) -> &'static str {
+    match figure {
+        Some("person") => "person",
+        Some("outside") => "cloud",
+        _ => "cube",
+    }
+}
+
 /// A data card's kind, and its line to its shape (`specboard://SpecBoard/Docs/Design:CardKinds`
 /// 「データ（instance）」): MCP writes the line with the value's key `of`, not in `connections`.
 pub const INSTANCE: &str = "instance";
-pub const OF_LINE: &str = "of";
+pub const OF_LINE: &str = "shapeOf";
+
+/// The built-in kinds of line named otherwise before (`name_move`), each by its name of before and
+/// of now: named now as the screen says them.
+pub const LINE_NAMES_BEFORE: [(&str, &str); 5] = [
+    ("notes", "rules"),
+    ("of", "shapeOf"),
+    ("branch", "condition"),
+    ("event", "awaits"),
+    ("peer", "partner"),
+];
+
+/// A goal's values of before (`name_move`), each by its field, its value of before and of now: in
+/// English now, the Japanese their labels (`optionLabels`).
+pub const GOAL_VALUES_BEFORE: [(&str, &str, &str); 7] = [
+    ("status", "未着手", "notStarted"),
+    ("status", "進行中", "inProgress"),
+    ("status", "完了", "done"),
+    ("status", "打ち切り", "cancelled"),
+    ("priority", "高", "high"),
+    ("priority", "中", "medium"),
+    ("priority", "低", "low"),
+];
 
 /// The kind of a table of data cards (`specboard://SpecBoard/Docs/Design:CardKinds`「表（table）」): its shape is the line `of` too.
 pub const TABLE: &str = "table";

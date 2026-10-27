@@ -40,7 +40,7 @@ struct ConnectView: View {
         do {
             return .success(try model.drawable(from: source, to: target))
         } catch {
-            return .failure(Problem(said: error.localizedDescription))
+            return .failure(Problem(said: ErrorText.said(error)))
         }
     }
 
@@ -271,7 +271,7 @@ struct LineList: View {
                                 .font(.app(11.5)).lineLimit(1)
                             Text(one.kind).font(.app(9.5, design: .monospaced)).foregroundStyle(.tertiary)
                             if let state = one.state, !state.isEmpty {
-                                Text(state).font(.app(10)).foregroundStyle(.secondary)
+                                Text(model.detail?.cardKinds[one.kind]?.field(one.stateField ?? "")?.shown(state) ?? state).font(.app(10)).foregroundStyle(.secondary)
                             }
                         }
                         Text(one.at.map { "\(one.path) → \($0)" } ?? one.path)
@@ -412,7 +412,8 @@ struct LineList: View {
 }
 
 /// What an implementation line says under its target when its code is to be looked at: in orange where the code
-/// changed since it was recorded (its dot, `CodeStateDot`, is at the row's end), in grey where it was never recorded.
+/// changed since it was recorded (its dot, `CodeStateDot`, is at the row's end), in grey where it was never recorded,
+/// in red where what it points at is not in the code (the core's words: which function, in which file).
 struct CodeStateNote: View {
     var code: CodeReviewLine
 
@@ -424,6 +425,9 @@ struct CodeStateNote: View {
                 .lineLimit(1).truncationMode(.tail)
         case .unrecorded:
             Text(L10n[.Lines.lineCodeUnrecorded]).font(.app(10.5)).foregroundStyle(.secondary)
+        case .broken:
+            Text(code.why ?? L10n[.Lines.lineTargetGone]).font(.app(10.5)).foregroundStyle(Color(nsColor: .systemRed))
+                .lineLimit(2).truncationMode(.tail).help(code.why ?? "")
         }
     }
 }

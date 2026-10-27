@@ -3,20 +3,21 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// What is open — main, or what one branch sees (`specboard://SpecBoard/Docs/Design:DesignBranches` §2) — as
-/// one tree: its sections; in each section the sections inside it, what its lines reach
-/// of the others (folded into section ghosts on its diagram), and its cards and card
-/// ghosts, folded in a group of their own. Which branch is open is picked above it
-/// (`BranchList`).
+/// one tree: its sections; in each section its cards and card ghosts, folded in a group of
+/// their own, what its lines reach of the others (folded into section ghosts on its
+/// diagram), and the sections inside it. Which branch is open is picked above it
+/// (`BranchList`). Scrolled down, the rows above the top row stay pinned over the tree
+/// (`NavSticky`).
 ///
 ///     main  Main
 ///       ▸ Docs
 ///       ▾ Ordering
-///         ▸ Payments          ← a section inside
-///         ▸ section ghosts    ← worked out: the other sections' cards its lines reach
 ///         ▾ cards             ← its cards, folded until opened
 ///             Order
 ///             ↪ Buyer → Tenant:User   ← a card ghost: a shortcut to another's card
 ///           ▸ values / enums  ← drawn inside the cards that hold them
+///         ▸ section ghosts    ← worked out: the other sections' cards its lines reach
+///         ▸ Payments          ← a section inside
 ///
 /// The browser before it went one level at a time behind a trail, so a deep
 /// section was always several clicks up and down again. The rows are worked out
@@ -312,6 +313,8 @@ enum NavPanelTree {
             }
         }
         func isOpen(_ node: Node) -> Bool { expanded.contains(node.key) }
+        // Each flow's nodes, in the project's order: looked up once rather than searched for each flow.
+        let nodesOf = Dictionary(grouping: detail.inner, by: \.container)
         // In the section's own order (the cards' `order`), which a drag between them changes.
         func cards(of section: String) -> [SchemaNode] {
             directory.members(section).filter { !filtering || found.contains($0.id) }
@@ -321,19 +324,25 @@ enum NavPanelTree {
             directory.ghosts(in: section).filter { !filtering || found.contains($0.id) }
         }
 
+        // A section's own cards first, what its lines reach next, the sections inside it last: what it holds
+        // is read before what lies below it, and a long run of sections does not push its cards out of sight.
         func walk(_ section: ProjectSection, _ depth: Int, removed: Bool = false) {
             if filtering, !keep.contains(section.id) { return }
             let node = removed ? Node.goneSection(section.id) : Node.section(section.id)
             out.append(Row(node: node, depth: depth))
             guard filtering || isOpen(node) else { return }
-            let children = merged(directory.children(of: section.id), goneSections[section.id] ?? []) { ($0.sortOrder, $0.name) }
-            for (child, isGone) in children { walk(child, depth + 1, removed: removed || isGone) }
+            cardsGroup(section, depth)
             // A root draws no diagram of its own (its dashboard is there): no section ghosts.
             if !filtering, !removed, section.parentId != nil {
                 let auto = Node.auto(section.id)
                 out.append(Row(node: auto, depth: depth + 1))
                 if isOpen(auto) { autoRows(section, depth + 2) }
             }
+            let children = merged(directory.children(of: section.id), goneSections[section.id] ?? []) { ($0.sortOrder, $0.name) }
+            for (child, isGone) in children { walk(child, depth + 1, removed: removed || isGone) }
+        }
+        // A section's cards and card ghosts, in a group of their own.
+        func cardsGroup(_ section: ProjectSection, _ depth: Int) {
             // No group where there is nothing to hold, as for the values below.
             let held = merged(cards(of: section.id), goneCards[section.id] ?? [], order: byPlace)
             let shortcuts = merged(ghosts(of: section.id), goneGhosts[section.id] ?? []) { ($0.sortOrder, $0.name) }
@@ -368,7 +377,7 @@ enum NavPanelTree {
                 return
             }
             if card.kind == .flow {
-                let nodes = detail.inner.filter { $0.container == card.id && (!filtering || foundNodes.contains($0.id)) }
+                let nodes = (nodesOf[card.id] ?? []).filter { !filtering || foundNodes.contains($0.id) }
                 for (held, isGone) in merged(nodes, goneNodes[card.id] ?? [], order: { ($0.sortOrder, $0.name) }) {
                     out.append(Row(node: isGone ? .gone(held.id) : .node(held.id), depth: depth))
                 }
@@ -458,7 +467,11 @@ enum NavPanelTree {
     /// container card and the groups of a section's cards, ● for what changed inside them, the
     /// sections and containers inside too. A thing's own mark is said before what is inside it.
     struct Marks {
-        private var byKey: [String: ChangeMark] = [:]
+        /// A thing's own mark, by the row's key.
+        private var own: [String: ChangeMark] = [:]
+        /// ● for what changed inside, by the row's key: said only while the row is folded, for
+        /// open, the rows inside show their own.
+        private var inside: [String: ChangeMark] = [:]
 
         init() {}
 
@@ -532,11 +545,14 @@ enum NavPanelTree {
                 own[Node.goneSection(section.id).key] = .removed
                 up(from: section.parentId, .removed)
             }
-            byKey = inside.compactMapValues(\.mark).merging(own) { _, mine in mine }
+            self.own = own
+            self.inside = inside.compactMapValues(\.mark)
         }
 
-        /// A row's mark.
-        func of(_ node: Node) -> ChangeMark? { byKey[node.key] }
+        /// A row's mark: its own, else — folded — ● for what changed inside it.
+        func of(_ node: Node, open: Bool = false) -> ChangeMark? {
+            own[node.key] ?? (open ? nil : inside[node.key])
+        }
     }
 
     /// How each row hangs from its parent, drawn as lines: one entry per level above
@@ -878,6 +894,61 @@ enum NavPanelTree {
         return .ghostAt(id, position: position)
     }
 
+    /// One kind of section a section's menu offers to make inside it (`newSections`): the kind as
+    /// `section_create`'s `type` takes it, an actor's figure, and what the menu says.
+    struct NewSection: Hashable {
+        /// Empty where none is asked for: the core makes the parent's own.
+        var kind: String
+        var figure: ActorFigure?
+        var title: String
+    }
+
+    /// The kinds of section that may be made inside `parent`, as its menu offers them: the kinds its
+    /// kind's definition lists (`sections`) — an actor once for each figure, first, the others in the
+    /// order listed — leaving out the ones the core alone makes (a board's Complete and Cancelled, a
+    /// working directory's folders). Its own kind where nothing is listed.
+    static func newSections(in parent: ProjectSection, _ detail: ProjectDetail) -> [NewSection] {
+        let own = parent.kind?.madeInside.rawValue ?? parent.kindName ?? ""
+        let listed = detail.sectionInside[parent.kind?.rawValue ?? parent.kindName ?? ""] ?? [own]
+        let made = listed.filter { kind in
+            !kind.isEmpty && SectionKind(rawValue: kind)?.isFixed != true
+                && kind != WorkDirIds.workdirKind && kind != WorkDirIds.directoryKind
+        }
+        let actor = SectionKind.actor.rawValue
+        var out: [NewSection] = []
+        if made.contains(actor) {
+            out += ActorFigure.allCases.map { NewSection(kind: actor, figure: $0, title: newActorTitle($0)) }
+        }
+        for kind in made where kind != actor {
+            let title = kind == SectionKind.chart.rawValue ? L10n[.Nav.menuNewChartSection]
+                : L10n[.Sections.kindNamed(SectionKind(rawValue: kind)?.label ?? detail.sectionLabels[kind] ?? kind)]
+            out.append(NewSection(kind: kind, figure: nil, title: title))
+        }
+        // Nothing listed: one of what the core makes without a kind asked for.
+        return out.isEmpty ? [NewSection(kind: "", figure: nil, title: L10n[.Nav.promptCreateSection])] : out
+    }
+
+    /// What a section's menu offers to make inside it under `title`: a submenu (`title` ▸) of the kinds,
+    /// or — one kind — a single item.
+    enum CreateMenu: Equatable {
+        case submenu(String, [NewSection])
+        case item(String, NewSection)
+    }
+
+    static func createMenu(in parent: ProjectSection, title: String, _ detail: ProjectDetail) -> CreateMenu? {
+        let choices = newSections(in: parent, detail)
+        if choices.count > 1 { return .submenu(title, choices) }
+        return choices.first.map { .item(title + "…", $0) }
+    }
+
+    private static func newActorTitle(_ figure: ActorFigure) -> String {
+        switch figure {
+        case .system: L10n[.Nav.menuNewActorSystem]
+        case .person: L10n[.Nav.menuNewActorPerson]
+        case .outside: L10n[.Nav.menuNewActorOutside]
+        }
+    }
+
     /// Whether a section's menu offers to delete it: not a root, nor what is directly under a root —
     /// the project's, renamed here and taken away with `project_tree` (the tab for kinds) — but
     /// `_evacuation_`; nor one the core keeps in its place (the board's Complete and Cancelled).
@@ -983,8 +1054,12 @@ struct NavPanelTreeView: View {
     /// The row just pressed, lit as the row on screen until what the press does has run
     /// (`NavRow.pressing`).
     @State private var pressed: String?
-    /// How tall each row is, for which part of it a drag is over.
-    @State private var heights = RowHeights()
+    /// What the rows were worked out from and what each says, kept while it is alike (`NavTreeMemo`).
+    @State private var memo = NavTreeMemo()
+    /// What the rows reach the panel through (`NavTreeHands`).
+    @State private var hands = NavTreeHands()
+    /// The rows above the top row, pinned over the tree as it scrolls (`NavSticky`).
+    @State private var sticky = NavSticky()
     @State private var loadedFor: String?
     /// The project the tree has settled on. Until it has, what arrives with the switch —
     /// the section and card the project reopens on — does not open the way to itself.
@@ -996,8 +1071,6 @@ struct NavPanelTreeView: View {
 
     /// A section or a branch being made or renamed from here.
     private enum Prompt: Equatable {
-        /// Inside a section, of its kind.
-        case create(parent: String?, kind: SectionKind?)
         case branch
         case rename(String)
         case renameBranch(String)
@@ -1005,13 +1078,15 @@ struct NavPanelTreeView: View {
         /// Whether the name asked for is a section's, held to the rule of a path's names.
         var namesSection: Bool {
             switch self {
-            case .create, .rename: true
+            case .rename: true
             case .branch, .renameBranch: false
             }
         }
     }
     /// Its name being asked for (`NameSheet`).
     @State private var asking: NameAsk?
+    /// A section about to be made: its name and mark being asked for (`NewSectionSheet`).
+    @State private var making: NewSectionAsk?
 
     /// A branch about to be let go, with what it changed.
     @State private var deleting: BranchInfo?
@@ -1021,15 +1096,31 @@ struct NavPanelTreeView: View {
     /// A card ghost being pointed elsewhere (`GhostRetargetSheet`).
     @State private var retargeting: String?
 
+    /// How many rows have been built, and how many times the rows have been worked out — for the tests: an
+    /// update builds the rows on screen that changed, and works out the rows only when what they are made
+    /// from changed.
+    static var rowsBuilt = 0
+    static var rowsWorkedOut = 0
+    /// The keys of the rows built last, the newest last — for the tests.
+    private(set) static var builtKeys: [String] = []
+
+    static func built(_ key: String) {
+        rowsBuilt += 1
+        builtKeys.append(key)
+        if builtKeys.count > 2000 { builtKeys.removeFirst(1000) }
+    }
+
     var body: some View {
         if let detail = model.detail {
             // The files whose rows are open: their functions and types, read as they open.
             let _ = model.askOutlines(NavPanelTree.openFiles(expanded))
-            let outlines = model.outlines
-            let rows = NavPanelTree.rows(detail, expanded: expanded, filter: filter, gone: model.shownMarks.gone,
-                                         outlines: outlines)
-            let marks = NavPanelTree.Marks(detail, model.shownMarks)
-            let guides = NavPanelTree.guides(rows)
+            let marksShown = model.shownMarks
+            let _ = memo.update(detail, expanded: expanded, filter: filter, marks: marksShown, inputs: faceInputs(detail))
+            let _ = hands.tree = self
+            let _ = hands.sticky = sticky
+            let rows = memo.rows
+            let guides = memo.guides
+            let now = RowState(model, pressed: pressed, drawn: drawn, allowed: allowed)
             VStack(spacing: 0) {
                 header(detail)
                     .confirmationDialog(
@@ -1060,7 +1151,8 @@ struct NavPanelTreeView: View {
                 Divider()
                 ScrollViewReader { scroll in
                     List(rows) { row in
-                        self.row(row, detail, marks: marks, guides: guides[row.id] ?? [], outlines: outlines)
+                        treeRow(row, guides: guides, now: now, detail: detail)
+                            .equatable()
                             .id(row.id)
                             // The gap around the row is the row's own (`rowGap`), to be pressed.
                             .listRowInsets(EdgeInsets())
@@ -1068,6 +1160,11 @@ struct NavPanelTreeView: View {
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
+                    // Behind the list: what finds its scroll view and lays the pinned rows over it.
+                    .background(NavStickyFollower(sticky: sticky, content: NavSticky.Content(
+                        rows: rows, outline: memo.outline,
+                        make: { row in treeRow(row, guides: guides, now: now, detail: detail, pinned: true) },
+                        toggle: { [hands] node in hands.tree?.toggle(node) })))
                     .sheet(isPresented: Binding(get: { retargeting != nil }, set: { if !$0 { retargeting = nil } })) {
                         if let id = retargeting, let ghost = model.ghost(id) {
                             GhostRetargetSheet(model: model, ghost: ghost) { retargeting = nil }
@@ -1098,6 +1195,8 @@ struct NavPanelTreeView: View {
                 }
             }
             .onAppear { load(detail) }
+            // The rows let go of the panel they reached it through.
+            .onDisappear { hands.tree = nil }
             // Another project: its tree starts folded, the way a folder does.
             .onChange(of: detail.project.id) { _, _ in load(detail, folded: true) }
             .onChange(of: model.shownSectionKey) { _, key in
@@ -1110,6 +1209,7 @@ struct NavPanelTreeView: View {
             }
             .onChange(of: expanded) { _, now in save(detail.project.id, now) }
             .nameSheet($asking)
+            .sheet(item: $making) { asked in NewSectionSheet(ask: asked) { making = nil } }
             .confirmationDialog(
                 L10n[.Nav.alertDeleteBranch(deleting?.name ?? "")],
                 isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
@@ -1236,345 +1336,107 @@ struct NavPanelTreeView: View {
 
     // MARK: - Rows
 
-    @ViewBuilder
-    private func row(_ row: NavPanelTree.Row, _ detail: ProjectDetail, marks: NavPanelTree.Marks,
-                     guides: [NavPanelTree.Guide], outlines: [String: FileOutline]) -> some View {
-        let opens = row.node.opens(in: detail.directory, gone: model.shownMarks.gone, outlines: outlines)
-        let mark = marks.of(row.node)
-        HStack(spacing: 0) {
-            chevron(row.node, depth: row.depth, opens: opens)
-            label(row.node, detail, mark: mark)
+    /// A row as the tree draws it — or its copy pinned over the tree (`NavSticky`), which takes no drag.
+    private func treeRow(_ row: NavPanelTree.Row, guides: [String: [NavPanelTree.Guide]], now: RowState,
+                         detail: ProjectDetail, pinned: Bool = false) -> NavTreeRow {
+        let face = memo.face(row)
+        return NavTreeRow(row: row, guides: guides[row.id] ?? [], face: face,
+                          open: expanded.contains(row.id), lit: now.lit(row), bold: now.bold(row.node),
+                          hidden: now.hidden(row.node, face: face),
+                          drop: !pinned && dropMark?.key == row.id ? dropMark?.spot : nil,
+                          showsMarks: now.showsMarks,
+                          draggable: !pinned && NavPanelTree.canDrag(row.node, in: detail, allowed: now.allowed),
+                          hands: hands, pinned: pinned)
+    }
+
+    /// What the rows' faces are worked out from beside the project (`NavPanelTree.FaceInputs`).
+    private func faceInputs(_ detail: ProjectDetail) -> NavPanelTree.FaceInputs {
+        let root = NavPanelTree.RootLook(
+            title: model.isBoardOpen ? L10n[.Common.wordProjectBoard] : model.openTree.name,
+            help: model.isBoardOpen ? L10n[.Nav.treeBoardOpen]
+                : model.openBranch == nil ? L10n[.Nav.treeMainOpen]
+                : L10n[.Nav.treeBranchOpen(model.openBranch?.name ?? "")],
+            branch: model.openBranch != nil && !model.isBoardOpen,
+            mainMoved: model.openBranch != nil && !model.isBoardOpen ? model.branchMarks.mainMoved : 0,
+            locked: !(model.openBranch != nil && !model.isBoardOpen) && (model.isLockedMainOpen || model.isLockedGroupOpen))
+        return NavPanelTree.FaceInputs(root: root, query: filter.query, gone: model.branchMarks.gone,
+                                       shownGone: model.shownMarks.gone, exportMarks: model.exportMarks,
+                                       outlines: model.outlines)
+    }
+
+    /// What each row shows of what a person does — the row on screen, the card picked, a press waiting —
+    /// read once for all the rows.
+    private struct RowState {
+        var here: AppModel.Place
+        var selected: String?
+        var shownSection: String
+        var picked: String?
+        var symbol: (file: String, path: String)?
+        var pressed: String?
+        var drawn: Set<String>
+        var showsMarks: Bool
+        var allowed: NavPanelTree.Allowed
+
+        init(_ model: AppModel, pressed: String?, drawn: Set<String>, allowed: NavPanelTree.Allowed) {
+            here = model.here
+            selected = model.selectedSchemaId
+            shownSection = model.shownSectionKey
+            picked = model.pickedGone
+            symbol = model.selectedSymbol.map { ($0.file.id, $0.path) }
+            self.pressed = pressed
+            self.drawn = drawn
+            showsMarks = model.showsMarks
+            self.allowed = allowed
         }
-        // What the row is called and what its mark means, a pause over it away.
-        .help(ifAny: rowHelp(row.node, detail, mark: mark))
-        .padding(.vertical, 2)
-        .padding(.horizontal, 3)
-        // From the parent's chevron down to this row: which rows belong to which.
-        .background(alignment: .leading) {
-            GuideLines(guides: guides, indent: Self.indent, reach: opens ? 8 : 18)
-        }
-        .overlay { dropMarkView(row) }
-        .modifier(NavRowSlot(key: row.id, current: isCurrent(row.node), pressed: pressed,
-                             dropping: dropMark?.key == row.id, gap: Self.rowGap))
-        // Twice — a double-click, as the window counts it (the event's click count, as the
-        // diagram reads it): a section or a root opens or shuts in the tree, a card opens in its
-        // editor (once has already opened the section, or shown the card on its relation panel).
-        // The second tap gesture this had beside it opened nothing on the window.
-        .onTapGesture { press(row, detail) }
-        .contextMenu { menu(row.node, detail) }
-        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { heights.of[row.id] = $0 }
-        .modifier(DragSource(enabled: NavPanelTree.canDrag(row.node, in: detail, allowed: allowed)) {
-            dragging = row.node
-            return NSItemProvider(object: Self.token(row.node) as NSString)
-        })
-        .onDrop(of: [.text], delegate: NavPanelDrop(
-            target: row.node,
-            height: { heights.of[row.id] ?? 20 },
-            dragged: { dragging },
-            decide: { dragged, spot in
-                // With ⌥⌘ held, a card ghost of it is left there, as an alias is in Finder.
-                NavPanelTree.drop(dragged, on: row.node, at: spot, in: detail, allowed: allowed,
-                                  board: model.isBoardOpen, alias: NavPanelTree.aliasHeld)
-            },
-            mark: { spot in
-                if let spot { dropMark = DropMark(key: row.id, spot: spot) } else if dropMark?.key == row.id { dropMark = nil }
-            },
-            perform: { dragged, drop, providers in
-                dragging = nil
-                dropMark = nil
-                // Only the drag that started here: a stale one — let go outside the panel —
-                // must not move a row when text from elsewhere is dropped on it.
-                guard let provider = providers.first else { return }
-                let expected = Self.token(dragged)
-                _ = provider.loadObject(ofClass: NSString.self) { object, _ in
-                    guard (object as? String) == expected else { return }
-                    DispatchQueue.main.async { model.perform(drop) }
+
+        func isCurrent(_ node: NavPanelTree.Node) -> Bool {
+            switch node {
+            case .section(let id):
+                switch here {
+                case .section(let open), .root(let open, _): id == open && selected == nil
+                case .card, .settings, .connections, .inspection: false
                 }
-            }))
+            case .card(let id), .ghost(let id): id == selected
+            case .gone(let id), .goneSection(let id): id == picked
+            case .symbol(let file, let path): symbol.map { $0.file == file && $0.path == path } ?? false
+            default: false
+            }
+        }
+
+        /// Lit as the row on screen — or, while a press waits for what it does, the row pressed alone
+        /// (`NavRow.fill`).
+        func lit(_ row: NavPanelTree.Row) -> Bool {
+            pressed.map { $0 == row.id } ?? isCurrent(row.node)
+        }
+
+        func bold(_ node: NavPanelTree.Node) -> Bool {
+            switch node {
+            case .section(let id): id == shownSection
+            case .card(let id), .ghost(let id): id == selected
+            case .gone(let id), .goneSection(let id): id == picked
+            case .symbol: isCurrent(node)
+            default: false
+            }
+        }
+
+        func hidden(_ node: NavPanelTree.Node, face: NavPanelTree.RowFace) -> Bool {
+            guard case .card(let id) = node, let home = face.home else { return false }
+            return home == shownSection && !drawn.contains(id)
+        }
     }
 
     /// What may be changed from the tree now (`NavPanelTree.Allowed`).
     private var allowed: NavPanelTree.Allowed { NavPanelTree.Allowed(model) }
 
     /// What a dragged row carries: its key, marked as the tree's own.
-    private static func token(_ node: NavPanelTree.Node) -> String { "specboard-nav-panel:\(node.key)" }
-
-    /// Where a drag over the row would be taken: a line above or below it, or the row
-    /// lit, into it.
-    @ViewBuilder
-    private func dropMarkView(_ row: NavPanelTree.Row) -> some View {
-        if let mark = dropMark, mark.key == row.id {
-            switch mark.spot {
-            case .into:
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Color.accentColor.opacity(0.12))
-                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 1.5))
-                    .allowsHitTesting(false)
-            case .before, .after:
-                VStack(spacing: 0) {
-                    if mark.spot == .after { Spacer(minLength: 0) }
-                    Rectangle().fill(Color.accentColor).frame(height: 2)
-                        .padding(.leading, CGFloat(row.depth) * Self.indent + 16)
-                    if mark.spot == .before { Spacer(minLength: 0) }
-                }
-                .allowsHitTesting(false)
-            }
-        }
-    }
+    static func token(_ node: NavPanelTree.Node) -> String { "specboard-nav-panel:\(node.key)" }
 
     /// How far each depth steps in.
-    private static let indent: CGFloat = 12
+    static let indent: CGFloat = 12
 
     /// The gap around a row, part of its slot (`NavRowSlot`): a point to the rows above and below,
     /// and the list's sides.
     static let rowGap = EdgeInsets(top: 1, leading: 6, bottom: 1, trailing: 8)
-
-    /// The indent, the chevron and the gap after it. Where there is a chevron all of
-    /// it is the chevron's to click — the arrow alone is too small a thing to hit —
-    /// drawn and spaced just as before, so the guide lines still meet it.
-    @ViewBuilder
-    private func chevron(_ node: NavPanelTree.Node, depth: Int, opens: Bool) -> some View {
-        let lead = CGFloat(depth) * Self.indent
-        if opens {
-            let open = expanded.contains(node.key)
-            Button { toggle(node) } label: {
-                HStack(spacing: 0) {
-                    Color.clear.frame(width: lead + 4, height: 1)
-                    Image(systemName: open ? "chevron.down" : "chevron.right")
-                        .font(.app(8.5, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 12, height: 14)
-                    Color.clear.frame(width: 4, height: 1)
-                }
-                .frame(maxHeight: .infinity)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help(open ? L10n[.Nav.rowCollapse] : L10n[.Nav.rowExpand])
-        } else {
-            Color.clear.frame(width: lead + 4 + 12 + 4, height: 1)
-        }
-    }
-
-    @ViewBuilder
-    private func label(_ node: NavPanelTree.Node, _ detail: ProjectDetail, mark: ChangeMark?) -> some View {
-        let directory = detail.directory
-        switch node {
-        case .section(let id):
-            if let section = directory.section(id: id) {
-                if section.parentId == nil {
-                    // The tree open, plainly, and what kind of tree it is: a
-                    // branch's name with a tag saying so, main as itself — with a lock while it is
-                    // locked — the board as itself. The root's own name is not said here: named
-                    // Main by default, it read as main with a branch open.
-                    Text(model.isBoardOpen ? L10n[.Common.wordProjectBoard] : model.openTree.name)
-                        .font(.app(12, weight: .semibold)).lineLimit(1)
-                        .help(model.isBoardOpen ? L10n[.Nav.treeBoardOpen]
-                              : model.openBranch == nil ? L10n[.Nav.treeMainOpen]
-                              : L10n[.Nav.treeBranchOpen(model.openBranch?.name ?? "")])
-                    if model.openBranch != nil, !model.isBoardOpen {
-                        tag("branch")
-                        // What main did since the branch was made: what taking main in brings.
-                        let moved = model.branchMarks.mainMoved
-                        if moved > 0 {
-                            Text("↓ \(moved)")
-                                .font(.app(10, weight: .semibold, design: .monospaced))
-                                .foregroundStyle(ChangeMark.Tint.blue.color)
-                                .padding(.leading, 5)
-                                .help(L10n[.Nav.treeMainMovedHelp(moved)])
-                        }
-                    } else if model.isLockedMainOpen || model.isLockedGroupOpen {
-                        Image(systemName: "lock.fill").font(.app(9.5)).foregroundStyle(.secondary)
-                            .padding(.leading, 4)
-                            .help(L10n[.Branches.listMainLockedHelp])
-                    }
-                } else if section.missing {
-                    // A folder a note is in that reading the folder no longer finds: a stand-in.
-                    sectionMark(section, detail)
-                    Text(section.name)
-                        .font(.app(12, weight: id == model.shownSectionKey ? .semibold : .regular))
-                        .foregroundStyle(.orange).strikethrough(true, color: .orange)
-                        .lineLimit(1)
-                        .help(L10n[.Nav.treeMissingFolderHelp(section.description)])
-                } else {
-                    sectionMark(section, detail)
-                    Text(section.name)
-                        .font(.app(12, weight: id == model.shownSectionKey ? .semibold : .regular))
-                        .foregroundStyle(nameStyle(mark, else: HierarchicalShapeStyle.primary))
-                        .lineLimit(1)
-                    // A working directory: read from a folder of this Mac, not written here.
-                    if section.kindName == WorkDirIds.workdirKind {
-                        Image(systemName: "lock.fill").font(.app(8)).foregroundStyle(.tertiary)
-                            .help(L10n[.Nav.treeWorkDirHelp])
-                    }
-                }
-                Spacer(minLength: 4)
-                count(directory.members(id).count)
-                markColumn(mark)
-            }
-        case .goneSection(let id):
-            if let section = model.branchMarks.gone.sections.first(where: { $0.id == id }) {
-                sectionMark(section, detail)
-                goneName(section.name, font: .app(12, weight: id == model.pickedGone ? .semibold : .regular))
-                Spacer(minLength: 4)
-                markColumn(mark)
-            }
-        case .auto:
-            Text(NavPanelTree.autoTitle).font(.app(11)).foregroundStyle(.secondary)
-                .help(NavPanelTree.autoHelp)
-            Spacer(minLength: 4)
-            markColumn(nil)
-        case .autoSection(let at, let other):
-            Image(systemName: "rectangle.dashed").font(.app(9.5)).foregroundStyle(.tertiary)
-            Text(directory.shown(section: other, within: directory.root(of: at)))
-                .font(.app(11.5, design: .monospaced)).foregroundStyle(.secondary).lineLimit(1)
-            Spacer(minLength: 4)
-            markColumn(nil)
-        case .autoCard(_, let card):
-            if let schema = directory.schema(id: card) {
-                Text(schema.name).font(.app(11.5, design: .monospaced)).foregroundStyle(.secondary).lineLimit(1)
-                Spacer(minLength: 4)
-                Text(schema.kindName).font(.app(9.5)).foregroundStyle(.tertiary)
-                markColumn(nil)
-            }
-        case .cards(let id):
-            Text("cards").font(.app(11)).foregroundStyle(.secondary)
-                .help(Self.said(L10n[.Nav.treeCardsHelp], mark?.meaning))
-            Spacer(minLength: 4)
-            count(directory.members(id).count)
-            markColumn(mark)
-        case .ghost(let id):
-            if let ghost = directory.ghost(id: id) {
-                let card = directory.reached(ghost)
-                Image(systemName: NavPanelTree.ghostSymbol).font(.app(9.5))
-                    .foregroundStyle(card == nil ? Color.red : Color.secondary)
-                    .help(L10n[.Nav.treeGhostHelp])
-                Text(NavPanelTree.ghostLine(ghost, in: directory))
-                    .font(.app(12, weight: id == model.selectedSchemaId ? .semibold : .regular, design: .monospaced))
-                    .foregroundStyle(nameStyle(mark, else: card == nil ? HierarchicalShapeStyle.secondary : .primary))
-                    .lineLimit(1).truncationMode(.middle)
-                    .help(Self.said(directory.ghostProblem(ghost) ?? "\(directory.full(ghost)) → \(card.map(directory.full) ?? "")",
-                                    mark?.meaning))
-                Spacer(minLength: 4)
-                Text(card?.kindName ?? "ghost").font(.app(9.5)).foregroundStyle(.tertiary)
-                markColumn(mark)
-            }
-        case .card(let id):
-            if let schema = directory.schema(id: id) {
-                let hidden = directory.sectionId(of: schema) == model.shownSectionKey && !drawn.contains(id)
-                Text(schema.name)
-                    .font(.app(12, weight: id == model.selectedSchemaId ? .semibold : .regular, design: .monospaced))
-                    .foregroundStyle(nameStyle(mark, else: HierarchicalShapeStyle.primary))
-                    .lineLimit(1)
-                // Its label is in the tooltip; on the row only while the search box finds it by its label.
-                if filter.isOn, filter.byLabel(schema) {
-                    Text(schema.label).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
-                }
-                // A file an export writes: which, and how it stands.
-                if let mark = model.exportMarks[id] {
-                    ExportMarkView(mark: mark)
-                }
-                Spacer(minLength: 4)
-                if hidden {
-                    Image(systemName: "eye.slash").font(.app(9)).foregroundStyle(.tertiary)
-                        .help(L10n[.Nav.treeHiddenOnPanel])
-                }
-                Text(schema.kindName)
-                    .font(.app(9.5)).foregroundStyle(.tertiary)
-                markColumn(mark)
-            }
-        case .node(let id):
-            if let node = detail.inner.first(where: { $0.id == id }) {
-                Text(node.name).font(.app(12, design: .monospaced))
-                    .foregroundStyle(nameStyle(mark, else: HierarchicalShapeStyle.primary))
-                    .lineLimit(1)
-                if filter.isOn, filter.byLabel(node) {
-                    Text(node.label).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
-                }
-                Spacer(minLength: 4)
-                Text(node.kind).font(.app(9.5)).foregroundStyle(.tertiary)
-                markColumn(mark)
-            }
-        case .gone(let id):
-            let gone = model.branchMarks.gone
-            let weight: Font.Weight = id == model.pickedGone ? .semibold : .regular
-            if let card = gone.cards.first(where: { $0.id == id }) {
-                goneName(card.name, font: .app(12, weight: weight, design: .monospaced))
-                Spacer(minLength: 4)
-                Text(card.kindName).font(.app(9.5)).foregroundStyle(.tertiary)
-            } else if let ghost = gone.ghosts.first(where: { $0.id == id }) {
-                Image(systemName: NavPanelTree.ghostSymbol).font(.app(9.5)).foregroundStyle(.secondary)
-                goneName(NavPanelTree.ghostLine(ghost, in: directory), font: .app(12, weight: weight, design: .monospaced))
-                Spacer(minLength: 4)
-                Text(directory.reached(ghost)?.kindName ?? "ghost").font(.app(9.5)).foregroundStyle(.tertiary)
-            } else if let node = gone.nodes.first(where: { $0.id == id }) {
-                goneName(node.name, font: .app(12, weight: weight, design: .monospaced))
-                Spacer(minLength: 4)
-                Text(node.kind).font(.app(9.5)).foregroundStyle(.tertiary)
-            }
-            markColumn(mark)
-        case .values(let id):
-            Text("values / enums").font(.app(11)).foregroundStyle(.secondary)
-                .help(Self.said(L10n[.Nav.treeValuesHelp], mark?.meaning))
-            Spacer(minLength: 4)
-            count(directory.members(id).filter { $0.kind == .value || $0.kind == .enum }.count)
-            markColumn(mark)
-        case .none:
-            Text(L10n[.Common.wordNone]).font(.app(10.5)).foregroundStyle(.tertiary)
-            Spacer(minLength: 4)
-            markColumn(nil)
-        case .symbol(let file, let path):
-            if let symbol = model.outlines[file]?.symbol(path) {
-                SymbolBadgeView(symbol: symbol)
-                Text(symbol.name)
-                    .font(.app(12, weight: isCurrent(node) ? .semibold : .regular, design: .monospaced))
-                    .lineLimit(1)
-                    .padding(.leading, 5)
-                Spacer(minLength: 4)
-                Text("\(symbol.line)").font(.app(9.5, design: .monospaced)).foregroundStyle(.tertiary)
-                markColumn(nil)
-            }
-        }
-    }
-
-    /// A section's kind, as its mark and colour: what the kind's definition says — a built-in kind's
-    /// from the built-in definitions, written over by the project, or the project's own — else a
-    /// folder in grey.
-    @ViewBuilder
-    private func sectionMark(_ section: ProjectSection, _ detail: ProjectDetail) -> some View {
-        if let key = section.kind?.rawValue ?? section.kindName {
-            let mark = detail.sectionMarks[key] ?? SectionMark()
-            Image(systemName: mark.symbol).font(.app(10))
-                .foregroundStyle(mark.color.flatMap(HexColor.color(hex:)) ?? .gray)
-                .frame(width: 14)
-                .help(section.kind?.help ?? L10n[.Nav.treeOwnKindHelp(key)])
-        }
-    }
-
-    /// The name of what the open branch removed: in the removed mark's colour, struck through.
-    private func goneName(_ name: String, font: Font) -> some View {
-        let red = ChangeMark.Tint.red.color
-        return Text(name).font(font).foregroundStyle(red).strikethrough(true, color: red).lineLimit(1)
-    }
-
-    /// How a name is drawn under its row's mark: in the mark's colour when the mark is its own, as it
-    /// is otherwise else.
-    private func nameStyle(_ mark: ChangeMark?, else plain: some ShapeStyle) -> AnyShapeStyle {
-        guard let mark, mark.isOwn else { return AnyShapeStyle(plain) }
-        return AnyShapeStyle(mark.tint.color)
-    }
-
-    /// The right-most column, as wide on every row while what a branch did is marked (`showsMarks`):
-    /// the row's mark, or nothing.
-    @ViewBuilder
-    private func markColumn(_ mark: ChangeMark?) -> some View {
-        if model.showsMarks {
-            HStack(spacing: 0) {
-                if let mark { ChangeMarkText(mark: mark) }
-            }
-            .frame(width: Self.markWidth, alignment: .center)
-        }
-    }
 
     /// How wide the column of the marks is: room for M↓.
     static let markWidth: CGFloat = 24
@@ -1586,50 +1448,47 @@ struct NavPanelTreeView: View {
 
     /// What a pause over a row says: what it is called (its label) and what its mark means.
     func rowHelp(_ node: NavPanelTree.Node, _ detail: ProjectDetail, mark: ChangeMark?) -> String? {
-        let label: String?
-        switch node {
-        case .card(let id): label = detail.directory.schema(id: id)?.label
-        case .node(let id): label = detail.inner.first { $0.id == id }?.label
-        case .symbol(let file, let path):
-            label = model.outlines[file]?.symbol(path).map { SymbolBadgeView.help($0, language: model.outlines[file]?.language) }
-        case .gone(let id):
-            let gone = model.branchMarks.gone
-            label = gone.cards.first { $0.id == id }?.label ?? gone.nodes.first { $0.id == id }?.label
-        default: label = nil
-        }
-        let text = Self.said(label, mark?.meaning)
-        return text.isEmpty ? nil : text
+        NavPanelTree.rowHelp(node, detail, mark: mark, gone: model.branchMarks.gone, outlines: model.outlines)
     }
 
-    private func tag(_ text: String) -> some View {
-        Text(text)
-            .font(.app(9))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 4).padding(.vertical, 1)
-            .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary))
+    // MARK: - Dragging a row
+
+    /// The row being dragged, now.
+    var draggingNow: NavPanelTree.Node? { dragging }
+
+    func startDragging(_ node: NavPanelTree.Node) { dragging = node }
+
+    /// What dropping `dragged` on `target` at `spot` would do, on what is open now. With ⌥⌘ held, a card
+    /// ghost of it is left there, as an alias is in Finder.
+    func decide(_ dragged: NavPanelTree.Node, on target: NavPanelTree.Node, at spot: NavPanelTree.Spot) -> NavPanelTree.Drop? {
+        guard let detail = model.detail else { return nil }
+        return NavPanelTree.drop(dragged, on: target, at: spot, in: detail, allowed: allowed,
+                                 board: model.isBoardOpen, alias: NavPanelTree.aliasHeld)
     }
 
-    private func count(_ n: Int) -> some View {
-        Text("\(n)").font(.app(10, design: .monospaced)).foregroundStyle(.tertiary)
+    /// Where on the row `key` a drag would be taken, drawn there; none, the row's mark taken away.
+    func markDrop(_ key: String, _ spot: NavPanelTree.Spot?) {
+        if let spot { dropMark = DropMark(key: key, spot: spot) } else if dropMark?.key == key { dropMark = nil }
     }
 
-    private func isCurrent(_ node: NavPanelTree.Node) -> Bool {
-        switch node {
-        case .section(let id):
-            switch model.here {
-            case .section(let open), .root(let open, _): id == open && model.selectedSchemaId == nil
-            case .card, .settings, .connections, .inspection: false
-            }
-        case .card(let id), .ghost(let id): id == model.selectedSchemaId
-        case .gone(let id), .goneSection(let id): id == model.pickedGone
-        case .symbol(let file, let path): model.selectedSymbol.map { $0.file.id == file && $0.path == path } ?? false
-        default: false
+    /// A drag let go on a row that takes it.
+    func dropped(_ dragged: NavPanelTree.Node, _ drop: NavPanelTree.Drop, _ providers: [NSItemProvider]) {
+        dragging = nil
+        dropMark = nil
+        // Only the drag that started here: a stale one — let go outside the panel —
+        // must not move a row when text from elsewhere is dropped on it.
+        guard let provider = providers.first else { return }
+        let expected = Self.token(dragged)
+        let model = model
+        _ = provider.loadObject(ofClass: NSString.self) { object, _ in
+            guard (object as? String) == expected else { return }
+            DispatchQueue.main.async { model.perform(drop) }
         }
     }
 
     // MARK: - Acting
 
-    private func toggle(_ node: NavPanelTree.Node) {
+    func toggle(_ node: NavPanelTree.Node) {
         if expanded.contains(node.key) { expanded.remove(node.key) } else { expanded.insert(node.key) }
     }
 
@@ -1642,7 +1501,8 @@ struct NavPanelTreeView: View {
     /// A row pressed: lit at once, and what it does run once the light is on screen
     /// (`NavRow.pressing`). The light goes as the press is done: the row the window is on takes
     /// it from there.
-    private func press(_ row: NavPanelTree.Row, _ detail: ProjectDetail) {
+    func press(_ row: NavPanelTree.Row) {
+        guard let detail = model.detail else { return }
         let key = row.id
         NavRow.pressing(row.node, event: NSApp.currentEvent, in: detail,
                         light: { pressed = key }, later: NavRow.afterDrawn) { press in
@@ -1659,7 +1519,7 @@ struct NavPanelTreeView: View {
     }
 
     @ViewBuilder
-    private func menu(_ node: NavPanelTree.Node, _ detail: ProjectDetail) -> some View {
+    func menu(_ node: NavPanelTree.Node, _ detail: ProjectDetail) -> some View {
         let directory = detail.directory
         switch node {
         case .section(let id):
@@ -1918,15 +1778,29 @@ struct NavPanelTreeView: View {
 
     // MARK: - Prompts
 
-    /// Making a section in `parent`, of its kind: nothing more goes directly under the
-    /// root.
+    /// Making a section in `parent` (nothing more goes directly under the root): one item for each kind
+    /// it may hold inside (`NavPanelTree.newSections`), each opening the window that names it and picks its
+    /// mark; a single item where there is one kind.
+    @ViewBuilder
     private func createMenu(in parent: ProjectSection, title: String) -> some View {
-        Button(title + "…") { ask(.create(parent: parent.id, kind: parent.kind?.madeInside)) }
+        switch model.detail.flatMap({ NavPanelTree.createMenu(in: parent, title: title, $0) }) {
+        case .submenu(let title, let choices):
+            Menu(title) {
+                ForEach(Array(choices.enumerated()), id: \.offset) { at, choice in
+                    // The actors apart from the rest.
+                    if at > 0, choice.figure == nil, choices[at - 1].figure != nil { Divider() }
+                    Button(choice.title + "…") { making = NewSectionAsk(choice, in: parent, model: model, single: false) }
+                }
+            }
+        case .item(let title, let choice):
+            Button(title) { making = NewSectionAsk(choice, in: parent, model: model, single: true) }
+        case nil:
+            EmptyView()
+        }
     }
 
     private static func title(_ prompt: Prompt) -> String {
         switch prompt {
-        case .create(_, let kind): kind.map { L10n[.Nav.promptCreateKindSection($0.label)] } ?? L10n[.Nav.promptCreateSection]
         case .branch: L10n[.Nav.promptCreateBranch]
         case .rename, .renameBranch: L10n[.Common.actionRename]
         }
@@ -1946,7 +1820,6 @@ struct NavPanelTreeView: View {
 
     private func commit(_ prompt: Prompt, _ typed: String) {
         switch prompt {
-        case .create(let parent, let kind): model.createSection(name: typed, parentId: parent, kind: kind)
         case .branch: model.createBranch(name: typed)
         case .rename(let id): model.renameSection(id, to: typed)
         case .renameBranch(let id): model.renameBranch(id, to: typed)
@@ -1985,102 +1858,4 @@ struct NavPanelTreeView: View {
 private struct DropMark: Equatable {
     var key: String
     var spot: NavPanelTree.Spot
-}
-
-/// How tall each row is, by its key: read while a drag is over it, never drawn from, so a
-/// reference — changing it redraws nothing.
-private final class RowHeights {
-    var of: [String: CGFloat] = [:]
-}
-
-/// A row that may be picked up and dragged (`NavPanelTree.canDrag`); one that may not
-/// stays put, and a press on it is a press.
-private struct DragSource: ViewModifier {
-    var enabled: Bool
-    var item: () -> NSItemProvider
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if enabled { content.onDrag(item) } else { content }
-    }
-}
-
-/// A row as a place to drop on: what the drag would do there is asked of
-/// `NavPanelTree.drop` as it moves over the row, and only where it would do something is
-/// the row marked as taking it — elsewhere the drag says it would not be taken.
-private struct NavPanelDrop: DropDelegate {
-    var target: NavPanelTree.Node
-    var height: () -> CGFloat
-    var dragged: () -> NavPanelTree.Node?
-    var decide: (NavPanelTree.Node, NavPanelTree.Spot) -> NavPanelTree.Drop?
-    var mark: (NavPanelTree.Spot?) -> Void
-    var perform: (NavPanelTree.Node, NavPanelTree.Drop, [NSItemProvider]) -> Void
-
-    private func spot(_ info: DropInfo, _ dragging: NavPanelTree.Node) -> NavPanelTree.Spot {
-        NavPanelTree.spot(info.location.y, height: height(), dragging: dragging, over: target)
-    }
-
-    func validateDrop(info: DropInfo) -> Bool {
-        dragged() != nil && info.hasItemsConforming(to: [.text])
-    }
-
-    func dropUpdated(info: DropInfo) -> DropProposal? {
-        guard let dragging = dragged() else { return DropProposal(operation: .forbidden) }
-        let at = spot(info, dragging)
-        guard let drop = decide(dragging, at) else {
-            mark(nil)
-            return DropProposal(operation: .forbidden)
-        }
-        mark(at)
-        // A card ghost made is a copy of nothing but a pointer: the copy cursor, as an alias.
-        if case .ghostOf = drop { return DropProposal(operation: .copy) }
-        return DropProposal(operation: .move)
-    }
-
-    func dropExited(info: DropInfo) { mark(nil) }
-
-    func performDrop(info: DropInfo) -> Bool {
-        mark(nil)
-        guard let dragging = dragged(), let drop = decide(dragging, spot(info, dragging)) else { return false }
-        perform(dragging, drop, info.itemProviders(for: [.text]))
-        return true
-    }
-}
-
-/// The lines of one row of the tree (`NavPanelTree.guides`): a level's line runs
-/// under the chevron of the row it hangs from, and a branch reaches across to the
-/// row. Drawn a point past the row at top and bottom, over the gap between rows.
-private struct GuideLines: View {
-    let guides: [NavPanelTree.Guide]
-    let indent: CGFloat
-    /// How far past its own level's line the branch to the row reaches: to the
-    /// chevron, or on to the name where there is none.
-    let reach: CGFloat
-
-    var body: some View {
-        GeometryReader { geo in
-            Path { path in
-                let top: CGFloat = -1, bottom = geo.size.height + 1, middle = (geo.size.height / 2).rounded() + 0.5
-                for (level, guide) in guides.enumerated() {
-                    // Under the chevron of a row at this depth: past the padding (3),
-                    // the indent, the spacing (4) and half the chevron (6).
-                    let x = CGFloat(level) * indent + 13.5
-                    switch guide {
-                    case .none:
-                        continue
-                    case .line:
-                        path.move(to: CGPoint(x: x, y: top))
-                        path.addLine(to: CGPoint(x: x, y: bottom))
-                    case .tee, .end:
-                        path.move(to: CGPoint(x: x, y: top))
-                        path.addLine(to: CGPoint(x: x, y: guide == .tee ? bottom : middle))
-                        path.move(to: CGPoint(x: x, y: middle))
-                        path.addLine(to: CGPoint(x: x + reach, y: middle))
-                    }
-                }
-            }
-            .stroke(Color.secondary.opacity(0.35), lineWidth: 1)
-        }
-        .allowsHitTesting(false)
-    }
 }

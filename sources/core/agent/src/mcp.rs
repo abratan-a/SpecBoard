@@ -15,13 +15,16 @@
 //! reads the answers, English takes it the fewest tokens, and every agent answers every session
 //! alike. A setting kept by a version that let the language be chosen (`mcpLanguage`) is not read.
 
-use crate::http::{MAX_CONNECTIONS, Request, read_request, response, stream_head, text_headers};
+use crate::http::{
+    Incoming, KEYED, LIMITS, Request, STRANGERS, Slot, Slots, read_request, response, stream_head,
+    text_headers,
+};
 use serde_json::{Map, Value, json};
 use specboard_core::{Core, text};
 use std::io::{Read, Write};
 use std::net::{Shutdown, TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
@@ -88,11 +91,12 @@ struct Listening {
     out: TcpStream,
 }
 
-/// Where it listens, or why it does not.
+/// Where it listens, or why it does not: kept by its key, as each app is told it in its screen's
+/// language.
 #[derive(Clone)]
 struct Listen {
     port: u16,
-    problem: String,
+    problem: Option<text::Keyed>,
 }
 
 pub struct Mcp {
@@ -101,11 +105,15 @@ pub struct Mcp {
     listen: Mutex<Option<Listen>>,
     /// Bumped as a listener is let go: its loop ends.
     generation: AtomicU64,
-    open: AtomicUsize,
+    /// The connections held, by whether a key came on them.
+    slots: Arc<Slots>,
     streams: Mutex<Vec<Listening>>,
     /// Told where it listens whenever that changes on its own (the port taken came free).
-    told: std::sync::OnceLock<Box<dyn Fn(Value) + Send + Sync>>,
+    told: std::sync::OnceLock<Tell>,
 }
+
+/// Who is told where it listens: handed the listener, to say it to each in their own language.
+type Tell = Box<dyn Fn(&Mcp) + Send + Sync>;
 
 /// How often a port taken is tried again.
 const RETRY: Duration = Duration::from_secs(5);
@@ -118,7 +126,7 @@ impl Mcp {
             home: home.to_path_buf(),
             listen: Mutex::new(None),
             generation: AtomicU64::new(0),
-            open: AtomicUsize::new(0),
+            slots: Slots::new(STRANGERS, KEYED),
             streams: Mutex::new(Vec::new()),
             told: std::sync::OnceLock::new(),
         });
@@ -128,7 +136,10 @@ impl Mcp {
                 "{}",
                 specboard_core::text!("agent.mcp.listenFailed", problem = &problem)
             );
-            *mcp.state() = Some(Listen { port, problem });
+            *mcp.state() = Some(Listen {
+                port,
+                problem: Some(problem),
+            });
         }
         let kept = mcp.clone();
         std::thread::spawn(move || {
@@ -142,14 +153,14 @@ impl Mcp {
         std::thread::spawn(move || {
             loop {
                 std::thread::sleep(RETRY);
-                let waiting = kept.state().clone().filter(|l| !l.problem.is_empty());
+                let waiting = kept.state().clone().filter(|l| l.problem.is_some());
                 let Some(Listen { port, .. }) = waiting else {
                     continue;
                 };
                 if kept.bind(port).is_ok()
                     && let Some(tell) = kept.told.get()
                 {
-                    tell(kept.said());
+                    tell(&kept);
                 }
             }
         });
@@ -157,7 +168,7 @@ impl Mcp {
     }
 
     /// Who is told where it listens when that changes on its own.
-    pub fn tell_with(&self, tell: impl Fn(Value) + Send + Sync + 'static) {
+    pub fn tell_with(&self, tell: impl Fn(&Mcp) + Send + Sync + 'static) {
         let _ = self.told.set(Box::new(tell));
     }
 
@@ -165,14 +176,22 @@ impl Mcp {
         self.listen.lock().unwrap_or_else(|e| e.into_inner())
     }
 
-    /// Where it listens, as the apps and `status` are told it: `{port, listening, problem}`.
+    /// Where it listens, as the apps and `status` are told it: `{port, listening, problem}`, why it
+    /// does not said in the language of the call.
     pub fn said(&self) -> Value {
         match &*self.state() {
             Some(l) => {
-                json!({"port": l.port, "listening": l.problem.is_empty(), "problem": l.problem})
+                let problem = l.problem.as_ref().map(text::Keyed::render);
+                json!({"port": l.port, "listening": problem.is_none(), "problem": problem.unwrap_or_default()})
             }
             None => json!({"port": port_set(&self.home), "listening": false, "problem": ""}),
         }
+    }
+
+    /// `said`, in `lang` (an app's screen's; none: the machine's).
+    pub fn said_in(&self, lang: Option<&str>) -> Value {
+        let _lang = text::bind(lang);
+        self.said()
     }
 
     /// Listens at `port` from now on, and keeps it as the setting; the port before let go. One that
@@ -184,26 +203,26 @@ impl Mcp {
         let now = self.state().clone();
         if now
             .as_ref()
-            .is_some_and(|l| l.port == port && l.problem.is_empty())
+            .is_some_and(|l| l.port == port && l.problem.is_none())
         {
             return keep_port(&self.home, port);
         }
-        self.bind(port)?;
+        self.bind(port).map_err(String::from)?;
         keep_port(&self.home, port)
     }
 
     /// A listener at `port`, answered on a thread of its own; the one before let go.
-    fn bind(self: &Arc<Self>, port: u16) -> Result<(), String> {
+    fn bind(self: &Arc<Self>, port: u16) -> Result<(), text::Keyed> {
         let listener = TcpListener::bind(("127.0.0.1", port))
-            .map_err(|e| specboard_core::text!("agent.mcp.cannotBind", port, error = e))?;
+            .map_err(|e| specboard_core::keyed!("agent.mcp.cannotBind", port, error = e))?;
         listener
             .set_nonblocking(true)
-            .map_err(|e| specboard_core::text!("agent.mcp.cannotSetUp", error = e))?;
+            .map_err(|e| specboard_core::keyed!("agent.mcp.cannotSetUp", error = e))?;
         let port = listener.local_addr().map(|a| a.port()).unwrap_or(port);
         let generation = self.generation.fetch_add(1, Ordering::SeqCst) + 1;
         *self.state() = Some(Listen {
             port,
-            problem: String::new(),
+            problem: None,
         });
         eprintln!("{}", specboard_core::text!("agent.mcp.listening", port));
         let mcp = self.clone();
@@ -217,15 +236,11 @@ impl Mcp {
                 Ok((connection, _)) => {
                     // What a non-blocking listener takes is non-blocking on some systems.
                     let _ = connection.set_nonblocking(false);
-                    if self.open.load(Ordering::SeqCst) >= MAX_CONNECTIONS {
+                    let Some(slot) = self.slots.admit(&connection) else {
                         continue;
-                    }
-                    self.open.fetch_add(1, Ordering::SeqCst);
+                    };
                     let mcp = self.clone();
-                    std::thread::spawn(move || {
-                        mcp.serve(connection);
-                        mcp.open.fetch_sub(1, Ordering::SeqCst);
-                    });
+                    std::thread::spawn(move || mcp.serve(connection, slot));
                 }
                 Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                     std::thread::sleep(Duration::from_millis(50));
@@ -236,10 +251,13 @@ impl Mcp {
     }
 
     /// Requests on one connection, one after another, until the client goes or a stream opens.
-    fn serve(&self, mut connection: TcpStream) {
-        let mut buffer: Vec<u8> = Vec::new();
+    fn serve(&self, mut connection: TcpStream, slot: Slot) {
+        let mut incoming = Incoming::held(slot);
+        // A key the store cannot be asked about is not let on: the body of a stranger is not read
+        // whatever the store's state.
+        let knows = |headers: &Map<String, Value>| self.core.knows_key(headers).unwrap_or(false);
         loop {
-            let request = match read_request(&mut connection, &mut buffer) {
+            let request = match read_request(&mut connection, &mut incoming, &knows, &LIMITS) {
                 Ok(Some(request)) => request,
                 Ok(None) => return,
                 Err((status, message)) => {
@@ -299,6 +317,7 @@ impl Mcp {
                     return Answer::text(415, "content-type must be application/json");
                 }
             }
+            // Only with a key of the store's (`http::refusal`), as every method here.
             "DELETE" => return Answer::empty(200),
             "GET" => {
                 return Answer::text(405, "this server does not open a notification stream");

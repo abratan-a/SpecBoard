@@ -120,6 +120,7 @@ extension FlowNode {
         returns = list(f["returns"])
         via = text("via")
         initiator = text("initiator")
+        if case .bool(true)? = f["anyCaller"] { anyCaller = true }
         value = text("value")
         waitFor = text("for")
         timeout = text("timeout")
@@ -143,18 +144,18 @@ extension FlowNode {
             let way = line.to.flatMap { siblings[$0] }
             switch line.line {
             case Line.next: if let way { nexts.append(way); remember(line, way) }
-            case Line.branch:
+            case Line.condition:
                 if let way { branches.append(FlowBranch(when: line.text("when") ?? "", next: way)); remember(line, way) }
             case Line.otherwise: otherwise = way; remember(line, way)
             case Line.onError: onError = way; remember(line, way)
             case Line.onTimeout: onTimeout = way; remember(line, way)
             case Line.runs: target = landing(line); remember(line, target)
-            case Line.event:
+            case Line.awaits:
                 if let flow = landing(line) {
                     event = FlowEvent(flow: flow, outcome: line.text("outcome") ?? "")
                     remember(line, flow)
                 }
-            case Line.peer:
+            case Line.partner:
                 // Every one of them, in the lines' order: a write gives back all it read.
                 guard let path = landing(line) else { continue }
                 remember(line, path)
@@ -204,7 +205,7 @@ extension FlowNode {
                         step.foreign.append(Step.Foreign(line: line.line, path: path))
                     }
                     held = true
-                case Line.peer: step.peers.append(path); held = true
+                case Line.partner: step.peers.append(path); held = true
                 case Line.key where step.op == "sign" || step.op == "verify": step.key = path; held = true
                 case Line.key:
                     if line.text("use") == "sign" { step.signWith = path } else { step.verifyWith = path }
@@ -231,7 +232,7 @@ enum NodeWrite {
     /// kind's own (`builtin.json`).
     static func fields(of kind: String) -> [String] {
         let own: [String] = switch kind {
-        case "begin": ["trigger", "every", "program", "carries", "via", "initiator"]
+        case "begin": ["trigger", "every", "program", "carries", "via", "initiator", "anyCaller"]
         case "run": ["carries", "returns", "via"]
         case "eval": ["value"]
         case "wait": ["for", "timeout"]
@@ -258,6 +259,7 @@ enum NodeWrite {
             put("carries", node.carries)
             put("via", node.via)
             put("initiator", node.initiator)
+            if node.anyCaller { out["anyCaller"] = true }
         case "run":
             put("carries", node.carries)
             put("returns", node.returns)
@@ -344,13 +346,13 @@ enum NodeWrite {
             out.append(made)
         }
         for next in node.nexts { way(Line.next, next) }
-        for branch in node.branches { way(Line.branch, branch.next, ["when": branch.when]) }
+        for branch in node.branches { way(Line.condition, branch.next, ["when": branch.when]) }
         way(Line.otherwise, node.otherwise)
         way(Line.onError, node.onError)
         way(Line.onTimeout, node.onTimeout)
         path(Line.runs, node.target)
-        if let event = node.event { path(Line.event, event.flow, ["outcome": event.outcome]) }
-        for peer in node.kind == "end" ? (node.reply?.peers ?? []) : node.peers { path(Line.peer, peer) }
+        if let event = node.event { path(Line.awaits, event.flow, ["outcome": event.outcome]) }
+        for peer in node.kind == "end" ? (node.reply?.peers ?? []) : node.peers { path(Line.partner, peer) }
         if node.kind == "end" {
             path(Line.key, node.reply?.signWith, ["use": "sign"])
         } else {
@@ -369,7 +371,7 @@ enum NodeWrite {
             // The other kind of line on a read or write row: not the row's to change, only to let go of
             // with the path.
             for other in split.foreign { path(other.line, other.path, from: from, extras: extras) }
-            for peer in step.peers { path(Line.peer, peer, from: from, extras: extras) }
+            for peer in step.peers { path(Line.partner, peer, from: from, extras: extras) }
             if step.op == "sign" || step.op == "verify" {
                 path(Line.key, step.key, from: from, ["use": step.op], extras: extras)
             }
@@ -412,7 +414,10 @@ enum NodeWrite {
         for key in fields(of: now.kind) {
             let a = before[key].map(OJSONBox.init), b = after[key].map(OJSONBox.init)
             guard a != b else { continue }
-            value[key] = after[key] ?? NSNull()
+            // A list taken away is written empty: the core reads null in a list's place as a list
+            // of one null, which is not a path, nor allowed where the field is not (a begin no
+            // longer receiving).
+            value[key] = after[key] ?? (before[key] is [Any] ? [Any]() : NSNull())
         }
         if now.kind == "process", OJSONBox(rows(was)) != OJSONBox(rows(now)) {
             value["steps"] = rows(now)

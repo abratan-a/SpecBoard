@@ -1,12 +1,12 @@
 import Foundation
 
-/// What the notice bubble said — errors, notices, an AI's merges into a locked main — kept for the
+/// What the notice bubble said — errors, notices, an AI's merges into a locked main, new versions — kept for the
 /// bell in the top bar (`NoticeBell`): a bubble goes by itself, or is not shown at all (`NoticeSettings`),
 /// and what it said is still there to read. In memory, a window's, for as long as the app runs.
 struct NoticeLog: Equatable {
     /// What a notice is, as the bubble tells them apart.
     enum Kind: String, CaseIterable, Identifiable, Sendable {
-        case error, notice, aiMerge
+        case error, notice, aiMerge, update
 
         var id: String { rawValue }
     }
@@ -15,10 +15,28 @@ struct NoticeLog: Equatable {
         /// In the order told, from 1: a newer one's is greater.
         let id: Int
         let kind: Kind
+        /// What it said when it was told, in the screen's language then (`toldIn`).
         let text: String
+        let toldIn: String
+        /// How it is said in another language: for what the screen words itself; none for what came
+        /// worded (the core's refusals), said as it came.
+        let sayIn: (@MainActor (String) -> String)?
         let at: Date
         /// The project an AI merged into, whose history the entry opens.
         let project: String?
+        /// The release tag of a new version said to be there, which the entry offers to download.
+        let update: String?
+
+        /// What it says in `code`: the list follows the screen's language when it changes.
+        @MainActor func text(in code: String) -> String {
+            guard code != toldIn, let sayIn else { return text }
+            return sayIn(code)
+        }
+
+        static func == (a: Entry, b: Entry) -> Bool {
+            a.id == b.id && a.kind == b.kind && a.text == b.text && a.toldIn == b.toldIn && a.at == b.at
+                && a.project == b.project && a.update == b.update
+        }
     }
 
     /// How many are kept: enough for a long day's work, while a window that runs for weeks does not
@@ -32,9 +50,11 @@ struct NoticeLog: Equatable {
     /// The newest one told, dropped off or cleared or not.
     private(set) var lastTold = 0
 
-    mutating func add(_ kind: Kind, _ text: String, project: String? = nil, at time: Date = Date()) {
+    mutating func add(_ kind: Kind, _ text: String, project: String? = nil, update: String? = nil,
+                      at time: Date = Date(), sayIn: (@MainActor (String) -> String)? = nil) {
         lastTold += 1
-        entries.insert(Entry(id: lastTold, kind: kind, text: text, at: time, project: project), at: 0)
+        entries.insert(Entry(id: lastTold, kind: kind, text: text, toldIn: Language.current, sayIn: sayIn, at: time,
+                             project: project, update: update), at: 0)
         if entries.count > Self.kept { entries.removeLast(entries.count - Self.kept) }
     }
 

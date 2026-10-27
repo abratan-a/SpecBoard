@@ -121,7 +121,7 @@ struct PageCardEditor: View {
         panel.message = L10n[.CardEditor.pageReadFileHelp]
         guard panel.runModal() == .OK, let url = panel.url else { return }
         guard let read = Self.read(url) else {
-            model.lastError = L10n[.CardEditor.pageNotText(url.lastPathComponent)]
+            model.tell(error: { L10n.text(.CardEditor.pageNotText(url.lastPathComponent), in: $0) })
             return
         }
         pause?.cancel()

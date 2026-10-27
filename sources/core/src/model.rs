@@ -110,6 +110,9 @@ pub struct Card {
     pub rules: Vec<Rule>,
     pub absent_fields: Vec<AbsentField>,
     pub discriminator: Option<String>,
+    /// An entity's or a value's list face (`specboard://SpecBoard/Docs/Design:CardKinds`「データの一覧の顔」):
+    /// `{list, header}` on a data card's shape, `{text, note, mark, fold}` on an array element's.
+    pub face: Option<Value>,
     pub enum_open: bool,
     pub sort_order: i64,
     pub fields: Vec<Field>,
@@ -463,35 +466,35 @@ impl ExportSetting {
     }
 
     /// Why a path cannot be written to, or none: relative, under the directory, plain.
-    pub fn path_problem(raw: &str) -> Option<String> {
+    pub fn path_problem(raw: &str) -> Option<crate::text::Keyed> {
         let path = raw.trim_matches(|c: char| c == ' ' || c == '\t');
         if path.is_empty() {
-            return Some(text!("model.path.empty"));
+            return Some(keyed!("model.path.empty"));
         }
         if path.starts_with('/') || path.starts_with('~') {
-            return Some(text!("model.path.notRelative"));
+            return Some(keyed!("model.path.notRelative"));
         }
         let parts: Vec<&str> = path.split('/').collect();
         if parts.iter().any(|p| *p == ".." || *p == ".") {
-            return Some(text!("model.path.dots"));
+            return Some(keyed!("model.path.dots"));
         }
         if parts[..parts.len() - 1].iter().any(|p| p.is_empty()) {
-            return Some(text!("model.path.emptyFolder"));
+            return Some(keyed!("model.path.emptyFolder"));
         }
         if path.contains('\\') || path.chars().any(char::is_control) {
-            return Some(text!("model.path.backslash"));
+            return Some(keyed!("model.path.backslash"));
         }
         None
     }
 
     /// Why this setting cannot be a card's of `kind`, or none.
-    pub fn problem_for(&self, kind: &str) -> Option<String> {
+    pub fn problem_for(&self, kind: &str) -> Option<crate::text::Keyed> {
         match self.kind.as_str() {
             "none" | "default" => return None,
             _ => {}
         }
         if self.dir.is_none() {
-            return Some(text!("model.problem.noDirectory"));
+            return Some(keyed!("model.problem.noDirectory"));
         }
         if let Some(problem) = Self::path_problem(&self.path) {
             return Some(problem);
@@ -504,62 +507,62 @@ impl ExportSetting {
                     return self
                         .format
                         .as_ref()
-                        .map(|_| text!("model.problem.noteMarkdownFormat"));
+                        .map(|_| keyed!("model.problem.noteMarkdownFormat"));
                 }
                 let Some(format) = self.schema_format() else {
-                    return Some(text!("model.problem.noteTarget"));
+                    return Some(keyed!("model.problem.noteTarget"));
                 };
                 if !CODE_FORMATS.contains(&format.as_str()) {
-                    return Some(text!("model.problem.codeFormat", format));
+                    return Some(keyed!("model.problem.codeFormat", format));
                 }
                 None
             }
             "freedoc" | "formatdoc" | "stackdoc" => {
                 if !folder && !markdown {
-                    return Some(text!("model.problem.docTarget"));
+                    return Some(keyed!("model.problem.docTarget"));
                 }
                 self.format
                     .as_ref()
-                    .map(|_| text!("model.problem.docFormat"))
+                    .map(|_| keyed!("model.problem.docFormat"))
             }
             "instance" => {
                 if self.schema_format().as_deref() != Some(JSON_DATA) {
-                    return Some(text!("model.problem.instanceFormat"));
+                    return Some(keyed!("model.problem.instanceFormat"));
                 }
                 if folder || !self.path.to_lowercase().ends_with(".json") {
-                    return Some(text!("model.problem.instanceFile"));
+                    return Some(keyed!("model.problem.instanceFile"));
                 }
                 None
             }
             "svg" | "html" => {
                 let extension = format!(".{kind}");
                 if !folder && !self.path.to_lowercase().ends_with(&extension) {
-                    return Some(text!("model.problem.pageFile", kind, extension));
+                    return Some(keyed!("model.problem.pageFile", kind, extension));
                 }
                 self.format
                     .as_ref()
-                    .map(|_| text!("model.problem.pageFormat", kind))
+                    .map(|_| keyed!("model.problem.pageFormat", kind))
             }
             "action" | "flow" => {
                 if folder || !markdown {
-                    return Some(text!("model.problem.chartFile"));
+                    return Some(keyed!("model.problem.chartFile"));
                 }
                 self.format
                     .as_ref()
-                    .map(|_| text!("model.problem.chartFormat"))
+                    .map(|_| keyed!("model.problem.chartFormat"))
             }
             _ => {
                 if self.schema_format().as_deref() == Some(JSON_DATA) {
-                    return Some(text!("model.problem.jsonDataOnlyInstance"));
+                    return Some(keyed!("model.problem.jsonDataOnlyInstance"));
                 }
                 if folder {
-                    return Some(text!("model.problem.schemaOneFile"));
+                    return Some(keyed!("model.problem.schemaOneFile"));
                 }
                 let Some(format) = self.schema_format() else {
-                    return Some(text!("model.problem.schemaFormat"));
+                    return Some(keyed!("model.problem.schemaFormat"));
                 };
                 if !CODE_FORMATS.contains(&format.as_str()) {
-                    return Some(text!("model.problem.codeFormat", format));
+                    return Some(keyed!("model.problem.codeFormat", format));
                 }
                 None
             }
@@ -575,9 +578,21 @@ pub struct Section {
     pub description: String,
     pub parent_id: Option<String>,
     pub kind: Option<String>,
+    /// What an actor is (`kinds::FIGURES`): written only when it is not a system.
+    pub figure: Option<String>,
+    /// The mark it writes of its own (`{name, color}`, either left out): the rest is its kind's.
+    pub icon: Option<SectionIcon>,
     /// A working directory's directory that a note is put in but was not read here
     /// (`workdir::compose_part`): kept in its place so that the note stays where it was put.
     pub missing: bool,
+}
+
+/// A section's own mark: an SF Symbols name and a colour (`#RRGGBB`), as a kind's `icon` is written.
+#[derive(Deserialize, Clone, Debug, Default, PartialEq, Eq)]
+#[serde(default)]
+pub struct SectionIcon {
+    pub name: Option<String>,
+    pub color: Option<String>,
 }
 
 #[derive(Deserialize, Clone, Debug, Default)]
@@ -652,6 +667,8 @@ pub struct FlowNode {
     pub returns: Vec<String>,
     pub via: Option<String>,
     pub initiator: Option<String>,
+    /// A begin that receives from anyone: no partner is named, and none is missing.
+    pub any_caller: bool,
     pub verify_with: Option<String>,
     pub sign_with: Option<String>,
     #[serde(rename = "next", deserialize_with = "nexts")]
@@ -682,7 +699,11 @@ impl FlowNode {
             out.push((branch.next.clone(), Some(branch.when.clone()), Exit::Branch));
         }
         if let Some(o) = &self.otherwise {
-            out.push((o.clone(), Some("else".into()), Exit::Otherwise));
+            out.push((
+                o.clone(),
+                Some(text!("model.exit.otherwise")),
+                Exit::Otherwise,
+            ));
         }
         if let Some(e) = &self.on_error {
             out.push((e.clone(), Some(text!("model.exit.onError")), Exit::Error));

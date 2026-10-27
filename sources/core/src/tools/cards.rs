@@ -486,6 +486,7 @@ pub(crate) fn changed_label(key: &str, value: &Value) -> Option<crate::text::Key
         "absentFields" => keyed!("cards.changed.absentFields"),
         "connections" => keyed!("cards.changed.connections"),
         "discriminator" => keyed!("cards.changed.discriminator"),
+        "face" => keyed!("cards.changed.face"),
         "open" => {
             if value.as_bool() == Some(true) {
                 keyed!("cards.changed.openEnum")

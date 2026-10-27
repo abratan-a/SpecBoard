@@ -4,9 +4,10 @@
 //! of whoever loads it, so only one the agent's user owns and nobody else can write is loaded — the
 //! rule ssh holds a key's folder to — and nothing is ever fetched. A library loaded is never let go:
 //! what was made of it points into it. A grammar that cannot be loaded leaves out its language alone
-//! and says why (`problems`).
+//! and says why (`problems`), kept by its key: each reader is told it in its own language.
 
 use super::registry::{Language, Rules, Source, registry};
+use crate::text::Keyed;
 use serde_json::Value;
 use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use std::path::{Path, PathBuf};
@@ -19,8 +20,8 @@ fn dir() -> &'static Mutex<Option<PathBuf>> {
 }
 
 /// Why each grammar not loaded was not: its folder's name, and why.
-fn kept_problems() -> &'static Mutex<Vec<(String, String)>> {
-    static PROBLEMS: OnceLock<Mutex<Vec<(String, String)>>> = OnceLock::new();
+fn kept_problems() -> &'static Mutex<Vec<(String, Keyed)>> {
+    static PROBLEMS: OnceLock<Mutex<Vec<(String, Keyed)>>> = OnceLock::new();
     PROBLEMS.get_or_init(|| Mutex::new(Vec::new()))
 }
 
@@ -31,7 +32,7 @@ pub fn set_dir(folder: PathBuf) {
 }
 
 /// Why each grammar of the folder was not loaded, as last looked: its folder's name, and why.
-pub fn problems() -> Vec<(String, String)> {
+pub fn problems() -> Vec<(String, Keyed)> {
     kept_problems().lock().unwrap().clone()
 }
 
@@ -51,7 +52,7 @@ pub fn reload() {
 pub fn load_from(
     folder: &Path,
     before: &[&'static Language],
-) -> (Vec<&'static Language>, Vec<(String, String)>) {
+) -> (Vec<&'static Language>, Vec<(String, Keyed)>) {
     let mut loaded: Vec<&'static Language> = before.to_vec();
     let mut problems = Vec::new();
     let Ok(entries) = std::fs::read_dir(folder) else {
@@ -81,7 +82,7 @@ pub fn load_from(
         match load_one(&one) {
             Ok(language) => {
                 if loaded.iter().any(|l| l.id == language.id) {
-                    problems.push((name, text!("code.loader.taken", id = language.id)));
+                    problems.push((name, keyed!("code.loader.taken", id = language.id)));
                     continue;
                 }
                 loaded.push(Box::leak(Box::new(language)));
@@ -93,19 +94,19 @@ pub fn load_from(
 }
 
 /// Whether a file or a folder is the agent's user's alone: owned by it, and written by nobody else.
-fn owned_alone(path: &Path) -> Result<(), String> {
+fn owned_alone(path: &Path) -> Result<(), Keyed> {
     let meta = std::fs::symlink_metadata(path)
-        .map_err(|_| text!("code.loader.missing", path = path.display()))?;
+        .map_err(|_| keyed!("code.loader.missing", path = path.display()))?;
     // SAFETY: `getuid` reads the process's user and cannot fail.
     let me = unsafe { libc::getuid() };
     if meta.uid() != me {
-        return Err(text!("code.loader.owner", path = path.display()));
+        return Err(keyed!("code.loader.owner", path = path.display()));
     }
     if meta.permissions().mode() & 0o022 != 0 {
-        return Err(text!("code.loader.writable", path = path.display()));
+        return Err(keyed!("code.loader.writable", path = path.display()));
     }
     if meta.file_type().is_symlink() {
-        return Err(text!("code.loader.link", path = path.display()));
+        return Err(keyed!("code.loader.link", path = path.display()));
     }
     Ok(())
 }
@@ -125,32 +126,32 @@ fn strings(manifest: &Value, key: &str) -> Vec<String> {
 
 /// One grammar's folder loaded: its manifest read, its files checked, its library opened and its
 /// queries made.
-fn load_one(folder: &Path) -> Result<Language, String> {
+fn load_one(folder: &Path) -> Result<Language, Keyed> {
     owned_alone(folder)?;
     let manifest_path = folder.join("grammar.json");
     owned_alone(&manifest_path)?;
     let manifest: Value = serde_json::from_slice(
         &std::fs::read(&manifest_path)
-            .map_err(|_| text!("code.loader.missing", path = manifest_path.display()))?,
+            .map_err(|_| keyed!("code.loader.missing", path = manifest_path.display()))?,
     )
-    .map_err(|e| text!("code.loader.manifest", e))?;
-    let field = |key: &str| -> Result<String, String> {
+    .map_err(|e| keyed!("code.loader.manifest", e))?;
+    let field = |key: &str| -> Result<String, Keyed> {
         manifest
             .get(key)
             .and_then(Value::as_str)
             .filter(|s| !s.trim().is_empty())
             .map(str::to_string)
-            .ok_or_else(|| text!("code.loader.field", key))
+            .ok_or_else(|| keyed!("code.loader.field", key))
     };
     let id = field("id")?;
     if !id
         .chars()
         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_' || c == '-')
     {
-        return Err(text!("code.loader.id", id));
+        return Err(keyed!("code.loader.id", id));
     }
     if registry().is_bundled(&id) {
-        return Err(text!("code.loader.bundled", id));
+        return Err(keyed!("code.loader.bundled", id));
     }
     let name = manifest
         .get("name")
@@ -160,13 +161,13 @@ fn load_one(folder: &Path) -> Result<Language, String> {
     let symbol = field("symbol")?;
     let library = field("library")?;
     if library.contains('/') {
-        return Err(text!("code.loader.libraryName", library));
+        return Err(keyed!("code.loader.libraryName", library));
     }
     let extensions = strings(&manifest, "extensions");
     let file_names = strings(&manifest, "fileNames");
     let library_path = folder.join(&library);
     owned_alone(&library_path)?;
-    let query = |file: &str| -> Result<Option<String>, String> {
+    let query = |file: &str| -> Result<Option<String>, Keyed> {
         let path = folder.join(file);
         if !path.exists() {
             return Ok(None);
@@ -174,7 +175,7 @@ fn load_one(folder: &Path) -> Result<Language, String> {
         owned_alone(&path)?;
         std::fs::read_to_string(&path)
             .map(Some)
-            .map_err(|_| text!("code.loader.missing", path = path.display()))
+            .map_err(|_| keyed!("code.loader.missing", path = path.display()))
     };
     let symbols = query("symbols.scm")?;
     let highlights = query("highlights.scm")?;
@@ -182,11 +183,11 @@ fn load_one(folder: &Path) -> Result<Language, String> {
     // SAFETY: the library is the agent's user's own and written by nobody else (checked above); it
     // runs as that user, as a program of theirs would.
     let lib = unsafe { libloading::Library::new(&library_path) }
-        .map_err(|e| text!("code.loader.open", library, e))?;
+        .map_err(|e| keyed!("code.loader.open", library, e))?;
     // SAFETY: a grammar's library exports its language as `const TSLanguage *tree_sitter_<name>(void)`.
     let made: unsafe extern "C" fn() -> *const () = unsafe {
         *lib.get::<unsafe extern "C" fn() -> *const ()>(symbol.as_bytes())
-            .map_err(|_| text!("code.loader.symbol", symbol, library))?
+            .map_err(|_| keyed!("code.loader.symbol", symbol, library))?
     };
     // SAFETY: the function is the grammar's, as asked for by its name.
     let grammar =
@@ -194,7 +195,7 @@ fn load_one(folder: &Path) -> Result<Language, String> {
     let abi = grammar.abi_version();
     let takes = tree_sitter::MIN_COMPATIBLE_LANGUAGE_VERSION..=tree_sitter::LANGUAGE_VERSION;
     if !takes.contains(&abi) {
-        return Err(text!(
+        return Err(keyed!(
             "code.loader.abi",
             abi,
             min = takes.start(),
@@ -218,7 +219,9 @@ fn load_one(folder: &Path) -> Result<Language, String> {
         highlights,
         injections,
     );
-    language.check_queries()?;
+    language
+        .check_queries()
+        .map_err(|why| keyed!("code.loader.queries", why))?;
     language.inner = false;
     Ok(language)
 }
@@ -248,7 +251,11 @@ mod tests {
 
     fn why(root: &Path) -> Vec<(String, String)> {
         let _lang = crate::text::bind(Some("en"));
-        load_from(root, &[]).1
+        load_from(root, &[])
+            .1
+            .into_iter()
+            .map(|(name, why)| (name, why.render()))
+            .collect()
     }
 
     /// A grammar that cannot be loaded leaves out its language alone and says why: a manifest that

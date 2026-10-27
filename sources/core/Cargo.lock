@@ -773,6 +773,7 @@ name = "specboard-agent"
 version = "0.1.0"
 dependencies = [
  "libc",
+ "rusqlite",
  "serde_json",
  "specboard-core",
 ]

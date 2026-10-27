@@ -1,15 +1,17 @@
 import SwiftUI
 
-/// The project settings' tab for kinds (`specboard://SpecBoard/Docs/Design:Overview` §13): the kinds
-/// of card, of section and of line the project has, on the left — the built-in ones to read, the
-/// project's own to make, change and take away
-/// (`＋`) — and the one picked on the right, its definition as JSON. The project's own is written
-/// there and tried by the core as it is written (`kind_create`'s and `kind_update`'s `dryRun`), every
-/// problem said under it; saved, it is the project's (one line in main's history), as MCP writes it
-/// (`kind_create`, `kind_update`, `kind_delete`). A kind of card's field, kind of row or the kind
-/// itself is given another name with its values (名前を変える…). A built-in kind's definition is to
-/// read, but for what it is for, when to use it and not (`context`), which the project may write
-/// over. A form to put a definition together comes once the shape settles (not yet).
+/// The project settings' tab for kinds (`specboard://SpecBoard/Docs/Design:Overview` §13,
+/// `specboard://SpecBoard/Docs/Design:UI` the Kinds tab): the kinds of card, of section and of line the
+/// project has, on the left — the built-in ones to read, the project's own to make, change and take away
+/// (`＋`) — and the one picked on the right, as a form of foldable groups or as its JSON («Form | JSON»,
+/// kept per Mac), both writing one draft (`KindDraft`), with a preview of it beside the form (`kind_preview`;
+/// the form's first group when there is no room beside it). The project's own is tried by the core as it is
+/// written (`kind_create`'s and `kind_update`'s `dryRun`), every problem said under it; saved, it is the
+/// project's (one line in main's history), as MCP writes it (`kind_create`, `kind_update`, `kind_delete`). A
+/// kind of card's field, kind of row or the kind itself is given another name with its values (名前を変える…,
+/// or the form renaming a saved one). A built-in kind opens in the same form, only to read, but for what it is
+/// for, when to use it and not (`context`) and a kind of section's mark, which the project may write over,
+/// each with its own button.
 ///
 /// Above them, the project's tree (`project_tree`): what is directly under main's
 /// root (and every branch's) and the board's, written as JSON; checked as it is written, what
@@ -26,17 +28,32 @@ struct KindsView: View {
     /// The definition picked (`KindEntry.id`), or a new one of a list being written.
     @State private var picked: String?
     @State private var newOf: AppModel.KindList?
-    /// What is written in the editor, and what the core said of it.
+    /// What is written, as the JSON editor shows it, and what the core said of it.
     @State private var draft = ""
     @State private var check: AppModel.KindsCheck?
-    /// The renames to send with the next save.
-    @State private var renames: [OJSON] = []
+    /// The same draft as the form reads it, and why the form cannot read what the JSON says now.
+    @State private var form: KindDraft?
+    @State private var formProblem: String?
     @State private var renaming = false
     @State private var removing = false
     /// A built-in kind's context as it is written in the tab: what it is for, when to use it and not.
     @State private var context: [String: String] = [:]
     /// A built-in kind of section's mark as it is being picked in the tab, until it is saved.
     @State private var builtinMark: SectionMark?
+    /// The field or kind of row picked in the form, outlined in the preview.
+    @State private var selection: KindDraft.Place?
+    /// What the core last read of the draft, whether the draft now cannot be read, and the card drawn
+    /// (one of the tree's, by id; none for made-up values).
+    @State private var preview: AppModel.KindPreview?
+    @State private var previewFaded = false
+    @State private var sample: String?
+    /// The kinds of card a definition may name, with what people call them.
+    @State private var cardChoices: [(name: String, label: String)] = []
+
+    @AppStorage(KindFormMemory.modeKey) private var mode = KindFormMemory.form
+    @AppStorage(KindFormMemory.openKey) private var openSaid = KindFormMemory.standardOpen
+    /// The way a definition is shown, set by a picture of the tab rather than kept.
+    @State private var startMode: String?
 
     /// Where the tab starts — for a picture of it (a test): the definitions, the one picked,
     /// what is written and what the core said of it. None: as the window opens it, read once
@@ -48,6 +65,12 @@ struct KindsView: View {
         var check: AppModel.KindsCheck?
         /// Asking whether to take the one picked away.
         var removing = false
+        /// Shown as the form or as the JSON (`KindFormMemory.form`, `.json`); none: as this Mac keeps it.
+        var mode: String? = nil
+        /// What the preview draws until the draft is read again.
+        var preview: AppModel.KindPreview? = nil
+        /// The field or kind of row picked in the form.
+        var selection: KindDraft.Place? = nil
     }
 
     init(model: AppModel, start: Start? = nil) {
@@ -58,6 +81,16 @@ struct KindsView: View {
             _draft = State(initialValue: start.draft)
             _check = State(initialValue: start.check)
             _removing = State(initialValue: start.removing)
+            _startMode = State(initialValue: start.mode)
+            _preview = State(initialValue: start.preview)
+            _selection = State(initialValue: start.selection)
+            _cardChoices = State(initialValue: Self.cardChoices(start.entries))
+            if let entry = start.entries.first(where: { $0.id == start.picked }) {
+                switch KindDraft.read(start.draft, as: entry.list, saved: entry.text) {
+                case .success(let read): _form = State(initialValue: read)
+                case .failure(let problem): _formProblem = State(initialValue: problem.said)
+                }
+            }
         }
     }
 
@@ -75,6 +108,12 @@ struct KindsView: View {
         return (entry.list, entry.name)
     }
 
+    /// The list of the definition on the right, written or read.
+    private var shownList: AppModel.KindList? { newOf ?? (treePicked ? nil : entry?.list) }
+
+    /// Whether the definition on the right is shown as the form (the project's tree is JSON only).
+    private var showsForm: Bool { (startMode ?? mode) == KindFormMemory.form && shownList != nil }
+
     var body: some View {
         HStack(spacing: 0) {
             sidebar
@@ -86,18 +125,21 @@ struct KindsView: View {
         .task(id: model.dataGeneration) { reload() }
         // Checked as it is written, a moment after the last key; again when the screen's language changes,
         // for the check's texts are made in it.
-        .task(id: "\(picked ?? "")|\(newOf?.rawValue ?? "")|\(draft)|\(renames.count)|\(Language.shared.code)") {
+        .task(id: "\(picked ?? "")|\(newOf?.rawValue ?? "")|\(draft)|\(currentRenames.count)|\(Language.shared.code)") {
             guard writing != nil || treePicked else { check = nil; return }
             try? await Task.sleep(nanoseconds: 350_000_000)
             guard !Task.isCancelled else { return }
             check = currentCheck()
         }
+        // Drawn again as it is written, the same moment after; nothing is written.
+        .task(id: "\(picked ?? "")|\(newOf?.rawValue ?? "")|\(draft)|\(sample ?? "")|\(showsForm)|\(model.dataGeneration)|\(Language.shared.code)") {
+            guard showsForm, shownList != nil else { return }
+            try? await Task.sleep(nanoseconds: 350_000_000)
+            guard !Task.isCancelled else { return }
+            drawPreview()
+        }
         .sheet(isPresented: $renaming) {
-            KindRenameSheet(text: draft, strays: strayNames) { text, rename, kind in
-                draft = text
-                if let kind { renames = KindsEditing.renaming(renames, kind: kind.from, to: kind.to) }
-                renames.append(rename)
-            }
+            KindRenameSheet(text: draft, strays: strayNames) { what, from, to in rename(what, from: from, to: to) }
         }
         .confirmationDialog(L10n[.Kinds.confirmDeleteTitle], isPresented: $removing) {
             Button(L10n[.Common.actionDelete], role: .destructive) { remove() }
@@ -105,67 +147,6 @@ struct KindsView: View {
             Button(L10n[.Common.actionCancel], role: .cancel) {}
         } message: {
             Text(L10n[.Kinds.confirmDeleteMessage])
-        }
-    }
-
-    // MARK: - A kind of section's mark
-
-    /// A kind of section's mark and colour in the nav panel (`icon: {name, color}`), picked rather than
-    /// written: each writes its part of `icon` in the definition being written, saved with it.
-    private var sectionMark: some View {
-        let mark = KindsEditing.mark(in: draft)
-        return markPicker(mark, defaultMark: nil, editable: editable) { next in
-            if let text = KindsEditing.setting(next, in: draft) { draft = text }
-        }
-    }
-
-    /// The pickers for a mark: the SF Symbol from the candidates, the colour from a colour well, each
-    /// given back (`defaultMark`, when there is one, is what is shown for a part not said).
-    private func markPicker(_ mark: SectionMark, defaultMark: SectionMark?, clears: Bool = true, editable: Bool,
-                            set: @escaping (SectionMark) -> Void) -> some View {
-        let shown = SectionMark(icon: mark.icon ?? defaultMark?.icon, color: mark.color ?? defaultMark?.color)
-        return HStack(spacing: 12) {
-            Text(L10n[.Kinds.markLabel]).font(.app(11)).foregroundStyle(.secondary)
-            Menu {
-                ForEach(KindsEditing.sectionIcons, id: \.symbol) { item in
-                    Button {
-                        var next = mark
-                        next.icon = item.symbol
-                        set(next)
-                    } label: { Label(item.word, systemImage: item.symbol) }
-                }
-                if clears {
-                    Divider()
-                    Button(defaultMark == nil ? L10n[.Kinds.markUnsetFolder] : L10n[.Kinds.markRestoreBuiltin]) {
-                        var next = mark
-                        next.icon = nil
-                        set(next)
-                    }
-                }
-            } label: {
-                Label(shown.icon ?? L10n[.Kinds.markUnset], systemImage: shown.symbol)
-            }
-            .fixedSize()
-            .disabled(!editable)
-            ColorPicker(L10n[.Kinds.markColor], selection: Binding(
-                get: { shown.color.flatMap(HexColor.color(hex:)) ?? .gray },
-                set: { color in
-                    var next = mark
-                    next.color = HexColor.hex(color)
-                    set(next)
-                }), supportsOpacity: false)
-                .fixedSize()
-                .disabled(!editable)
-            if clears, mark.color != nil {
-                Button(defaultMark == nil ? L10n[.Kinds.markClearColor] : L10n[.Kinds.markRestoreColor]) {
-                    var next = mark
-                    next.color = nil
-                    set(next)
-                }
-                .buttonStyle(.borderless).font(.app(11))
-                .disabled(!editable)
-            }
-            Spacer()
         }
     }
 
@@ -246,14 +227,7 @@ struct KindsView: View {
                 }
                 Text(L10n[.Kinds.projectTreeExplain])
                     .font(.app(10.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                TextEditor(text: $draft)
-                    .font(.app(12, design: .monospaced))
-                    .scrollContentBackground(.hidden)
-                    .padding(6)
-                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.quaternary))
-                    .frame(minHeight: 260)
-                    .disabled(!editable)
+                jsonEditor
                 problemsView
                 HStack {
                     Spacer()
@@ -267,36 +241,22 @@ struct KindsView: View {
             .padding(16)
         } else if let writing {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
-                    Text(writing.name ?? L10n[.Kinds.listNewTitle(writing.list.noun)]).font(.app(14, weight: .semibold))
-                    Text(writing.list.title).font(.app(11)).foregroundStyle(.secondary)
-                    Spacer()
-                    if writing.list == .cards {
-                        Button(L10n[.Common.actionRenameMenu]) { renaming = true }
-                            .disabled(!editable)
-                            .help(L10n[.Kinds.editorRenameHelp])
-                    }
-                    if writing.name != nil {
-                        Button(L10n[.Common.actionDelete], role: .destructive) { removing = true }.disabled(!editable)
-                    }
-                }
-                Text(L10n[.Kinds.editorJsonHelp])
-                    .font(.app(10.5)).foregroundStyle(.secondary)
-                if writing.list == .sections { sectionMark }
-                TextEditor(text: $draft)
-                    .font(.app(12, design: .monospaced))
-                    .scrollContentBackground(.hidden)
-                    .padding(6)
-                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.quaternary))
-                    .frame(minHeight: 260)
-                    .disabled(!editable)
-                problemsView
-                if !renames.isEmpty {
-                    Text(L10n[.Kinds.editorRenamesPending(renames.map { KindRenameSheet.said($0) }.joined(separator: L10n[.Kinds.editorRenamesSeparator]))])
+                heading(title: writing.name ?? L10n[.Kinds.listNewTitle(writing.list.noun)], list: writing.list, builtin: false)
+                if showsForm {
+                    formArea(readOnly: !editable)
+                } else {
+                    Text(L10n[.Kinds.editorJsonHelp])
                         .font(.app(10.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    jsonEditor
                 }
-                HStack {
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        problemsView
+                        if !currentRenames.isEmpty {
+                            Text(L10n[.Kinds.editorRenamesPending(currentRenames.map { KindRenameSheet.said($0) }.joined(separator: L10n[.Kinds.editorRenamesSeparator]))])
+                                .font(.app(10.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
                     Spacer()
                     Button(L10n[.Kinds.buttonRevert]) { pick(newOf == nil ? picked : nil) }
                         .disabled(!changed)
@@ -306,34 +266,24 @@ struct KindsView: View {
                 }
             }
             .padding(16)
+            .background { if showsForm { undoKeys } }
         } else if let entry {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
-                    Text(entry.name).font(.app(14, weight: .semibold, design: .monospaced))
-                    Text(L10n[.Kinds.builtinTitle(entry.list.title)]).font(.app(11)).foregroundStyle(.secondary)
-                    if entry.iconChanged {
-                        Text(L10n[.Kinds.builtinIconChanged]).font(.app(9.5)).foregroundStyle(Color.accentColor)
-                            .padding(.horizontal, 4).padding(.vertical, 1)
-                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.accentColor.opacity(0.6)))
-                    }
-                    if entry.contextChanged {
-                        Text(L10n[.Kinds.builtinContextChanged]).font(.app(9.5)).foregroundStyle(Color.accentColor)
-                            .padding(.horizontal, 4).padding(.vertical, 1)
-                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.accentColor.opacity(0.6)))
-                    }
-                }
+                heading(title: entry.name, list: entry.list, builtin: true)
                 Text(L10n[.Kinds.builtinHelp])
                     .font(.app(10.5)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                if entry.list == .sections { builtinMarkEditor(entry) }
-                contextEditor(entry)
-                ScrollView {
-                    Text(entry.text)
-                        .font(.app(11.5, design: .monospaced))
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(8)
+                if showsForm {
+                    formArea(readOnly: true)
+                } else {
+                    ScrollView {
+                        Text(entry.text)
+                            .font(.app(11.5, design: .monospaced))
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(8)
+                    }
+                    .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
                 }
-                .background(Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
             }
             .padding(16)
         } else {
@@ -346,6 +296,134 @@ struct KindsView: View {
         }
     }
 
+    /// The top of the right: the definition's name, its list and what people call it; on the right the
+    /// switch between the form and the JSON, 「名前を変える…」 (a kind of card of the project's) and
+    /// 「削除」 (one saved).
+    private func heading(title: String, list: AppModel.KindList, builtin: Bool) -> some View {
+        HStack(spacing: 8) {
+            Text(title).font(.app(14, weight: .semibold, design: builtin ? .monospaced : .default))
+            Text(builtin ? L10n[.Kinds.builtinTitle(list.title)] : list.title).font(.app(11)).foregroundStyle(.secondary)
+            if let label = form?.string(at: .kind, "label"), !label.isEmpty, label != title {
+                Text(label).font(.app(11)).foregroundStyle(.secondary).lineLimit(1)
+            }
+            if builtin, let entry {
+                if entry.iconChanged { KindTag(text: L10n[.Kinds.builtinIconChanged], tint: .accentColor) }
+                if entry.contextChanged { KindTag(text: L10n[.Kinds.builtinContextChanged], tint: .accentColor) }
+            }
+            Spacer()
+            Picker("", selection: Binding(get: { startMode ?? mode }, set: { switchTo($0) })) {
+                Text(L10n[.Kinds.formModeForm]).tag(KindFormMemory.form)
+                Text(verbatim: "JSON").tag(KindFormMemory.json)
+            }
+            .pickerStyle(.segmented).labelsHidden().fixedSize()
+            if !builtin, list == .cards {
+                Button(L10n[.Common.actionRenameMenu]) { renaming = true }
+                    .disabled(!editable)
+                    .help(L10n[.Kinds.editorRenameHelp])
+            }
+            if !builtin, writing?.name != nil {
+                Button(L10n[.Common.actionDelete], role: .destructive) { removing = true }.disabled(!editable)
+            }
+        }
+    }
+
+    private var jsonEditor: some View {
+        TextEditor(text: $draft)
+            .font(.app(12, design: .monospaced))
+            .scrollContentBackground(.hidden)
+            .padding(6)
+            .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(.quaternary))
+            .frame(minHeight: 260)
+            .disabled(!editable)
+    }
+
+    /// The form, with the preview beside it where there is room for both (the form at least 480 wide, the
+    /// preview 300), else as the form's first group; or, while the JSON cannot be read as a definition,
+    /// why, and the way back to the JSON.
+    @ViewBuilder
+    private func formArea(readOnly: Bool) -> some View {
+        if let formProblem {
+            VStack(alignment: .leading, spacing: 8) {
+                Label(L10n[.Kinds.formUnreadable(formProblem)], systemImage: "exclamationmark.triangle")
+                    .font(.app(11.5)).foregroundStyle(.orange).fixedSize(horizontal: false, vertical: true)
+                Button(L10n[.Kinds.formBackToJSON]) { switchTo(KindFormMemory.json) }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        } else if let form, let list = shownList {
+            GeometryReader { geo in
+                let wide = Self.sideBySide(geo.size.width)
+                HStack(alignment: .top, spacing: 16) {
+                    ScrollView {
+                        kindForm(form, list: list, readOnly: readOnly, narrow: !wide)
+                            .padding(.trailing, 6)
+                    }
+                    .frame(minWidth: wide ? Self.formWidth : nil, maxWidth: .infinity)
+                    if wide {
+                        ScrollView { previewView(form, list: list, titled: true) }
+                            .frame(width: Self.previewWidth)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Whether a kind of section may be told to hold the kind of card written: only once it is saved as it
+    /// is, for the kind of section is saved on its own and names it.
+    static func canHoldIn(saved: Bool, changed: Bool, editable: Bool) -> Bool { saved && !changed && editable }
+
+    /// Whether the room right of the list takes the form and the preview side by side.
+    static func sideBySide(_ width: CGFloat) -> Bool { width >= formWidth + previewWidth + 16 }
+
+    /// The least the form is given beside the preview, and the preview's width.
+    static let formWidth: CGFloat = 480
+    static let previewWidth: CGFloat = 300
+
+    private func kindForm(_ form: KindDraft, list: AppModel.KindList, readOnly: Bool, narrow: Bool) -> some View {
+        let shown = previewView(form, list: list, titled: false)
+        let builtin = entry?.builtin == true && newOf == nil
+        return KindForm(
+            context: KindFormContext(draft: form, readOnly: readOnly, cardKinds: cardChoices,
+                                     edit: { change in edit(change) }, toJSON: { switchTo(KindFormMemory.json) }),
+            list: list, entries: entries, entry: newOf == nil ? entry : nil,
+            canHold: Self.canHoldIn(saved: writing?.name != nil, changed: changed, editable: editable),
+            rowKinds: { name in model.detail?.cardKinds[name]?.rows.map(\.name) ?? [] },
+            selection: $selection,
+            preview: narrow ? AnyView(shown) : nil, previewSummary: shown.sampleSaid,
+            builtinUsage: builtin ? entry.map { AnyView(contextEditor($0)) } : nil,
+            builtinMark: builtin && list == .sections ? entry.map { AnyView(builtinMarkEditor($0)) } : nil,
+            holdIn: { holdIn($0) }, openProjectTree: { pick(Self.treeId) },
+            anyHolders: KindForm.anyHolders(entries, inTree: Set((model.detail?.sections ?? [])
+                .filter { $0.name != ProjectSection.evacuation }.compactMap { $0.kindName ?? $0.kind?.rawValue })))
+    }
+
+    private func previewView(_ form: KindDraft, list: AppModel.KindList, titled: Bool) -> KindPreviewView {
+        KindPreviewView(list: list, preview: preview, faded: previewFaded, draft: form, selection: selection,
+                        containerRow: KindFormMemory.groups(openSaid).contains("card.look"),
+                        samples: samples, sample: $sample, kinds: model.detail?.cardKinds ?? CardKinds(), titled: titled,
+                        makePage: { await model.documentPage($0) })
+    }
+
+    /// ⌘Z and ⇧⌘Z in the form: the draft's changes taken back and made again, one by one. Not there while
+    /// none can be, so the keys go on to what has focus.
+    @ViewBuilder
+    private var undoKeys: some View {
+        if let form, editable {
+            ZStack {
+                Button("") { edit { $0.undo() } }
+                    .keyboardShortcut("z", modifiers: .command)
+                    .disabled(!form.canUndo)
+                Button("") { edit { $0.redo() } }
+                    .keyboardShortcut("z", modifiers: [.command, .shift])
+                    .disabled(!form.canRedo)
+            }
+            .opacity(0)
+            .frame(width: 0, height: 0)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+    }
+
     /// A built-in kind of section's mark written over by the project (`kind_update`'s `icon`): what
     /// the picked entry says is its own (`builtin.json`'s) or the project's, and the pickers write the
     /// project's, saved with the button, or given back.
@@ -354,7 +432,7 @@ struct KindsView: View {
         let mark = builtinMark ?? saved
         return VStack(alignment: .leading, spacing: 6) {
             // A built-in kind's mark is given back whole ("組み込みに戻す"): the part left out is its own.
-            markPicker(mark, defaultMark: nil, clears: false, editable: editable) { builtinMark = $0 }
+            KindMarkPicker(mark: mark, clears: false, editable: editable) { builtinMark = $0 }
             HStack {
                 Text(entry.iconChanged ? L10n[.Kinds.markChanged] : L10n[.Kinds.markDefault])
                     .font(.app(10.5)).foregroundStyle(.secondary)
@@ -405,9 +483,10 @@ struct KindsView: View {
 
     /// The definitions read again with the one picked, after its context was written.
     private func reloadPicked() {
-        entries = model.kindEntries()
+        setEntries(model.kindEntries())
         context = entry?.context ?? [:]
         draft = entry?.text ?? ""
+        loadForm()
     }
 
     @ViewBuilder
@@ -437,7 +516,15 @@ struct KindsView: View {
     /// Whether what is written is not what is saved.
     private var changed: Bool {
         if treePicked { return draft != treeSaved }
-        return newOf != nil || !renames.isEmpty || draft != (entry?.text ?? "")
+        return newOf != nil || !currentRenames.isEmpty || draft != (entry?.text ?? "")
+    }
+
+    /// What saving renames (`renames`): the form's renames of the saved fields and kinds of row, and those
+    /// 「名前を変える…」 wrote — read against what the JSON says now.
+    private var currentRenames: [OJSON] {
+        guard writing != nil, var now = form else { return [] }
+        _ = now.setText(draft)
+        return now.renames
     }
 
     /// The fields left behind in the project's cards of the kind being written: what a rename may
@@ -448,11 +535,33 @@ struct KindsView: View {
         return Array(Set(names)).sorted()
     }
 
+    /// The tree's cards of the kind picked, each by its path: what the preview may draw.
+    private var samples: [(id: String, path: String)] {
+        guard shownList == .cards, newOf == nil, let name = entry?.name, let detail = model.detail else { return [] }
+        return detail.schemas.filter { $0.kindName == name }.prefix(100).map { ($0.id, detail.directory.full($0)) }
+    }
+
+    private func setEntries(_ read: [AppModel.KindEntry]) {
+        entries = read
+        cardChoices = Self.cardChoices(read)
+    }
+
+    /// The kinds of card a definition may name: those a card can be made of (not one only to take after,
+    /// nor one only the app makes).
+    static func cardChoices(_ entries: [AppModel.KindEntry]) -> [(name: String, label: String)] {
+        entries.filter { $0.list == .cards }.compactMap { entry in
+            guard case .object(let o)? = OJSON.parse(entry.text) else { return nil }
+            if case .bool(true)? = o["abstract"] { return nil }
+            if case .bool(true)? = o["system_only"] { return nil }
+            return (entry.name, entry.label)
+        }
+    }
+
     /// The definitions read again (the project changed, here or by MCP): what is being written is
     /// kept, and follows the definition only while it is as it was.
     private func reload() {
         let was = treePicked ? treeSaved : entry?.text
-        entries = model.kindEntries()
+        setEntries(model.kindEntries())
         let tree = model.projectTreeText()
         if treePicked {
             if draft == was { draft = tree }
@@ -461,7 +570,10 @@ struct KindsView: View {
         }
         treeSaved = tree
         if let picked, !entries.contains(where: { $0.id == picked }) { self.picked = nil }
-        if newOf == nil, draft == (was ?? "") || entry == nil { draft = entry?.text ?? "" }
+        if newOf == nil, draft == (was ?? "") || entry == nil {
+            draft = entry?.text ?? ""
+            if form.map({ !$0.canUndo }) ?? true { loadForm() }
+        }
     }
 
     private func pick(_ id: String?) {
@@ -475,16 +587,103 @@ struct KindsView: View {
         }
         context = entry?.context ?? [:]
         builtinMark = nil
-        renames = []
         check = nil
+        reset()
     }
 
     private func startNew(_ list: AppModel.KindList) {
         picked = nil
         newOf = list
         draft = list.template
-        renames = []
         check = nil
+        reset()
+    }
+
+    /// What was drawn and picked for the definition before let go of, and the draft read anew: nothing
+    /// to take back.
+    private func reset() {
+        selection = nil
+        sample = nil
+        preview = nil
+        previewFaded = false
+        loadForm()
+    }
+
+    /// The draft read by the form as the JSON says it, against the definition as it is saved.
+    private func loadForm() {
+        guard let list = shownList else { form = nil; formProblem = nil; return }
+        switch KindDraft.read(draft, as: list, saved: newOf == nil ? entry?.text : nil) {
+        case .success(let read):
+            form = read
+            formProblem = nil
+        case .failure(let problem):
+            form = nil
+            formProblem = problem.said
+        }
+    }
+
+    /// The form's draft made to say what the JSON says now (one change, taken back as one); why not, when
+    /// it cannot read it.
+    private func readText() {
+        guard var now = form else { loadForm(); return }
+        if let problem = now.setText(draft) {
+            formProblem = problem.said
+        } else {
+            form = now
+            formProblem = nil
+        }
+    }
+
+    /// A change made by the form: written into the draft, and the JSON written from it.
+    private func edit(_ change: (inout KindDraft) -> Void) {
+        guard var now = form else { return }
+        change(&now)
+        form = now
+        draft = now.text
+    }
+
+    /// The definition shown as the form or as the JSON, and kept so on this Mac; to the form, it reads
+    /// what the JSON says.
+    private func switchTo(_ next: String) {
+        if next == KindFormMemory.form { readText() }
+        startMode = nil
+        mode = next
+    }
+
+    /// 「名前を変える…」: written into the draft as the form writes a rename. Why not, when not.
+    private func rename(_ what: KindsEditing.Renamed, from: String, to: String) -> KindsEditing.Problem? {
+        readText()
+        guard form != nil, formProblem == nil else { return KindsEditing.Problem(L10n[.Kinds.problemFixJSONFirst]) }
+        var why: KindsEditing.Problem?
+        edit { why = $0.rename(what, from: from, to: to) }
+        return why
+    }
+
+    /// A kind of section made to hold the kind of card being written: its definition opened with the kind
+    /// added to what it holds — `section`'s, or a new one's — to be saved on its own.
+    private func holdIn(_ section: String?) {
+        guard let name = form?.name, !name.isEmpty else { return }
+        if let section, let target = entries.first(where: { $0.list == .sections && !$0.builtin && $0.name == section }) {
+            pick(target.id)
+            edit { $0.setHolds($0.strings(at: .kind, "holds") + [name]) }
+        } else {
+            startNew(.sections)
+            edit { $0.setHolds([name]) }
+        }
+    }
+
+    /// The draft as the core reads it as though it were written, drawn; the last drawing kept faint while
+    /// it cannot be read.
+    private func drawPreview() {
+        guard let list = shownList else { return }
+        guard case .success(let written) = KindsEditing.parse(draft, as: list),
+              let read = model.kindPreview(list, replacing: newOf == nil ? entry?.name : nil, with: written, sample: sample),
+              read.kind != nil else {
+            previewFaded = preview != nil
+            return
+        }
+        preview = read
+        previewFaded = false
     }
 
     /// The project's own list with what is written in it, checked by the core.
@@ -499,34 +698,35 @@ struct KindsView: View {
         switch KindsEditing.parse(draft, as: writing.list) {
         case .failure(let why): return AppModel.KindsCheck(ok: false, problems: [why.said])
         case .success(let written):
-            return model.checkKind(writing.list, replacing: writing.name, with: written, renames: renames)
+            return model.checkKind(writing.list, replacing: writing.name, with: written, renames: currentRenames)
         }
     }
 
     private func save() {
         if treePicked {
             guard let parsed = OJSON.parse(draft), model.saveProjectTree(parsed) else { return }
-            entries = model.kindEntries()
+            setEntries(model.kindEntries())
             treeSaved = model.projectTreeText()
             draft = treeSaved
             return
         }
         guard let writing, case .success(let written) = KindsEditing.parse(draft, as: writing.list) else { return }
-        guard model.saveKind(writing.list, replacing: writing.name, with: written, renames: renames) else { return }
-        renames = []
-        newOf = nil
-        entries = model.kindEntries()
+        guard model.saveKind(writing.list, replacing: writing.name, with: written, renames: currentRenames) else { return }
+        setEntries(model.kindEntries())
+        var saved: String?
         if case .object(let o) = written, case .string(let name)? = o[writing.list.nameKey] {
-            picked = entries.first { $0.list == writing.list && !$0.builtin && $0.name == name }?.id
+            saved = entries.first { $0.list == writing.list && !$0.builtin && $0.name == name }?.id
         }
-        draft = entry?.text ?? ""
+        let keep = selection
+        pick(saved)
+        selection = keep
     }
 
     private func remove() {
         guard let writing, let name = writing.name else { return }
         guard model.deleteKind(name) else { return }
         pick(nil)
-        entries = model.kindEntries()
+        setEntries(model.kindEntries())
     }
 }
 
@@ -538,8 +738,8 @@ struct KindRenameSheet: View {
     var text: String
     /// The fields left behind in its cards (「定義に無い欄」), offered as what to move from.
     var strays: [String]
-    /// The JSON with the rename written in, the rename to send, and the kind's own rename.
-    var done: (String, OJSON, (from: String, to: String)?) -> Void
+    /// The rename written into the draft, as the form writes one: why not, when it cannot be.
+    var apply: (KindsEditing.Renamed, String, String) -> KindsEditing.Problem?
 
     @Environment(\.dismiss) private var dismiss
     @State private var what = KindsEditing.Renamed.field
@@ -594,13 +794,9 @@ struct KindRenameSheet: View {
                 Spacer()
                 Button(L10n[.Common.actionCancel]) { dismiss() }.keyboardShortcut(.cancelAction)
                 Button(L10n[.Kinds.renameSheetApply]) {
-                    var old = from
-                    if what == .kind, case .success(let parsed) = KindsEditing.parse(text, as: AppModel.KindList.cards),
-                       case .object(let o) = parsed, case .string(let kind)? = o["kind"] { old = kind }
-                    switch KindsEditing.rename(text, what: what, from: from, to: to) {
-                    case .failure(let why): problem = why.said
-                    case .success(let made):
-                        done(made.text, made.rename, what == .kind ? (old, to) : nil)
+                    if let why = apply(what, from, to) {
+                        problem = why.said
+                    } else {
                         dismiss()
                     }
                 }

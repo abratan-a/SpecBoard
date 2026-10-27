@@ -663,6 +663,7 @@ struct RootView: View {
         static let whole = ISO8601DateFormatter()
         static let shown: DateFormatter = {
             let writer = DateFormatter()
+            writer.locale = Locale(identifier: "en_US_POSIX")
             writer.dateFormat = "MM-dd HH:mm"
             return writer
         }()
@@ -789,7 +790,7 @@ struct RootView: View {
 
     private func conflictView(_ conflict: MergeRequest.Result.Conflict) -> some View {
         VStack(alignment: .leading, spacing: 1) {
-            Text(L10n[.Root.conflictTitle(conflict.path, conflict.unit,
+            Text(L10n[.Root.conflictTitle(conflict.path, Merge3.shown(conflict.unit),
                                           conflict.took == "source" ? L10n[.Root.conflictTookBranch] : L10n[.Root.conflictKeptMain])])
                 .font(.app(10.5, weight: .semibold))
             ForEach([(L10n[.Root.conflictBase], conflict.base), ("branch", conflict.source), ("main", conflict.target)], id: \.0) { side in

@@ -19,7 +19,24 @@ enum SectionGhosts {
     /// the definitions name it.
     static let kindWord = "section"
 
+    /// What its badge says where the section is an actor's.
+    static let actorWord = "actor"
+
     static func isGhost(_ id: String) -> Bool { id.hasPrefix(prefix) }
+
+    /// How a section ghost's head is drawn: the section's mark (`ProjectDetail.mark(of:)`), and for an
+    /// actor a tint of the actors' blue, the badge `actor`, and a dashed edge for one outside.
+    struct Look: Hashable {
+        var mark: SectionMark
+        var figure: ActorFigure?
+    }
+
+    /// The head of the section ghost `id` stands for; nil for an id that is no section's.
+    @MainActor
+    static func look(of id: String, in detail: ProjectDetail) -> Look? {
+        guard isGhost(id), let section = detail.directory.section(id: String(id.dropFirst(prefix.count))) else { return nil }
+        return Look(mark: detail.mark(of: section), figure: section.actorFigure)
+    }
 
     /// The card or field a section ghost's row stands for: its rows carry
     /// `§f|<schema>|<field>` as their id — the field's id, or the names of a place the card does

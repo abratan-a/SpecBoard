@@ -259,6 +259,36 @@ fn a_ghost_is_a_card_of_its_section_named_as_it_says_and_read_as_one() {
     assert!(ghosts[0]["posX"].is_number());
 }
 
+/// Where a ghost sits is said as it is made, as a card's is; a ghost draws its card whole, so a
+/// size is a key it does not take.
+#[test]
+fn a_ghost_is_made_where_top_left_says_and_takes_no_size() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Buyer", "value": {
+            "kind": "ghost", "target": "Schemas:Customer", "topLeft": {"x": 200, "y": 200}}}),
+    );
+    let read = read(&core, "Docs:Buyer");
+    assert_eq!(read["kind"], "ghost", "{read}");
+    assert_eq!(read["topLeft"], json!({"x": 200, "y": 200}), "{read}");
+
+    let refusal = refused(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Sized", "value": {
+            "kind": "ghost", "target": "Schemas:Customer", "size": {"w": 4}}}),
+    );
+    assert_eq!(refusal, "Docs:Sized: size: ghost が持てないキーです");
+    let (_, text) = call(
+        &core,
+        "card_read",
+        json!({"project": PROJECT, "target": "Docs:Sized"}),
+    );
+    assert!(text.contains("error"), "{text}");
+}
+
 #[test]
 fn a_ghost_points_out_of_its_section_and_never_round() {
     let core = Core::open(script_store()).unwrap();

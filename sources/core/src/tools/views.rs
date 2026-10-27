@@ -99,6 +99,15 @@ impl Seen {
                 if let Some(kind) = &s.kind {
                     row.insert("type".into(), kind.clone().into());
                 }
+                if let Some(figure) = &s.figure {
+                    row.insert("figure".into(), figure.clone().into());
+                }
+                if let Some(icon) = &s.icon {
+                    row.insert(
+                        "icon".into(),
+                        icon_json(icon.name.as_deref(), icon.color.as_deref()),
+                    );
+                }
                 // Its card ghosts are named among its cards, not counted with them.
                 let ghosts = project.directory.ghosts_in(&s.id).len();
                 if ghosts > 0 {
@@ -114,6 +123,18 @@ impl Seen {
             })
             .collect()
     }
+}
+
+/// A mark as it is written, `{name, color}`, each part only when there is one.
+pub(crate) fn icon_json(name: Option<&str>, color: Option<&str>) -> Value {
+    let mut out = Map::new();
+    if let Some(name) = name {
+        out.insert("name".into(), name.into());
+    }
+    if let Some(color) = color {
+        out.insert("color".into(), color.into());
+    }
+    Value::Object(out)
 }
 
 // MARK: - A card and what is in it
@@ -479,6 +500,9 @@ impl Seen {
         if let Some(d) = &card.discriminator {
             out.insert("discriminator".into(), d.clone().into());
         }
+        if let Some(face) = &card.face {
+            out.insert("face".into(), face.clone());
+        }
         // In the kinds' form, an open enum reads as it is written: `open`.
         if card.enum_open {
             out.insert("open".into(), true.into());
@@ -582,7 +606,10 @@ impl Seen {
                     out.insert(k, v);
                 }
             }
-            if let Some(progress) = super::board::progress(self, card) {
+            // Nothing inside to count says nothing.
+            if let Some(progress) = super::board::progress(self, card)
+                && progress["of"] != 0
+            {
                 out.insert("progress".into(), progress);
             }
             // What the board's kinds no longer have: kept apart, let go of
@@ -619,7 +646,9 @@ impl Seen {
                 );
             } else {
                 let (fields, cut) = self.flat_fields(&card.fields, card, projection);
-                out.insert("fields".into(), Value::Array(fields));
+                if !fields.is_empty() {
+                    out.insert("fields".into(), Value::Array(fields));
+                }
                 if cut {
                     out.insert("truncated".into(), true.into());
                 }
@@ -633,16 +662,14 @@ impl Seen {
         }
         // A container: the cards inside it, one level, by their paths (as a section's).
         if fields && project.is_container(&card.kind) {
-            out.insert(
-                "cards".into(),
-                Value::Array(
-                    project
-                        .inner_of(&card.id)
-                        .iter()
-                        .map(|c| Value::from(project.full(c)))
-                        .collect(),
-                ),
-            );
+            let inside: Vec<Value> = project
+                .inner_of(&card.id)
+                .iter()
+                .map(|c| Value::from(project.full(c)))
+                .collect();
+            if !inside.is_empty() {
+                out.insert("cards".into(), Value::Array(inside));
+            }
         }
         if projection.has("used_by") && card.is_shape() {
             for (key, value) in self.used_by(card) {

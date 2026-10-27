@@ -4,7 +4,9 @@
 //! common, and written into the target the way the target keeps it.
 //!
 //! A card is taken apart into its units: each key of its document, each of its fields'
-//! values (`fields`), each row of a record's fields, of an enum's values, of a stackdoc's
+//! values (`fields`; a data card's `data` by its top-level fields, an array whose elements' shape
+//! has a key an element at a time, where the array stands among them worked out apart), each row
+//! of a record's fields, of an enum's values, of a stackdoc's
 //! versions and of a formatdoc's rows by id (its parent is part of it; where it stands among
 //! its siblings is worked out apart), and every other kind of row whole — a flow's steps,
 //! whose parts lead to one another, and a table a project's own kind defines: mixing them
@@ -71,7 +73,7 @@ pub struct Conflict {
     /// side removing what the other changed.
     pub unit: String,
     /// The unit as a person names it, one of the card's alone: `label`, `fields.total`,
-    /// `values.paid`, `versions.v0_2`, `rows.auth.login`, `steps`, `（カード）`.
+    /// `values.paid`, `versions.v0_2`, `rows.auth.login`, `steps`, `(whole)`.
     pub label: String,
     pub base: Option<Value>,
     pub source: Option<Value>,
@@ -127,7 +129,23 @@ pub fn places_from_main() -> String {
     text!("write.merge.placesFromMain")
 }
 
+/// The unit and the name of a conflict of a whole card or section (one side removed what the other
+/// changed): the same in every language, as a `take` names it.
 pub const WHOLE: &str = "(whole)";
+
+/// Whether a unit a `take` names is the whole card or section: `WHOLE`, or what a request kept
+/// before named it — the whole's name in a language, a card's or a section's.
+pub fn is_whole(unit: &str) -> bool {
+    unit == WHOLE
+        || crate::text::LANGUAGES.iter().any(|lang| {
+            [
+                keyed!("write.merge.wholeCard"),
+                keyed!("write.merge.wholeSection"),
+            ]
+            .iter()
+            .any(|said| said.render_in(lang) == unit)
+        })
+}
 
 // MARK: - Three versions
 
@@ -141,6 +159,195 @@ enum Kind {
 const BY_ROW: [&str; 4] = ["fields", "values", "versions", "rows"];
 const PARENT: &str = "~parent";
 
+/// A data card's top-level arrays whose elements' shape has a key: by the array's field, its key
+/// fields' names, in the shape's order.
+pub(crate) type DataKeys = HashMap<String, Vec<String>>;
+
+/// The units a data card's `data` is kept apart in start so: `d:` that it is there, `d:<field>` a
+/// top-level field's value, `d:<field>[]` that a keyed array is there, `d:<field>[<key>]` an element
+/// of it (`d:tests[name=helper]`).
+const DATA: &str = "d:";
+
+/// An element's key as a path picks it (`[name=helper]`): none when a key field has no text,
+/// number or truth.
+fn element_key(keys: &[String], element: &Value) -> Option<String> {
+    use crate::tools::picks::{Lit, Pick};
+    keys.iter()
+        .map(|k| Some((k.clone(), Lit::of(element.get(k)?)?)))
+        .collect::<Option<Vec<_>>>()
+        .map(|picked| Pick::Where(picked).written())
+}
+
+/// A version's `data`, when it has one as an object.
+fn data_of(doc: Option<&Map<String, Value>>) -> Option<&Map<String, Value>> {
+    doc?.get("fields")?.get("data")?.as_object()
+}
+
+/// The keyed arrays a merge takes an element at a time: those whose every element in every version
+/// has its whole key, and no two the same. One that does not is taken whole, as any other field.
+fn data_split(keys: &DataKeys, versions: &[Option<&Map<String, Value>>]) -> DataKeys {
+    keys.iter()
+        .filter(|(field, names)| {
+            versions
+                .iter()
+                .filter_map(|v| data_of(*v))
+                .all(|data| match data.get(*field) {
+                    None => true,
+                    Some(Value::Array(items)) => {
+                        let mut seen = HashSet::new();
+                        items
+                            .iter()
+                            .all(|i| element_key(names, i).is_some_and(|k| seen.insert(k)))
+                    }
+                    Some(_) => false,
+                })
+        })
+        .map(|(k, v)| (k.clone(), v.clone()))
+        .collect()
+}
+
+/// A data card's keyed arrays (`DataKeys`), read from its shape's document and those of the shapes
+/// its arrays' elements are (`doc_of`, a card's document by its id): each top-level array of an
+/// embedded shape, or of an object, with primary key fields. None for a card that is not data or
+/// whose shape is not there; empty for one whose arrays have no key.
+fn data_keys(
+    card: &Map<String, Value>,
+    doc_of: &dyn Fn(&str) -> Option<Map<String, Value>>,
+) -> Option<DataKeys> {
+    if card.get("kind").and_then(Value::as_str) != Some(crate::kinds::INSTANCE) {
+        return None;
+    }
+    let shape_id = card
+        .get("connections")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|l| l.get("line").and_then(Value::as_str) == Some(crate::kinds::OF_LINE))
+        .and_then(|l| l.get("to").and_then(Value::as_str))?;
+    let shape = doc_of(shape_id)?;
+    let primary = |rows: &[Value]| -> Vec<String> {
+        rows.iter()
+            .filter(|r| r["fields"]["primaryKey"].as_bool() == Some(true))
+            .filter_map(|r| r["fields"]["name"].as_str().map(str::to_string))
+            .collect()
+    };
+    let mut out = DataKeys::new();
+    for row in rows_of(&shape, "fields") {
+        let fields = &row["fields"];
+        let Some(name) = fields["name"].as_str() else {
+            continue;
+        };
+        if fields["array"].as_bool() != Some(true) {
+            continue;
+        }
+        let embedded = shape
+            .get("connections")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .find(|l| {
+                l.get("line").and_then(Value::as_str) == Some("embed")
+                    && l.get("from").and_then(Value::as_str) == Some(name)
+            })
+            .and_then(|l| l.get("to").and_then(Value::as_str))
+            .and_then(doc_of);
+        let keys = match embedded {
+            Some(element) => primary(rows_of(&element, "fields")),
+            None => primary(
+                row.get("rows")
+                    .and_then(|r| r.get("fields"))
+                    .and_then(Value::as_array)
+                    .map(Vec::as_slice)
+                    .unwrap_or(&[]),
+            ),
+        };
+        if !keys.is_empty() {
+            out.insert(name.to_string(), keys);
+        }
+    }
+    Some(out)
+}
+
+/// The keys of a version's keyed array, in its order.
+fn element_sequence(doc: Option<&Map<String, Value>>, field: &str, keys: &[String]) -> Vec<String> {
+    data_of(doc)
+        .and_then(|d| d.get(field))
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(|i| element_key(keys, i))
+        .collect()
+}
+
+/// The field of the top of `data` a data unit is of (`d:tests[name=x]` → `tests`).
+fn data_field(unit: &str) -> Option<&str> {
+    let rest = unit.strip_prefix(DATA)?;
+    let name = rest.split('[').next().unwrap_or(rest);
+    (!name.is_empty()).then_some(name)
+}
+
+/// A data card's `data` put back together from its units: its top-level fields in the order the
+/// versions had them, a keyed array's elements in the order of the side that moved them.
+fn data_assembled(
+    units: &HashMap<String, Value>,
+    split: &DataKeys,
+    versions: [Option<&Map<String, Value>>; 3],
+) -> Option<Value> {
+    if !units.contains_key(DATA) {
+        return None;
+    }
+    let [ancestor, source, target] = versions;
+    let mut names: Vec<String> = Vec::new();
+    for version in [target, source] {
+        for k in data_of(version).into_iter().flat_map(|d| d.keys()) {
+            if !names.contains(k) {
+                names.push(k.clone());
+            }
+        }
+    }
+    let mut extra: Vec<String> = units
+        .keys()
+        .filter_map(|u| data_field(u))
+        .filter(|n| !names.iter().any(|m| m == n))
+        .map(str::to_string)
+        .collect();
+    extra.sort();
+    extra.dedup();
+    names.extend(extra);
+    let mut out = Map::new();
+    for name in names {
+        if let Some(v) = units.get(&format!("{DATA}{name}")) {
+            out.insert(name, v.clone());
+            continue;
+        }
+        let Some(keys) = split.get(&name) else {
+            continue;
+        };
+        let prefix = format!("{DATA}{name}[");
+        let marker = format!("{DATA}{name}[]");
+        let held: Vec<String> = units
+            .keys()
+            .filter(|u| u.starts_with(&prefix) && **u != marker)
+            .map(|u| u[prefix.len() - 1..].to_string())
+            .collect();
+        if held.is_empty() && !units.contains_key(&marker) {
+            continue;
+        }
+        let order = ordered(
+            &held,
+            &element_sequence(ancestor, &name, keys),
+            &element_sequence(source, &name, keys),
+            &element_sequence(target, &name, keys),
+        );
+        let items: Vec<Value> = order
+            .iter()
+            .filter_map(|k| units.get(&format!("{DATA}{name}{k}")).cloned())
+            .collect();
+        out.insert(name, Value::Array(items));
+    }
+    Some(Value::Object(out))
+}
+
 /// Whether a card's rows of `name` are kept apart row by row — a record's fields, an enum's
 /// values, a stackdoc's versions, a formatdoc's rows (each its own: one added on one side and
 /// another changed on the other both go in). A formatdoc's rows are by row only in a
@@ -152,9 +359,9 @@ fn by_row(card: Option<&str>, name: &str) -> bool {
     }
 }
 
-/// The key a row of `name` is named by among its siblings: an enum's value by its value.
-fn name_key(name: &str) -> &'static str {
-    if name == "values" { "value" } else { "name" }
+/// The key a row is named by among its siblings.
+fn name_key(_: &str) -> &'static str {
+    "name"
 }
 
 /// A card's kind, as the first of its versions that has one says it.
@@ -257,8 +464,14 @@ fn line_sequence(doc: Option<&Map<String, Value>>) -> Vec<String> {
 }
 
 /// A document as its units: each line of a card (`connections`) one by its id
-/// (`c:<id>`), as a field is.
-fn units(doc: &Map<String, Value>, kind: Kind, card: Option<&str>) -> HashMap<String, Value> {
+/// (`c:<id>`), as a field is; a data card's `data` by its top-level fields and the elements of the
+/// keyed arrays `split` names, when it is given.
+fn units(
+    doc: &Map<String, Value>,
+    kind: Kind,
+    card: Option<&str>,
+    split: Option<&DataKeys>,
+) -> HashMap<String, Value> {
     let mut out = HashMap::new();
     for (key, value) in doc {
         if kind == Kind::Card && (key == "fields" || key == "rows" || key == "connections") {
@@ -281,6 +494,27 @@ fn units(doc: &Map<String, Value>, kind: Kind, card: Option<&str>) -> HashMap<St
     }
     if let Some(fields) = doc.get("fields").and_then(Value::as_object) {
         for (key, value) in fields {
+            if key == "data"
+                && let (Some(split), Some(data)) = (split, value.as_object())
+            {
+                out.insert(DATA.into(), Value::Bool(true));
+                for (field, held) in data {
+                    match (split.get(field), held.as_array()) {
+                        (Some(keys), Some(items)) => {
+                            out.insert(format!("{DATA}{field}[]"), Value::Bool(true));
+                            for item in items {
+                                if let Some(key) = element_key(keys, item) {
+                                    out.insert(format!("{DATA}{field}{key}"), item.clone());
+                                }
+                            }
+                        }
+                        _ => {
+                            out.insert(format!("{DATA}{field}"), held.clone());
+                        }
+                    }
+                }
+                continue;
+            }
             out.insert(format!("f:{key}"), value.clone());
         }
     }
@@ -436,6 +670,7 @@ fn assemble(
     kind: Kind,
     card: Option<&str>,
     versions: [Option<&Map<String, Value>>; 3],
+    split: Option<&DataKeys>,
 ) -> Map<String, Value> {
     let [ancestor, source, target] = versions;
     let order = [target, source];
@@ -454,6 +689,7 @@ fn assemble(
                 && !k.starts_with("r:")
                 && !k.starts_with("c:")
                 && !k.starts_with("rows.")
+                && !k.starts_with(DATA)
                 && !keys.contains(k)
         })
         .collect();
@@ -489,11 +725,18 @@ fn assemble(
                     .filter(|k| !names.iter().any(|n| n == k))
                     .map(str::to_string)
                     .collect();
+                if units.contains_key(DATA) && !names.iter().any(|n| n == "data") {
+                    extra.push("data".into());
+                }
                 extra.sort();
                 names.extend(extra);
+                let data = split.and_then(|split| data_assembled(units, split, versions));
                 let fields: Map<String, Value> = names
                     .into_iter()
-                    .filter_map(|n| units.get(&format!("f:{n}")).map(|v| (n, v.clone())))
+                    .filter_map(|n| match (&data, n.as_str()) {
+                        (Some(d), "data") => Some((n, d.clone())),
+                        _ => units.get(&format!("f:{n}")).map(|v| (n, v.clone())),
+                    })
                     .collect();
                 if !fields.is_empty() {
                     out.insert(key, Value::Object(fields));
@@ -731,6 +974,14 @@ impl Labels {
         }
         if let Some(key) = unit.strip_prefix("f:") {
             return key.to_string();
+        }
+        if let Some(rest) = unit.strip_prefix(DATA) {
+            let rest = rest.strip_suffix("[]").unwrap_or(rest);
+            return if rest.is_empty() {
+                "data".to_string()
+            } else {
+                format!("data.{rest}")
+            };
         }
         if let Some(name) = unit.strip_prefix("rows.") {
             return name.to_string();
@@ -971,6 +1222,7 @@ fn merge3(
     source: Option<&Map<String, Value>>,
     target: Option<&Map<String, Value>>,
     take: Option<&HashMap<String, Side>>,
+    keys: Option<&DataKeys>,
 ) -> Outcome {
     let (a, s, t) = (ancestor.map(text), source.map(text), target.map(text));
     let kept = |changes| Outcome {
@@ -994,11 +1246,11 @@ fn merge3(
     };
     // One side removed what the other changed.
     let (Some(source_doc), Some(target_doc)) = (source, target) else {
-        let label = match kind {
-            Kind::Card => "（カード）",
-            Kind::Section => "（セクション）",
-        };
-        return match chosen(label, WHOLE) {
+        let chose = chosen(WHOLE, WHOLE).or_else(|| {
+            take.and_then(|t| t.iter().find(|(unit, _)| is_whole(unit)))
+                .map(|(_, side)| *side)
+        });
+        return match chose {
             Some(Side::Source) => Outcome {
                 result: source.cloned(),
                 conflicts: Vec::new(),
@@ -1009,7 +1261,7 @@ fn merge3(
                 result: target.cloned(),
                 conflicts: vec![(
                     WHOLE.to_string(),
-                    label.to_string(),
+                    WHOLE.to_string(),
                     ancestor.map(|d| Value::Object(d.clone())),
                     source.map(|d| Value::Object(d.clone())),
                     target.map(|d| Value::Object(d.clone())),
@@ -1019,9 +1271,19 @@ fn merge3(
         };
     };
     let card = card_kind(&[Some(target_doc), Some(source_doc), ancestor]);
-    let base = ancestor.map(|d| units(d, kind, card)).unwrap_or_default();
-    let mine = units(source_doc, kind, card);
-    let theirs = units(target_doc, kind, card);
+    // A data card's data by its top-level fields, and its clean keyed arrays an element at a time.
+    let split = (card == Some(crate::kinds::INSTANCE)).then(|| {
+        data_split(
+            keys.unwrap_or(&DataKeys::new()),
+            &[ancestor, Some(source_doc), Some(target_doc)],
+        )
+    });
+    let split = split.as_ref().filter(|_| keys.is_some());
+    let base = ancestor
+        .map(|d| units(d, kind, card, split))
+        .unwrap_or_default();
+    let mine = units(source_doc, kind, card, split);
+    let theirs = units(target_doc, kind, card, split);
     let names = Labels::of([Some(target_doc), Some(source_doc)]);
     let side = |s: Side| if s == Side::Source { &mine } else { &theirs };
     let mut all: Vec<&String> = base
@@ -1134,6 +1396,7 @@ fn merge3(
         kind,
         card,
         [ancestor, Some(source_doc), Some(target_doc)],
+        split,
     );
     let changes = text(&merged) != text(target_doc);
     Outcome {
@@ -1167,7 +1430,7 @@ pub(crate) fn three_way(
         result,
         conflicts,
         changes,
-    } = merge3(kind, ancestor, source, target, None);
+    } = merge3(kind, ancestor, source, target, None, None);
     ThreeWay {
         result,
         conflicts,
@@ -1195,7 +1458,10 @@ pub fn unit_changes(
 ) -> Vec<UnitChange> {
     let kind = if section { Kind::Section } else { Kind::Card };
     let card = card_kind(&[Some(after), Some(before)]);
-    let (was, now) = (units(before, kind, card), units(after, kind, card));
+    let (was, now) = (
+        units(before, kind, card, None),
+        units(after, kind, card, None),
+    );
     let names = Labels::of([Some(after), Some(before)]);
     let mut changed: Vec<&String> = was
         .keys()
@@ -1358,7 +1624,7 @@ fn boxes_of(
 ) -> Result<HashMap<(String, String, String), super::Spot>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT view, item_kind, item, x, y, w, h, pinned FROM places WHERE project_id = ? AND branch_id = ?",
+            "SELECT view, item_kind, item, x, y, w, h, pinned, look FROM places WHERE project_id = ? AND branch_id = ?",
         )
         .map_err(db)?;
     stmt.query_map(params![project, tree], |r| {
@@ -1370,6 +1636,7 @@ fn boxes_of(
                 w: r.get(5)?,
                 h: r.get(6)?,
                 pinned: r.get::<_, i64>(7)? != 0,
+                look: r.get(8)?,
             },
         ))
     })
@@ -1525,12 +1792,36 @@ impl Tx<'_> {
                     version(&theirs, &kept_theirs, id)
                 };
                 let ancestor_doc = ancestor.as_ref().and_then(|a| parse(Some(&a.0)));
+                // A data card's keyed arrays, by its shape as the target has it (else the source).
+                let keys = (!section)
+                    .then(|| {
+                        let doc_of = |id: &str| {
+                            let target_version = if target.is_empty() {
+                                parse(main.get(id).and_then(|r| r.doc.as_ref()))
+                            } else {
+                                version(&theirs, &kept_theirs, id)
+                            };
+                            target_version.or_else(|| {
+                                if source.is_empty() {
+                                    parse(main.get(id).and_then(|r| r.doc.as_ref()))
+                                } else {
+                                    version(&mine, &kept_mine, id)
+                                }
+                            })
+                        };
+                        [&target_doc, &source_doc, &ancestor_doc]
+                            .into_iter()
+                            .flatten()
+                            .find_map(|d| data_keys(d, &doc_of))
+                    })
+                    .flatten();
                 let outcome = merge3(
                     kind,
                     ancestor_doc.as_ref(),
                     source_doc.as_ref(),
                     target_doc.as_ref(),
                     take.get(&path),
+                    keys.as_ref(),
                 );
                 // The base the target's row is on: main now where main is mixed in, the
                 // newer of two where both sides kept one.
@@ -1682,6 +1973,20 @@ impl Tx<'_> {
         let drawn = |view: &str| -> Result<bool, String> {
             Ok(view.is_empty() || held(Table::Sections, view)? || held(Table::Cards, view)?)
         };
+        // A diagram the merge itself brings: a section or a card the target holds only once merged.
+        let made_here = |view: &str| -> Result<bool, String> {
+            for table in [Table::Sections, Table::Cards] {
+                if changed.get(&(table, view)).is_some_and(Option::is_some)
+                    && self
+                        .seen(table, project, target, view)?
+                        .filter(|s| !s.removed)
+                        .is_none()
+                {
+                    return Ok(true);
+                }
+            }
+            Ok(false)
+        };
         let mut keys: Vec<&(String, String, String)> = own.keys().collect();
         keys.sort();
         let mut out = Vec::new();
@@ -1690,6 +1995,8 @@ impl Tx<'_> {
             let there = match item_kind.as_str() {
                 "card" => held(Table::Cards, item)? && drawn(view)?,
                 "section" => held(Table::Sections, item)? && drawn(view)?,
+                // A group on a diagram the target holds once merged, by its name.
+                "group" => drawn(view)?,
                 _ => false,
             };
             if !there {
@@ -1698,6 +2005,10 @@ impl Tx<'_> {
             let spot = &own[key];
             let seen = theirs.get(key).or_else(|| main.get(key));
             if seen == Some(spot) {
+                continue;
+            }
+            // A group the source let go of that the target has none of: nothing to let go of.
+            if item_kind == "group" && spot.x.is_none() && seen.is_none_or(|s| s.x.is_none()) {
                 continue;
             }
             // A branch taking main's box as it is: its own goes, and main's shows.
@@ -1709,12 +2020,17 @@ impl Tx<'_> {
                 "node" => Some(view),
                 _ => None,
             };
-            let anyway = seen.is_none()
-                && card.is_some_and(|c| {
-                    changed
-                        .get(&(Table::Cards, c.as_str()))
-                        .is_some_and(Option::is_some)
-                });
+            // A group on a diagram the merge brings goes in with it, as the boxes of a merged card do.
+            let anyway = if item_kind == "group" {
+                made_here(view)?
+            } else {
+                seen.is_none()
+                    && card.is_some_and(|c| {
+                        changed
+                            .get(&(Table::Cards, c.as_str()))
+                            .is_some_and(Option::is_some)
+                    })
+            };
             out.push(Moved {
                 view: view.clone(),
                 item_kind: item_kind.clone(),
@@ -1724,6 +2040,40 @@ impl Tx<'_> {
             });
         }
         Ok(out)
+    }
+
+    /// One box the source moved, put in the target over its own. A group the source let go of goes
+    /// from the target too: on a branch over main's group of that name, as a row with no cells.
+    fn put_moved(&mut self, project: &str, target: &str, moved: &Moved) -> Result<(), String> {
+        let gone = matches!(&moved.spot, Some(s) if moved.item_kind == "group" && s.x.is_none());
+        let spot = if gone {
+            let in_main = !target.is_empty()
+                && !crate::store::is_own_tree(target)
+                && self
+                    .conn()
+                    .query_row(
+                        "SELECT 1 FROM places WHERE project_id = ? AND branch_id = '' AND view = ? AND item_kind = ? AND item = ? AND x IS NOT NULL",
+                        params![project, moved.view, moved.item_kind, moved.item],
+                        |_| Ok(()),
+                    )
+                    .is_ok();
+            moved.spot.as_ref().filter(|_| in_main)
+        } else {
+            moved.spot.as_ref()
+        };
+        match spot {
+            Some(s) => self.conn().execute(
+                "INSERT INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned, look) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
+                 ON CONFLICT(project_id, branch_id, view, item_kind, item) DO UPDATE SET x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h, pinned = excluded.pinned, look = excluded.look",
+                params![project, target, moved.view, moved.item_kind, moved.item, s.x, s.y, s.w, s.h, s.pinned as i64, s.look],
+            ),
+            None => self.conn().execute(
+                "DELETE FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = ? AND item = ?",
+                params![project, target, moved.view, moved.item_kind, moved.item],
+            ),
+        }
+        .map_err(db)?;
+        Ok(())
     }
 
     /// The boxes the source moved, put in the target over its own (`places`); into main,
@@ -1736,18 +2086,7 @@ impl Tx<'_> {
         target: &str,
     ) -> Result<(), String> {
         for moved in &work.moves {
-            match &moved.spot {
-                Some(s) => self.conn().execute(
-                    "INSERT INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
-                     ON CONFLICT(project_id, branch_id, view, item_kind, item) DO UPDATE SET x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h, pinned = excluded.pinned",
-                    params![project, target, moved.view, moved.item_kind, moved.item, s.x, s.y, s.w, s.h, s.pinned as i64],
-                ),
-                None => self.conn().execute(
-                    "DELETE FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = ? AND item = ?",
-                    params![project, target, moved.view, moved.item_kind, moved.item],
-                ),
-            }
-            .map_err(db)?;
+            self.put_moved(project, target, moved)?;
         }
         if !work.moves.is_empty() {
             self.touch(project, target);
@@ -2102,6 +2441,19 @@ impl Tx<'_> {
         if source.is_empty() {
             return Ok(());
         }
+        // The groups on a diagram the merge brings go in with it (`place_moves`' `beyond`).
+        let mut brought = false;
+        for moved in work
+            .moves
+            .iter()
+            .filter(|m| m.item_kind == "group" && !m.beyond)
+        {
+            self.put_moved(project, target, moved)?;
+            brought = true;
+        }
+        if brought {
+            self.touch(project, target);
+        }
         let cards: HashSet<&String> = work
             .merged
             .iter()
@@ -2272,6 +2624,17 @@ mod tests {
         v.as_object().unwrap().clone()
     }
 
+    /// A merge of documents that are not data cards' (no shapes to read keys from).
+    fn merge3(
+        kind: Kind,
+        ancestor: Option<&Map<String, Value>>,
+        source: Option<&Map<String, Value>>,
+        target: Option<&Map<String, Value>>,
+        take: Option<&HashMap<String, Side>>,
+    ) -> Outcome {
+        super::merge3(kind, ancestor, source, target, take, None)
+    }
+
     #[test]
     fn units_changed_apart_merge_and_alike_conflict() {
         let base = doc(
@@ -2316,9 +2679,17 @@ mod tests {
         let mut target = base.clone();
         target["fields"]["body"] = json!("b");
         let out = merge3(Kind::Card, Some(&base), None, Some(&target), None);
-        assert_eq!(out.conflicts[0].1, "（カード）");
+        assert_eq!(out.conflicts[0].1, WHOLE);
         assert!(out.result.is_some() && !out.changes);
-        let take: HashMap<String, Side> = [("（カード）".to_string(), Side::Source)].into();
+        let take: HashMap<String, Side> = [(WHOLE.to_string(), Side::Source)].into();
+        let out = merge3(Kind::Card, Some(&base), None, Some(&target), Some(&take));
+        assert!(out.result.is_none() && out.changes);
+        // A request kept before named the whole by its Japanese name: still taken.
+        let take: HashMap<String, Side> = [(
+            keyed!("write.merge.wholeCard").render_in("ja"),
+            Side::Source,
+        )]
+        .into();
         let out = merge3(Kind::Card, Some(&base), None, Some(&target), Some(&take));
         assert!(out.result.is_none() && out.changes);
     }

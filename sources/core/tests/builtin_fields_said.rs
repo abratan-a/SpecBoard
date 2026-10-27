@@ -66,7 +66,7 @@ fn a_goals_status_and_a_tasks_done_are_named_in_the_history_line() {
         json!({"kind": "goal", "label": "目標"}),
     );
     make(&core, BOARD, "Goals:Plan.Step", json!({"kind": "task"}));
-    put(&core, BOARD, "Goals:Plan", json!({"status": "進行中"}));
+    put(&core, BOARD, "Goals:Plan", json!({"status": "inProgress"}));
     assert_eq!(
         latest(&core, BOARD),
         "カード Goals:Plan を更新（欄 status）"

@@ -655,7 +655,7 @@ fn boxes_are_put_where_the_window_says() {
     );
     assert_eq!(
         s.ok(json!({"op": "section_positions"})),
-        json!({"positions": {}, "sectionGhosts": {}})
+        json!({"positions": {}, "sectionGhosts": {}, "groups": {}})
     );
     // Another section's card on this section's diagram: no history.
     let before = s.last_seq("");

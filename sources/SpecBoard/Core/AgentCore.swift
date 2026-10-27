@@ -17,6 +17,19 @@ nonisolated final class AgentCore: @unchecked Sendable {
     private var waiting: [Int: DispatchSemaphore] = [:]
     private var answers: [Int: String] = [:]
     private var ended = false
+    /// What `attach` said on its standard error, read as it comes — a pipe not read fills (64 KB)
+    /// and stops the writer, and with it the way — and only its end kept (`saidLimit`).
+    private var said = Data()
+    private let saidDone = DispatchSemaphore(value: 0)
+    static let saidLimit = 16 << 10
+
+    /// `said` with `chunk` after it, cut to its last `saidLimit` bytes.
+    static func kept(_ said: Data, adding chunk: Data) -> Data {
+        var said = said
+        said.append(chunk)
+        // Copied: cutting the front off `Data` keeps all it held behind it.
+        return said.count > saidLimit ? Data(said.suffix(saidLimit)) : said
+    }
     /// What the daemon says when it takes this app: itself, or why it cannot.
     private var greeting: Result<[String: Any], AgentDeploy.Failure>?
     private let greeted = DispatchSemaphore(value: 0)
@@ -66,6 +79,7 @@ nonisolated final class AgentCore: @unchecked Sendable {
         _ = fcntl(input.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1)
         try process.run()
         Thread.detachNewThread { [weak self] in self?.readLines() }
+        Thread.detachNewThread { [weak self] in self?.readErrors() }
         send(["t": "hello", "client": client])
         if greeted.wait(timeout: .now() + timeout) == .timedOut {
             stop()
@@ -79,8 +93,7 @@ nonisolated final class AgentCore: @unchecked Sendable {
             throw failure
         case nil:
             stop()
-            let said = String(decoding: errors.fileHandleForReading.availableData, as: UTF8.self)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let said = errorsSaid()
             throw AgentDeploy.Failure(said.isEmpty ? L10n.text(.Model.agentDroppedEarly, in: Language.current) : said)
         }
     }
@@ -144,8 +157,17 @@ nonisolated final class AgentCore: @unchecked Sendable {
 
     // MARK: - Lines
 
+    /// A line as it goes to the daemon: with the screen's language (`lang`), so what the daemon says of its
+    /// own (where MCP listens, why it cannot) and the core's answers are in it.
+    nonisolated static func framed(_ message: [String: Any], language: String = Language.current) -> [String: Any] {
+        var message = message
+        message["lang"] = language
+        return message
+    }
+
     private func send(_ message: [String: Any]) {
-        guard let data = try? JSONSerialization.data(withJSONObject: message, options: [.withoutEscapingSlashes]) else { return }
+        guard let data = try? JSONSerialization.data(withJSONObject: Self.framed(message), options: [.withoutEscapingSlashes])
+        else { return }
         writing.lock()
         defer { writing.unlock() }
         try? input.fileHandleForWriting.write(contentsOf: data + Data([0x0A]))
@@ -230,8 +252,28 @@ nonisolated final class AgentCore: @unchecked Sendable {
         // Whatever was waited for has no answer coming.
         for done in left { done.signal() }
         if greeting == nil { greeted.signal() }
-        let said = String(decoding: errors.fileHandleForReading.availableData, as: UTF8.self)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        onEnd?(said)
+        onEnd?(errorsSaid())
+    }
+
+    /// Standard error read until `attach` closes it, its end kept.
+    private func readErrors() {
+        let handle = errors.fileHandleForReading
+        while true {
+            let chunk = autoreleasepool { handle.availableData }
+            if chunk.isEmpty { break }
+            guarding.lock()
+            said = Self.kept(said, adding: chunk)
+            guarding.unlock()
+        }
+        saidDone.signal()
+    }
+
+    /// What `attach` said on its standard error: all of it once it has closed, waited for a moment
+    /// (the process has ended by now, or been told to).
+    private func errorsSaid() -> String {
+        if saidDone.wait(timeout: .now() + 1) == .success { saidDone.signal() }
+        guarding.lock()
+        defer { guarding.unlock() }
+        return String(decoding: said, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

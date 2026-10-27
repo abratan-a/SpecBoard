@@ -275,7 +275,7 @@ final class RemoteHosts {
                 made = client
                 madeWay = way
             } catch {
-                failure = error.localizedDescription
+                failure = ErrorText.said(error)
             }
             let client = made, way = madeWay, said = failure
             Task { @MainActor in

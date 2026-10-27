@@ -16,6 +16,7 @@
   "agent.cli.stopped": "止めました",
   "agent.cli.usage": "使い方: specboard-agent <役>\n  serve     本体: プロジェクトの DB とコアを持って常駐する（attach か start が起こします）\n  attach    接続ごとの道: アプリの行を本体へ渡す（SpecBoard のアプリが SSH で起こします）\n  start     本体を起こす（ホストのシェルから。動いていればそのまま）\n  stop      本体を止める\n  status    本体が動いているか（MCP の待ち受けも）\n  port <n>  本体が MCP を待ち受けるポートを変える（利用者ごとの設定に残る）",
   "agent.cli.wontStop": "止まりません",
+  "agent.mcp.allInUse": "MCP の接続がどれも要求の途中です。少し待ってから送り直してください",
   "agent.mcp.cannotBind": "127.0.0.1:{port} で待ち受けられません: {error}",
   "agent.mcp.cannotSetUp": "待ち受けを整えられません: {error}",
   "agent.mcp.coreUnreadable": "コアの答えが読めません",

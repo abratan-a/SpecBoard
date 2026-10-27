@@ -14,7 +14,7 @@ use crate::model::Section;
 use crate::store::BOARD;
 use crate::write::{Tx, new_id, valid_section_name};
 use serde_json::{Map, Value};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 /// What `type` on a section is told (`MCPTools.noSectionType`).
 pub(crate) fn no_section_type() -> String {
@@ -263,20 +263,23 @@ fn split_tree(raw: &str) -> (Option<&str>, &str) {
 pub(crate) fn section_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Value, String> {
     let pairs = args.pairs()?;
     each_pair(tx, scope, &pairs, |tx, scope, path, given| {
-        // A kind of the project's own is said; the built-in ones come from where it is made.
-        let own_type = match given.get("type") {
+        // The kind is one the parent's kind lists (`sections`), its first unless `type` names another.
+        let wanted = match given.get("type") {
             None => None,
             Some(Value::String(t)) => {
                 let defs = Seen::in_tx(tx, scope)?.project().defs;
-                match defs.section(t) {
-                    Some(def) if !def.builtin => Some(t.clone()),
-                    _ => return Err(type_refused(&defs, t)),
+                if defs.section(t).is_none() {
+                    return Err(type_refused(t));
                 }
+                Some(t.clone())
             }
             Some(_) => return Err(no_section_type()),
         };
         let mut given = given.clone();
         given.remove("type");
+        // What an actor is and a section's own mark: said here, in the words their checks have.
+        let figure = given.remove("figure");
+        let icon = given.remove("icon");
         let given = &given;
         super::check(given, "section_create", "section")?;
         // A tree from before stays with the parent: `main@Store` is Store under the root.
@@ -297,28 +300,125 @@ pub(crate) fn section_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
             parent.as_deref(),
             &name,
             description,
-            own_type.as_deref(),
+            Made {
+                kind: wanted.as_deref(),
+                figure: figure.as_ref(),
+                icon: icon.as_ref(),
+                path,
+            },
         )
     })
 }
 
-/// What `type` is told when it names no kind of the project's own: a built-in one comes from
-/// where the section is made.
-fn type_refused(defs: &Defs, written: &str) -> String {
-    let own: Vec<String> = defs
-        .sections
-        .iter()
-        .filter(|s| !s.builtin)
-        .map(|s| s.name.clone())
-        .collect();
-    if defs.section(written).is_some() || own.is_empty() {
-        return no_section_type();
+/// What `type` is told when it names no kind of section there is.
+fn type_refused(written: &str) -> String {
+    text!("sections.error.unknownType", written)
+}
+
+/// What a section is made as besides its name: the kind `type` names, what an actor is (`figure`),
+/// its own mark (`icon`), and the path it was asked at (what a refusal of these names).
+struct Made<'a> {
+    kind: Option<&'a str>,
+    figure: Option<&'a Value>,
+    icon: Option<&'a Value>,
+    path: &'a str,
+}
+
+/// `figure` as a section of `kind` keeps it: none for a system (the default), refused on a section
+/// that is not an actor and for anything but the figures there are.
+fn figure_of(
+    defs: &Defs,
+    path: &str,
+    kind: Option<&str>,
+    given: &Value,
+) -> Result<Option<String>, String> {
+    if given.is_null() {
+        return Ok(None);
     }
-    text!(
-        "sections.error.unknownType",
-        written,
-        own = crate::text::List::of(&own)
-    )
+    if kind != Some(crate::kinds::ACTOR) {
+        return Err(text!(
+            "sections.error.figureNotActor",
+            path,
+            kind = label_of(defs, kind)
+        ));
+    }
+    match given.as_str() {
+        Some(figure) if crate::kinds::FIGURES.contains(&figure) => {
+            Ok((figure != "system").then(|| figure.to_string()))
+        }
+        _ => Err(text!(
+            "sections.error.figureValue",
+            given = crate::ojson::compact(given),
+            figures = crate::text::List::of(crate::kinds::FIGURES)
+        )),
+    }
+}
+
+/// A section's own mark as written over `had`: each part given in place of the one it had, `null`
+/// taking it away — checked as a kind's `icon` is (`kinds::read_icon`), the same words for what is
+/// wrong. None when no part is left. Not on a working directory's sections: their mark is their
+/// kind's (`kind_update`).
+fn icon_of(
+    path: &str,
+    kind: Option<&str>,
+    had: Option<&Map<String, Value>>,
+    given: &Value,
+) -> Result<Option<Map<String, Value>>, String> {
+    if matches!(kind, Some(crate::kinds::WORKDIR | crate::kinds::DIRECTORY)) {
+        return Err(text!("sections.error.iconWorkdir", path));
+    }
+    let given = match given {
+        Value::Null => return Ok(None),
+        Value::Object(o) => o,
+        other => {
+            let mut problems = Vec::new();
+            crate::kinds::read_icon(Some(other), path, &mut problems);
+            return Err(problems.join("\n"));
+        }
+    };
+    // Each part null takes the part away; the check reads what is written.
+    let mut mark = had.cloned().unwrap_or_default();
+    let mut written = Map::new();
+    for (key, value) in given {
+        if value.is_null() {
+            mark.shift_remove(key);
+        } else {
+            written.insert(key.clone(), value.clone());
+            mark.insert(key.clone(), value.clone());
+        }
+    }
+    let mut problems = Vec::new();
+    crate::kinds::read_icon(Some(&Value::Object(written)), path, &mut problems);
+    if !problems.is_empty() {
+        return Err(problems.join("\n"));
+    }
+    // The keys it may have only, in the order a kind's mark says them.
+    let mut out = Map::new();
+    for key in ["name", "color"] {
+        if let Some(v) = mark.get(key) {
+            out.insert(key.into(), v.clone());
+        }
+    }
+    Ok((!out.is_empty()).then_some(out))
+}
+
+/// Whether a section of `wanted` may be inside one of `parent_kind`: a kind the parent's kind lists
+/// in `sections`; refused naming those it lists.
+fn allowed_inside(defs: &Defs, parent_kind: Option<&str>, wanted: &str) -> Result<(), String> {
+    let inside = parent_kind.unwrap_or_default();
+    let listed: Vec<String> = defs
+        .section(inside)
+        .map(|d| d.sections.clone())
+        .unwrap_or_default();
+    if listed.iter().any(|s| s == wanted) {
+        return Ok(());
+    }
+    Err(text!(
+        "sections.error.notInside",
+        kind = section_label(defs, inside),
+        allowed = crate::text::List::of(&listed),
+        wanted
+    ))
 }
 
 /// A section made inside `parent`, last among its siblings, of its parent's kind
@@ -330,8 +430,9 @@ fn create_section(
     parent: Option<&str>,
     raw_name: &str,
     raw_description: &str,
-    own_type: Option<&str>,
+    made: Made,
 ) -> Result<Value, String> {
+    let own_type = made.kind;
     let seen = Seen::in_tx(tx, scope)?;
     let defs = seen.project().defs;
     let given = match parent {
@@ -378,25 +479,26 @@ fn create_section(
         });
     }
     if let Some(wanted) = own_type {
-        let allowed = parent_kind
-            .as_deref()
-            .and_then(|k| defs.section(k))
-            .is_some_and(|def| def.sections.iter().any(|s| s == wanted));
-        if !allowed {
-            let inside = parent_kind.as_deref().unwrap_or_default();
+        // The places the card actions move cards into are the core's to make, never a call's.
+        if action_place(Some(wanted)) {
             return Err(text!(
-                "sections.error.notInside",
-                kind = section_label(&defs, inside),
-                allowed = crate::text::List::of(
-                    defs.section(inside)
-                        .map(|d| d.sections.clone())
-                        .unwrap_or_default()
-                ),
-                wanted
+                "sections.error.typeActionPlace",
+                kind = section_label(&defs, wanted)
             ));
         }
+        allowed_inside(&defs, parent_kind.as_deref(), wanted)?;
         kind = Some(wanted.to_string());
     }
+    let figure = made
+        .figure
+        .map(|f| figure_of(&defs, made.path, kind.as_deref(), f))
+        .transpose()?
+        .flatten();
+    let icon = made
+        .icon
+        .map(|i| icon_of(made.path, kind.as_deref(), None, i))
+        .transpose()?
+        .flatten();
     if let Some(k) = kind.as_deref().filter(|k| action_place(Some(k))) {
         return Err(action_place_fixed(&defs, &name, k));
     }
@@ -419,6 +521,8 @@ fn create_section(
     set(&mut doc, "sort_order", order.into());
     doc.insert("created_at".into(), tx.now()?.into());
     set(&mut doc, "kind", kind.map_or(Value::Null, Value::from));
+    set(&mut doc, "figure", figure.map_or(Value::Null, Value::from));
+    set(&mut doc, "icon", icon.map_or(Value::Null, Value::Object));
     tx.put_section(&scope.project, &scope.tree, &doc)?;
     let after = Seen::in_tx(tx, scope)?;
     let path = after.project().directory.full_section(&id);
@@ -448,12 +552,18 @@ struct Edit {
     position: Option<i64>,
     /// Another section to move it into — `Some(None)` for directly under the root.
     parent: Option<Option<String>>,
+    /// The kind it is made (`type`): one its parent's kind lists.
+    kind: Option<String>,
+    /// What an actor is (`figure`), `null` for a system.
+    figure: Option<Value>,
+    /// Its own mark (`icon`): the parts written over those it has, `null` taking one or all away.
+    icon: Option<Value>,
 }
 
 pub(crate) fn section_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Value, String> {
     let pairs = args.pairs()?;
     each_pair(tx, scope, &pairs, |tx, scope, path, given| {
-        if given.contains_key("type") {
+        if given.get("type").is_some_and(|t| !t.is_string()) {
             return Err(no_section_type());
         }
         // A section's card ghosts are cards of their own.
@@ -496,7 +606,11 @@ pub(crate) fn section_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
             out.extend(said);
             return Ok(super::warned(Value::Object(out), &warnings));
         }
-        super::check(given, "section_update", "section")?;
+        // What an actor is and a section's own mark: said in the words their checks have.
+        let mut checked = given.clone();
+        checked.shift_remove("figure");
+        checked.shift_remove("icon");
+        super::check(&checked, "section_update", "section")?;
         update_one(tx, scope, path, given)
     })
 }
@@ -539,8 +653,28 @@ fn update_one(
         position: given
             .get("position")
             .map(|v| v.as_f64().map_or(0, |n| n.trunc() as i64)),
+        kind: text_of("type"),
+        figure: given.get("figure").cloned(),
+        icon: given.get("icon").cloned(),
         ..Edit::default()
     };
+    if let Some(kind) = &edit.kind
+        && project.defs.section(kind).is_none()
+    {
+        return Err(type_refused(kind));
+    }
+    // A working directory's sections are read from a folder: their mark is their kind's.
+    if edit.icon.is_some()
+        && matches!(
+            project.section_kind(&target),
+            Some(crate::kinds::WORKDIR | crate::kinds::DIRECTORY)
+        )
+    {
+        return Err(text!(
+            "sections.error.iconWorkdir",
+            path = project.directory.full_section(&target)
+        ));
+    }
     if let Some(raw) = given.get("parent").and_then(Value::as_str) {
         edit.parent = Some(if raw.trim_matches([' ', '\t']).is_empty() {
             None
@@ -549,6 +683,8 @@ fn update_one(
         });
     }
     let places = given.get("places");
+    // The diagram's groups: made, changed, moved with what they hold, or let go of.
+    let grouping = given.get("groups");
     // The boxes named moved together, or arranged in columns.
     let moving = given.get("move");
     let arranging = given.get("arrange");
@@ -560,10 +696,14 @@ fn update_one(
     let edits = edit.name.is_some()
         || edit.description.is_some()
         || edit.position.is_some()
-        || edit.parent.is_some();
+        || edit.parent.is_some()
+        || edit.kind.is_some()
+        || edit.figure.is_some()
+        || edit.icon.is_some();
     if !edits
         && top_rename.is_none()
         && places.is_none()
+        && grouping.is_none()
         && moving.is_none()
         && arranging.is_none()
         && !tidy
@@ -571,7 +711,8 @@ fn update_one(
         return Err(text!("sections.error.nothingToChange"));
     }
     drop(seen);
-    let renamed_or_moved = edit.name.is_some() || edit.parent.is_some();
+    // A kind changed too: what it says is that no path had to follow.
+    let renamed_or_moved = edit.name.is_some() || edit.parent.is_some() || edit.kind.is_some();
     let rewritten = if edits {
         update_section(tx, scope, &target, &edit)?
     } else {
@@ -590,15 +731,20 @@ fn update_one(
     let placed = places
         .map(|raw| super::boxes::put_places(tx, scope, &target, raw))
         .transpose()?;
+    let grouped = grouping
+        .map(|raw| {
+            super::groups::put_groups(tx, scope, super::groups::MapOf::Section(&target), raw)
+        })
+        .transpose()?;
     let moved = moving
         .map(|raw| super::boxes::move_boxes(tx, scope, &target, raw))
         .transpose()?;
     let arranged = arranging
         .map(|raw| super::boxes::arrange_boxes(tx, scope, &target, raw))
         .transpose()?;
-    // Then what still lies over another moved clear, nothing else touched.
+    // Then the boxes kept where they are, moved down only where they overlap or a card grows.
     let tidied = if tidy {
-        super::boxes::tidy(tx, scope, &target)?
+        super::tidy::tidy(tx, scope, &target)?
     } else {
         Vec::new()
     };
@@ -619,13 +765,53 @@ fn update_one(
             out.insert("jumped".into(), Value::Array(jumped));
         }
     }
-    for said in [moved, arranged].into_iter().flatten() {
-        out.extend(said);
+    for said in [grouped, moved, arranged].into_iter().flatten() {
+        for (key, value) in said {
+            // What groups carried and what `move` moved, said together.
+            match (out.get_mut(&key), value) {
+                (Some(Value::Array(had)), Value::Array(more)) => had.extend(more),
+                (_, value) => {
+                    out.insert(key, value);
+                }
+            }
+        }
     }
     if tidy {
         out.insert("tidied".into(), Value::Array(tidied));
     }
     Ok(Value::Object(out))
+}
+
+/// The kind `id` and each section inside it come to when `id` becomes `kind`: a section inside keeps
+/// its own where the kind of the one it is in lists it (`sections`), else takes that one's first. The
+/// sections as they were (`before`); `id` first, then each level below it.
+fn kinds_inside(defs: &Defs, before: &[Section], id: &str, kind: &str) -> Vec<(String, String)> {
+    let mut out = vec![(id.to_string(), kind.to_string())];
+    let mut at = 0;
+    while at < out.len() {
+        let (parent, parent_kind) = out[at].clone();
+        let made_inside: Vec<String> = defs
+            .section(&parent_kind)
+            .map(|d| d.sections.clone())
+            .unwrap_or_else(|| vec![parent_kind.clone()]);
+        for child in before
+            .iter()
+            .filter(|s| s.parent_id.as_deref() == Some(parent.as_str()))
+        {
+            if out.iter().any(|(s, _)| *s == child.id) {
+                continue;
+            }
+            let own = child
+                .kind
+                .clone()
+                .filter(|k| made_inside.contains(k))
+                .or_else(|| made_inside.first().cloned())
+                .unwrap_or_else(|| parent_kind.clone());
+            out.push((child.id.clone(), own));
+        }
+        at += 1;
+    }
+    out
 }
 
 /// A section changed (`Repository.updateSection`): moved, renamed, described, put
@@ -729,6 +915,57 @@ fn update_section(tx: &mut Tx, scope: &Scope, id: &str, edit: &Edit) -> Result<u
             changed.push(keyed!("common.label.description"));
         }
     }
+    // The kind it comes to: the one `type` names, which its parent's kind lists; else, moved, its own
+    // still where its new parent's kind lists that (`sections`), else the parent's first.
+    let parent_kind = before
+        .iter()
+        .find(|s| s.id.as_str() == parent_id.as_deref().unwrap_or_default())
+        .and_then(|s| s.kind.clone());
+    let mut kind = current.kind.clone();
+    if let Some(wanted) = &edit.kind {
+        if Some(wanted) != current.kind.as_ref() {
+            if parent_id.is_none() {
+                return Err(text!("sections.error.rootKind"));
+            }
+            if is_root_own(&current, main_root.as_deref()) {
+                return Err(text!(
+                    "sections.error.rootOwnKind",
+                    name = current.name,
+                    tree = tree_of(board).said(),
+                    kind = label_of(&defs, current.kind.as_deref())
+                ));
+            }
+        }
+        allowed_inside(&defs, parent_kind.as_deref(), wanted)?;
+        kind = Some(wanted.clone());
+    } else if let Some(parent_kind) = &parent_kind {
+        let made_inside: Vec<String> = defs
+            .section(parent_kind)
+            .map(|d| d.sections.clone())
+            .unwrap_or_else(|| vec![parent_kind.clone()]);
+        let keeps = kind.as_ref().is_some_and(|k| made_inside.contains(k));
+        if !keeps {
+            kind = made_inside.first().cloned().or(Some(parent_kind.clone()));
+        }
+    }
+    if let Some(given) = &edit.figure {
+        let figure = figure_of(&defs, &old_full, kind.as_deref(), given)?;
+        if figure != current.figure {
+            changed.push(keyed!(
+                "sections.change.figure",
+                figure = figure.as_deref().unwrap_or("system")
+            ));
+        }
+        set(&mut doc, "figure", figure.map_or(Value::Null, Value::from));
+    }
+    if let Some(given) = &edit.icon {
+        let had = doc.get("icon").and_then(Value::as_object).cloned();
+        let icon = icon_of(&old_full, kind.as_deref(), had.as_ref(), given)?;
+        if icon != had {
+            changed.push(keyed!("sections.change.icon"));
+        }
+        set(&mut doc, "icon", icon.map_or(Value::Null, Value::Object));
+    }
     drop(seen);
     tx.put_section(&scope.project, &scope.tree, &doc)?;
 
@@ -772,24 +1009,8 @@ fn update_section(tx: &mut Tx, scope: &Scope, id: &str, edit: &Edit) -> Result<u
         }
     }
 
-    // What it holds: what its new parent makes inside it when moved into one — its own
-    // kind still when the parent makes that (`sections` of the parent's definition), else
-    // the parent's first.
-    let parent_kind = before
-        .iter()
-        .find(|s| s.id.as_str() == parent_id.as_deref().unwrap_or_default())
-        .and_then(|s| s.kind.clone());
-    let mut kind = current.kind.clone();
-    if let Some(parent_kind) = parent_kind {
-        let made_inside: Vec<String> = defs
-            .section(&parent_kind)
-            .map(|d| d.sections.clone())
-            .unwrap_or_else(|| vec![parent_kind.clone()]);
-        let keeps = kind.as_ref().is_some_and(|k| made_inside.contains(k));
-        if !keeps {
-            kind = made_inside.first().cloned().or(Some(parent_kind));
-        }
-    }
+    // What it holds: each section inside keeps its kind where the kind of the section it is in
+    // lists it (`sections`), else takes that one's first — level by level, from the top down.
     if let Some(k) = &kind
         && kind != current.kind
     {
@@ -807,25 +1028,17 @@ fn update_section(tx: &mut Tx, scope: &Scope, id: &str, edit: &Edit) -> Result<u
                 kind = label_of(&defs, current.kind.as_deref())
             ));
         }
-        let mut inside: HashSet<String> = HashSet::from([id.to_string()]);
-        let mut queue = vec![id.to_string()];
-        while let Some(at) = queue.pop() {
-            for child in before
-                .iter()
-                .filter(|s| s.parent_id.as_deref() == Some(&at))
-            {
-                if inside.insert(child.id.clone()) {
-                    queue.push(child.id.clone());
-                }
-            }
-        }
+        let kinds = kinds_inside(&defs, &before, id, k);
         let misfits: Vec<String> = before_detail
             .detail
             .schemas
             .iter()
-            .filter(|c| inside.contains(c.section_id.as_deref().unwrap_or_default()))
-            .filter(|c| !defs.holds(k, &c.kind))
-            .map(|c| text!("sections.part.nameWithKind", name = c.name, kind = c.kind))
+            .filter_map(|c| {
+                let at = c.section_id.as_deref().unwrap_or_default();
+                let (_, kind) = kinds.iter().find(|(s, _)| s == at)?;
+                (!defs.holds(kind, &c.kind))
+                    .then(|| text!("sections.part.nameWithKind", name = c.name, kind = c.kind))
+            })
             .collect();
         if !misfits.is_empty() {
             let more = if misfits.len() > 5 {
@@ -842,16 +1055,26 @@ fn update_section(tx: &mut Tx, scope: &Scope, id: &str, edit: &Edit) -> Result<u
             ));
         }
         let mut docs = section_docs(tx, scope)?;
-        for section in &inside {
+        for (section, inner_kind) in &kinds {
             if let Some(mut inner) = docs.remove(section) {
-                inner.insert("kind".into(), k.clone().into());
+                let had = inner.get("kind").and_then(Value::as_str) == Some(inner_kind.as_str());
+                let figured = inner.contains_key("figure") && inner_kind != crate::kinds::ACTOR;
+                if had && !figured {
+                    continue;
+                }
+                inner.insert("kind".into(), inner_kind.clone().into());
+                // What an actor is goes with its being one.
+                if inner_kind != crate::kinds::ACTOR {
+                    inner.shift_remove("figure");
+                }
                 tx.put_section(&scope.project, &scope.tree, &inner)?;
             }
         }
-        changed.push(keyed!(
-            "sections.change.kind",
-            kind = section_label(&defs, k)
-        ));
+        changed.push(if edit.kind.is_some() {
+            keyed!("sections.change.type", kind = section_label(&defs, k))
+        } else {
+            keyed!("sections.change.kind", kind = section_label(&defs, k))
+        });
     }
 
     // A new name or a new parent changes the path of this section and of everything
@@ -1090,14 +1313,14 @@ pub(super) mod tests {
                 "section_update",
                 json!({"project": "見本", "target": "Schemas/Ordering", "value": {"type": "chart"}})
             ),
-            no_section_type()
+            "スキーマセクションの中に作れるのは schema です（chart は作れません）"
         );
         assert_eq!(
             refused(
                 "section_update",
                 json!({"project": "見本", "target": "Schemas/Ordering", "value": {}})
             ),
-            "変更する項目がありません（name / parent / description / position / exportTo / places / move / arrange / tidy）"
+            "変更する項目がありません（name / parent / description / position / type / figure / icon / places / move / arrange / tidy）"
         );
         assert_eq!(
             refused(
@@ -1159,7 +1382,7 @@ pub(super) mod tests {
         let before = update(json!({"ghosts": ["Schemas:Customer"]})).unwrap_err();
         assert_eq!(
             before,
-            "value に使えないキーです: ghosts。使えるのは: name / parent / description / position / places / move / arrange / tidy / readType / exclude / folder / parsers（形は guide の about: section_update）"
+            "value に使えないキーです: ghosts。使えるのは: name / parent / description / position / places / move / arrange / tidy / readType / exclude / folder / parsers / groups / type / figure / icon（形は guide の about: section_update）"
         );
     }
 
@@ -1231,7 +1454,7 @@ pub(super) mod tests {
         let refused = call(&core, "section_create", board("Projects")).unwrap_err();
         assert!(
             refused.starts_with(
-                "ボードの直下にはセクションを作れません。直下のセクション（Goals（ゴール））はプロジェクトの project_tree で決まり"
+                "ボードの直下にはセクションを作れません。直下のセクション（Goals（ボード））はプロジェクトの project_tree で決まり"
             ),
             "{refused}"
         );
@@ -1241,7 +1464,7 @@ pub(super) mod tests {
         let refused = call(&core, "section_delete", board("Goals")).unwrap_err();
         assert_eq!(
             refused,
-            "Goals は ボードの直下のゴールセクションなので、ここでは消せません（名前は変えられます。外すのは project_tree で: 空なら消え、中身があれば _evacuation_ へ退避します）"
+            "Goals は ボードの直下のボードセクションなので、ここでは消せません（名前は変えられます。外すのは project_tree で: 空なら消え、中身があれば _evacuation_ へ退避します）"
         );
         let mut moved = board("Goals/Projects");
         moved["value"] = json!({"parent": "Board"});

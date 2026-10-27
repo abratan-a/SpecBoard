@@ -1,5 +1,6 @@
 {
   "code.cut": "関数と型が {most} を超えたので、先の {most} だけです",
+  "code.file.missing": "{file} はフォルダにありません",
   "code.grammar": "{language} の文法を使えません: {e}",
   "code.highlight": "{language} の色付けができません: {e}",
   "code.list.key": "関数と型の card_list（kind: symbol）の value に {key} は書けません（書けるのは section・of・name・limit・after）",
@@ -19,6 +20,7 @@
   "code.loader.open": "ライブラリ {library} を開けません: {e}",
   "code.loader.owner": "{path} はエージェントを動かす利用者のものではありません",
   "code.loader.problem": "文法 {name} を読み込めません: {why}",
+  "code.loader.queries": "クエリが読めません: {why}",
   "code.loader.symbol": "ライブラリ {library} に関数 {symbol} がありません",
   "code.loader.taken": "{id} はもう読み込んだ言語です",
   "code.loader.writable": "{path} はほかの人か組から書けます（chmod go-w で直します）",

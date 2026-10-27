@@ -14,6 +14,8 @@ struct BoardReach: Hashable, Identifiable {
     var kind: String
     var label: String
     var state: String?
+    /// The field `state` is the value of, to show it as its kind's definition says it.
+    var stateField: String?
     var at: String?
 
     var id: String { path }
@@ -25,7 +27,9 @@ struct BoardReach: Hashable, Identifiable {
         label = read["label"] as? String ?? ""
         at = read["at"] as? String
         let known: Set<String> = ["path", "kind", "label", "at"]
-        state = read.first { !known.contains($0.key) && $0.value is String }?.value as? String
+        let said = read.first { !known.contains($0.key) && $0.value is String }
+        state = said?.value as? String
+        stateField = said?.key
     }
 }
 

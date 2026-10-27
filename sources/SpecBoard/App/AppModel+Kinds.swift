@@ -176,7 +176,7 @@ extension AppModel {
             return KindsCheck(ok: Self.flag(body["ok"]), problems: Self.texts(body["problems"]),
                               moved: Self.projectTreeSaid(body["projectTree"]))
         } catch {
-            return KindsCheck(ok: false, problems: [error.localizedDescription])
+            return KindsCheck(ok: false, problems: [ErrorText.said(error)])
         }
     }
 
@@ -231,7 +231,7 @@ extension AppModel {
         do {
             return Self.checked(try kindTool(list, replacing: name, with: written, renames: renames, dryRun: true))
         } catch {
-            return KindsCheck(ok: false, problems: [error.localizedDescription])
+            return KindsCheck(ok: false, problems: [ErrorText.said(error)])
         }
     }
 
@@ -249,7 +249,7 @@ extension AppModel {
         do {
             return Self.checked(try kindDelete(name, dryRun: true))
         } catch {
-            return KindsCheck(ok: false, problems: [error.localizedDescription])
+            return KindsCheck(ok: false, problems: [ErrorText.said(error)])
         }
     }
 
@@ -366,6 +366,65 @@ extension AppModel {
         return try kindsCall("kind_update", target: name, value: value)
     }
 
+    /// A definition being written, as the core reads it as though it were written (`kind_preview`): the
+    /// kind as the project's reading says it, and for a kind of card a card of it to draw — the tree's
+    /// card at `sample` read with the draft, or one of values made up for it. Nothing is written.
+    struct KindPreview {
+        /// The kind as `project_detail`'s `kinds` says it; none when the draft cannot be read as a definition.
+        var kind: OJSON?
+        /// A kind of card's, read as the diagrams read one.
+        var cardKind: CardKindDef?
+        /// A kind of line's, read as the diagrams read one.
+        var lineKind: LineKind?
+        /// The card to draw, read as the window reads a card of the tree.
+        var card: SchemaNode?
+        /// Whether the card is one of values made up for the kind, not one of the tree's.
+        var made = false
+        /// The card as the core answered it, to read it again among other cards (a container's row).
+        var raw: OJSON?
+    }
+
+    /// The definition written as `written` in place of the one called `name` (none for a new one), as the
+    /// core reads it as though it were written (`kind_preview`), in the tree open: the card drawn of it is
+    /// the tree's card at `sample` (its path), or one of values made up when there is none. None when the
+    /// core cannot be asked.
+    func kindPreview(_ list: KindList, replacing name: String?, with written: OJSON, sample: String? = nil) -> KindPreview? {
+        guard let core, let projectId = detail?.project.id else { return nil }
+        var fields = OrderedObject([("project", .string(projectId)), ("branch", .string(openTrees[projectId] ?? "")),
+                                    ("of", .string(list.of))])
+        if let name { fields["replacing"] = .string(name) }
+        fields["definition"] = written
+        if let sample { fields["sample"] = .string(sample) }
+        guard let answer = try? core.ordered("kind_preview", fields) else { return nil }
+        return Self.kindPreview(answer, list: list, kinds: detail?.cardKinds ?? CardKinds())
+    }
+
+    /// What `kind_preview` answered, read: its card read as the window reads a card of the tree, by the
+    /// project's kinds of card `kinds` with the kind read in place of the one of its name.
+    static func kindPreview(_ answer: OJSON, list: KindList, kinds: CardKinds) -> KindPreview {
+        guard case .object(let body) = answer, let kind = body["kind"], case .object = kind else { return KindPreview() }
+        func decoded<T: Decodable>(_ type: T.Type, _ value: OJSON) -> T? {
+            try? JSONDecoder().decode(type, from: Data(value.compact().utf8))
+        }
+        var out = KindPreview(kind: kind)
+        switch list {
+        case .cards:
+            out.cardKind = decoded(CardKindDef.self, kind)
+        case .lines:
+            out.lineKind = decoded(LineKind.self, kind)
+        case .sections:
+            break
+        }
+        if let raw = body["card"], let card = decoded(WholeCard.self, raw) {
+            var all = kinds.list.filter { $0.kind != out.cardKind?.kind }
+            if let own = out.cardKind { all.append(own) }
+            out.card = WholeCard.shown([card], kinds: CardKinds(all)).first
+            out.raw = raw
+            if case .object(let o) = raw, case .bool(true)? = o["made"] { out.made = true }
+        }
+        return out
+    }
+
     private func kindDelete(_ name: String, dryRun: Bool) throws -> OJSON {
         try kindsCall("kind_delete", target: name, value: dryRun ? OrderedObject([("dryRun", .bool(true))]) : OrderedObject())
     }
@@ -388,21 +447,6 @@ enum KindsEditing {
               case .object(let icon)? = object["icon"] else { return SectionMark() }
         let said = { (key: String) -> String? in if case .string(let s)? = icon[key] { s } else { nil } }
         return SectionMark(icon: said("name"), color: said("color"))
-    }
-
-    /// The definition written with its `icon` set to `mark` — each of `name` and `color` only when
-    /// it is there, the whole taken out when neither is — the rest as it was, in its order: what the
-    /// kinds tab's pickers write (a kind of section's mark). None when what is written is not an
-    /// object.
-    static func setting(_ mark: SectionMark, in text: String) -> String? {
-        guard let parsed = OJSON.parse(text), case .object(var object) = parsed else { return nil }
-        let parts: [(String, OJSON)] = [("name", mark.icon), ("color", mark.color)].compactMap { key, value in
-            value.map { (key, OJSON.string($0)) }
-        }
-        object["icon"] = parts.isEmpty ? nil : .object(OrderedObject(parts))
-        // The way before (a `color` beside the `icon`) goes with it.
-        object["color"] = nil
-        return OJSON.object(object).pretty()
     }
 
     /// What is written for `key` in the definition, when it is a string.
@@ -432,6 +476,27 @@ enum KindsEditing {
         return icons.map { (symbol: $0, word: L10n[$1]) }
     }
 
+    /// The marks the built-in kinds a section is told apart by take — an actor's for each figure, a
+    /// chart's — offered first for a section's own mark.
+    static var sectionKindIcons: [(symbol: String, word: String)] {
+        ActorFigure.allCases.map { (symbol: $0.symbol, word: figureWord($0)) }
+            + [(symbol: "arrow.triangle.branch", word: L10n[.Kinds.iconChart])]
+    }
+
+    /// What the mark of an actor of `figure` is called.
+    static func figureWord(_ figure: ActorFigure) -> String {
+        switch figure {
+        case .system: L10n[.Kinds.iconActorSystem]
+        case .person: L10n[.Kinds.iconActorPerson]
+        case .outside: L10n[.Kinds.iconActorOutside]
+        }
+    }
+
+    /// What a mark offered is called; nil for a name not among them.
+    static func word(for symbol: String) -> String? {
+        (sectionIcons + sectionKindIcons).first { $0.symbol == symbol }?.word
+    }
+
     /// The JSON written, read as one definition: or why it is not one.
     static func parse(_ text: String, as list: AppModel.KindList) -> Result<OJSON, Problem> {
         if let value = OJSON.parse(text), case .object(let object) = value {
@@ -445,7 +510,7 @@ enum KindsEditing {
             _ = try JSONSerialization.jsonObject(with: Data(text.utf8), options: [.fragmentsAllowed])
             return .failure(Problem(L10n[.Kinds.problemNotObject]))
         } catch {
-            let said = (error as NSError).userInfo[NSDebugDescriptionErrorKey] as? String ?? error.localizedDescription
+            let said = (error as NSError).userInfo[NSDebugDescriptionErrorKey] as? String ?? ErrorText.said(error)
             return .failure(Problem(L10n[.Kinds.problemNotJSON(said)]))
         }
     }
@@ -469,8 +534,19 @@ enum KindsEditing {
     /// behind — stays as it is, and its values go to `to`, which the definition must have), or
     /// the kind called `to`. The JSON changed, and the rename `kind_update` is told.
     static func rename(_ text: String, what: Renamed, from: String, to: String) -> Result<(text: String, rename: OJSON), Problem> {
-        guard case .success(let parsed) = parse(text, as: .cards), case .object(var object) = parsed,
-              case .string(let kind)? = object["kind"] else {
+        guard case .success(let parsed) = parse(text, as: .cards), case .object(let object) = parsed else {
+            return .failure(Problem(L10n[.Kinds.problemFixJSONFirst]))
+        }
+        return rename(object, what: what, from: from, to: to).map { (OJSON.object($0.object).pretty(), $0.rename) }
+    }
+
+    /// The same rename written into a kind of card's definition as read: a field of the kind of row `row`
+    /// when one is named. Where the definition names a field of its own — its header, `as_row`, its face
+    /// — it is renamed too, as the core renames it on saving.
+    static func rename(_ definition: OrderedObject, what: Renamed, from: String, to: String,
+                       row: String? = nil) -> Result<(object: OrderedObject, rename: OJSON), Problem> {
+        var object = definition
+        guard case .string(let kind)? = object["kind"], !kind.isEmpty else {
             return .failure(Problem(L10n[.Kinds.problemFixJSONFirst]))
         }
         let from = from.trimmingCharacters(in: .whitespaces)
@@ -484,6 +560,10 @@ enum KindsEditing {
                 return .object(o)
             })
         }
+        func listed(_ list: OJSON?) -> OJSON? {
+            guard case .array(let names)? = list else { return list }
+            return .array(names.map { if case .string(let s) = $0, s == from { .string(to) } else { $0 } })
+        }
         var rename = OrderedObject()
         switch what {
         case .kind:
@@ -492,12 +572,28 @@ enum KindsEditing {
             rename["to"] = .string(to)
         case .field:
             guard !from.isEmpty else { return .failure(Problem(L10n[.Kinds.problemPreviousFieldMissing])) }
-            object["fields"] = renamed(object["fields"])
-            // The header names it too.
-            if case .array(let header)? = object["header"] {
-                object["header"] = .array(header.map { if case .string(let s) = $0, s == from { .string(to) } else { $0 } })
-            }
             rename["kind"] = .string(kind)
+            if let row {
+                guard case .array(let rows)? = object["rows"] else { return .failure(Problem(L10n[.Kinds.problemPreviousRowMissing])) }
+                object["rows"] = .array(rows.map { item in
+                    guard case .object(var r) = item, case .string(let name)? = r["name"], name == row else { return item }
+                    r["fields"] = renamed(r["fields"])
+                    return .object(r)
+                })
+                rename["row"] = .string(row)
+            } else {
+                object["fields"] = renamed(object["fields"])
+                // Where the definition names its fields, they are named anew too.
+                if object["header"] != nil { object["header"] = listed(object["header"]) }
+                if case .array? = object["as_row"] { object["as_row"] = listed(object["as_row"]) }
+                if case .object(var face)? = object["face"] {
+                    if face["top"] != nil { face["top"] = listed(face["top"]) }
+                    for key in ["markdown", "svg", "html"] {
+                        if case .string(let named)? = face[key], named == from { face[key] = .string(to) }
+                    }
+                    object["face"] = .object(face)
+                }
+            }
             rename["field"] = .string(from)
             rename["to"] = .string(to)
         case .row:
@@ -507,17 +603,6 @@ enum KindsEditing {
             rename["row"] = .string(from)
             rename["to"] = .string(to)
         }
-        return .success((OJSON.object(object).pretty(), .object(rename)))
-    }
-
-    /// A kind of card's renames, as the kind is named in them: once the kind itself is renamed,
-    /// a later rename of its fields names it by its new name.
-    static func renaming(_ renames: [OJSON], kind from: String, to: String) -> [OJSON] {
-        renames.map { item in
-            guard case .object(var o) = item, case .string(let k)? = o["kind"], k == from, o["field"] != nil || o["row"] != nil
-            else { return item }
-            o["kind"] = .string(to)
-            return .object(o)
-        }
+        return .success((object, .object(rename)))
     }
 }

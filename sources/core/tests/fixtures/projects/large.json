@@ -1,6 +1,6 @@
 {
   "format": "specboard/project",
-  "version": 28,
+  "version": 33,
   "project": {
     "id": "9a37417d-698a-5bd2-9c18-b3c0e6dce5ae",
     "name": "Harbor City Library Network",
@@ -2485,21 +2485,21 @@
           {
             "id": "a638426b-34a5-5790-a366-b6512b8c81f4",
             "fields": {
-              "value": "JPY",
+              "name": "JPY",
               "label": "円"
             }
           },
           {
             "id": "b01ba05e-1f71-58a5-acd3-4234dbfbd497",
             "fields": {
-              "value": "USD",
+              "name": "USD",
               "label": "米ドル"
             }
           },
           {
             "id": "1e0b39b5-f780-5536-8a49-7522affd6f87",
             "fields": {
-              "value": "EUR",
+              "name": "EUR",
               "label": "ユーロ"
             }
           }
@@ -2522,21 +2522,21 @@
           {
             "id": "abaae6dc-bd61-577a-ab79-1a9ab5eea996",
             "fields": {
-              "value": "floor",
+              "name": "floor",
               "label": "切り捨て"
             }
           },
           {
             "id": "429de251-ebd6-57b4-96cc-2b84da0655f8",
             "fields": {
-              "value": "round",
+              "name": "round",
               "label": "四捨五入"
             }
           },
           {
             "id": "e7d78d7d-d3a2-56ef-ae32-7bb62c6031c7",
             "fields": {
-              "value": "ceil",
+              "name": "ceil",
               "label": "切り上げ"
             }
           }
@@ -2559,70 +2559,70 @@
           {
             "id": "660a22a9-5020-59ee-aa4e-c6a5faace014",
             "fields": {
-              "value": "book",
+              "name": "book",
               "label": "図書"
             }
           },
           {
             "id": "5cae010b-798d-5a93-82c5-a0b1dba2405d",
             "fields": {
-              "value": "magazine",
+              "name": "magazine",
               "label": "雑誌"
             }
           },
           {
             "id": "dd723b72-db9c-57dc-ba81-163f9b222a3c",
             "fields": {
-              "value": "audio",
+              "name": "audio",
               "label": "音声"
             }
           },
           {
             "id": "1ebe238c-828f-5d1a-8ec7-31333306d1e5",
             "fields": {
-              "value": "video",
+              "name": "video",
               "label": "映像"
             }
           },
           {
             "id": "94d0edc8-6fdf-5395-afea-1b095f0d4df6",
             "fields": {
-              "value": "map",
+              "name": "map",
               "label": "地図"
             }
           },
           {
             "id": "502af8b2-cf4d-5268-9f54-62eda55f6cbe",
             "fields": {
-              "value": "kit",
+              "name": "kit",
               "label": "学習キット"
             }
           },
           {
             "id": "e5775e2f-31aa-5b69-a67b-f3b223368c61",
             "fields": {
-              "value": "ebook",
+              "name": "ebook",
               "label": "電子書籍"
             }
           },
           {
             "id": "60fc027a-f5ef-5cd7-99c0-32d5f81e0cee",
             "fields": {
-              "value": "score",
+              "name": "score",
               "label": "楽譜"
             }
           },
           {
             "id": "f83bd520-6653-569e-b13b-8b56e97affcc",
             "fields": {
-              "value": "newspaper",
+              "name": "newspaper",
               "label": "新聞"
             }
           },
           {
             "id": "c5a97368-07aa-5c34-9d4d-ae97b4653115",
             "fields": {
-              "value": "game",
+              "name": "game",
               "label": "ボードゲーム"
             }
           }
@@ -2645,35 +2645,35 @@
           {
             "id": "a5ec9534-acce-54c8-bd8f-4fbff4000b6e",
             "fields": {
-              "value": "adult",
+              "name": "adult",
               "label": "一般"
             }
           },
           {
             "id": "f68567c7-a660-5f5d-b92a-ded8dc8a71e0",
             "fields": {
-              "value": "child",
+              "name": "child",
               "label": "子ども"
             }
           },
           {
             "id": "5b7342fa-d837-588e-995f-d569664ee86c",
             "fields": {
-              "value": "student",
+              "name": "student",
               "label": "学生"
             }
           },
           {
             "id": "690630e4-a92c-5efa-8ff7-01425c53dcb8",
             "fields": {
-              "value": "senior",
+              "name": "senior",
               "label": "高齢者"
             }
           },
           {
             "id": "cf2bf2de-9d06-5ddd-950e-4ef1ef6a9a32",
             "fields": {
-              "value": "corporate",
+              "name": "corporate",
               "label": "団体"
             }
           }
@@ -2695,19 +2695,19 @@
           {
             "id": "fbd299e2-fe71-598b-94a6-e26a9ec5785b",
             "fields": {
-              "value": "active"
+              "name": "active"
             }
           },
           {
             "id": "379296cc-0773-5c35-838b-68a698251502",
             "fields": {
-              "value": "suspended"
+              "name": "suspended"
             }
           },
           {
             "id": "b745df73-0355-5ddf-b6b7-43d0424263c4",
             "fields": {
-              "value": "expired"
+              "name": "expired"
             }
           }
         ]
@@ -2729,28 +2729,28 @@
           {
             "id": "dac0db50-57e4-59a3-ac51-480afc63b50a",
             "fields": {
-              "value": "open",
+              "name": "open",
               "label": "貸出中"
             }
           },
           {
             "id": "323c6438-ade1-5b05-8576-21f251ada6eb",
             "fields": {
-              "value": "returned",
+              "name": "returned",
               "label": "返却済み"
             }
           },
           {
             "id": "3219abea-00ad-5636-bc25-db700b8a8f1d",
             "fields": {
-              "value": "overdue",
+              "name": "overdue",
               "label": "延滞"
             }
           },
           {
             "id": "0871368d-8a9f-53dd-84be-e13593b3bf69",
             "fields": {
-              "value": "lost",
+              "name": "lost",
               "label": "紛失"
             }
           }
@@ -2772,35 +2772,35 @@
           {
             "id": "19cb75ed-7e80-566a-9a82-8887560b1ddb",
             "fields": {
-              "value": "waiting",
+              "name": "waiting",
               "label": "順番待ち"
             }
           },
           {
             "id": "db395ddb-a4ed-525a-b22b-df4e5c9e5eb1",
             "fields": {
-              "value": "ready",
+              "name": "ready",
               "label": "取り置き中"
             }
           },
           {
             "id": "99c1c9de-b6eb-5c0e-9ea6-e732814f2e65",
             "fields": {
-              "value": "collected",
+              "name": "collected",
               "label": "受け取り済み"
             }
           },
           {
             "id": "858198b7-81b7-5f82-b514-88cdcb731c27",
             "fields": {
-              "value": "cancelled",
+              "name": "cancelled",
               "label": "取り消し"
             }
           },
           {
             "id": "034433fd-e4b9-5fd2-bf79-d9f51c3a1b0e",
             "fields": {
-              "value": "expired",
+              "name": "expired",
               "label": "期限切れ"
             }
           }
@@ -2823,31 +2823,31 @@
           {
             "id": "56acfc1e-e005-5d80-8e43-fef7b691a9d9",
             "fields": {
-              "value": "requested"
+              "name": "requested"
             }
           },
           {
             "id": "91b437ac-acd3-5eb8-852f-bb0d6b393a56",
             "fields": {
-              "value": "packed"
+              "name": "packed"
             }
           },
           {
             "id": "2dc0b392-f556-524c-af73-d3c8a42ba7e5",
             "fields": {
-              "value": "in_transit"
+              "name": "in_transit"
             }
           },
           {
             "id": "ab638223-d384-5033-b3ec-10663c28bf22",
             "fields": {
-              "value": "received"
+              "name": "received"
             }
           },
           {
             "id": "c47d1f43-f176-54e9-85cc-ee357a720575",
             "fields": {
-              "value": "rejected"
+              "name": "rejected"
             }
           }
         ]
@@ -2868,28 +2868,28 @@
           {
             "id": "784ff8e0-0732-5feb-bce5-a61cd4dff828",
             "fields": {
-              "value": "new",
+              "name": "new",
               "label": "新品"
             }
           },
           {
             "id": "a52a58e9-7f2a-540b-9799-1d43b57c7bae",
             "fields": {
-              "value": "good",
+              "name": "good",
               "label": "良"
             }
           },
           {
             "id": "023ac5be-52f4-5b82-986d-14a9f7efcc9e",
             "fields": {
-              "value": "worn",
+              "name": "worn",
               "label": "傷みあり"
             }
           },
           {
             "id": "d4d3964d-e7ef-5689-9fda-fade268bb4ae",
             "fields": {
-              "value": "damaged",
+              "name": "damaged",
               "label": "破損"
             }
           }
@@ -2912,28 +2912,28 @@
           {
             "id": "845bd4fc-7881-5309-a9fc-51e07323e97e",
             "fields": {
-              "value": "general",
+              "name": "general",
               "label": "一般開架"
             }
           },
           {
             "id": "325a40b5-fdd9-5aab-9519-baf8c089ded8",
             "fields": {
-              "value": "reference",
+              "name": "reference",
               "label": "参考"
             }
           },
           {
             "id": "456405f0-0b2b-52f7-a7e0-238d2c9ac63a",
             "fields": {
-              "value": "children",
+              "name": "children",
               "label": "児童"
             }
           },
           {
             "id": "3cb8e25f-ca2d-55ba-b0b7-9a2459b01044",
             "fields": {
-              "value": "closed_stack",
+              "name": "closed_stack",
               "label": "閉架"
             }
           }
@@ -2955,43 +2955,43 @@
           {
             "id": "197e4c0c-945d-5daa-8eac-d90c3c907846",
             "fields": {
-              "value": "mon"
+              "name": "mon"
             }
           },
           {
             "id": "b8a5c741-cd15-596d-b054-eeeaadb4ec1f",
             "fields": {
-              "value": "tue"
+              "name": "tue"
             }
           },
           {
             "id": "7010fedf-3c85-5e1e-bcab-904d2b5a631c",
             "fields": {
-              "value": "wed"
+              "name": "wed"
             }
           },
           {
             "id": "5b2ec414-5ab7-5b49-a85b-18af753f4095",
             "fields": {
-              "value": "thu"
+              "name": "thu"
             }
           },
           {
             "id": "4c18143c-466c-547a-bf59-6ce8de991f71",
             "fields": {
-              "value": "fri"
+              "name": "fri"
             }
           },
           {
             "id": "d7327703-282e-59a9-92e4-f0aa2f793f8b",
             "fields": {
-              "value": "sat"
+              "name": "sat"
             }
           },
           {
             "id": "e4e41202-93e1-5863-a7ad-8c895371eeff",
             "fields": {
-              "value": "sun"
+              "name": "sun"
             }
           }
         ]
@@ -3013,28 +3013,28 @@
           {
             "id": "1e7cf0f4-13be-5be5-8f3c-37600ee5bb47",
             "fields": {
-              "value": "email",
+              "name": "email",
               "label": "メール"
             }
           },
           {
             "id": "932ffeb4-b6b3-556d-8748-3a0c14eeab1d",
             "fields": {
-              "value": "sms",
+              "name": "sms",
               "label": "ショートメッセージ"
             }
           },
           {
             "id": "8702a7e9-50f8-5820-b075-f42e8cc1112d",
             "fields": {
-              "value": "post",
+              "name": "post",
               "label": "郵便"
             }
           },
           {
             "id": "cff2600e-2fa3-5c27-b2cd-6aa9ce3d2bb6",
             "fields": {
-              "value": "app",
+              "name": "app",
               "label": "アプリ"
             }
           }
@@ -3056,21 +3056,21 @@
           {
             "id": "4fbb3f8a-4b80-5264-850d-f1bc5261ddd4",
             "fields": {
-              "value": "overdue",
+              "name": "overdue",
               "label": "延滞"
             }
           },
           {
             "id": "77db8e0d-84dd-5c6d-94b8-af7f760f15a1",
             "fields": {
-              "value": "damage",
+              "name": "damage",
               "label": "汚損"
             }
           },
           {
             "id": "1f31ec83-c7b7-588d-a1e2-00bf9b58fa8b",
             "fields": {
-              "value": "loss",
+              "name": "loss",
               "label": "紛失"
             }
           }
@@ -3092,25 +3092,25 @@
           {
             "id": "319e7cc5-955d-5113-890e-59ae9db0274f",
             "fields": {
-              "value": "cash"
+              "name": "cash"
             }
           },
           {
             "id": "132ca048-66fd-58f5-96ed-3e7f412c5aff",
             "fields": {
-              "value": "card"
+              "name": "card"
             }
           },
           {
             "id": "e87efcc7-d830-527e-952b-47761afbf0ce",
             "fields": {
-              "value": "transfer"
+              "name": "transfer"
             }
           },
           {
             "id": "aa461b7c-4dda-5e6b-9293-fe8bab82556f",
             "fields": {
-              "value": "waiver",
+              "name": "waiver",
               "label": "免除"
             }
           }
@@ -3132,21 +3132,21 @@
           {
             "id": "e4b979e1-4a6f-5beb-84d6-3da7ba05382f",
             "fields": {
-              "value": "purchase",
+              "name": "purchase",
               "label": "購入"
             }
           },
           {
             "id": "f39516a0-69b5-5dd3-a781-2857be8ab0c0",
             "fields": {
-              "value": "donation",
+              "name": "donation",
               "label": "寄贈"
             }
           },
           {
             "id": "62a94251-3b8e-5540-b3eb-df9c971b1d80",
             "fields": {
-              "value": "exchange",
+              "name": "exchange",
               "label": "交換"
             }
           }
@@ -3169,31 +3169,31 @@
           {
             "id": "3eacd20a-f657-56a5-ad11-6350197afdcd",
             "fields": {
-              "value": "draft"
+              "name": "draft"
             }
           },
           {
             "id": "9bceaf9d-f066-5d9f-84bf-b08fe9015088",
             "fields": {
-              "value": "ordered"
+              "name": "ordered"
             }
           },
           {
             "id": "860801ff-77a1-5d9e-8bb5-390dda6c0d67",
             "fields": {
-              "value": "partially_received"
+              "name": "partially_received"
             }
           },
           {
             "id": "f3bdc6ce-4840-558e-8ef5-f5925c8c4a96",
             "fields": {
-              "value": "received"
+              "name": "received"
             }
           },
           {
             "id": "ca5b3c68-d184-5c57-bc74-d5fc950005de",
             "fields": {
-              "value": "cancelled"
+              "name": "cancelled"
             }
           }
         ]
@@ -3214,21 +3214,21 @@
           {
             "id": "3f799ed4-4955-5af2-af7e-20f26ee797e7",
             "fields": {
-              "value": "publisher",
+              "name": "publisher",
               "label": "出版社"
             }
           },
           {
             "id": "1fe923ec-54d0-5ddb-ab47-dceef62facd9",
             "fields": {
-              "value": "distributor",
+              "name": "distributor",
               "label": "取次"
             }
           },
           {
             "id": "ede164fa-9664-5b70-bfb4-acf1101c64b6",
             "fields": {
-              "value": "bookstore",
+              "name": "bookstore",
               "label": "書店"
             }
           }
@@ -3250,28 +3250,28 @@
           {
             "id": "380ad361-e932-538d-b19f-baba3cb8284d",
             "fields": {
-              "value": "reading",
+              "name": "reading",
               "label": "読み聞かせ"
             }
           },
           {
             "id": "85294f5d-7cde-562a-8cc2-d6f585ceadc1",
             "fields": {
-              "value": "workshop",
+              "name": "workshop",
               "label": "工作"
             }
           },
           {
             "id": "c1d74777-8cb7-5575-b0ab-62d6efdcc59d",
             "fields": {
-              "value": "exhibition",
+              "name": "exhibition",
               "label": "展示"
             }
           },
           {
             "id": "50ff7cfc-7587-5977-9324-6422901899cb",
             "fields": {
-              "value": "lecture",
+              "name": "lecture",
               "label": "講演"
             }
           }
@@ -3293,25 +3293,25 @@
           {
             "id": "60724693-fac5-5f41-9673-4a3b1011b1a8",
             "fields": {
-              "value": "children"
+              "name": "children"
             }
           },
           {
             "id": "aaee0a76-69c5-5dec-853d-0f88c2249ebd",
             "fields": {
-              "value": "teens"
+              "name": "teens"
             }
           },
           {
             "id": "68a28439-574f-5418-bae1-484993542262",
             "fields": {
-              "value": "adults"
+              "name": "adults"
             }
           },
           {
             "id": "98b20e80-396a-52a8-b620-2c80aa904ead",
             "fields": {
-              "value": "all"
+              "name": "all"
             }
           }
         ]
@@ -3332,21 +3332,21 @@
           {
             "id": "ae0bca3f-8f01-5bbb-8d9b-20cde1da825c",
             "fields": {
-              "value": "study",
+              "name": "study",
               "label": "学習室"
             }
           },
           {
             "id": "d4bcf252-ac71-525c-8fc2-57b3a8083acd",
             "fields": {
-              "value": "meeting",
+              "name": "meeting",
               "label": "会議室"
             }
           },
           {
             "id": "11fe2b9c-6bab-559c-b06a-260f61e503f6",
             "fields": {
-              "value": "hall",
+              "name": "hall",
               "label": "ホール"
             }
           }
@@ -3368,19 +3368,19 @@
           {
             "id": "ab351a95-d06c-57a8-b495-31977cfd13ee",
             "fields": {
-              "value": "held"
+              "name": "held"
             }
           },
           {
             "id": "2e6c28c5-e709-5c30-b355-301b2d3a4309",
             "fields": {
-              "value": "confirmed"
+              "name": "confirmed"
             }
           },
           {
             "id": "6c98620e-5725-563a-8beb-f3e86b2a9570",
             "fields": {
-              "value": "cancelled"
+              "name": "cancelled"
             }
           }
         ]
@@ -3402,28 +3402,28 @@
           {
             "id": "468e819f-780c-55ad-9d1a-254003c0d05f",
             "fields": {
-              "value": "librarian",
+              "name": "librarian",
               "label": "司書"
             }
           },
           {
             "id": "3a4f78c7-490d-529d-8480-893898f0b595",
             "fields": {
-              "value": "clerk",
+              "name": "clerk",
               "label": "事務"
             }
           },
           {
             "id": "4a969c71-c0c1-569d-920a-edeebf61fbba",
             "fields": {
-              "value": "manager",
+              "name": "manager",
               "label": "館長"
             }
           },
           {
             "id": "82b40726-b1e8-513d-81a6-80cbbde64981",
             "fields": {
-              "value": "volunteer",
+              "name": "volunteer",
               "label": "ボランティア"
             }
           }
@@ -3445,19 +3445,19 @@
           {
             "id": "f8f50181-1db5-5bfe-832c-42b3381445da",
             "fields": {
-              "value": "morning"
+              "name": "morning"
             }
           },
           {
             "id": "1c167238-ad26-594e-af84-b9b1b4ad694c",
             "fields": {
-              "value": "afternoon"
+              "name": "afternoon"
             }
           },
           {
             "id": "aa672806-799c-5e35-b956-487e5f858f4f",
             "fields": {
-              "value": "evening"
+              "name": "evening"
             }
           }
         ]
@@ -3478,31 +3478,31 @@
           {
             "id": "06a0fcbf-161a-57cb-b5f0-358ac77a33ce",
             "fields": {
-              "value": "create"
+              "name": "create"
             }
           },
           {
             "id": "8c87f86c-ffeb-595a-b0db-1910496f772d",
             "fields": {
-              "value": "update"
+              "name": "update"
             }
           },
           {
             "id": "866ed1dd-f3d4-5d7c-9c46-c1c7f293bc0e",
             "fields": {
-              "value": "delete"
+              "name": "delete"
             }
           },
           {
             "id": "e08dcecf-3fac-5289-81a5-e926b59aa0e8",
             "fields": {
-              "value": "approve"
+              "name": "approve"
             }
           },
           {
             "id": "d02e95be-30b8-572a-a538-34fc5c15ddd2",
             "fields": {
-              "value": "reject"
+              "name": "reject"
             }
           }
         ]
@@ -3524,31 +3524,31 @@
           {
             "id": "4d82d847-fcd1-59ab-95fb-cf340e50631b",
             "fields": {
-              "value": "loan-record"
+              "name": "loan-record"
             }
           },
           {
             "id": "cc990c8d-f94f-5dbf-a572-e4940926db48",
             "fields": {
-              "value": "reservation"
+              "name": "reservation"
             }
           },
           {
             "id": "dc22dd5d-2e26-5344-ab4f-a3a9821fe696",
             "fields": {
-              "value": "transfer-manifest"
+              "name": "transfer-manifest"
             }
           },
           {
             "id": "6da981a3-fe44-5861-ac9a-25681f0882a4",
             "fields": {
-              "value": "purchase-order"
+              "name": "purchase-order"
             }
           },
           {
             "id": "c7456530-1389-5637-9bc3-5f85a6c924d0",
             "fields": {
-              "value": "fine-assessment"
+              "name": "fine-assessment"
             }
           }
         ]
@@ -3569,35 +3569,35 @@
           {
             "id": "20714ab3-f8fb-560e-b107-45edcd32321f",
             "fields": {
-              "value": "ja",
+              "name": "ja",
               "label": "日本語"
             }
           },
           {
             "id": "fc9af5f8-6d5a-509d-8f0e-2446b1235dbf",
             "fields": {
-              "value": "en",
+              "name": "en",
               "label": "英語"
             }
           },
           {
             "id": "96672d4f-d936-5643-b553-a3149a9d5377",
             "fields": {
-              "value": "zh",
+              "name": "zh",
               "label": "中国語"
             }
           },
           {
             "id": "d136b4dd-98e8-5684-9f05-022db40cc76a",
             "fields": {
-              "value": "ko",
+              "name": "ko",
               "label": "韓国語"
             }
           },
           {
             "id": "3a4c1519-4d59-5674-b2c1-91f4a169a712",
             "fields": {
-              "value": "es",
+              "name": "es",
               "label": "スペイン語"
             }
           }
@@ -3619,21 +3619,21 @@
           {
             "id": "e358d6c7-d71e-562d-99f4-2e34e2db4c39",
             "fields": {
-              "value": "ndc",
+              "name": "ndc",
               "label": "日本十進分類法"
             }
           },
           {
             "id": "97908520-541f-5114-96db-ffc3a9f474af",
             "fields": {
-              "value": "ddc",
+              "name": "ddc",
               "label": "デューイ十進分類法"
             }
           },
           {
             "id": "69388afd-64f2-5cab-980d-d1db2328116d",
             "fields": {
-              "value": "local",
+              "name": "local",
               "label": "館の独自分類"
             }
           }
@@ -3655,27 +3655,27 @@
           {
             "id": "f54b10b3-1e3d-5e24-b7a0-ee7bc01a1ce6",
             "fields": {
-              "value": "print"
+              "name": "print"
             }
           },
           {
             "id": "b99da239-2153-5983-bf5a-b4d858e48b47",
             "fields": {
-              "value": "large_print",
+              "name": "large_print",
               "label": "大活字"
             }
           },
           {
             "id": "2e445fb6-2876-56ab-8489-656482280bc2",
             "fields": {
-              "value": "braille",
+              "name": "braille",
               "label": "点字"
             }
           },
           {
             "id": "97441b2b-1fd9-5047-8671-19b10617083c",
             "fields": {
-              "value": "digital"
+              "name": "digital"
             }
           }
         ]
@@ -3696,21 +3696,21 @@
           {
             "id": "fe8c81d2-bf53-54d0-a3b1-95a2ac6ec8a0",
             "fields": {
-              "value": "van",
+              "name": "van",
               "label": "巡回車"
             }
           },
           {
             "id": "a15287b6-bf88-5dc7-8b03-bfc888324c8b",
             "fields": {
-              "value": "courier",
+              "name": "courier",
               "label": "宅配"
             }
           },
           {
             "id": "8f34c284-3c88-572c-9371-09d76594bb48",
             "fields": {
-              "value": "post",
+              "name": "post",
               "label": "郵便"
             }
           }
@@ -3733,25 +3733,25 @@
           {
             "id": "383c7c0a-3516-5073-8167-b8219f9ef358",
             "fields": {
-              "value": "north"
+              "name": "north"
             }
           },
           {
             "id": "ce626da1-eda6-53fd-b26b-69368dff311a",
             "fields": {
-              "value": "south"
+              "name": "south"
             }
           },
           {
             "id": "147968ab-2df0-573b-a1ef-a01b9c93e049",
             "fields": {
-              "value": "east"
+              "name": "east"
             }
           },
           {
             "id": "41d58c19-ff43-539f-9f1c-bee262b3c884",
             "fields": {
-              "value": "west"
+              "name": "west"
             }
           }
         ]
@@ -3772,21 +3772,21 @@
           {
             "id": "ac968ff2-63bd-5bf6-ae4f-1e8562ff965e",
             "fields": {
-              "value": "branch",
+              "name": "branch",
               "label": "館の窓口"
             }
           },
           {
             "id": "7fc887bc-742c-5712-b8dc-62df72afcadf",
             "fields": {
-              "value": "locker",
+              "name": "locker",
               "label": "受け取りロッカー"
             }
           },
           {
             "id": "d0cc0963-1de6-5ca2-8382-b1b9e8748bbc",
             "fields": {
-              "value": "home_delivery",
+              "name": "home_delivery",
               "label": "宅配"
             }
           }
@@ -3808,19 +3808,19 @@
           {
             "id": "f7471898-0f69-5320-a9c6-cf6c3f628ed6",
             "fields": {
-              "value": "allowed"
+              "name": "allowed"
             }
           },
           {
             "id": "52665388-544c-5109-a663-e44f8a521b11",
             "fields": {
-              "value": "once"
+              "name": "once"
             }
           },
           {
             "id": "97ed172a-2b74-5540-b911-80ed364bc6d8",
             "fields": {
-              "value": "never"
+              "name": "never"
             }
           }
         ]
@@ -3841,19 +3841,19 @@
           {
             "id": "f5c8e98f-0462-5a15-9c2d-497fe2ce53c5",
             "fields": {
-              "value": "ongoing"
+              "name": "ongoing"
             }
           },
           {
             "id": "5bd4c30d-6de6-50a0-8786-ad2241714eb3",
             "fields": {
-              "value": "completed"
+              "name": "completed"
             }
           },
           {
             "id": "68b57e1b-e6d1-565f-81f1-f4aadcb7da22",
             "fields": {
-              "value": "discontinued"
+              "name": "discontinued"
             }
           }
         ]
@@ -3874,21 +3874,21 @@
           {
             "id": "999c5d39-eac7-54b1-99f1-40b2ce9fbb02",
             "fields": {
-              "value": "one_user",
+              "name": "one_user",
               "label": "同時 1 人"
             }
           },
           {
             "id": "9e4240cd-b268-5c0b-ac48-80cb4b9c1c81",
             "fields": {
-              "value": "multi_user",
+              "name": "multi_user",
               "label": "同時複数"
             }
           },
           {
             "id": "4a075ca8-ba04-5f89-9dbb-43bc666a41bf",
             "fields": {
-              "value": "unlimited",
+              "name": "unlimited",
               "label": "無制限"
             }
           }
@@ -3910,19 +3910,19 @@
           {
             "id": "2458c17b-e041-54a9-b158-4c0c6bc386a5",
             "fields": {
-              "value": "public"
+              "name": "public"
             }
           },
           {
             "id": "e1adafb7-4b9c-5b18-bb6f-2a2336087e81",
             "fields": {
-              "value": "staff"
+              "name": "staff"
             }
           },
           {
             "id": "60df72eb-40fa-57b4-aaca-51647dd37d9f",
             "fields": {
-              "value": "restricted"
+              "name": "restricted"
             }
           }
         ]
@@ -3943,21 +3943,21 @@
           {
             "id": "42154b42-02d4-51d1-ae44-f725895018d2",
             "fields": {
-              "value": "approved",
+              "name": "approved",
               "label": "承認"
             }
           },
           {
             "id": "cf073e12-4585-512d-aefa-5aee8ecc18e9",
             "fields": {
-              "value": "rejected",
+              "name": "rejected",
               "label": "却下"
             }
           },
           {
             "id": "62f80fb0-72b3-5f44-8ec1-e5faf50f8cfe",
             "fields": {
-              "value": "deferred",
+              "name": "deferred",
               "label": "保留"
             }
           }
@@ -3980,31 +3980,31 @@
           {
             "id": "3ae54150-dba0-51a7-8e7c-7292e06729db",
             "fields": {
-              "value": "1"
+              "name": "1"
             }
           },
           {
             "id": "b2f7ec93-6c83-5055-b4c6-c0eef97f11fc",
             "fields": {
-              "value": "2"
+              "name": "2"
             }
           },
           {
             "id": "79708fe7-d75f-5552-ad5f-a0c39e0b7fd6",
             "fields": {
-              "value": "3"
+              "name": "3"
             }
           },
           {
             "id": "7c3c587f-9000-5784-b711-5af5d5be4efa",
             "fields": {
-              "value": "4"
+              "name": "4"
             }
           },
           {
             "id": "b7df73cd-bf81-546e-8f21-a76e71cee354",
             "fields": {
-              "value": "5"
+              "name": "5"
             }
           }
         ]
@@ -4025,28 +4025,28 @@
           {
             "id": "092de50f-5601-5472-9d09-68ceade30902",
             "fields": {
-              "value": "outdated",
+              "name": "outdated",
               "label": "内容が古い"
             }
           },
           {
             "id": "de1bf7a5-8552-5cf6-9c39-fc2af20971b9",
             "fields": {
-              "value": "damaged",
+              "name": "damaged",
               "label": "破損"
             }
           },
           {
             "id": "bc9f439a-a404-5bea-a73b-28194285601d",
             "fields": {
-              "value": "duplicate",
+              "name": "duplicate",
               "label": "重複"
             }
           },
           {
             "id": "150b373d-14f5-5765-8db4-b22d11cd23d1",
             "fields": {
-              "value": "low_use",
+              "name": "low_use",
               "label": "利用が少ない"
             }
           }
@@ -4068,19 +4068,19 @@
           {
             "id": "d911f16d-3e6e-57e7-9ba0-c809b0b0566c",
             "fields": {
-              "value": "monthly"
+              "name": "monthly"
             }
           },
           {
             "id": "32a4166a-ac29-5117-bb80-0f6a7badef08",
             "fields": {
-              "value": "quarterly"
+              "name": "quarterly"
             }
           },
           {
             "id": "fe5db8a3-ebfb-5e99-bfed-5e774d497ae0",
             "fields": {
-              "value": "yearly"
+              "name": "yearly"
             }
           }
         ]
@@ -4101,21 +4101,21 @@
           {
             "id": "321e0008-b4ac-5864-a4b5-ee18450ce418",
             "fields": {
-              "value": "billing",
+              "name": "billing",
               "label": "請求"
             }
           },
           {
             "id": "1f4e19c0-6801-50c3-ab9f-f3652bb4366c",
             "fields": {
-              "value": "notices",
+              "name": "notices",
               "label": "お知らせ"
             }
           },
           {
             "id": "b99a9e97-db78-5545-8591-a5270d06261a",
             "fields": {
-              "value": "emergency",
+              "name": "emergency",
               "label": "緊急"
             }
           }
@@ -4137,25 +4137,25 @@
           {
             "id": "27e71a08-3b2f-536d-b826-1021db73f1aa",
             "fields": {
-              "value": "id_card"
+              "name": "id_card"
             }
           },
           {
             "id": "e154569c-4061-5c97-9c86-df27201474c4",
             "fields": {
-              "value": "passport"
+              "name": "passport"
             }
           },
           {
             "id": "ee8e698e-499e-5888-94bd-411cad8f0223",
             "fields": {
-              "value": "student_card"
+              "name": "student_card"
             }
           },
           {
             "id": "d50f2361-bf0f-591c-b69a-ec805db2201c",
             "fields": {
-              "value": "health_card"
+              "name": "health_card"
             }
           }
         ]
@@ -4177,21 +4177,21 @@
           {
             "id": "45e9252f-1a00-5c7d-b7ad-02037281bdd7",
             "fields": {
-              "value": "subject",
+              "name": "subject",
               "label": "件名"
             }
           },
           {
             "id": "9c72adde-f3fc-5684-ba41-cd691dcc80f8",
             "fields": {
-              "value": "author",
+              "name": "author",
               "label": "著者"
             }
           },
           {
             "id": "691e2b95-d258-5dc7-b6ff-0576de578a1b",
             "fields": {
-              "value": "series",
+              "name": "series",
               "label": "シリーズ"
             }
           }
@@ -4213,19 +4213,19 @@
           {
             "id": "57558115-8069-5d3e-8798-9a1f8de85652",
             "fields": {
-              "value": "normal"
+              "name": "normal"
             }
           },
           {
             "id": "9a53963b-c2c6-5dd2-8ea3-3d8bbbcdedcc",
             "fields": {
-              "value": "cool"
+              "name": "cool"
             }
           },
           {
             "id": "957c1291-71c5-5326-b9b5-7828252b6a79",
             "fields": {
-              "value": "archive"
+              "name": "archive"
             }
           }
         ]
@@ -4246,19 +4246,19 @@
           {
             "id": "1fbba8be-5859-54d5-b5d2-ad19d6519928",
             "fields": {
-              "value": "marc21"
+              "name": "marc21"
             }
           },
           {
             "id": "d79d2229-fd40-53d3-8019-d2169d7e94e2",
             "fields": {
-              "value": "csv"
+              "name": "csv"
             }
           },
           {
             "id": "3fff5748-4a2f-5866-b7f9-b199dbcf3a80",
             "fields": {
-              "value": "json"
+              "name": "json"
             }
           }
         ]
@@ -4279,25 +4279,25 @@
           {
             "id": "cb38989f-c0e1-5fa1-8022-c7e8884cd395",
             "fields": {
-              "value": "low"
+              "name": "low"
             }
           },
           {
             "id": "12bf9117-cd2e-515f-9f6d-1313d1156dab",
             "fields": {
-              "value": "normal"
+              "name": "normal"
             }
           },
           {
             "id": "a2b961dc-86eb-58d2-a68f-0abe595eab9f",
             "fields": {
-              "value": "high"
+              "name": "high"
             }
           },
           {
             "id": "5ccfadbb-8312-5c54-b457-652fab97e3df",
             "fields": {
-              "value": "urgent"
+              "name": "urgent"
             }
           }
         ]
@@ -9291,28 +9291,28 @@
           {
             "id": "e7b884e2-e9c6-5564-83d9-e6c683040ddf",
             "fields": {
-              "value": "desk",
+              "name": "desk",
               "label": "机"
             }
           },
           {
             "id": "8d819a2c-d596-5816-9f0d-f7e415b20127",
             "fields": {
-              "value": "sofa",
+              "name": "sofa",
               "label": "ソファ"
             }
           },
           {
             "id": "1a0571b8-3e02-5ee2-934a-3fb55b04ad39",
             "fields": {
-              "value": "carrel",
+              "name": "carrel",
               "label": "個人ブース"
             }
           },
           {
             "id": "d6a9899f-4a5f-5ed8-8f8f-07dc38f7051d",
             "fields": {
-              "value": "pc",
+              "name": "pc",
               "label": "パソコン席"
             }
           }
@@ -9334,19 +9334,19 @@
           {
             "id": "8c0066a0-84e1-5384-8339-8a08aba20bc3",
             "fields": {
-              "value": "good"
+              "name": "good"
             }
           },
           {
             "id": "5251d42c-f7af-5206-8cec-a0e2f28ddb15",
             "fields": {
-              "value": "fair"
+              "name": "fair"
             }
           },
           {
             "id": "baef3cb5-35ab-5b81-81dd-58c8f7a7e168",
             "fields": {
-              "value": "poor"
+              "name": "poor"
             }
           }
         ]
@@ -9367,21 +9367,21 @@
           {
             "id": "e28b1c2e-359e-5311-aec8-2ffb987a3a92",
             "fields": {
-              "value": "maintenance",
+              "name": "maintenance",
               "label": "点検"
             }
           },
           {
             "id": "a09e4793-ee4d-5897-9ec8-782676f3b51b",
             "fields": {
-              "value": "weather",
+              "name": "weather",
               "label": "荒天"
             }
           },
           {
             "id": "4c080153-3467-52ba-b5d5-bc7bd31a45d8",
             "fields": {
-              "value": "event",
+              "name": "event",
               "label": "行事"
             }
           }

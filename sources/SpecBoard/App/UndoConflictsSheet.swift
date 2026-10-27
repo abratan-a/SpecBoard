@@ -40,7 +40,7 @@ struct UndoConflictsSheet: View {
 
     private func conflictRow(_ conflict: UndoConflict) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(L10n[.Branches.mergeConflictOf(conflict.path, conflict.unit)])
+            Text(L10n[.Branches.mergeConflictOf(conflict.path, Merge3.shown(conflict.unit))])
                 .font(.app(11.5, weight: .semibold, design: .monospaced))
             value(L10n[.Root.undoBefore("\(refusal.seq)")], conflict.before)
             value(L10n[.Root.undoAfter("\(refusal.seq)")], conflict.after)

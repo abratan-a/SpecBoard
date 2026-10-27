@@ -1,42 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "badge.also" : {
-      "comment" : "Small badge on a field that lists the other kinds it may hold; the argument is the list.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "also: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "他: %@"
-          }
-        }
-      }
-    },
-    "badge.nullable" : {
-      "comment" : "Small badge on a field that may be null.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nullable"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "null可"
-          }
-        }
-      }
-    },
     "description.empty" : {
       "comment" : "Shown in the description pane of the Properties panel when the project is read-only and the description is empty.",
       "extractionState" : "manual",
@@ -307,6 +271,582 @@
         }
       }
     },
+    "group.box" : {
+      "comment" : "Title of the Properties panel group with a group's frame (size, name corner, colour, fill).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "枠"
+          }
+        }
+      }
+    },
+    "group.cells" : {
+      "comment" : "Unit after a group's size in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cells"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マス"
+          }
+        }
+      }
+    },
+    "group.color.amber" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amber"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "琥珀"
+          }
+        }
+      }
+    },
+    "group.color.blue" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "青"
+          }
+        }
+      }
+    },
+    "group.color.green" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "緑"
+          }
+        }
+      }
+    },
+    "group.color.none" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        }
+      }
+    },
+    "group.color.red" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "赤"
+          }
+        }
+      }
+    },
+    "group.color.violet" : {
+      "comment" : "Value of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "紫"
+          }
+        }
+      }
+    },
+    "group.colorHelp" : {
+      "comment" : "Help of a group's color in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The box's colour: its dashed line, faint fill, pattern and name take it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "枠の色。点線・薄い塗り・模様・名前の字がこの色になる"
+          }
+        }
+      }
+    },
+    "group.delete" : {
+      "comment" : "Button in the Properties panel that deletes the group picked; its cards stay.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete group"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループを消す"
+          }
+        }
+      }
+    },
+    "group.deleteNote" : {
+      "comment" : "Note beside the Delete group button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The cards stay."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードは残る"
+          }
+        }
+      }
+    },
+    "group.fill.check" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェック"
+          }
+        }
+      }
+    },
+    "group.fill.diagonal" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagonal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "斜めストライプ"
+          }
+        }
+      }
+    },
+    "group.fill.dots" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dots"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドット"
+          }
+        }
+      }
+    },
+    "group.fill.none" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし"
+          }
+        }
+      }
+    },
+    "group.fill.stripes" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stripes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ストライプ"
+          }
+        }
+      }
+    },
+    "group.fill.zebra" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zebra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ゼブラ"
+          }
+        }
+      }
+    },
+    "group.fill.zebraDiagonal" : {
+      "comment" : "Value of a group's fill (the pattern over its faint fill) in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zebra diagonal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "斜めゼブラ"
+          }
+        }
+      }
+    },
+    "group.fillHelp" : {
+      "comment" : "Help of a group's fill in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pattern drawn over the box's faint fill."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "枠の薄い塗りの上に描く模様"
+          }
+        }
+      }
+    },
+    "group.headerPlaceHelp" : {
+      "comment" : "Help of a group's headerPlace in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The corner the name is written in, as a ui part's header place. Hidden: no name, and the group is picked by its top row."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を書く隅（UI の部品の見出しの位置と同じ）。隠すなら名前を出さず、上の 1 行でつかむ"
+          }
+        }
+      }
+    },
+    "group.heading" : {
+      "comment" : "Small word after a group's name at the top of the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "group"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループ"
+          }
+        }
+      }
+    },
+    "group.inside" : {
+      "comment" : "Title of the Properties panel group listing the cards inside a group.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中のカード"
+          }
+        }
+      }
+    },
+    "group.insideNote" : {
+      "comment" : "Note under the cards inside a group in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards whose top-left cell is inside the box. They move with it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上のマスが枠の中にあるカード。枠と一緒に動く"
+          }
+        }
+      }
+    },
+    "group.labelHelp" : {
+      "comment" : "Help of a group's label in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown on the diagram instead of the name. Empty: the name is shown."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図に名前の代わりに出す字。空なら名前を出す"
+          }
+        }
+      }
+    },
+    "group.labelPlaceholder" : {
+      "comment" : "Placeholder of a group's label field in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown instead of the name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前の代わりに出す字"
+          }
+        }
+      }
+    },
+    "group.nameHelp" : {
+      "comment" : "Help of a group's name in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The group's name, unique on this diagram (case is ignored). MCP names the group by it in groups of section_update and card_update."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループの名前。同じ図の中で一意（大文字小文字は区別しない）。MCP は section_update・card_update の groups でこの名前で指す"
+          }
+        }
+      }
+    },
+    "group.place.bottomLeft" : {
+      "comment" : "Value of a group's headerPlace in the Properties panel (the corner its name is written in), worded as a ui part's header place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom left"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左下"
+          }
+        }
+      }
+    },
+    "group.place.bottomRight" : {
+      "comment" : "Value of a group's headerPlace in the Properties panel (the corner its name is written in), worded as a ui part's header place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右下"
+          }
+        }
+      }
+    },
+    "group.place.hidden" : {
+      "comment" : "Value of a group's headerPlace in the Properties panel (the corner its name is written in), worded as a ui part's header place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隠す"
+          }
+        }
+      }
+    },
+    "group.place.topLeft" : {
+      "comment" : "Value of a group's headerPlace in the Properties panel (the corner its name is written in), worded as a ui part's header place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top left"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上"
+          }
+        }
+      }
+    },
+    "group.place.topRight" : {
+      "comment" : "Value of a group's headerPlace in the Properties panel (the corner its name is written in), worded as a ui part's header place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上"
+          }
+        }
+      }
+    },
+    "group.sizeHelp" : {
+      "comment" : "Help of a group's size in the Properties panel; the least width, the least height and the most of either, in cells.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The box's size in cells: %1$lld to %3$lld wide, %2$lld to %3$lld tall. Changing it moves no card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "枠の大きさ（マス）。横 %1$lld〜%3$lld・縦 %2$lld〜%3$lld。変えてもカードは動かない"
+          }
+        }
+      }
+    },
     "header.cardGhost" : {
       "comment" : "What the top of the Properties panel says a picked card ghost is.",
       "extractionState" : "manual",
@@ -519,24 +1059,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文字"
-          }
-        }
-      }
-    },
-    "instance.badge" : {
-      "comment" : "The kind badge at the left of a data card's editor bar.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "instance (data)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "instance（データ）"
           }
         }
       }
@@ -973,24 +1495,6 @@
         }
       }
     },
-    "row.holds" : {
-      "comment" : "What a picked entry of a store's holds is called at the top of the Properties panel, and the title of such an entry whose path is missing.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "置くもの"
-          }
-        }
-      }
-    },
     "rule.addColumn" : {
       "comment" : "Button that adds a column to a table.",
       "extractionState" : "manual",
@@ -1399,6 +1903,60 @@
         }
       }
     },
+    "section.figureHelp" : {
+      "comment" : "Explanation of the figure property of an actor section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What the actor is: a part of the system, a person, or something outside. Its mark follows it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクターが何か: システム・人・外部。印もそれに合わせて変わる"
+          }
+        }
+      }
+    },
+    "section.markHelp" : {
+      "comment" : "Explanation of the mark property of a section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The section's own mark in the navigator, the map tab and section ghosts. A part left out is the kind's"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネル・マップのタブ・セクションゴーストに出す、このセクションの印。決めない方は種類の印"
+          }
+        }
+      }
+    },
+    "section.markMissing" : {
+      "comment" : "Note under a section's mark when this Mac has no symbol of that name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not on this Mac"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac にはありません"
+          }
+        }
+      }
+    },
     "section.pathHelp" : {
       "comment" : "Explanation of the path property of a section in the Properties panel.",
       "extractionState" : "manual",
@@ -1417,6 +1975,24 @@
         }
       }
     },
+    "section.typeNote" : {
+      "comment" : "Note under the type menu of a section in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What is inside stays as it is"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中のカードとセクションはそのまま"
+          }
+        }
+      }
+    },
     "section.typeValue" : {
       "comment" : "Value of the type property of a section: the kind's label and then its key.",
       "extractionState" : "manual",
@@ -1431,6 +2007,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "section.useKindsMark" : {
+      "comment" : "Button under a section's mark: take its own mark off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use kind's mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類の印にする"
           }
         }
       }
@@ -1719,24 +2313,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "関数と型"
-          }
-        }
-      }
-    },
-    "table.badge" : {
-      "comment" : "The kind badge at the left of a table card's editor bar.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "table"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "table（表）"
           }
         }
       }

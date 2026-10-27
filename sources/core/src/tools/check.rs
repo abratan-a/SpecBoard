@@ -587,7 +587,7 @@ pub(crate) fn declared_paths(
         for (via, text) in form_texts(kinds, card) {
             in_text(&own, &via, &text, &mut out);
         }
-        for line in card.connections.iter().filter(|l| l.line == "branch") {
+        for line in card.connections.iter().filter(|l| l.line == "condition") {
             let Some(text) = line.fields.get("when").and_then(Value::as_str) else {
                 continue;
             };
@@ -644,7 +644,7 @@ pub(crate) fn declared_paths(
                 ..declared(&own, via, &row.target)
             }),
             "diagrams" => out.push(DeclaredPath {
-                section: Some("chart"),
+                section: Some(crate::kinds::CHART),
                 ..declared(&own, via, &row.target)
             }),
             "card" => out.push(DeclaredPath {
@@ -1078,7 +1078,10 @@ fn declared_problem_from(
             .iter()
             .find(|s| s.id == found)
             .and_then(|s| s.kind.as_deref());
-        if found_kind != Some(kind) {
+        // Where a chart's section is asked for, an actor's holds flows as one does.
+        let fits = found_kind == Some(kind)
+            || (kind == crate::kinds::CHART && crate::kinds::holds_flows(found_kind));
+        if !fits {
             return Some(text!(
                 "check.path.notSectionOf",
                 name,
@@ -1578,6 +1581,8 @@ pub(crate) fn is_flow_warning(warning: &str) -> bool {
     crate::text::is_said("check.flow.unfinished", warning)
         || crate::text::is_said("check.flow.unreachable", warning)
         || crate::text::is_said("check.flow.selfLoop", warning)
+        || crate::text::is_said("check.flow.noPartner", warning)
+        || crate::text::is_said("check.flow.unlinkedPartner", warning)
 }
 
 /// What a writer of `flow` is told: what is not finished yet, and nodes nothing leads
@@ -1611,7 +1616,233 @@ pub(crate) fn flow_warnings(flow: &Card, project: &Project) -> Vec<crate::text::
             nodes = crate::text::List::of(looped)
         ));
     }
+    // Told at once to whoever writes it; the check lists it as a gap of its own (`missingPartners`).
+    if let Some(begin) = flow.nodes.iter().find(|n| n.kind == "begin")
+        && crate::export::charts::names_no_partner(begin)
+    {
+        out.push(keyed!("check.flow.noPartner", name, node = begin.name));
+    }
+    // The same: the check lists it as a group of its own (`unlinkedPartners`).
+    for partner in unlinked_partners_of(flow, project) {
+        out.push(keyed!(
+            "check.flow.unlinkedPartner",
+            name,
+            place = partner.place,
+            program = partner.program,
+            names = partner.named()
+        ));
+    }
     out
+}
+
+// MARK: - A partner written as text that names a flow or an actor
+
+/// What a program's text is held against: the flows of the project by the text of their name and
+/// of their heading, and the actor sections with a flow in them (or in an actor inside them) by
+/// their name. Made once for a reading (`Project::partner_names`).
+pub(crate) struct PartnerNames {
+    /// The ids of the flows a text names, each once, in the tree's order.
+    flows: HashMap<String, Vec<String>>,
+    /// Each flow's place in the tree's order: its section's, then its own.
+    rank: HashMap<String, usize>,
+    /// The ids of the actor sections a text names, in the tree's order.
+    actors: HashMap<String, Vec<String>>,
+}
+
+impl PartnerNames {
+    fn of(project: &Project) -> PartnerNames {
+        let sections: HashMap<&str, usize> = project
+            .detail
+            .sections
+            .iter()
+            .enumerate()
+            .map(|(i, s)| (s.id.as_str(), i))
+            .collect();
+        let mut flows: Vec<(usize, usize, &Card)> = project
+            .detail
+            .schemas
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| c.kind == "flow")
+            .map(|(i, c)| {
+                let section = sections
+                    .get(project.section_of(c).as_str())
+                    .copied()
+                    .unwrap_or(usize::MAX);
+                (section, i, c.as_ref())
+            })
+            .collect();
+        flows.sort_by_key(|(section, i, _)| (*section, *i));
+        let around = crate::export::actors::Actors::new(project);
+        let mut names = PartnerNames {
+            flows: HashMap::new(),
+            rank: HashMap::new(),
+            actors: HashMap::new(),
+        };
+        let mut holding: HashSet<String> = HashSet::new();
+        for (rank, (_, _, flow)) in flows.iter().enumerate() {
+            names.rank.insert(flow.id.clone(), rank);
+            for text in [flow.name.trim(), flow.label.trim()] {
+                if text.is_empty() {
+                    continue;
+                }
+                let ids = names.flows.entry(text.to_string()).or_default();
+                if !ids.contains(&flow.id) {
+                    ids.push(flow.id.clone());
+                }
+            }
+            holding.extend(around.chain(&project.section_of(flow)));
+        }
+        for section in &project.detail.sections {
+            if holding.contains(&section.id) {
+                names
+                    .actors
+                    .entry(section.name.trim().to_string())
+                    .or_default()
+                    .push(section.id.clone());
+            }
+        }
+        names
+    }
+}
+
+/// A place in a flow that writes its partner as a program whose text is the name of a flow or of an
+/// actor of the project (`unlinkedPartners`): the diagram draws a lifeline of its own for it, not
+/// the flow's or the actor's.
+pub(crate) struct UnlinkedPartner {
+    /// Where, in full: `…:Flow.start`, `…:Flow.node.steps[i]`, `…:Flow.end`.
+    pub at: String,
+    /// The same inside the flow: `start`, `node.steps[i]`, `end`.
+    pub place: String,
+    /// What it does there: `receive` (a start, or a row), `send`, `call`, `return` (an end).
+    pub op: String,
+    /// The program, without the spaces around it.
+    pub program: String,
+    /// The flows it is named like (by name, by heading or as a path), in the tree's order.
+    pub flows: Vec<String>,
+    /// The actor section it is named like, by its path.
+    pub actor: Option<String>,
+}
+
+impl UnlinkedPartner {
+    /// Whom it is named like, as a text kept by its key (said in the language of whoever reads it).
+    pub fn named(&self) -> crate::text::Keyed {
+        let flows = || crate::text::List::of(&self.flows);
+        match (&self.actor, self.flows.is_empty()) {
+            (Some(actor), false) => keyed!(
+                "check.partner.flowsAndActor",
+                flows = flows(),
+                actor = actor.as_str()
+            ),
+            (Some(actor), true) => keyed!("check.partner.actor", actor = actor.as_str()),
+            (None, _) => keyed!("check.partner.flows", flows = flows()),
+        }
+    }
+}
+
+/// The places of `flow` that write their partner as a program named like a flow or an actor of the
+/// project, in the flow's order: a start that receives, the rows that send, receive and call, an end
+/// that returns. The flow itself and the actors around it are not held against: a program of the
+/// same name is the other processes of the same program. A text is held as written but for the
+/// spaces around it, and a capital is not a small letter.
+pub(crate) fn unlinked_partners_of(flow: &Card, project: &Project) -> Vec<UnlinkedPartner> {
+    let full = project.full(flow);
+    let mut asked: Vec<(String, String, String, String)> = Vec::new();
+    for node in &flow.nodes {
+        let here = crate::pathtext::member(&full, &node.name);
+        if let Some(Step {
+            program: Some(program),
+            ..
+        }) = facts::receive_row(node)
+        {
+            asked.push((here.clone(), node.name.clone(), "receive".into(), program));
+        }
+        if node.kind == "process" {
+            for (index, step) in node.steps.iter().enumerate() {
+                if let ("send" | "receive" | "call", Some(program)) =
+                    (step.op.as_str(), &step.program)
+                {
+                    asked.push((
+                        format!("{here}.steps[{index}]"),
+                        format!("{}.steps[{index}]", node.name),
+                        step.op.clone(),
+                        program.clone(),
+                    ));
+                }
+            }
+        }
+        if let Some(Step {
+            program: Some(program),
+            ..
+        }) = facts::return_row(node)
+        {
+            asked.push((here, node.name.clone(), "return".into(), program));
+        }
+    }
+    // The names are looked up only for a flow that names a program.
+    if asked.is_empty() {
+        return Vec::new();
+    }
+    let names = project
+        .partner_names
+        .get_or_init(|| PartnerNames::of(project));
+    let base = project.section_of(flow);
+    let mut around: Option<Vec<String>> = None;
+    asked
+        .into_iter()
+        .filter_map(|(at, place, op, program)| {
+            let text = program.trim();
+            if text.is_empty() {
+                return None;
+            }
+            let mut ids: Vec<String> = names.flows.get(text).cloned().unwrap_or_default();
+            if let Some(found) = project
+                .find_seeing(text, &base)
+                .filter(|c| c.kind == "flow")
+                && !ids.contains(&found.id)
+            {
+                ids.push(found.id.clone());
+            }
+            ids.retain(|id| *id != flow.id);
+            ids.sort_by_key(|id| names.rank.get(id).copied().unwrap_or(usize::MAX));
+            let flows: Vec<String> = ids
+                .iter()
+                .filter_map(|id| project.card(id))
+                .map(|c| project.full(c))
+                .collect();
+            let actor = names.actors.get(text).and_then(|sections| {
+                let around = around.get_or_insert_with(|| {
+                    crate::export::actors::Actors::new(project).chain(&base)
+                });
+                sections
+                    .iter()
+                    .find(|s| !around.contains(s))
+                    .map(|s| project.directory.full_section(s))
+            });
+            if flows.is_empty() && actor.is_none() {
+                return None;
+            }
+            Some(UnlinkedPartner {
+                at,
+                place,
+                op,
+                program: text.to_string(),
+                flows,
+                actor,
+            })
+        })
+        .collect()
+}
+
+/// The unlinked partners of every flow, in the tree's order (`unlinkedPartners`).
+pub(crate) fn unlinked_partners(project: &Project) -> Vec<UnlinkedPartner> {
+    project
+        .detail
+        .schemas
+        .iter()
+        .filter(|c| c.kind == "flow")
+        .flat_map(|c| unlinked_partners_of(c, project))
+        .collect()
 }
 
 /// A send or a receive whose other flow says nothing back: the place in its flow, the flow it
@@ -2086,12 +2317,13 @@ const TRIGGERS: [&str; 5] = ["manual", "receive", "event", "schedule", "startup"
 const PROCESS_OPS: [&str; 8] = [
     "read", "write", "sign", "verify", "call", "send", "receive", "compute",
 ];
-const RECEIVING: [&str; 6] = [
+const RECEIVING: [&str; 7] = [
     "peer",
     "program",
     "carries",
     "via",
     "initiator",
+    "anyCaller",
     "verifyWith",
 ];
 const JOINS: [&str; 3] = ["all", "any", "first"];
@@ -2192,6 +2424,7 @@ fn given_keys(node: &FlowNode) -> Vec<&'static str> {
     put(!node.returns.is_empty(), "returns");
     put(node.via.is_some(), "via");
     put(node.initiator.is_some(), "initiator");
+    put(node.any_caller, "anyCaller");
     put(node.verify_with.is_some(), "verifyWith");
     put(node.sign_with.is_some(), "signWith");
     put(!node.nexts.is_empty(), "next");
@@ -2273,14 +2506,14 @@ pub(crate) fn step_lines(op: &str) -> &'static [&'static str] {
         "read" => &["reads"],
         "write" => &["writes"],
         "sign" | "verify" => &["key"],
-        "send" | "receive" => &["peer", "key"],
+        "send" | "receive" => &["partner", "key"],
         "call" => &["key"],
         _ => &[],
     }
 }
 
 /// The kinds of line only a process node's row of the right kind takes.
-pub(crate) const STEP_LINES: [&str; 4] = ["reads", "writes", "peer", "key"];
+pub(crate) const STEP_LINES: [&str; 4] = ["reads", "writes", "partner", "key"];
 
 /// Why a process node's rows cannot be (`Validate.processRows`, with the checks of
 /// `Validate.steps` its rows can reach: no group, no return), or none. `vias`: what `via` may be,
@@ -2315,14 +2548,19 @@ fn process_rows_problem(rows: &[Step], place: &str, vias: &[String]) -> Option<S
     for (index, row) in rows.iter().enumerate() {
         let here = format!("steps[{index}]");
         let keys = step_keys(&row.op);
+        // A row's partners are written as lines of the kind `partner`: said by that name.
+        fn said(k: &&'static str) -> &'static str {
+            if *k == "peer" { "partner" } else { k }
+        }
         let stray: Vec<&str> = set_keys(row)
             .into_iter()
             .filter(|k| !keys.contains(k))
+            .map(|k| said(&k))
             .collect();
         let problem = if index >= 300 {
             Some(text!("check.rows.tooMany"))
         } else if !stray.is_empty() {
-            let mut allowed = keys.to_vec();
+            let mut allowed: Vec<&str> = keys.iter().map(said).collect();
             allowed.sort();
             Some(if allowed.is_empty() {
                 text!(
@@ -2471,6 +2709,10 @@ pub(crate) fn node_problems(
             && let Some(stray) = RECEIVING.iter().find(|k| given.contains(k))
         {
             return wrong(text!("check.node.receiveOnly", name = node.name, stray));
+        }
+        // Anyone, or the ones named: both at once would say two things of who calls.
+        if node.any_caller && (!node.peers.is_empty() || node.program.is_some()) {
+            return wrong(text!("check.node.anyCallerAlone", name = node.name));
         }
         if let Some(bad) = one(node.via.as_deref(), &vias, "via", node)
             .or_else(|| one(node.initiator.as_deref(), &INITIATORS, "initiator", node))

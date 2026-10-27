@@ -12,6 +12,7 @@
   "mcp.complaint.prefix": "{path} の ",
   "mcp.complaint.replaced": "{prefix}{key} はありません。{moved}",
   "mcp.complaint.required": "{prefix}{name} は必須です{hint}",
+  "mcp.complaint.requiredOneOf": "{prefix}{name} は必須です（{names} のいずれか）{hint}",
   "mcp.complaint.unknownNested": "{path} に使えないキーです: {given}。使えるのは: {takes}{hint}",
   "mcp.complaint.unknownTop": "受け付けない引数です: {given}。このツールが取るのは: {takes}",
   "mcp.complaint.wrongType": "{prefix}{key} は {expected} で指定してください（渡されたのは {given}）",

@@ -136,19 +136,19 @@ fn a_goal_started_has_its_branch_made_and_is_in_progress() {
         done["changes"],
         json!([
             "branch mcp-pictures を作った",
-            "status: 進行中",
+            "status: inProgress",
             "workBranch: mcp-pictures"
         ])
     );
     let card = read(&core, "Goals:McpPictures");
-    assert_eq!(card["status"], "進行中");
+    assert_eq!(card["status"], "inProgress");
     assert_eq!(card["workBranch"], "mcp-pictures");
     assert!(branches(&core).contains(&"mcp-pictures".to_string()));
     // One line on the board for the action, and the branch's own.
     assert_eq!(
         last_lines(&core, BOARD),
         [
-            "カード Goals:McpPictures を開始（branch mcp-pictures を作った / status: 進行中 / workBranch: mcp-pictures）"
+            "カード Goals:McpPictures を開始（branch mcp-pictures を作った / status: inProgress / workBranch: mcp-pictures）"
         ]
     );
     assert_eq!(
@@ -204,7 +204,7 @@ fn a_start_whose_branch_cannot_be_made_writes_nothing() {
     goal(
         &core,
         "Again",
-        json!({"status": "進行中", "workBranch": "gone-away"}),
+        json!({"status": "inProgress", "workBranch": "gone-away"}),
     );
     assert_eq!(
         available(&core, "Goals:Again")[0],
@@ -235,7 +235,7 @@ fn a_goal_finished_lets_go_of_its_branch_and_moves_with_what_it_holds() {
         json!(["済んでいない task が 1 件あります: Goals:Launch.Build"])
     );
     let card = read(&core, "Goals/Complete:Launch");
-    assert_eq!(card["status"], "完了");
+    assert_eq!(card["status"], "done");
     assert!(card.get("workBranch").is_none(), "{card}");
     assert_eq!(
         card["cards"],
@@ -245,7 +245,7 @@ fn a_goal_finished_lets_go_of_its_branch_and_moves_with_what_it_holds() {
     assert_eq!(
         last_lines(&core, BOARD),
         [
-            "カード Goals:Launch を完了（branch launch を消した / status: 完了 / workBranch を空に / Goals/Complete へ移した）"
+            "カード Goals:Launch を完了（branch launch を消した / status: done / workBranch を空に / Goals/Complete へ移した）"
         ]
     );
     assert_eq!(last_lines(&core, ""), ["branch launch を削除"]);
@@ -287,7 +287,7 @@ fn a_goal_whose_branch_has_changes_is_not_finished_until_they_are_merged() {
         json!({"tool": "branch_merge", "arguments": {"target": "orders", "project": PROJECT}})
     );
     // Refused, nothing was written: the goal and its branch as they were.
-    assert_eq!(read(&core, "Goals:Orders")["status"], "進行中");
+    assert_eq!(read(&core, "Goals:Orders")["status"], "inProgress");
     assert!(branches(&core).contains(&"orders".to_string()));
     // Merged, the branch is set aside: finished, the field emptied, nothing to delete.
     ok(&core, "branch_merge", json!({"target": "orders"}));
@@ -319,11 +319,14 @@ fn a_goal_cancelled_throws_its_changes_away_only_when_told() {
     assert_eq!(listed["actions"][2]["discardChanges"], 1);
     let said = refusal(&core, "Goals:Coupons", "cancel", json!({}));
     assert_eq!(said["use"]["arguments"]["value"], json!({"discard": true}));
-    assert_eq!(read(&core, "Goals:Coupons")["status"], "進行中");
+    assert_eq!(read(&core, "Goals:Coupons")["status"], "inProgress");
     let done = action(&core, "Goals:Coupons", "cancel", json!({"discard": true})).unwrap();
     assert_eq!(done["path"], "Goals/Cancelled:Coupons");
     assert_eq!(done["branchDeleted"], "coupons");
-    assert_eq!(read(&core, "Goals/Cancelled:Coupons")["status"], "打ち切り");
+    assert_eq!(
+        read(&core, "Goals/Cancelled:Coupons")["status"],
+        "cancelled"
+    );
     assert!(!branches(&core).contains(&"coupons".to_string()));
     // Not started, no branch: cancelled and moved.
     goal(&core, "Idea", json!({}));
@@ -331,7 +334,7 @@ fn a_goal_cancelled_throws_its_changes_away_only_when_told() {
     assert_eq!(done["movedTo"], "Goals/Cancelled");
     assert_eq!(
         done["changes"],
-        json!(["status: 打ち切り", "Goals/Cancelled へ移した"])
+        json!(["status: cancelled", "Goals/Cancelled へ移した"])
     );
 }
 
@@ -570,7 +573,7 @@ fn a_finish_refused_at_its_move_writes_nothing() {
     ok(
         &core,
         "card_create",
-        json!({"branch": BOARD, "target": "Goals/Complete:Twice", "value": {"kind": "goal", "status": "完了"}}),
+        json!({"branch": BOARD, "target": "Goals/Complete:Twice", "value": {"kind": "goal", "status": "done"}}),
     );
     goal(&core, "Twice", json!({}));
     action(&core, "Goals:Twice", "start", json!({})).unwrap();
@@ -581,12 +584,14 @@ fn a_finish_refused_at_its_move_writes_nothing() {
     );
     assert!(said.contains("Twice"), "{said}");
     let card = read(&core, "Goals:Twice");
-    assert_eq!(card["status"], "進行中");
+    assert_eq!(card["status"], "inProgress");
     assert_eq!(card["workBranch"], "twice");
     assert!(branches(&core).contains(&"twice".to_string()));
     assert_eq!(
         last_lines(&core, BOARD),
-        ["カード Goals:Twice を開始（branch twice を作った / status: 進行中 / workBranch: twice）"]
+        [
+            "カード Goals:Twice を開始（branch twice を作った / status: inProgress / workBranch: twice）"
+        ]
     );
 }
 

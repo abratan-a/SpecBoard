@@ -12,7 +12,7 @@
   "writes.bodyFrom.withBody": "bodyFrom cannot be written with body (give the body one way or the other)",
   "writes.create.bodyOnly": "{name} is a {kind} and has no named rows inside (write the text in body; to write with items and rows, use a kind: formatdoc card)",
   "writes.create.containerUnmade": "The container {container} could not be made, so {path} inside it is not made (fix the container's error)",
-  "writes.create.instanceValue": "{name} is data (instance), and the values inside it are not made. Write values in data, or to the value's path ({path}) with card_update's value {\"value\": …}",
+  "writes.create.instanceValue": "{name} is data (instance), and the values inside it are not made (only an array's element is, by card_create on the element's path with value {\"value\": …, \"position\": …}). Write values in data, or to the value's path ({path}) with card_update's value {\"value\": …}",
   "writes.create.notCard": "{path} is not a card",
   "writes.create.notContainer": "{parent} is not a container",
   "writes.create.sectionNeeded": "Write target with its section (for example: Schemas:User. The sections are {sections})",

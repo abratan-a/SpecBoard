@@ -1,0 +1,4 @@
+{
+  "nameMove.error.sql": "組み込みの名前を移せません: {e}",
+  "nameMove.line.builtinNames": "{count} 枚の組み込みの線の名前・列挙の値のキー・goal の値を今の名前にした（{cards}）"
+}

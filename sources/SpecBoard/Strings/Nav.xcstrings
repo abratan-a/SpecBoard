@@ -319,6 +319,78 @@
         }
       }
     },
+    "menu.newActorOutside" : {
+      "comment" : "Item of the navigator's new-section submenu (a trailing ellipsis is added in code): an actor outside the system.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor (outside)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター（外部）"
+          }
+        }
+      }
+    },
+    "menu.newActorPerson" : {
+      "comment" : "Item of the navigator's new-section submenu (a trailing ellipsis is added in code): an actor that is a person.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor (person)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター（人）"
+          }
+        }
+      }
+    },
+    "menu.newActorSystem" : {
+      "comment" : "Item of the navigator's new-section submenu (a trailing ellipsis is added in code): an actor that is a part of the system.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor (system)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター（システム）"
+          }
+        }
+      }
+    },
+    "menu.newChartSection" : {
+      "comment" : "Item of the navigator's new-section submenu (a trailing ellipsis is added in code): a chart section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャートのセクション"
+          }
+        }
+      }
+    },
     "menu.openReal" : {
       "comment" : "Context menu item on a card ghost: open the card it points at.",
       "extractionState" : "manual",
@@ -535,20 +607,20 @@
         }
       }
     },
-    "prompt.createKindSection" : {
-      "comment" : "Title of the name sheet when creating a section of a kind; the argument is the kind's heading.",
+    "prompt.createIn" : {
+      "comment" : "Title of the window a new section is named in; arguments 1: the section it is made in, 2: what is made (as the menu said it).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create %@ section"
+            "value" : "New %2$@ in %1$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@セクションを作る"
+            "value" : "%1$@ の中に%2$@を作る"
           }
         }
       }
@@ -571,6 +643,24 @@
         }
       }
     },
+    "prompt.mark" : {
+      "comment" : "Label of the mark row in the new section window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "印"
+          }
+        }
+      }
+    },
     "prompt.renameGhost" : {
       "comment" : "Title of the name sheet when renaming a card ghost.",
       "extractionState" : "manual",
@@ -585,6 +675,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードゴーストの名前を変える"
+          }
+        }
+      }
+    },
+    "prompt.sectionWord" : {
+      "comment" : "What is made, in the new section window's title, where no kind is named.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション"
           }
         }
       }

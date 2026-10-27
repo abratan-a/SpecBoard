@@ -91,8 +91,22 @@ pub fn spans(language: &Language, text: &str) -> Option<Result<Vec<u32>, Keyed>>
         Ok(c) => c,
         Err(e) => return Some(Err(keyed!("code.query", language = language.id, e))),
     };
+    // Coloured from the copy its grammar reads right (`super::parse_mended`): the same bytes but the
+    // blanked ones, so every offset below is the text's own.
+    let mended;
+    let source = if language.mend.is_some_and(|m| m.may(text.as_bytes())) {
+        match super::parse_mended(language, text.as_bytes()) {
+            Ok((_, copy)) => {
+                mended = copy;
+                &*mended
+            }
+            Err(_) => text.as_bytes(),
+        }
+    } else {
+        text.as_bytes()
+    };
     let mut highlighter = Highlighter::new();
-    let events = match highlighter.highlight(config, text.as_bytes(), None, None, |said| {
+    let events = match highlighter.highlight(config, source, None, None, |said| {
         let found = registry().named(said)?;
         found.highlight_config()?.ok()
     }) {

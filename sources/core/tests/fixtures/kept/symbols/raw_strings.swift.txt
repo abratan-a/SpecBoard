@@ -1,0 +1,6 @@
+Palette — type struct — line 4 — 3-36
+  Palette.accent — method func — line 9 — 9-11
+  Palette.background — method func — line 17 — 17-19
+  Palette.swatch — method func — line 21 — 21-25
+  Palette.label — method func — line 27 — 27-30
+  Palette.border — method func — line 33 — 32-35

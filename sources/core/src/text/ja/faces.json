@@ -1,0 +1,18 @@
+{
+  "faces.said.foldShown": "{name} は行の字・後ろの字・印に出しているので、› で開く欄に重ねられません",
+  "faces.said.foldTwice": "{name} を 2 度書いています",
+  "faces.said.headerNotOne": "{name} は 1 つの値の欄ではないので、頭に出せません",
+  "faces.said.keyNotAllowed": "{key} は書けません（書けるのは {keys}）",
+  "faces.said.listNotShapes": "{name} は entity・value の形の要素の並びではないので、行にできません",
+  "faces.said.markFieldNeeded": "mark には field（印を決める列挙か bool の欄）が要ります",
+  "faces.said.markNotEnum": "{name} は列挙か bool の 1 つの値の欄ではないので、印を決められません",
+  "faces.said.markShape": "mark は {field, values, none} のオブジェクトです",
+  "faces.said.noField": "この形に欄「{name}」はありません（一番上の欄: {names}）",
+  "faces.said.notName": "欄の名前（文字）を書きます",
+  "faces.said.notNames": "欄の名前の並びを書きます",
+  "faces.said.notObject": "face はオブジェクトです（{list, header} か {text, note, mark, fold}。外すのは null）",
+  "faces.said.notRole": "{role} は印の役ではありません（{roles}）",
+  "faces.said.notText": "{name} は文字（string・text）か列挙の 1 つの値の欄ではないので、行の字にできません",
+  "faces.said.notValue": "{value} は欄の値ではありません（{values}）",
+  "faces.said.valuesShape": "mark の values は {値: 役} のオブジェクトです"
+}

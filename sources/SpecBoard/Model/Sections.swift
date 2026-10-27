@@ -15,7 +15,13 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
     /// messages): its shapes beside their data cards and tables, which is why it holds both. After
     /// `schema`, so that a shape's home stays there and a data card's is here.
     case definition
-    case chart, document, export, rules, free
+    case chart
+    /// What provides and uses (a part of a system, a person, an outside service): a chart section's
+    /// parts, as deep as needed, holding the flows that are what it does
+    /// (`specboard://SpecBoard/Docs/Design:Overview` §9「アクターのセクション」). After `chart`, so a flow's
+    /// home stays a chart.
+    case actor
+    case document, export, rules, free
     /// A section of the project board (`specboard://SpecBoard/Docs/Design:DesignBoard` §2): where what is to be done
     /// is kept — goals and their tasks, freedocs and notes. Only there. The core calls it
     /// `goals` (its top holds one, Goals, and every other section inside it).
@@ -36,35 +42,22 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
     /// project's (`project_tree`, `specboard://SpecBoard/Docs/Design:DesignSections` §1).
     static let creatable: [SectionKind] = [.document, .schema, .definition, .chart, .free]
 
-    /// The heading a person sees.
+    /// The heading a person sees: its definition's label (`BuiltinWords`). The two kinds the core keeps
+    /// only for projects of before have none, and are said here.
     var label: String {
         switch self {
-        case .schema: L10n[.Sections.kindSchema]
-        case .definition: L10n[.Sections.kindDefinition]
-        case .chart: L10n[.Sections.kindChart]
-        case .document: L10n[.Sections.kindDocument]
         case .export: L10n[.Sections.kindExport]
         case .rules: L10n[.Sections.kindRules]
-        case .free: L10n[.Sections.kindFree]
-        case .board: L10n[.Sections.kindBoard]
-        case .complete: L10n[.Sections.kindComplete]
-        case .cancelled: L10n[.Sections.kindCancelled]
-        case .ui: L10n[.Sections.kindUi]
+        default: BuiltinWords.section(rawValue)
         }
     }
 
-    /// What it holds, in a line, for a tooltip.
+    /// What it holds, in a line, for a tooltip: its definition's description.
     var holding: String {
         switch self {
-        case .schema: L10n[.Sections.holdingSchema]
-        case .definition: L10n[.Sections.holdingDefinition]
-        case .chart: L10n[.Sections.holdingChart]
-        case .document: L10n[.Sections.holdingDocument]
         case .export: L10n[.Sections.holdingExport]
         case .rules: L10n[.Sections.holdingRules]
-        case .free: L10n[.Sections.holdingFree]
-        case .board, .complete, .cancelled: L10n[.Sections.holdingBoard]
-        case .ui: L10n[.Sections.holdingUi]
+        default: BuiltinWords.sectionMeaning(rawValue)
         }
     }
 
@@ -79,7 +72,7 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
         switch self {
         case .schema: [.entity, .value, .enum, .store, .note]
         case .definition: [.entity, .value, .enum, .store, .instance, .table, .note]
-        case .chart: [.flow, .note]
+        case .chart, .actor: [.flow, .note]
         case .document: [.freedoc, .formatdoc, .stackdoc, .table, .note, .svg, .html]
         case .export, .rules: []
         // A frame goes only where a section names it: not in the free one, which holds every other kind.
@@ -88,6 +81,9 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
         case .ui: [.html, .svg, .note, .frame]
         }
     }
+
+    /// Whether its sections hold flows: what a section embed and a chart's reading list the flows of.
+    var holdsFlows: Bool { self == .chart || self == .actor }
 
     /// Whether the core keeps the section in its place: never deleted, never moved out of its
     /// parent.
@@ -165,9 +161,26 @@ struct ProjectSection: Codable, Hashable, Identifiable, Sendable {
     /// stand-in the core keeps so the note has a place (`project_detail`'s `missing`). Read from the core
     /// alone.
     var missing = false
+    /// What an actor is (`project_detail`'s `figure`): absent for a system, and on any other kind.
+    /// Read from the core alone.
+    var figure: String? = nil
+    /// The mark it carries of its own (`icon`), each part as written. Read from the core alone.
+    var icon: SectionMark? = nil
+    /// The mark the core says to draw it with (`shownMark`): its own parts over its kind's, an
+    /// actor's by its figure. Only on actors and on sections with a mark of their own; nil draws the
+    /// kind's (`ProjectDetail.mark(of:)`). Read from the core alone.
+    var shownMark: SectionMark? = nil
 
     enum CodingKeys: String, CodingKey {
         case id, projectId, name, description, sortOrder, parentId, kind
+    }
+
+    /// Whether it is an actor's section.
+    var isActor: Bool { kind == .actor }
+
+    /// What it is as an actor; nil for a section of any other kind.
+    var actorFigure: ActorFigure? {
+        isActor ? figure.flatMap(ActorFigure.init(rawValue:)) ?? .system : nil
     }
 
     /// What a project's first section is called, and what every project written before
@@ -1107,6 +1120,9 @@ struct Surroundings: Equatable {
     /// Where this section put them, when someone moved one. The rest are placed
     /// beside the section: references on the right, consumers on the left.
     var positions: [String: CGPoint] = [:]
+    /// Of its section ghosts in `positions`, the ones a hand put there (or tidying moved): never stacked again by
+    /// the diagram, which stacks again the ones it put itself where they grow into another.
+    var pinned: Set<String> = []
     /// Its card ghosts (`specboard://SpecBoard/Docs/Design:DesignSections` §2): each a box of its own on its
     /// diagram, where it sits, the card it leads to drawn whole in it.
     var ghosts: [CardGhost] = []
@@ -1148,6 +1164,9 @@ struct Surroundings: Equatable {
     var folders: [FolderBox] = []
     /// Of those, the ones reading the folder no longer finds, kept for the notes in them.
     var missingFolders: Set<String> = []
+    /// The groups put on the diagram (`MapGroup`): each a frame on cells of its own, behind the lines and the
+    /// cards. None on a diagram that holds none (a ui section's, a working directory's).
+    var groups: [MapGroup] = []
 
     /// A folder drawn as a box on its working directory's section map.
     struct FolderBox: Equatable {
@@ -1306,6 +1325,56 @@ extension ProjectDetail {
 
 }
 
+
+/// What an actor is (`figure`): a part of a system, a person, or a service outside — each drawn with
+/// a mark of its own while the project keeps the built-in mark of actors (the core's
+/// `kinds::figure_mark`).
+enum ActorFigure: String, CaseIterable, Sendable {
+    case system, person, outside
+
+    /// The mark an actor of this figure is drawn with by default.
+    var symbol: String {
+        switch self {
+        case .system: "cube"
+        case .person: "person"
+        case .outside: "cloud"
+        }
+    }
+
+    /// What a person reads it as.
+    var label: String {
+        switch self {
+        case .system: L10n[.Sections.figureSystem]
+        case .person: L10n[.Sections.figurePerson]
+        case .outside: L10n[.Sections.figureOutside]
+        }
+    }
+
+    /// The figure as it is written: none for a system, the default.
+    var written: String? { self == .system ? nil : rawValue }
+}
+
+extension ProjectDetail {
+    /// The mark a section is drawn with in the nav panel, the map tab and a section ghost's head: the
+    /// core's (`shownMark`) where it says one, else its kind's — a folder in grey for neither.
+    func mark(of section: ProjectSection) -> SectionMark {
+        if let shown = section.shownMark { return shown }
+        guard let key = section.kind?.rawValue ?? section.kindName else { return SectionMark() }
+        return sectionMarks[key] ?? SectionMark()
+    }
+
+    /// The mark a section of `kind` (an actor of `figure`) takes for what it does not write of its own:
+    /// what "Kind's mark" restores. The core's rule (`kinds::Defs::shown_mark`) for a section not
+    /// made yet, or with every part of its own written: an actor's by its figure while the project keeps
+    /// the built-in mark of actors.
+    func kindMark(_ kind: String, figure: ActorFigure? = nil) -> SectionMark {
+        var mark = sectionMarks[kind] ?? SectionMark()
+        if kind == SectionKind.actor.rawValue, mark.icon == ActorFigure.system.symbol {
+            mark.icon = (figure ?? .system).symbol
+        }
+        return mark
+    }
+}
 
 /// What a kind of section's definition says its sections carry in the nav panel —
 /// `icon: {name, color}`: an SF Symbols name and a colour (`#RRGGBB`). Said of neither, a folder in grey.

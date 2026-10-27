@@ -34,6 +34,10 @@ pub(crate) struct Findings {
     pub missing: Vec<String>,
     /// A value whose field the shape no longer has, outside any array: where, and the value.
     pub strays: Vec<(String, Value)>,
+    /// An element of an array its element's keys do not hold apart (a key field missing, a key
+    /// or a `unique` field's value the same as an element's before it): the array's place, the
+    /// element's or its field's, and why. Refused whenever the array is written.
+    pub keys: Vec<(String, String, crate::text::Keyed)>,
     /// The patterns read so far, each once a check: none for one that cannot be read.
     patterns: HashMap<String, Option<regex::Regex>>,
 }
@@ -245,6 +249,7 @@ fn one(
                 out,
             );
         }
+        held_apart(inner_fields(project, field), items, at, out);
         return;
     }
     element(project, field, given, at, in_array, depth, out);
@@ -321,6 +326,103 @@ fn element(
         && let Some(why) = unmatched(field, text, out)
     {
         out.wrong.push((at.to_string(), why));
+    }
+}
+
+/// The fields an array's elements are told apart by: their shape's primary key, in its order.
+pub(crate) fn key_fields(inner: &[Field]) -> Vec<&Field> {
+    inner.iter().filter(|f| f.is_pk).collect()
+}
+
+/// An element's key as a path picks it (`[number=53,protocol=udp]`): each key field's value as a
+/// pick writes it. None when a key field has no text, number or truth.
+pub(crate) fn key_pick(keys: &[&Field], element: &Value) -> Option<Pick> {
+    keys.iter()
+        .map(|k| {
+            element
+                .get(&k.name)
+                .and_then(picks::Lit::of)
+                .map(|lit| (k.name.clone(), lit))
+        })
+        .collect::<Option<Vec<_>>>()
+        .map(Pick::Where)
+}
+
+/// A key as a person reads it, without its brackets (`number=53,protocol=udp`).
+pub(crate) fn key_text(pick: &Pick) -> String {
+    let written = pick.written();
+    written
+        .strip_prefix('[')
+        .and_then(|w| w.strip_suffix(']'))
+        .unwrap_or(&written)
+        .to_string()
+}
+
+/// An array's elements held apart by their key and their `unique` fields: a key field each
+/// element lacks, and a key or a unique field's value an element before it has already. Values
+/// are compared by the text a path writes them in, so the number 53 and the text "53" are the same.
+fn held_apart(inner: &[Field], items: &[Value], at: &str, out: &mut Findings) {
+    let keys = key_fields(inner);
+    let unique: Vec<&Field> = inner.iter().filter(|f| f.is_unique && !f.is_pk).collect();
+    if keys.is_empty() && unique.is_empty() {
+        return;
+    }
+    let text = |v: Option<&Value>| v.and_then(picks::Lit::of).map(|l| l.text);
+    let mut seen_keys: HashMap<Vec<String>, usize> = HashMap::new();
+    let mut seen_unique: HashMap<(String, String), usize> = HashMap::new();
+    for (i, item) in items.iter().enumerate() {
+        let place = format!("{at}[{i}]");
+        if !keys.is_empty() {
+            let mut tuple = Vec::new();
+            for k in &keys {
+                match text(item.get(&k.name)) {
+                    Some(t) => tuple.push(t),
+                    None => out.keys.push((
+                        at.to_string(),
+                        place.clone(),
+                        keyed!("instances.keys.missing", name = k.name),
+                    )),
+                }
+            }
+            if tuple.len() == keys.len() {
+                match seen_keys.get(&tuple) {
+                    Some(first) => out.keys.push((
+                        at.to_string(),
+                        place.clone(),
+                        keyed!(
+                            "instances.keys.twice",
+                            key = key_pick(&keys, item)
+                                .map(|p| key_text(&p))
+                                .unwrap_or_default(),
+                            other = format!("{at}[{first}]")
+                        ),
+                    )),
+                    None => {
+                        seen_keys.insert(tuple, i);
+                    }
+                }
+            }
+        }
+        for u in &unique {
+            let Some(t) = text(item.get(&u.name)) else {
+                continue;
+            };
+            match seen_unique.get(&(u.name.clone(), t.clone())) {
+                Some(first) => out.keys.push((
+                    at.to_string(),
+                    joined(&place, &u.name),
+                    keyed!(
+                        "instances.keys.uniqueTwice",
+                        name = u.name,
+                        value = t,
+                        other = format!("{at}[{first}]")
+                    ),
+                )),
+                None => {
+                    seen_unique.insert((u.name.clone(), t), i);
+                }
+            }
+        }
     }
 }
 
@@ -494,6 +596,15 @@ pub(crate) fn said(
             .filter(|(at, _)| counts(at))
             .map(|(at, _)| text!("instances.said.noFieldInShape", full, at, name = shape.name)),
     );
+    // An array's keys, whenever anything of the array is written: a duplicate made by changing
+    // one element sits at the element after it.
+    refused.extend(
+        found
+            .keys
+            .iter()
+            .filter(|(array, _, _)| counts(array))
+            .map(|(_, at, why)| format!("{}: {why}", place(&full, at))),
+    );
     if !refused.is_empty() {
         // A number written for a decimal is put right by writing it as the text; offered only when
         // that is all that is wrong, so the corrected call goes through.
@@ -647,6 +758,7 @@ pub(crate) fn problems(project: &Project, card: &Card) -> Vec<(String, crate::te
     found
         .wrong
         .into_iter()
+        .chain(found.keys.into_iter().map(|(_, at, why)| (at, why)))
         .chain(
             found
                 .missing
@@ -1258,6 +1370,34 @@ pub(crate) fn write_value(
     if value.is_none() && value_at(data.as_ref(), names).is_none() {
         return Err(text!("instances.write.noValue", at));
     }
+    // An element taken out: the lines that leave it, or anything inside it, go with it; those of
+    // other cards that land on it are said to point nowhere now.
+    let element_removed = value.is_none() && picks_last(names);
+    let broken_before = if element_removed {
+        Some(Seen::in_tx(tx, scope)?.broken_keys())
+    } else {
+        None
+    };
+    let mut lines_removed: Vec<Value> = Vec::new();
+    if element_removed && let Some(Value::Array(lines)) = doc.get_mut("connections") {
+        let seen = Seen::in_tx(tx, scope)?;
+        let project = seen.project();
+        lines.retain(|line| {
+            let leaves = line
+                .get("from")
+                .and_then(Value::as_str)
+                .filter(|f| !f.is_empty())
+                .and_then(|f| walked(data.as_ref(), &picks::split(f)).ok())
+                .is_some_and(|from| from.len() >= steps.len() && from[..steps.len()] == steps[..]);
+            if leaves {
+                lines_removed.push(line_read(&project, line));
+            }
+            !leaves
+        });
+        if lines.is_empty() {
+            doc.shift_remove("connections");
+        }
+    }
     // What holds it is an object, or not there yet (made on the way).
     for end in 1..names.len() {
         if let Some(there) = value_at(data.as_ref(), &names[..end])
@@ -1366,7 +1506,381 @@ pub(crate) fn write_value(
     let mut said = said(&project, card, Some(&written), Pointer::Value { skip })?;
     said.extend(followed);
     let answer = if removed { names } else { now.as_slice() };
-    Ok(super::warned(seen.value_view(card, answer), &said))
+    let mut view = seen.value_view(card, answer);
+    if let Some(before) = broken_before {
+        drop(project);
+        drop(seen);
+        let newly = super::update::newly_broken(tx, scope, &before, None)?;
+        said.extend(newly.iter().map(super::update::broken_warning));
+        if let Value::Object(out) = &mut view {
+            if !lines_removed.is_empty() {
+                out.insert("linesRemoved".into(), Value::Array(lines_removed));
+            }
+            out.insert("danglingRefs".into(), newly.len().into());
+        }
+    }
+    Ok(super::warned(view, &said))
+}
+
+/// A line as `card_read` reads it: its kind, the row it leaves, the card it reaches and where.
+fn line_read(project: &Project, line: &Value) -> Value {
+    let mut out = Map::new();
+    for key in ["line", "from"] {
+        if let Some(said) = line.get(key) {
+            out.insert(key.into(), said.clone());
+        }
+    }
+    if let Some(to) = line.get("to").and_then(Value::as_str) {
+        out.insert(
+            "to".into(),
+            project.named(to).map(Value::from).unwrap_or(Value::Null),
+        );
+    }
+    if let Some(at) = line.get("at") {
+        out.insert("at".into(), at.clone());
+    }
+    Value::Object(out)
+}
+
+/// A value a pick names, as its field holds it: a text quoted, or of a field that takes a text,
+/// is that text; unquoted, a number of a field of numbers and a truth of a field of truths.
+fn lit_value(field: &Field, lit: &picks::Lit) -> Value {
+    if !lit.quoted {
+        match field.kind.as_str() {
+            "int" => {
+                if let Ok(n) = lit.text.parse::<i64>() {
+                    return n.into();
+                }
+            }
+            "float" => {
+                if let Some(n) = lit
+                    .text
+                    .parse::<f64>()
+                    .ok()
+                    .and_then(serde_json::Number::from_f64)
+                {
+                    return Value::Number(n);
+                }
+            }
+            "bool" => {
+                if let Ok(b) = lit.text.parse::<bool>() {
+                    return b.into();
+                }
+            }
+            _ => {}
+        }
+    }
+    Value::from(lit.text.clone())
+}
+
+/// A line's place in a data card (`key`: its `from`, or its `at` in the card it reaches) that picks
+/// an element of the array at `parent` + `base` by its place, at or after `at`: one place on, past
+/// the element put in at `at`. Returns the place as it is now, when it changed.
+fn follow_insert(
+    line: &mut Map<String, Value>,
+    key: &str,
+    before: Option<&Value>,
+    parent: &[(String, Option<usize>)],
+    base: &str,
+    at: usize,
+) -> Option<String> {
+    let raw = line.get(key).and_then(Value::as_str)?.to_string();
+    if !picks::picks(&raw) {
+        return None;
+    }
+    let names = picks::split(&raw);
+    let j = parent.len();
+    if names.len() <= j || walked(before, &names[..j]).ok()? != parent {
+        return None;
+    }
+    let (b, pick) = picks::step(&names[j]).ok()?;
+    let Some(Pick::At(i)) = pick else {
+        return None;
+    };
+    if b != base || i < at {
+        return None;
+    }
+    let mut out = names.clone();
+    out[j] = format!("{}[{}]", crate::pathtext::quote(&b), i + 1);
+    let now = out.join(".");
+    line.insert(key.to_string(), now.clone().into());
+    Some(now)
+}
+
+/// An element made in a data card's array at a path that names it (`card_create`; `value`: the
+/// element's `value` and its `position`): by its key where the element's shape has one
+/// (`ports[number=443,protocol=tcp]`, the key fields taken from the path), by the place it goes in
+/// where it has none (`tags[1]`; the array's length puts it last), by its own value in an array of
+/// values (`groups[=api]`). The array is not written whole, so what another write put in it since
+/// it was read stays. Lines that pick an element after it by its place move one on with it.
+pub(crate) fn create_element(
+    tx: &mut Tx,
+    scope: &Scope,
+    path: &str,
+    value: &Map<String, Value>,
+) -> Result<Value, String> {
+    let (id, full, names, element, insert_at, parent, base, said_path) = {
+        let seen = Seen::in_tx(tx, scope)?;
+        let project = seen.project();
+        let (card, names) = match super::walk::locate(&project, path, None)? {
+            super::walk::Target::CustomRow(card, names) if card.kind == INSTANCE => (card, names),
+            _ => return Err(text!("instances.create.notElement", path)),
+        };
+        let full = project.full(card);
+        let shape = shape(&project, card).ok_or_else(|| text!("instances.said.ofNeeded", full))?;
+        let last = names.last().cloned().unwrap_or_default();
+        let (base, pick) = picks::step(&last).map_err(|why| format!("{path}: {why}"))?;
+        let base = base.into_owned();
+        let Some(pick) = pick else {
+            return Err(text!("instances.create.notElement", path));
+        };
+        let fields = field_at(&project, shape, &names)
+            .map_err(|_| text!("instances.create.notElement", path))?;
+        let field = fields[fields.len() - 1];
+        let inner = inner_fields(&project, field);
+        let keys = key_fields(inner);
+        let data = card.instance_data();
+        let parent = walked(data, &names[..names.len() - 1])
+            .map_err(|(i, why)| format!("{full}.{}: {why}", names[..=i].join(".")))?;
+        let array_at = format!(
+            "{full}.{}",
+            names[..names.len() - 1]
+                .iter()
+                .cloned()
+                .chain([crate::pathtext::quote(&base).into_owned()])
+                .collect::<Vec<_>>()
+                .join(".")
+        );
+        let holder = value_at(data, &names[..names.len() - 1]);
+        if holder.is_some_and(|h| !h.is_object()) {
+            return Err(text!(
+                "instances.write.notObject",
+                full,
+                inner = names[..names.len() - 1].join(".")
+            ));
+        }
+        let items: Vec<Value> = holder
+            .and_then(|h| h.get(&base))
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+        if holder
+            .and_then(|h| h.get(&base))
+            .is_some_and(|a| !a.is_array())
+        {
+            return Err(text!("instances.create.notArray", at = array_at));
+        }
+        let given = value.get("value");
+        let position = match value.get("position") {
+            None => None,
+            Some(p) => Some(
+                p.as_u64()
+                    .map(|p| p as usize)
+                    .filter(|p| *p <= items.len())
+                    .ok_or_else(|| text!("instances.create.position", count = items.len()))?,
+            ),
+        };
+        let keys_named = || crate::text::List::of(keys.iter().map(|k| k.name.as_str()));
+        let (element, insert_at) = match &pick {
+            Pick::Where(written) => {
+                if keys.is_empty() {
+                    return Err(text!("instances.create.unkeyed", at = array_at));
+                }
+                let mut wanted: Vec<&str> = keys.iter().map(|k| k.name.as_str()).collect();
+                let mut said: Vec<&str> = written.iter().map(|(k, _)| k.as_str()).collect();
+                wanted.sort_unstable();
+                said.sort_unstable();
+                if wanted != said {
+                    return Err(text!(
+                        "instances.create.keyNames",
+                        at = array_at,
+                        keys = keys_named()
+                    ));
+                }
+                let mut element = match given {
+                    None | Some(Value::Null) => Map::new(),
+                    Some(Value::Object(o)) => o.clone(),
+                    Some(_) => return Err(text!("instances.create.notObject", path)),
+                };
+                for (k, lit) in written {
+                    let Some(f) = inner.iter().find(|f| &f.name == k) else {
+                        continue;
+                    };
+                    match element.get(k) {
+                        Some(there) if !lit.fits(there) => {
+                            return Err(text!("instances.create.keyDiffers", key = k, path));
+                        }
+                        Some(_) => {}
+                        None => {
+                            element.insert(k.clone(), lit_value(f, lit));
+                        }
+                    }
+                }
+                (Value::Object(element), position.unwrap_or(items.len()))
+            }
+            Pick::At(i) => {
+                if !keys.is_empty() {
+                    return Err(text!(
+                        "instances.create.keyed",
+                        at = array_at,
+                        keys = keys_named()
+                    ));
+                }
+                if *i > items.len() {
+                    return Err(text!("instances.create.position", count = items.len()));
+                }
+                if position.is_some_and(|p| p != *i) {
+                    return Err(text!("instances.create.twoPlaces", path));
+                }
+                let element = match given {
+                    Some(v) if !v.is_null() => v.clone(),
+                    _ if !inner.is_empty() => Value::Object(Map::new()),
+                    _ => return Err(text!("instances.create.valueNeeded", path)),
+                };
+                (element, *i)
+            }
+            Pick::Is(lit) => {
+                let element = lit_value(field, lit);
+                if let Some(v) = given.filter(|v| !v.is_null())
+                    && !lit.fits(v)
+                {
+                    return Err(text!("instances.create.valueDiffers", path));
+                }
+                (element, position.unwrap_or(items.len()))
+            }
+        };
+        if !matches!(pick, Pick::At(_)) && !matches!(pick.find(&items), Found::None) {
+            return Err(text!(
+                "instances.create.exists",
+                path = format!("{array_at}{}", pick.written())
+            ));
+        }
+        let said_path = match &pick {
+            Pick::At(_) => format!("{array_at}[{insert_at}]"),
+            other => format!("{array_at}{}", other.written()),
+        };
+        (
+            card.id.clone(),
+            full,
+            names,
+            element,
+            insert_at,
+            parent,
+            base,
+            said_path,
+        )
+    };
+    let mut docs = scope.docs(tx)?;
+    let mut doc = docs
+        .remove(&id)
+        .ok_or_else(|| text!("instances.write.noCard"))?;
+    let data = doc.get("fields").and_then(|f| f.get("data")).cloned();
+    let holder = &names[..names.len() - 1];
+    let mut items: Vec<Value> = value_at(data.as_ref(), holder)
+        .and_then(|h| h.get(&base))
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    items.insert(insert_at, element.clone());
+    let mut array_steps = parent.clone();
+    array_steps.push((base.clone(), None));
+    let next = put_walked(data.as_ref(), &array_steps, Some(Value::Array(items)));
+    let mut followed = Vec::new();
+    if let Some(lines) = doc.get_mut("connections").and_then(Value::as_array_mut) {
+        for line in lines.iter_mut().filter_map(Value::as_object_mut) {
+            if let Some(said) =
+                follow_insert(line, "from", data.as_ref(), &parent, &base, insert_at)
+            {
+                followed.push(text!("instances.write.followedFrom", full, said));
+            }
+        }
+    }
+    match doc
+        .entry("fields")
+        .or_insert_with(|| Value::Object(Map::new()))
+    {
+        Value::Object(fields) => {
+            fields.insert("data".into(), next);
+        }
+        _ => return Err(text!("instances.write.fieldsNotObject")),
+    }
+    super::update::put_checked(tx, scope, &doc)?;
+    tx.line(
+        &scope.project,
+        &scope.tree,
+        "schema.update",
+        "schema",
+        Some(&id),
+        keyed!(
+            "instances.line.elementAdded",
+            full,
+            path = said_path.clone()
+        ),
+    )?;
+    // The lines of other cards that land on an element after it by its place.
+    let mut others: Vec<(String, Map<String, Value>, Vec<String>)> = Vec::new();
+    for (other, mut odoc) in docs {
+        let mut said = Vec::new();
+        if let Some(lines) = odoc.get_mut("connections").and_then(Value::as_array_mut) {
+            for line in lines.iter_mut().filter_map(Value::as_object_mut) {
+                let lands = line.get("to").and_then(Value::as_str) == Some(id.as_str())
+                    && line
+                        .get("at")
+                        .and_then(Value::as_str)
+                        .is_some_and(|a| !crate::pathtext::has_section(a));
+                if lands
+                    && let Some(now) =
+                        follow_insert(line, "at", data.as_ref(), &parent, &base, insert_at)
+                {
+                    said.push(now);
+                }
+            }
+        }
+        if !said.is_empty() {
+            others.push((other, odoc, said));
+        }
+    }
+    others.sort_by(|a, b| a.0.cmp(&b.0));
+    for (other, odoc, said) in others {
+        super::update::put_checked(tx, scope, &odoc)?;
+        let name = {
+            let seen = Seen::in_tx(tx, scope)?;
+            let project = seen.project();
+            project
+                .card(&other)
+                .map(|c| project.full(c))
+                .unwrap_or_default()
+        };
+        tx.line(
+            &scope.project,
+            &scope.tree,
+            "schema.update",
+            "schema",
+            Some(&other),
+            keyed!("instances.line.linesFollowed", name, full),
+        )?;
+        for now in said {
+            followed.push(text!("instances.write.followedAt", name, now));
+        }
+    }
+    let seen = Seen::in_tx(tx, scope)?;
+    let project = seen.project();
+    let card = project
+        .card(&id)
+        .ok_or_else(|| text!("instances.write.noCard"))?;
+    let mut at_element = parent.clone();
+    at_element.push((base, Some(insert_at)));
+    let written = sparse(&at_element, element);
+    let skip = at_element
+        .iter()
+        .map(|(_, at)| 1 + usize::from(at.is_some()))
+        .sum();
+    let mut said = said(&project, card, Some(&written), Pointer::Value { skip })?;
+    said.extend(followed);
+    let mut out = Map::new();
+    out.insert("project".into(), scope.project_name.clone().into());
+    out.insert("path".into(), said_path.into());
+    Ok(super::warned(Value::Object(out), &said))
 }
 
 /// The names of a path written, each pick of an element on the way picking it by the values it

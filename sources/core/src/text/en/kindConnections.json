@@ -8,6 +8,7 @@
   "kindConnections.problem.key": "\"{key}\" is not a key a line can have",
   "kindConnections.problem.keyAllowed": "\"{key}\" is not a key a line can have (allowed: {allowed})",
   "kindConnections.problem.lineMissing": "line (the kind of line) is missing",
+  "kindConnections.problem.lineRenamed": "\"{name}\" is the name of before: write it as \"{now}\" now",
   "kindConnections.problem.lineUnknown": "There is no kind of line \"{name}\" (available: {names})",
   "kindConnections.problem.list": "Must be a list of lines",
   "kindConnections.problem.listShape": "Must be a list of lines ([{line, from, to, at, description, fields}])",

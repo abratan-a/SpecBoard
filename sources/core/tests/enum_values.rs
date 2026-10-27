@@ -453,7 +453,7 @@ fn a_values_description_goes_with_the_project_file() {
             .unwrap()
             .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 28);
+    assert_eq!(file["version"], 33);
     assert!(text.contains("代金を受け取った"));
     let again = Core::create(common::place("described-again.sqlite")).unwrap();
     let read = common::op(&again, json!({"op": "project_file_read", "text": text}));

@@ -162,6 +162,19 @@ pub(crate) fn section_read(store: &Store, args: &Args) -> Result<Output, String>
                 .map(|g| project.full_ghost(g).into()),
         )
         .collect();
+    // The mark the screen shows it with: its own parts, the rest its kind's (an actor's by its figure).
+    if let Some(section) = seen.section(&id) {
+        let own = section.icon.clone().unwrap_or_default();
+        let (name, color) = project.defs.shown_mark(
+            section.kind.as_deref(),
+            section.figure.as_deref(),
+            (own.name.as_deref(), own.color.as_deref()),
+        );
+        row.insert(
+            "shownMark".into(),
+            super::views::icon_json(name.as_deref(), color.as_deref()),
+        );
+    }
     row.insert("cards".into(), Value::Array(cards));
     let inside: Vec<Value> = seen
         .children(Some(&id))
@@ -177,14 +190,26 @@ pub(crate) fn section_read(store: &Store, args: &Args) -> Result<Output, String>
             .as_array()
             .map(|l| l.iter().filter_map(Value::as_str).collect())
             .unwrap_or_default();
-        if let Some(other) = items.iter().find(|i| **i != "places") {
+        if let Some(other) = items.iter().find(|i| !["places", "groups"].contains(*i)) {
             return Err(text!("reads.include.placesOnly", other));
         }
+        let layout = Layout::read(&store.conn, &seen.summary.id)?;
         if items.contains(&"places") {
-            let layout = Layout::read(&store.conn, &seen.summary.id)?;
             row.insert(
                 "places".into(),
                 super::boxes::read_places(&store.reader(), &seen, &layout, &id)?,
+            );
+        }
+        // The groups on its diagram, with what is in each.
+        if items.contains(&"groups") {
+            row.insert(
+                "groups".into(),
+                super::groups::read_groups(
+                    &store.reader(),
+                    &seen,
+                    &layout,
+                    super::groups::MapOf::Section(&id),
+                )?,
             );
         }
     }
@@ -284,6 +309,8 @@ fn scope(
 
 /// What `include` asks of a goal's card map: its boxes (`card_read` only).
 const PLACES: &str = "places";
+/// What `include` asks of a container's card map: its groups (`card_read` only).
+const GROUPS: &str = "groups";
 /// card_read's own: the board's cards still to do that reach the card (`fromBoard`).
 const FROM_BOARD: &str = "from_board";
 /// A goal's or a task's actions, each with whether it can be used now (`actions`): `card_read` and
@@ -315,13 +342,14 @@ fn projection(given: &Map<String, Value>, places: bool) -> Result<Projection, St
         .filter(|i| {
             !(Projection::KNOWN.contains(i)
                 || *i == ACTIONS
-                || places && (*i == PLACES || *i == FROM_BOARD))
+                || places && (*i == PLACES || *i == GROUPS || *i == FROM_BOARD))
         })
         .collect();
     if !unknown.is_empty() {
         let mut known: Vec<&str> = Projection::KNOWN.to_vec();
         if places {
             known.push(PLACES);
+            known.push(GROUPS);
             known.push(FROM_BOARD);
         }
         known.push(ACTIONS);
@@ -337,7 +365,7 @@ fn projection(given: &Map<String, Value>, places: bool) -> Result<Projection, St
     }
     let parts: Vec<String> = items
         .into_iter()
-        .filter(|i| i != PLACES && i != FROM_BOARD && i != ACTIONS)
+        .filter(|i| i != PLACES && i != GROUPS && i != FROM_BOARD && i != ACTIONS)
         .collect();
     Ok(Projection::of(&parts))
 }
@@ -414,6 +442,17 @@ fn read_one(
         super::walk::shown_through(seen.level(&target, &projection, Some(layout)), &through);
     // The form it is written in, at the same path (`card_update`'s keys are the ones read).
     super::views::put_form(&mut read, super::views::form_of(&target));
+    // A flow's actor: the nearest actor section around it, worked out on each read.
+    if let super::walk::Target::Card(card) = &target
+        && card.kind == "flow"
+        && let Some(actor) = crate::export::actors::Actors::new(&project).of_card(card)
+        && let Value::Object(object) = &mut read
+    {
+        object.insert(
+            "actor".into(),
+            project.directory.full_section(&actor).into(),
+        );
+    }
     // A working directory's file: the tree's cards whose lines say they are carried out in it, the
     // other way round (with the function or type each lands at, when it lands inside), and what it
     // holds as code.
@@ -543,6 +582,49 @@ fn read_one(
             object.insert(
                 PLACES.into(),
                 super::card_map::read_places(seen, layout, card),
+            );
+        }
+    }
+    // A container's card map: its groups, with what is in each.
+    let groups = given
+        .get("include")
+        .and_then(Value::as_array)
+        .is_some_and(|l| l.iter().any(|v| v.as_str() == Some(GROUPS)));
+    if groups {
+        let without = || {
+            let mut list: Vec<Value> = given
+                .get("include")
+                .and_then(Value::as_array)
+                .cloned()
+                .unwrap_or_default();
+            list.retain(|v| v.as_str() != Some(GROUPS));
+            serde_json::json!({ "fix": [{ "at": "/value/include", "to": list }] })
+        };
+        let super::walk::Target::Card(card) = target else {
+            return Err(crate::mcp::refusal(
+                text!("reads.groups.notCard", path),
+                without(),
+            ));
+        };
+        if !project.card_mapped(&card.kind) {
+            return Err(crate::mcp::refusal(
+                text!(
+                    "reads.groups.notMapped",
+                    card = project.full(card),
+                    kind = card.kind
+                ),
+                without(),
+            ));
+        }
+        if let Value::Object(object) = &mut read {
+            object.insert(
+                GROUPS.into(),
+                super::groups::read_groups(
+                    reader,
+                    seen,
+                    layout,
+                    super::groups::MapOf::Card(&card.id),
+                )?,
             );
         }
     }
@@ -1662,6 +1744,10 @@ pub(crate) fn card_list(store: &Store, args: &Args) -> Result<Output, String> {
         let (mut made, id) = match chosen.get(i) {
             Some(c) => {
                 let mut made = seen.card_view(c, &projection, Some(&layout));
+                // The project is said once, at the head of the list.
+                if let Value::Object(object) = &mut made {
+                    object.shift_remove("project");
+                }
                 if let Some(extra) = said_code.get(&c.id)
                     && let Value::Object(object) = &mut made
                 {
@@ -1690,6 +1776,13 @@ pub(crate) fn card_list(store: &Store, args: &Args) -> Result<Output, String> {
         }
         if !with_body && let Value::Object(object) = &mut made {
             object.shift_remove("body");
+            // A data card's values are its body.
+            if chosen
+                .get(i)
+                .is_some_and(|c| c.kind == crate::kinds::INSTANCE)
+            {
+                object.shift_remove("data");
+            }
         }
         made
     };

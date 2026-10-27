@@ -139,7 +139,7 @@ struct MCPWritesView: View {
             if opening { open = Set(groups.filter { $0.state == nil }.map(\.id)) }
             error = nil
         } catch {
-            self.error = error.localizedDescription
+            self.error = ErrorText.said(error)
         }
     }
 
@@ -150,7 +150,7 @@ struct MCPWritesView: View {
             groups = try body(core)
             error = nil
         } catch {
-            self.error = error.localizedDescription
+            self.error = ErrorText.said(error)
         }
     }
 }

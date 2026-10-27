@@ -341,6 +341,8 @@ pub(crate) fn update_row(
     let (columns, cells) = (strings(row, "columns"), table_cells(row));
     // What its body was, changed in part: answered short through MCP (`in_part::quiet`).
     let mut in_part = None;
+    // What its cells were and are, changed in part: answered short the same way.
+    let mut cells_part = None;
     for (key, given) in &value {
         if key == "name" {
             continue;
@@ -364,13 +366,15 @@ pub(crate) fn update_row(
                         kind = kind_after
                     ));
                 }
-                let whole = super::cells::changed(
+                let (whole, gone) = super::cells::changed(
                     &columns,
                     &cells,
                     edits,
                     &format!("{}.cells", joined(names)),
                 )?;
-                serde_json::json!(whole)
+                let written = serde_json::json!(whole);
+                cells_part = Some((cells.clone(), whole, gone));
+                written
             }
             _ => given.clone(),
         };
@@ -392,6 +396,11 @@ pub(crate) fn update_row(
     let mut answer = write_back(tx, scope, id, "rows", rows, &moves, Some(&at))?;
     if let Some((before, after)) = in_part.filter(|_| tx.who().side == crate::write::Side::Mcp) {
         super::in_part::quieted(&mut answer, "body", &before, &after);
+    }
+    if let Some((before, after, gone)) =
+        cells_part.filter(|_| tx.who().side == crate::write::Side::Mcp)
+    {
+        super::cells::quieted(&mut answer, &before, &after, &gone);
     }
     Ok(answer)
 }

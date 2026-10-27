@@ -5,6 +5,7 @@
   "access.keyNameTooLong": "アクセスキーの名前 は 80 文字以内です",
   "access.keyNeeded": "MCP の接続にはアクセスキーが要ります（Authorization: Bearer <アクセスキー>）。プロジェクト一覧の場所の設定の「アクセスキー」で作ります",
   "access.keyNotFound": "アクセスキーが見つかりません",
+  "access.keyUnusable": "このアクセスキーは使えません（取り消したキーか、この場所のキーではありません）。プロジェクト一覧の場所の設定の「アクセスキー」にあるキーを使うか、そこで新しく作ってください",
   "access.levelWord": "level は read か write です（{value} は読めません）",
   "access.needs": "{op} には {key}（{what}）が要ります",
   "access.noProject": "そのプロジェクトはありません",

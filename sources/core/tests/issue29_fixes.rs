@@ -151,16 +151,16 @@ fn the_lines_a_process_row_may_draw_are_those_its_kind_of_row_writes() {
             .unwrap()
             .iter()
             .map(|k| k["line"].as_str().unwrap().to_string())
-            .filter(|l| ["reads", "writes", "peer", "key"].contains(&l.as_str()))
+            .filter(|l| ["reads", "writes", "partner", "key"].contains(&l.as_str()))
             .collect()
     };
     assert_eq!(drawn(0), ["reads"]);
     assert_eq!(drawn(1), ["writes"]);
-    assert_eq!(drawn(2), ["peer", "key"]);
+    assert_eq!(drawn(2), ["partner", "key"]);
     assert!(drawn(3).is_empty());
     // What it says may be drawn goes through.
     assert!(mcp_write(&core, 1, "writes").is_ok());
-    assert!(mcp_write(&core, 1, "peer").is_err());
+    assert!(mcp_write(&core, 1, "partner").is_err());
 }
 
 fn mcp_write(core: &Core, step: usize, line: &str) -> Result<Value, String> {
@@ -318,7 +318,8 @@ fn an_entry_with_a_format_to_a_folder_is_refused_for_writing_one_file() {
 
 // MARK: - The sequence diagram
 
-/// Two entities of one name in two sections, read by one flow whose description names a card.
+/// Two entities of one name in two sections, each kept in a store of one name of its own section,
+/// read by one flow whose rows' descriptions name cards.
 fn flow_reading_two_items(core: &Core) -> String {
     ok(
         core,
@@ -326,12 +327,15 @@ fn flow_reading_two_items(core: &Core) -> String {
         json!({"value": {
             "Schemas:Item": {"kind": "entity", "fields": [{"name": "id", "type": "string"}]},
             "Schemas/Ordering:Item": {"kind": "entity", "fields": [{"name": "id", "type": "string"}]},
+            "Schemas:Items": {"kind": "store", "connections": [{"line": "holds", "to": "Schemas:Item"}]},
+            "Schemas/Ordering:Items": {"kind": "store",
+                "connections": [{"line": "holds", "to": "Schemas/Ordering:Item"}]},
             "Charts/Shop:Scan": {"kind": "flow", "label": "scan"},
             "Charts/Shop:Scan.start": {"kind": "begin", "trigger": "manual",
-                "description": "[[Schemas:Customer]] から始まる",
                 "connections": [{"line": "next", "to": "look"}]},
             "Charts/Shop:Scan.look": {"kind": "process",
-                "steps": [{"do": "read", "description": "[[Schemas:Customer.name]] を引く"}, {"do": "read"}],
+                "steps": [{"do": "read", "description": "[[Schemas:Customer.name]] を引く"}, {"do": "read"},
+                    {"do": "compute", "description": "[[Schemas:Customer]] を数える"}],
                 "connections": [
                     {"line": "reads", "from": "steps[0]", "to": "Schemas:Item", "at": "id"},
                     {"line": "reads", "from": "steps[1]", "to": "Schemas/Ordering:Item", "at": "id"},
@@ -348,7 +352,7 @@ fn flow_reading_two_items(core: &Core) -> String {
 }
 
 #[test]
-fn cards_of_one_name_in_two_sections_are_two_participants() {
+fn stores_of_one_name_in_two_sections_are_two_lifelines() {
     let core = core();
     let chart = flow_reading_two_items(&core);
     let participants: Vec<&str> = chart
@@ -356,10 +360,19 @@ fn cards_of_one_name_in_two_sections_are_two_participants() {
         .filter(|l| l.trim_start().starts_with("participant"))
         .collect();
     assert!(
-        participants.iter().any(|p| p.ends_with("as Schemas:Item"))
+        participants
+            .iter()
+            .any(|p| p.ends_with("as Schemas:Items（store）"))
             && participants
                 .iter()
-                .any(|p| p.ends_with("as Schemas/Ordering:Item")),
+                .any(|p| p.ends_with("as Schemas/Ordering:Items（store）")),
+        "{chart}"
+    );
+    // What is read is no lifeline: where it is kept is.
+    assert!(
+        !participants
+            .iter()
+            .any(|p| p.ends_with("as Schemas:Item") || p.ends_with("as Schemas/Ordering:Item")),
         "{chart}"
     );
 }
@@ -369,7 +382,9 @@ fn a_row_s_description_names_its_cards_plainly_in_the_sequence() {
     let core = core();
     let chart = flow_reading_two_items(&core);
     assert!(!chart.contains("[["), "{chart}");
-    assert!(chart.contains("Customer"), "{chart}");
+    // A compute row's description is its note; any other row's is not on its arrow.
+    assert!(chart.contains("Customer を数える"), "{chart}");
+    assert!(!chart.contains("を引く"), "{chart}");
 }
 
 // MARK: - The names a kind cannot have

@@ -32,10 +32,20 @@ use sha2::{Digest, Sha256};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 
-/// What a request with no key, or with one this store does not have, is turned away with,
-/// as HTTP 401 — by the agent's daemon too, before the body, when there is no key (`agent/src/http.rs`).
+/// What a request with no key is turned away with, as HTTP 401 — by the agent's daemon too,
+/// before the body (`agent/src/http.rs`).
 pub fn key_needed() -> String {
     text!("access.keyNeeded")
+}
+
+/// What a request is told that carries no key of the store's: one with none is told a key is
+/// needed, one with a key the store does not have (never made here, or revoked) that its key
+/// cannot be used — not to go looking for a header it sent.
+pub fn key_refused(headers: &Map<String, Value>) -> String {
+    match bearer(headers) {
+        Some(_) => text!("access.keyUnusable"),
+        None => key_needed(),
+    }
 }
 
 /// What a project the key may not see is told: the same as one that is not there
@@ -335,6 +345,26 @@ fn fresh_value() -> Result<String, String> {
 }
 
 impl Core {
+    /// Whether a request carries a key of this store, asked of its headers alone: the HTTP side
+    /// turns one without away before it reads the body, so a stranger costs neither the reading
+    /// of 8 MB nor the parsing of it. Not noted as used: the request is not served yet.
+    pub fn knows_key(&self, headers: &Map<String, Value>) -> Result<bool, String> {
+        let Some(value) = bearer(headers) else {
+            return Ok(false);
+        };
+        let store = self.reading()?;
+        store
+            .conn
+            .query_row(
+                "SELECT 1 FROM access_keys WHERE digest = ?",
+                [digest(value)],
+                |_| Ok(()),
+            )
+            .optional()
+            .map(|found| found.is_some())
+            .map_err(sql)
+    }
+
     /// Who a request is from, by the key it carries; none for no key, or a value no key of
     /// this store has (never made, or revoked) — to be turned away with `key_needed`. A key
     /// found is noted as used, at most once a minute, so a busy session does not write on

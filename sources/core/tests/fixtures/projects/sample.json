@@ -1,6 +1,6 @@
 {
   "format": "specboard/project",
-  "version": 28,
+  "version": 33,
   "project": {
     "id": "d9cbe0d0-d9b3-4ba8-8c72-72248757e527",
     "name": "見本",
@@ -440,20 +440,20 @@
           {
             "id": "fa7668a7-c2ce-4555-834a-260f52c7cbf7",
             "fields": {
-              "value": "open",
+              "name": "open",
               "label": "受付"
             }
           },
           {
             "id": "905a44af-addf-44e8-9316-af9e65304460",
             "fields": {
-              "value": "paid"
+              "name": "paid"
             }
           },
           {
             "id": "3209dd53-20c6-4c30-8bde-627b681e52c3",
             "fields": {
-              "value": "shipped",
+              "name": "shipped",
               "label": "発送済み"
             }
           }
@@ -710,7 +710,7 @@
         },
         {
           "id": "1b1b1c1167c9bf41a242346e",
-          "line": "peer",
+          "line": "partner",
           "to": "65f0519b-330e-4293-bd81-614d6ea12f87"
         }
       ]
@@ -771,7 +771,7 @@
         },
         {
           "id": "f0c06c66b18fd546ffdb6fee",
-          "line": "peer",
+          "line": "partner",
           "from": "steps[1]",
           "to": "65f0519b-330e-4293-bd81-614d6ea12f87"
         },
@@ -879,7 +879,7 @@
       "connections": [
         {
           "id": "7c274f2c547cfdf660b470e3",
-          "line": "branch",
+          "line": "condition",
           "to": "b5a3d2f198536da6625ec07f",
           "fields": {
             "when": "支払い済み"
@@ -1012,7 +1012,7 @@
       "connections": [
         {
           "id": "a235e9b892a5bfcaae7374f1",
-          "line": "branch",
+          "line": "condition",
           "to": "ba29095877aba460663f2431",
           "fields": {
             "when": "[[Schemas:Status]] が paid"
@@ -1430,20 +1430,20 @@
                 {
                   "id": "bdb9f200-30a9-46b7-b36d-c0b37c127c17",
                   "fields": {
-                    "value": "open",
+                    "name": "open",
                     "label": "受付"
                   }
                 },
                 {
                   "id": "a22ecdac-fa40-4130-9a6b-8b301c9cbcfb",
                   "fields": {
-                    "value": "paid"
+                    "name": "paid"
                   }
                 },
                 {
                   "id": "9dd42037-f554-4eda-83fc-c74eef496534",
                   "fields": {
-                    "value": "refunded",
+                    "name": "refunded",
                     "label": "返金済み"
                   }
                 }
@@ -1465,20 +1465,20 @@
                 {
                   "id": "fa7668a7-c2ce-4555-834a-260f52c7cbf7",
                   "fields": {
-                    "value": "open",
+                    "name": "open",
                     "label": "受付"
                   }
                 },
                 {
                   "id": "905a44af-addf-44e8-9316-af9e65304460",
                   "fields": {
-                    "value": "paid"
+                    "name": "paid"
                   }
                 },
                 {
                   "id": "3209dd53-20c6-4c30-8bde-627b681e52c3",
                   "fields": {
-                    "value": "shipped",
+                    "name": "shipped",
                     "label": "発送済み"
                   }
                 }
@@ -1670,7 +1670,7 @@
         "order": 1,
         "fields": {
           "担当": "Claude",
-          "status": "進行中",
+          "status": "inProgress",
           "due": "2026-10-10"
         }
       },

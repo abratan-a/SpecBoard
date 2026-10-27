@@ -66,6 +66,16 @@ final class CardCanvasView: NSView {
     var inPlaceText: ((String) -> String)?
     /// What was written in place, kept: the card, and its text whole.
     var onEditInPlace: ((String, String) -> Void)?
+    /// A group pressed by its name's strip (`MapGroup`), or nil when one picked is let go of here.
+    var onPickGroup: ((String?) -> Void)?
+    /// A group named in the field opened over its strip: made at a cell (「グループを追加」), or round the boxes
+    /// picked, by their ids (「選んだカードをグループにする」). Neither offered while nil.
+    var onAddGroup: ((String, GridPoint) -> Void)?
+    var onFrameGroup: ((String, [String]) -> Void)?
+    /// A group dropped by its strip with its top-left cell at a cell — what is in it goes with it, written as one —
+    /// and a group sized by its corner, in cells. Neither moved nor sized by hand while nil.
+    var onMoveGroup: ((String, GridPoint) -> Void)?
+    var onResizeGroup: ((String, Int, Int) -> Void)?
     /// A custom card's form pressed on the diagram: a row's switch, or a radio
     /// field's option.
     enum FormPress: Equatable {
@@ -116,7 +126,10 @@ final class CardCanvasView: NSView {
     /// A card's box size: its form's, or its own width (the project's when it has none) and as
     /// tall as its rows.
     private func boxSize(_ id: String, _ content: CardContent?) -> CGSize {
-        forms[id]?.size ?? CGSize(width: forms[id]?.width ?? cardWidth, height: content.map(CardRenderer.height(of:)) ?? 0)
+        if let form = forms[id], let size = form.size {
+            return CGSize(width: size.width, height: form.drawnHeight ?? size.height)
+        }
+        return CGSize(width: forms[id]?.width ?? cardWidth, height: content.map(CardRenderer.height(of:)) ?? 0)
     }
     /// Fires whenever the viewport scale changes, so the toolbar can show it.
     var onZoomChanged: ((CGFloat) -> Void)?
@@ -238,6 +251,14 @@ final class CardCanvasView: NSView {
     private var frameLayers: [String: (box: CAShapeLayer, title: CATextLayer)] = [:]
     /// Where each frame is drawn now, in content points: round its cards as they are, dragged too.
     private(set) var groupFrames: [String: CGRect] = [:]
+    /// The groups put on the diagram (`Surroundings.groups`), as drawn now — moved and sized by hand too.
+    private(set) var mapGroups: [MapGroup] = []
+    /// Each group's layers, by its name as names are compared (`MapGroups.same`).
+    private var groupLayers: [String: GroupFrameLayers] = [:]
+    /// The group picked, by its name: its outline and its corner shown.
+    private(set) var pickedGroup: String?
+    /// The group that takes what is being dragged, if it were let go now: glowing.
+    private(set) var receivingGroup: String?
 
     /// Row highlights ride above the cards as their own layers rather than being
     /// drawn into them. A card is a texture; re-cutting one to tint a single row
@@ -275,6 +296,21 @@ final class CardCanvasView: NSView {
     private var routedNow = false
     /// Whether the lines go round the cards now — for the tests.
     var linesRouted: Bool { routedNow }
+    /// The ways round the cards found for the diagrams shown last, and what they were found for: a cut with
+    /// the same boxes, the same lines' ends and the same cells takes them rather than searching again — a
+    /// search goes with the number of lines and more, and a redraw that moved nothing, or a section shown
+    /// again as it was, would find the same ways.
+    private var routeMemory = RouteMemory()
+    /// While cards are dragged or sized: the cards moving, once every line has been cut as a curve for them.
+    /// A line that touches none of them is where it was, so a step cuts again only the lines that do.
+    private var curvedFor: Set<String>?
+    /// How many times, for the tests: the ways round the cards were searched, the diagram was rebuilt, a
+    /// line's wire was worked out, a line's shape was stroked to find a press on it, a line was restyled.
+    private(set) var routeSearches = 0
+    private(set) var rebuilds = 0
+    private(set) var wiresCut = 0
+    private(set) var linesStroked = 0
+    private(set) var linesRestyled = 0
     /// Whether the lines stay curves whatever this Mac's setting (`LineRouting`): a card's connections
     /// map, whose lines fan in to the card in the middle from the groups round it — cut round the cards
     /// on the grid, they would zig-zag through the other groups.
@@ -428,6 +464,8 @@ final class CardCanvasView: NSView {
     /// selected row of a card behind would show through the card in front of it, as
     /// a bar across somebody else's fields.
     private enum Depth {
+        /// The groups, the larger behind, each below the frames a connections map draws (none draws both).
+        static let group: CGFloat = -3
         static let frame: CGFloat = -1
         static let edge: CGFloat = 0
         static let label: CGFloat = 1
@@ -515,6 +553,7 @@ final class CardCanvasView: NSView {
         redrawAllCards()
         restyleEdges()
         restyleFrames()
+        restyleGroups()
         restyleHighlights()
     }
 
@@ -525,19 +564,76 @@ final class CardCanvasView: NSView {
     private var sectionGhostSides: Set<String> = []
     /// The section ghosts drawn now, by id — cards that stand for other cards.
     private var sectionGhostNodes: [String: SchemaNode] = [:]
+    /// How many grid rows each section ghost takes with no kind of line hidden: what it is stacked by, so a
+    /// filter never stacks the ghosts tighter than the core counts them (`tools/surround.rs`).
+    private var sectionGhostRows: [String: Int] = [:]
+    /// How each section ghost's head is drawn: its section's mark, and what it is as an actor.
+    private var sectionGhostLooks: [String: SectionGhosts.Look] = [:]
+    /// How the section ghost `id` drawn now has its head drawn.
+    func sectionGhostLook(of id: String) -> SectionGhosts.Look? { sectionGhostLooks[id] }
     /// The boxes of a working directory's folders that reading the folder no longer finds (`Surroundings`).
     private var missingFolders: Set<String> = []
+    /// `keepIfSame`: nothing rebuilt when all it draws from is what it drew last (`drawsSame`) — a project read
+    /// again for a write elsewhere (the board, another branch) brings back the same section; only the cards whose
+    /// faces are read from the whole tree are asked again (`keepDrawing`).
     func show(_ detail: ProjectDetail, filters: GraphFilters = GraphFilters(), fit: Bool = false,
               surroundings: Surroundings = Surroundings(), settings: LayoutSettings = .standard,
-              cardWidth: CGFloat = CardGeometry.cardWidth, marks: BranchMarks = BranchMarks()) {
+              cardWidth: CGFloat = CardGeometry.cardWidth, marks: BranchMarks = BranchMarks(), keepIfSame: Bool = false) {
+        if keepIfSame, !fit, drawsSame(detail, filters: filters, surroundings: surroundings, settings: settings,
+                                       cardWidth: cardWidth, marks: marks) {
+            keepDrawing(detail)
+            return
+        }
         DiagramTimes.measure("show") {
             showing(detail, filters: filters, fit: fit, surroundings: surroundings, settings: settings,
                     cardWidth: cardWidth, marks: marks)
         }
     }
 
+    /// Whether `show` would draw from what it drew from last: every one of its inputs the same — the project's
+    /// update time aside, which is not drawn and changes with a write in any tree — and nothing moved or sized
+    /// here by hand since, which a write not read back yet (or refused) would otherwise leave drawn. An input
+    /// `show` takes is compared here too, or a change to it alone would not be drawn.
+    private func drawsSame(_ detail: ProjectDetail, filters: GraphFilters, surroundings: Surroundings,
+                           settings: LayoutSettings, cardWidth: CGFloat, marks: BranchMarks) -> Bool {
+        guard let shown = self.detail, !heldByHand, shownParts == drawsParts else { return false }
+        return settings == self.settings && cardWidth == self.cardWidth && marks == self.marks
+            && Self.effective(filters).drawing(with: detail.lineKinds) == self.filters
+            && surroundings == self.surroundings
+            && Self.drawnAlike(shown, detail)
+    }
+
+    /// Two reads of a project alike in all a diagram draws: all but the time it was last written.
+    static func drawnAlike(_ a: ProjectDetail, _ b: ProjectDetail) -> Bool {
+        guard a.project.id == b.project.id else { return false }
+        var (a, b) = (a, b)
+        a.project.updatedAt = ""
+        b.project.updatedAt = ""
+        return a == b
+    }
+
+    /// The same drawn again, from a read alike (`drawsSame`): the read kept, and the cards drawn as their
+    /// documents' pages or as ui parts asked for their faces again, as a redraw would — those are read from the
+    /// whole tree and may name what changed.
+    private func keepDrawing(_ detail: ProjectDetail) {
+        self.detail = detail
+        withoutAnimation {
+            for id in drawnIds where isDocument(id) || isPart(id) { drawCard(id, scale: wantedScale(id)) }
+        }
+    }
+
+    /// Whether a box was moved or sized here by hand since the diagram was last shown, and where the boxes
+    /// dropped were written (`keptCell`).
+    private var heldByHand = false
+    private var droppedAt: [String: GridPoint] = [:]
+    /// Whether the diagram last shown was drawn as a ui section's parts.
+    private var shownParts = false
+
     private func showing(_ detail: ProjectDetail, filters: GraphFilters, fit: Bool, surroundings: Surroundings,
                          settings: LayoutSettings, cardWidth: CGFloat, marks: BranchMarks) {
+        heldByHand = false
+        droppedAt = [:]
+        shownParts = drawsParts
         self.marks = marks
         // Only a different project is worth fitting to. Re-reading the same one happens
         // after every write, and pulling the view back to the whole diagram each time
@@ -719,12 +815,16 @@ final class CardCanvasView: NSView {
     /// Everything derived from the project. Called when the project or the filters change —
     /// never when the viewport does.
     private func rebuild() {
+        rebuilds += 1
         DiagramTimes.measure("rebuild") { rebuilding() }
     }
 
     private func rebuilding() {
         guard let detail else { return }
         let lookup = self.lookup
+        mapGroups = surroundings.groups
+        if let picked = pickedGroup, MapGroups.named(picked, in: mapGroups) == nil { pickedGroup = nil }
+        if let receiving = receivingGroup, MapGroups.named(receiving, in: mapGroups) == nil { receivingGroup = nil }
 
         // Value objects and enums have no card of their own; the ones this section
         // placed — kept or for now — are drawn whole.
@@ -799,13 +899,14 @@ final class CardCanvasView: NSView {
                                           holders: holders, standIns: standIns)
             .filter(aboutHere).filter(notGone)
         // Asked with nothing hidden, before the other sections' cards are folded: the kinds
-        // the legend can switch.
+        // the legend can switch. With nothing hidden, the same lines as above.
         var unfiltered = filters
         unfiltered.hiddenLines = []
-        let available = Set(GraphEdges.placed(lines, visible: visible, rows: rows, filters: unfiltered,
-                                              holders: holders, standIns: standIns)
-            .filter(aboutHere).filter(notGone)
-            .map(\.line))
+        let nothingHidden = unfiltered == filters
+        let unfilteredLines = nothingHidden ? relations
+            : GraphEdges.placed(lines, visible: visible, rows: rows, filters: unfiltered, holders: holders, standIns: standIns)
+                .filter(aboutHere).filter(notGone)
+        let available = Set(unfilteredLines.map(\.line))
         // Another section's card is there for its line. With the line switched off
         // it would stand alone saying nothing. A card ghost, and a card put there for a
         // look, stays whether or not a line reaches it, and is drawn whole.
@@ -818,6 +919,17 @@ final class CardCanvasView: NSView {
                                        names: surroundings.names, projectId: detail.project.id,
                                        groups: childOf, titles: surroundings.childNames)
         relations = folded.relations
+        // The same folded with no kind of line hidden: how tall each section ghost is stacked.
+        let wholeFold = nothingHidden ? folded
+            : SectionGhosts.fold(unfilteredLines, own: ownIds, whole: whole, schemas: everything,
+                                 names: surroundings.names, projectId: detail.project.id,
+                                 groups: childOf, titles: surroundings.childNames)
+        sectionGhostRows = Dictionary(wholeFold.cards.map { card in
+            let content = cardRows(card, lookup: lookup, inlineReuse: filters.nesting.nests(card.id),
+                                   folded: cardFolds[card.id] ?? [], tree: tree,
+                                   form: cardForm(card, settings: settings, cardWidth: cardWidth))
+            return (card.id, Grid.rows(forHeight: Double(CardRenderer.height(of: content))))
+        }, uniquingKeysWith: { a, _ in a })
         // A working directory's folders: a box each, whether or not a line reaches into it.
         let foldedIds = Set(folded.cards.map(\.id))
         let folderBoxes = surroundings.folders.filter { !foldedIds.contains($0.id) }.map { folder in
@@ -833,6 +945,9 @@ final class CardCanvasView: NSView {
             + folded.cards + folderBoxes
         sectionGhostNodes = Dictionary((folded.cards + folderBoxes).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         sectionGhostSides = folded.referenced
+        sectionGhostLooks = Dictionary(folded.cards.compactMap { card in
+            SectionGhosts.look(of: card.id, in: detail).map { (card.id, $0) }
+        }, uniquingKeysWith: { a, _ in a })
         forms = Dictionary(visible.map { ($0.id, cardForm($0, settings: settings, cardWidth: cardWidth)) },
                            uniquingKeysWith: { a, _ in a })
         rows = GraphEdges.index(visible, lookup: lookup, filters: filters,
@@ -854,6 +969,8 @@ final class CardCanvasView: NSView {
         boxes = [:]
         var taken: [GridRect] = []
         var unplaced: [SchemaNode] = []
+        // A card with no place keeps out of the groups' frames: it does not join one by itself.
+        let frames = mapGroups.map(\.cells)
         // A card ghost sits where it was put, as a card does.
         for s in visible where ownIds.contains(s.id) || ghostIds.contains(s.id) || goneIds.contains(s.id) {
             guard let content = contents[s.id] else { continue }
@@ -868,7 +985,7 @@ final class CardCanvasView: NSView {
         }
         for s in unplaced {
             guard let content = contents[s.id] else { continue }
-            let at = settings.nextSpot(avoiding: taken)
+            let at = settings.nextSpot(avoiding: taken + frames)
             let size = boxSize(s.id, content)
             boxes[s.id] = CGRect(origin: points(at), size: size)
             taken.append(gridRect(of: boxes[s.id]!))
@@ -878,7 +995,7 @@ final class CardCanvasView: NSView {
         edges = GraphEdges.merge(relations)
         buildNeighbours()
 
-        let bounds = GraphEdges.bounds(boxes)
+        let bounds = GraphEdges.bounds(extentBoxes)
         origin = bounds.origin
         contentSize = bounds.size
 
@@ -887,6 +1004,7 @@ final class CardCanvasView: NSView {
             syncGrid()
             syncCardLayers()
             syncFrameLayers()
+            syncGroupLayers()
             syncEdgeLayers()
             // Both point at a row that may no longer be where it was, or exist.
             hoverRowLayer.isHidden = true
@@ -975,21 +1093,39 @@ final class CardCanvasView: NSView {
         let leftCards = sectionGhosts.filter { !sectionGhostSides.contains($0) }
         let order = surroundings.references + cardGhostOnly + rightCards + surroundings.consumers + leftCards
         func height(_ id: String) -> CGFloat { contents[id] == nil ? 0 : boxSize(id, contents[id]).height }
-        // Kept places first, so the others go around them — but not on this section's own cards: a card
-        // placed since where one was kept (made through MCP, given the first free cell of the section's)
-        // keeps its place, and the other goes beside the section again, as one with none kept does.
-        for id in order where outsideCards.contains(id) {
-            guard let kept = surroundings.positions[id], contents[id] != nil else { continue }
-            let at = Grid.nearest(x: Double(kept.x), y: Double(kept.y))
-            let box = CGRect(origin: points(at), size: boxSize(id, contents[id]))
-            let cell = gridRect(of: box)
-            guard !own.contains(where: { $0.intersects(cell) }) else { continue }
-            boxes[id] = box
-            taken.append(cell)
+        /// Grid rows a box takes: a section ghost as tall as its rows with no kind of line hidden.
+        func rows(_ id: String) -> Int {
+            max(Grid.rows(forHeight: Double(height(id))), sectionGhostRows[id] ?? 0)
         }
         var placed: [String: GridPoint] = [:]
+        // Kept places first, so the others go around them — but not on this section's own cards: a card
+        // placed since where one was kept (made through MCP, given the first free cell of the section's)
+        // keeps its place, and the other goes beside the section again, as one with none kept does. A
+        // section ghost this diagram stacked itself that has grown into a box before it goes down its
+        // column under that box, and is kept there; one a hand put stays (the check says the overlap, and
+        // tidying clears it).
+        for id in order where outsideCards.contains(id) {
+            guard let kept = surroundings.positions[id], contents[id] != nil else { continue }
+            var at = Grid.nearest(x: Double(kept.x), y: Double(kept.y))
+            let box = CGRect(origin: points(at), size: boxSize(id, contents[id]))
+            var cell = gridRect(of: box)
+            guard !own.contains(where: { $0.intersects(cell) }) else { continue }
+            if SectionGhosts.isGhost(id) {
+                cell.h = max(cell.h, rows(id))
+                if !surroundings.pinned.contains(id) {
+                    let from = at.y
+                    while let hit = taken.first(where: { $0.intersects(settings.withMargin(cell)) }) {
+                        cell.y = hit.y + hit.h + margin
+                    }
+                    at.y = cell.y
+                    if at.y != from, !surroundings.temporary.contains(id) { placed[id] = at }
+                }
+            }
+            boxes[id] = CGRect(origin: points(at), size: box.size)
+            taken.append(cell)
+        }
         for id in order where outsideCards.contains(id) && boxes[id] == nil && contents[id] != nil {
-            let tall = Grid.rows(forHeight: Double(height(id)))
+            let tall = rows(id)
             let right = surroundings.references.contains(id) || cardGhostOnly.contains(id) || rightCards.contains(id)
             let at = right ? stack(at: rightX, from: &rightY, height: tall) : stack(at: leftX, from: &leftY, height: tall)
             boxes[id] = CGRect(origin: points(at), size: boxSize(id, contents[id]))
@@ -1132,6 +1268,7 @@ final class CardCanvasView: NSView {
         look.combine(outside)
         look.combine(temporary)
         look.combine(ghostLooks[id])
+        look.combine(sectionGhostLooks[id])
         look.combine(gone)
         look.combine(missing)
         look.combine(mark)
@@ -1157,7 +1294,7 @@ final class CardCanvasView: NSView {
                 for: schema, content: content, theme: theme,
                 scale: scale, selected: selected,
                 drawn: drawnIds, outside: outside,
-                temporary: temporary, ghost: ghostLooks[id],
+                temporary: temporary, ghost: ghostLooks[id], section: sectionGhostLooks[id],
                 gone: gone, missing: missing, mark: mark,
                 width: size.width, height: size.height,
                 document: document, grip: grip) else { return }
@@ -1278,7 +1415,7 @@ final class CardCanvasView: NSView {
         let style = NSMutableParagraphStyle()
         style.lineBreakMode = .byTruncatingTail
         (schema.name as NSString).draw(in: CGRect(x: 6, y: max(0, size.height / 2 - 8), width: max(0, size.width - 12), height: 16),
-                                       withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 11, weight: .medium),
+                                       withAttributes: [.font: Typeface.mono(11, .medium),
                                                         .foregroundColor: theme.ink3, .paragraphStyle: style])
         return ctx.makeImage()
     }
@@ -1678,31 +1815,37 @@ final class CardCanvasView: NSView {
     private func resizeCard(to content: CGPoint) {
         guard var resizing else { return }
         let w = Int(((content.x - resizing.box.minX) / unit.width).rounded())
-        let h = min(max(Int(((content.y - resizing.box.minY) / unit.height).rounded()), GridSize.heights.lowerBound),
+        let id = resizing.id
+        // A card whose rows scroll inside it stops at the least a row and its half rows need.
+        let document = forms[id]?.document == true || schemasById[id]?.face?.markdown != nil
+        let exact = forms[id]?.exactHeight == true || schemasById[id]?.kind == .frame
+        let least = document || exact ? GridSize.heights.lowerBound
+            : max(GridSize.heights.lowerBound, CardGeometry.leastGridRows)
+        let h = min(max(Int(((content.y - resizing.box.minY) / unit.height).rounded()), least),
                     GridSize.heights.upperBound)
         let size = sizeAllowed(GridSize(w: min(max(w, GridSize.widths.lowerBound), GridSize.widths.upperBound), h: h),
                                for: resizing.id)
         guard size != resizing.size else { return }
         resizing.size = size
         self.resizing = resizing
-        let id = resizing.id
         let points = CGSize(width: CGFloat(size.w) * unit.width, height: CGFloat(size.h ?? h) * unit.height)
         // A card its kind's face draws is a document under its fields once it has a size, even
         // with nothing written yet.
-        let document = forms[id]?.document == true || schemasById[id]?.face?.markdown != nil
-        forms[id] = CardForm(size: points, document: document)
+        forms[id] = CardForm(size: points, document: document, exactHeight: exact)
+        var content: CardContent?
         if let schema = schemasById[id] {
-            let content = cardRows(schema, lookup: lookup, inlineReuse: filters.nesting.nests(id),
-                                   from: cardScroll[id] ?? 0, folded: cardFolds[id] ?? [], tree: tree,
-                                   form: forms[id] ?? CardForm())
-            rows[id] = CardIndex(content)
+            let made = cardRows(schema, lookup: lookup, inlineReuse: filters.nesting.nests(id),
+                                from: cardScroll[id] ?? 0, folded: cardFolds[id] ?? [], tree: tree,
+                                form: forms[id] ?? CardForm())
+            rows[id] = CardIndex(made)
+            content = made
         }
-        boxes[id] = CGRect(origin: resizing.box.origin, size: points)
+        boxes[id] = CGRect(origin: resizing.box.origin, size: boxSize(id, content ?? rows[id]?.content))
         withoutAnimation {
             cardLayers[id]?.frame = layerFrame(id)
             drawCard(id, scale: CardRenderer.baseScale)
             followPart(id)
-            cutEdges(curved: true)
+            cutEdges(curved: true, moving: [id])
             updateOffscreenHints()
         }
     }
@@ -1802,7 +1945,7 @@ final class CardCanvasView: NSView {
                     l.anchorPoint = .zero
                     l.alignmentMode = .center
                     l.fontSize = 10
-                    l.font = NSFont.monospacedSystemFont(ofSize: 10, weight: .medium)
+                    l.font = Typeface.mono(10, .medium)
                     l.contentsScale = 2
                     l.zPosition = Depth.label
                     labelLayers[edge.key] = l
@@ -1832,16 +1975,20 @@ final class CardCanvasView: NSView {
 
     /// Rebuild edge geometry. **Only when a card moves** — not when the viewport does.
     /// `curved`: the plain curves, while a card is being dragged or sized — the way round the
-    /// cards (`LineRouter`) is found once it is let go.
-    private func cutEdges(curved: Bool = false) {
+    /// cards (`LineRouter`) is found once it is let go. `moving`: the cards being dragged or sized —
+    /// once every line is a curve for them, a step cuts again only the lines that touch them.
+    private func cutEdges(curved: Bool = false, moving: Set<String>? = nil) {
         placeFrames()
-        wires = [:]
+        let only = curved && moving != nil && curvedFor == moving ? moving : nil
+        curvedFor = curved ? moving : nil
+        let cut = only.map { ids in edges.filter { ids.contains($0.from) || ids.contains($0.to) } } ?? edges
+        if only == nil { wires = [:] }
         routedNow = !curved && routesLines
         // Worked out once for the whole set: where a line lands depends on the other
         // lines landing beside it, which no single edge can know on its own.
         var shifted: [String: CGRect] = [:]
         var tails: [String: CGFloat] = [:]
-        for edge in edges {
+        for edge in cut {
             guard let a = boxes[edge.from] else { continue }
             let from = a.offsetBy(dx: -origin.x, dy: -origin.y)
             shifted[edge.from] = from
@@ -1863,11 +2010,17 @@ final class CardCanvasView: NSView {
                                           to: to.offsetBy(dx: origin.x, dy: origin.y),
                                           tailY: (tails[edge.key] ?? from.midY) + origin.y, landY: landing + origin.y)
             }
-            let boxes = Array(self.boxes.values), cell = unit
-            routed = DiagramTimes.measure("routes") { LineRouter.route(requests, boxes: boxes, cell: cell) }
+            let boxes = self.boxes, cell = unit
+            if let kept = routeMemory.routes(requests, boxes: boxes, cell: cell) {
+                routed = kept
+            } else {
+                routeSearches += 1
+                routed = DiagramTimes.measure("routes") { LineRouter.route(requests, boxes: Array(boxes.values), cell: cell) }
+                routeMemory.keep(routed, for: requests, boxes: boxes, cell: cell)
+            }
         }
 
-        for edge in edges {
+        for edge in cut {
             guard let shape = edgeLayers[edge.key],
                   let from = shifted[edge.from], let to = shifted[edge.to] else { continue }
             let tailY = tails[edge.key] ?? from.midY
@@ -1883,6 +2036,7 @@ final class CardCanvasView: NSView {
                 GraphEdges.Wire.routed(points.map { CGPoint(x: $0.x - origin.x, y: $0.y - origin.y) })
             } ?? GraphEdges.wire(from: from, to: to, tailY: tailY, landing: landing)
             wires[edge.key] = wire
+            wiresCut += 1
             shape.path = wire.path
 
             // Each mark points back along the line at its own end, which is the
@@ -1981,21 +2135,329 @@ final class CardCanvasView: NSView {
             layers.box.fillColor = theme.panel.withAlphaComponent(theme.isDark ? 0.16 : 0.32).cgColor
             guard let frame = byId[id] else { continue }
             let title = NSMutableAttributedString(string: frame.title, attributes: [
-                .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold),
+                .font: Typeface.mono(12, .semibold),
                 .foregroundColor: theme.ink2,
             ])
             title.append(NSAttributedString(string: "  \(frame.cards.count)", attributes: [
-                .font: NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .regular),
+                .font: Typeface.digits(12, .regular),
                 .foregroundColor: theme.ink3,
             ]))
             layers.title.string = title
         }
     }
 
-    private func restyleEdges() {
+    // MARK: - Groups on the diagram
+
+    /// A group's frame in content points, from its cells.
+    private func groupRect(_ cells: GridRect) -> CGRect {
+        CGRect(x: CGFloat(cells.x) * unit.width, y: CGFloat(cells.y) * unit.height,
+               width: CGFloat(cells.w) * unit.width, height: CGFloat(cells.h) * unit.height)
+    }
+
+    /// The strip a group is picked and moved by, a row tall: where its name is — at its foot for a name in a bottom
+    /// corner — or its top row when its name is hidden.
+    private func stripRect(_ group: MapGroup) -> CGRect {
+        let rect = groupRect(group.cells)
+        let top = group.headerPlace.onTop ? rect.minY : rect.maxY - unit.height
+        return CGRect(x: rect.minX, y: top, width: rect.width, height: unit.height)
+    }
+
+    private func groupKey(_ name: String) -> String { name.lowercased() }
+
+    /// A layer for each group, none for what is gone, each laid where its cells are and stacked the larger behind.
+    private func syncGroupLayers() {
+        let wanted = Set(mapGroups.map { groupKey($0.name) })
+        for (key, layers) in groupLayers where !wanted.contains(key) {
+            layers.remove()
+            groupLayers.removeValue(forKey: key)
+        }
+        for group in mapGroups where groupLayers[groupKey(group.name)] == nil {
+            let layers = GroupFrameLayers()
+            contentLayer.insertSublayer(layers.root, at: 0)
+            groupLayers[groupKey(group.name)] = layers
+        }
+        let order = MapGroups.drawingOrder(mapGroups)
+        for (rank, group) in order.enumerated() {
+            groupLayers[groupKey(group.name)]?.root.zPosition = Depth.group + CGFloat(rank) / CGFloat(order.count + 1)
+            layGroup(group)
+        }
+        restyleGroups()
+    }
+
+    /// `group`'s layers where its cells are, or moved by `offset` (content points) while it is dragged.
+    private func layGroup(_ group: MapGroup, offset: CGSize = .zero) {
+        let rect = groupRect(group.cells).offsetBy(dx: offset.width - origin.x, dy: offset.height - origin.y)
+        groupLayers[groupKey(group.name)]?.lay(group, frame: rect, unit: unit, strip: unit.height)
+    }
+
+    /// Every group in the theme's colours, the picked one marked and the one taking what is dragged glowing.
+    private func restyleGroups() {
+        let theme = self.theme
+        withoutAnimation {
+            for group in mapGroups {
+                groupLayers[groupKey(group.name)]?.style(
+                    group, theme: theme,
+                    picked: pickedGroup.map { MapGroups.same($0, group.name) } ?? false,
+                    glowing: receivingGroup.map { MapGroups.same($0, group.name) } ?? false,
+                    sizable: onResizeGroup != nil)
+            }
+            if let naming { naming.layers.style(naming.group, theme: theme, picked: true, glowing: false, sizable: false) }
+        }
+    }
+
+    /// Where a group is drawn now, in content points — for the tests and a picture's frame.
+    func frame(ofGroup name: String) -> CGRect? {
+        guard let group = MapGroups.named(name, in: mapGroups) else { return nil }
+        if let layers = groupLayers[groupKey(name)] {
+            return layers.root.frame.offsetBy(dx: origin.x, dy: origin.y)
+        }
+        return groupRect(group.cells)
+    }
+
+    /// Every group's frame, as drawn.
+    var mapGroupFrames: [CGRect] { mapGroups.compactMap { frame(ofGroup: $0.name) } }
+
+    /// The middle of a group's strip in the view, where it is pressed — for the tests.
+    func viewPoint(ofGroupStrip name: String) -> CGPoint? {
+        guard let group = MapGroups.named(name, in: mapGroups) else { return nil }
+        let strip = stripRect(group)
+        return toView(CGPoint(x: strip.midX, y: strip.midY))
+    }
+
+    /// The corner of a group in the view, where it is sized — for the tests.
+    func viewPoint(ofGroupCorner name: String) -> CGPoint? {
+        guard let group = MapGroups.named(name, in: mapGroups) else { return nil }
+        let rect = groupRect(group.cells)
+        return toView(CGPoint(x: rect.maxX - 3, y: rect.maxY - 3))
+    }
+
+    /// The group whose strip is under `content`: the one in front.
+    func groupStrip(at content: CGPoint) -> String? {
+        MapGroups.drawingOrder(mapGroups).last { stripRect($0).contains(content) }?.name
+    }
+
+    /// Whether `content` is on the corner of the group picked, where it is sized.
+    private func onGroupGrip(_ content: CGPoint) -> Bool {
+        guard onResizeGroup != nil, let name = pickedGroup, let group = MapGroups.named(name, in: mapGroups) else { return false }
+        let rect = groupRect(group.cells)
+        let reach = CardRenderer.gripSize + 4
+        return rect.contains(content) && content.x >= rect.maxX - reach && content.y >= rect.maxY - reach
+    }
+
+    /// The group `name` marked as picked — its outline and its corner — and the card picked here before let go;
+    /// nil, none.
+    func showGroup(_ name: String?) {
+        let found = name.flatMap { MapGroups.named($0, in: mapGroups)?.name }
+        guard found != pickedGroup else { return }
+        if found != nil {
+            letGoOfPick()
+            showLine(nil)
+        }
+        pickedGroup = found
+        restyleGroups()
+    }
+
+    /// A group pressed: picked here, and told.
+    private func pickGroup(_ name: String) {
+        showGroup(name)
+        onPickGroup?(name)
+    }
+
+    /// The group that takes what is dragged glowing: nil, none.
+    private func showReceiving(_ name: String?) {
+        guard name != receivingGroup else { return }
+        receivingGroup = name
+        restyleGroups()
+    }
+
+    /// The top-left cell of a box as drawn now: the cell a group counts it by.
+    private func topLeftCell(_ box: CGRect) -> GridPoint {
+        GridPoint(x: Int((box.minX / unit.width).rounded()), y: Int((box.minY / unit.height).rounded()))
+    }
+
+    /// The top-left cell of every box drawn, but what a merge takes away.
+    private var boxCells: [String: GridPoint] {
+        boxes.filter { !goneCards.contains($0.key) }.mapValues(topLeftCell)
+    }
+
+    /// The groups inside the group picked, and the boxes in them, as the screen counts them now — for the tests.
+    func members(ofGroup name: String) -> [String] {
+        guard let group = MapGroups.named(name, in: mapGroups) else { return [] }
+        return MapGroups.members(of: group, boxes: boxCells)
+    }
+
+    /// A group being moved by its strip: its name, where it was and where the pointer took hold, the groups it carries
+    /// (its own among them) as they were, and how far it has gone (content points). The boxes it carries ride on
+    /// `groupDrag`, as boxes picked together do.
+    private struct FrameDrag {
+        var name: String
+        var grab: CGPoint
+        var start: GridRect
+        var groups: [String: GridRect]
+        var moved = CGSize.zero
+    }
+    private var frameDrag: FrameDrag?
+    /// A group being sized by its corner: its name, its cells as pressed and as they are now.
+    private var frameResize: (name: String, start: GridRect, now: GridRect)?
+
+    /// Starts moving the group `group`: what it carries taken hold of with it.
+    private func beginFrameDrag(_ group: MapGroup, at content: CGPoint) {
+        let carried = MapGroups.carried(group, groups: mapGroups, boxes: boxCells)
+        var held: [String: GridRect] = [:]
+        for name in carried.groups {
+            if let inner = MapGroups.named(name, in: mapGroups) { held[groupKey(inner.name)] = inner.cells }
+        }
+        frameDrag = FrameDrag(name: group.name, grab: content, start: group.cells, groups: held)
+        groupDrag = (content, Dictionary(uniqueKeysWithValues: carried.boxes.compactMap { id in boxes[id].map { (id, $0) } }))
+        hideHandle()
+    }
+
+    /// The group being moved and the groups it carries put back under the pointer, the group that would take it
+    /// glowing (the boxes go with `moveGroup`).
+    private func moveFrames() {
+        guard var drag = frameDrag, let dragPoint else { return }
+        let content = toContent(dragPoint)
+        drag.moved = CGSize(width: content.x - drag.grab.x, height: content.y - drag.grab.y)
+        frameDrag = drag
+        withoutAnimation {
+            for group in mapGroups where drag.groups[groupKey(group.name)] != nil { layGroup(group, offset: drag.moved) }
+        }
+        let cell = Grid.nearest(x: Double((CGFloat(drag.start.x) * unit.width + drag.moved.width) / unit.width),
+                                y: Double((CGFloat(drag.start.y) * unit.height + drag.moved.height) / unit.height))
+        let carried = mapGroups.filter { drag.groups[groupKey($0.name)] != nil }.map(\.name)
+        showReceiving(MapGroups.receiver(at: cell, among: mapGroups, moving: carried, larger: drag.start.w * drag.start.h)?.name)
+    }
+
+    /// The group let go of: on the cells nearest where it was dropped, what it carries the same cells along — drawn
+    /// so until the diagram is read again, and written as one move of the group (the core carries the rest, and
+    /// shifts them all where they would land on a box outside). Let go where it was: picked, nothing written.
+    private func dropFrames(_ drag: FrameDrag, boxes held: [String: CGRect]) {
+        let by = (Int((drag.moved.width / unit.width).rounded()), Int((drag.moved.height / unit.height).rounded()))
+        for index in mapGroups.indices where drag.groups[groupKey(mapGroups[index].name)] != nil {
+            mapGroups[index].cells.x += by.0
+            mapGroups[index].cells.y += by.1
+        }
+        for (id, was) in held {
+            boxes[id] = was.offsetBy(dx: CGFloat(by.0) * unit.width, dy: CGFloat(by.1) * unit.height)
+        }
+        withoutAnimation {
+            for group in mapGroups where drag.groups[groupKey(group.name)] != nil { layGroup(group) }
+            for id in held.keys {
+                cardLayers[id]?.frame = layerFrame(id)
+                followPart(id)
+            }
+            cutEdges()
+            updateOffscreenHints()
+        }
+        showReceiving(nil)
+        guard by != (0, 0) else { return }
+        heldByHand = true
+        onMoveGroup?(drag.name, GridPoint(x: drag.start.x + by.0, y: drag.start.y + by.1))
+    }
+
+    /// The group being sized put to the pointer, cell by cell, no smaller than a group may be.
+    private func resizeFrame(to content: CGPoint) {
+        guard var resize = frameResize, let index = mapGroups.firstIndex(where: { MapGroups.same($0.name, resize.name) }) else { return }
+        let rect = groupRect(resize.start)
+        let w = min(max(Int(((content.x - rect.minX) / unit.width).rounded()), MapGroups.least.w), MapGroups.most)
+        let h = min(max(Int(((content.y - rect.minY) / unit.height).rounded()), MapGroups.least.h), MapGroups.most)
+        guard w != resize.now.w || h != resize.now.h else { return }
+        resize.now.w = w
+        resize.now.h = h
+        frameResize = resize
+        mapGroups[index].cells = resize.now
+        withoutAnimation { layGroup(mapGroups[index]) }
+    }
+
+    /// The group that takes the card being dragged, if it were let go now, glowing: the innermost holding its
+    /// top-left cell.
+    private func showReceiving(of box: CGRect?) {
+        guard let box, !mapGroups.isEmpty else { return showReceiving(nil) }
+        showReceiving(MapGroups.receiver(at: topLeftCell(box), among: mapGroups)?.name)
+    }
+
+    // MARK: - Naming a group where it goes
+
+    /// A group being named, over its strip: where it goes (its cells), the boxes it frames when made round them, the
+    /// field it is named in and the frame drawn meanwhile.
+    private var naming: (group: MapGroup, around: [String]?, field: NSTextField, layers: GroupFrameLayers)?
+
+    /// The field a group is named in now — for the tests.
+    var namingField: NSTextField? { naming?.field }
+
+    /// 「グループを追加」: a frame as big as a new group at `cell`, its name written in a field over its strip.
+    func beginNamingGroup(at cell: GridPoint) {
+        beginNaming(GridRect(x: cell.x, y: cell.y, w: MapGroups.made.w, h: MapGroups.made.h), around: nil)
+    }
+
+    /// 「選んだカードをグループにする」: the frame round the boxes picked, as the core makes it, named the same way.
+    func beginNamingGroup(around ids: [String]) {
+        let cells = ids.compactMap { boxes[$0].map(gridRect(of:)) }
+        guard let frame = MapGroups.around(cells, beside: mapGroups) else { return }
+        beginNaming(frame, around: ids.filter { boxes[$0] != nil })
+    }
+
+    private func beginNaming(_ cells: GridRect, around: [String]?) {
+        endNaming(keep: false)
+        endInPlace(keep: true)
+        let group = MapGroup(name: "", cells: cells)
+        let layers = GroupFrameLayers()
+        layers.root.zPosition = Depth.group + 0.99
+        contentLayer.addSublayer(layers.root)
+        withoutAnimation { layers.lay(group, frame: groupRect(cells).offsetBy(dx: -origin.x, dy: -origin.y), unit: unit, strip: unit.height) }
+        let field = NSTextField(string: "")
+        field.placeholderString = L10n[.Diagram.groupNamePlaceholder]
+        field.isBordered = true
+        field.bezelStyle = .roundedBezel
+        field.usesSingleLineMode = true
+        field.cell?.isScrollable = true
+        field.delegate = self
+        field.setAccessibilityLabel(L10n[.Diagram.groupNamePlaceholder])
+        addSubview(field)
+        naming = (group, around, field, layers)
+        restyleGroups()
+        layoutNaming()
+        window?.makeFirstResponder(field)
+    }
+
+    /// The field over its strip, as the diagram is zoomed and moved now.
+    private func layoutNaming() {
+        guard let naming else { return }
+        withoutAnimation {
+            naming.layers.lay(naming.group, frame: groupRect(naming.group.cells).offsetBy(dx: -origin.x, dy: -origin.y),
+                              unit: unit, strip: unit.height)
+        }
+        let strip = stripRect(naming.group)
+        let from = toView(CGPoint(x: strip.minX + 6, y: strip.minY + 2))
+        let to = toView(CGPoint(x: strip.maxX - 6, y: strip.maxY - 2))
+        naming.field.font = Typeface.mono(max(9, 12 * zoom), .semibold)
+        naming.field.frame = CGRect(x: from.x, y: from.y, width: max(80, to.x - from.x), height: max(20, to.y - from.y))
+    }
+
+    /// Naming ended: kept, the group made with the name written (none when nothing was written), or let go.
+    func endNaming(keep: Bool) {
+        guard let current = naming else { return }
+        naming = nil
+        current.field.delegate = nil
+        current.field.removeFromSuperview()
+        current.layers.remove()
+        window?.makeFirstResponder(self)
+        let name = current.field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard keep, !name.isEmpty else { return }
+        if let ids = current.around {
+            onFrameGroup?(name, ids)
+        } else {
+            onAddGroup?(name, GridPoint(x: current.group.cells.x, y: current.group.cells.y))
+        }
+    }
+
+    /// `only`: the edges of these lines (`Relation.connection`) alone, and not the labels.
+    private func restyleEdges(only: Set<String>? = nil) {
         let theme = self.theme
         for edge in edges {
+            if let only, !edge.vias.contains(where: { $0.connection.map(only.contains) ?? false }) { continue }
             guard let shape = edgeLayers[edge.key] else { continue }
+            linesRestyled += 1
             // How it is drawn is its kind's definition's (`look`): no setting of the screen's.
             let look = detail?.lineKinds.look(edge.line) ?? LineLook()
             let colour = look.ink.color(dark: theme.isDark).cgColor
@@ -2020,6 +2482,7 @@ final class CardCanvasView: NSView {
                 layer.zPosition = picked ? Depth.edge + 0.5 : Depth.edge
             }
         }
+        guard only == nil else { return }
         for label in labelLayers.values {
             label.foregroundColor = theme.ink3.cgColor
             label.backgroundColor = theme.background.withAlphaComponent(0.85).cgColor
@@ -2035,6 +2498,7 @@ final class CardCanvasView: NSView {
         syncGrid()
         updateOffscreenHints()
         layoutInPlace()
+        layoutNaming()
     }
 
     // MARK: - Writing a card where it is
@@ -2094,7 +2558,7 @@ final class CardCanvasView: NSView {
         let foot = max(box.maxY, top + 5 * CardGeometry.rowHeight)
         let from = toView(CGPoint(x: box.minX, y: top)), to = toView(CGPoint(x: box.maxX, y: foot))
         inPlace.scroll.frame = CGRect(x: from.x, y: from.y, width: max(40, to.x - from.x), height: max(24, to.y - from.y))
-        inPlace.text.font = .systemFont(ofSize: 12 * zoom)
+        inPlace.text.font = Typeface.system(12 * zoom)
         inPlace.text.textContainerInset = NSSize(width: 6 * zoom, height: 4 * zoom)
         inPlace.text.minSize = NSSize(width: 0, height: inPlace.scroll.contentSize.height)
         inPlace.text.frame.size.width = inPlace.scroll.contentSize.width
@@ -2127,7 +2591,7 @@ final class CardCanvasView: NSView {
             band.isHidden = true
             band.zPosition = 1000
             let label = CATextLayer()
-            label.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
+            label.font = Typeface.system(12, .semibold)
             label.fontSize = 12
             label.alignmentMode = .center
             label.isHidden = true
@@ -2248,7 +2712,14 @@ final class CardCanvasView: NSView {
     /// themselves rather than `contentSize`: a drag writes a position without
     /// rebuilding, and a card carried past the old edge still has to be in 全体表示
     /// and within reach of zooming out.
-    private var liveExtent: CGRect { GraphEdges.bounds(boxes) }
+    private var liveExtent: CGRect { GraphEdges.bounds(extentBoxes) }
+
+    /// The boxes and the groups' frames: what the diagram covers.
+    private var extentBoxes: [String: CGRect] {
+        var out = boxes
+        for group in mapGroups { out["\u{0}group:" + group.name] = groupRect(group.cells) }
+        return out
+    }
 
     func fitToView() {
         let extent = liveExtent
@@ -2445,6 +2916,8 @@ final class CardCanvasView: NSView {
     }
 
     private var drag: (id: String, grab: CGPoint, box: CGRect)?
+    /// Whether the card held by its header has moved under the pointer since it was pressed.
+    private var dragMoved = false
 
     // MARK: - The selection mode
 
@@ -2515,7 +2988,7 @@ final class CardCanvasView: NSView {
                 cardLayers[id]?.frame = layerFrame(id)
                 followPart(id)
             }
-            cutEdges(curved: true)
+            cutEdges(curved: true, moving: Set(group.boxes.keys))
             updateOffscreenHints()
         }
     }
@@ -2545,7 +3018,11 @@ final class CardCanvasView: NSView {
             }
             cutEdges()
         }
-        for (id, at) in placed { onMoveByHand?(id, at) }
+        heldByHand = true
+        for (id, at) in placed {
+            droppedAt[id] = at
+            onMoveByHand?(id, at)
+        }
     }
 
     /// How far a group of boxes moves: `by`, when none of them comes within the margin of `others`;
@@ -2612,10 +3089,25 @@ final class CardCanvasView: NSView {
     override func mouseDown(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
         let content = toContent(point)
+        // A group being named, and the diagram pressed instead: let go, as Esc does.
+        endNaming(keep: false)
         // The handle on a row's edge: a line drawn from it by hand (つなぐ), not the card moved.
         if let shown = handleAt, onConnect != nil,
            hypot(content.x - shown.point.x, content.y - shown.point.y) <= handleReach {
             connectDrag = (shown.hit, shown.point)
+            return
+        }
+        // Where no card is: the corner of the group picked sizes it; a group's strip picks it, and a drag from
+        // there moves it with what is in it, as a card's header does. The rest of a group is the diagram's.
+        if schema(at: content) == nil, onGroupGrip(content), let name = pickedGroup,
+           let group = MapGroups.named(name, in: mapGroups) {
+            frameResize = (group.name, group.cells, group.cells)
+            hideHandle()
+            return
+        }
+        if schema(at: content) == nil, let name = groupStrip(at: content), let group = MapGroups.named(name, in: mapGroups) {
+            pickGroup(group.name)
+            if onMoveGroup != nil { beginFrameDrag(group, at: content) }
             return
         }
         // The selection mode: a region drawn from where no card is, not the view moved.
@@ -2690,6 +3182,7 @@ final class CardCanvasView: NSView {
                 return
             }
             drag = (hit.card, content, box)
+            dragMoved = false
             hideHandle()
             return
         }
@@ -2702,10 +3195,20 @@ final class CardCanvasView: NSView {
         // aimed at and what they operate on have to be the same thing.
         let content = toContent(convert(event.locationInWindow, from: nil))
         if let id = schema(at: content) { raise(id) }
-        // Where no card is: the selection mode, on every diagram.
+        // Where no card is: a group made there, the boxes picked framed, the selection mode — on every diagram
+        // that holds groups, the first two.
         guard schema(at: content) == nil else { return onRowMenu?(select(at: content)) }
         let menu = onRowMenu?(nil) ?? NSMenu()
+        if onAddGroup != nil {
+            let cell = GridPoint(x: Int((content.x / unit.width).rounded(.down)), y: Int((content.y / unit.height).rounded(.down)))
+            menu.addItem(ActionMenuItem(L10n[.Diagram.groupAdd]) { [weak self] in self?.beginNamingGroup(at: cell) })
+        }
         if !menu.items.isEmpty { menu.addItem(.separator()) }
+        if selecting, !picks.isEmpty, onFrameGroup != nil {
+            let ids = picks.sorted()
+            menu.addItem(ActionMenuItem(L10n[.Diagram.groupPicked]) { [weak self] in self?.beginNamingGroup(around: ids) })
+            menu.addItem(.separator())
+        }
         let on = selecting
         menu.addItem(ActionMenuItem(on ? L10n[.Diagram.canvasExitSelecting] : L10n[.Diagram.canvasEnterSelecting]) { [weak self] in
             self?.setSelecting(!on)
@@ -2727,6 +3230,7 @@ final class CardCanvasView: NSView {
     private func select(at content: CGPoint) -> RowHit? {
         guard let id = schema(at: content) else { return nil }
         showLine(nil)
+        showGroup(nil)
 
         let previous = selectedSchemaId
         selectedSchemaId = id
@@ -2763,6 +3267,17 @@ final class CardCanvasView: NSView {
         }
         if resizing != nil {
             resizeCard(to: toContent(point))
+            return
+        }
+        if frameResize != nil {
+            resizeFrame(to: toContent(point))
+            return
+        }
+        if frameDrag != nil {
+            dragPoint = point
+            moveGroup()
+            moveFrames()
+            updateEdgeScroll()
             return
         }
         if drag != nil {
@@ -2818,12 +3333,31 @@ final class CardCanvasView: NSView {
             // Let go: the lines round the cards again.
             withoutAnimation { cutEdges() }
             if let written = Self.sizeWritten(start: resizing.start, hadHeight: resizing.hadHeight, now: resizing.size) {
+                heldByHand = true
                 onResizeByHand?(resizing.id, written)
                 // A width alone: as tall as its rows again, not as the cell it was let go on.
                 if written.h == nil { resettle(resizing.id, size: written) }
             }
             // A part's face is the size of its box: asked again at the size written.
             if isPart(resizing.id) { redrawDocument(resizing.id) }
+            return
+        }
+        if let resize = frameResize {
+            frameResize = nil
+            // Sized: stacked again by its new size, and written.
+            withoutAnimation { syncGroupLayers() }
+            if resize.now.w != resize.start.w || resize.now.h != resize.start.h {
+                heldByHand = true
+                onResizeGroup?(resize.name, resize.now.w, resize.now.h)
+            }
+            return
+        }
+        if let frames = frameDrag {
+            let held = groupDrag?.boxes ?? [:]
+            frameDrag = nil
+            groupDrag = nil
+            dragPoint = nil
+            dropFrames(frames, boxes: held)
             return
         }
         if let region = marquee {
@@ -2834,7 +3368,10 @@ final class CardCanvasView: NSView {
             withoutAnimation { marqueeLayer.isHidden = true }
             let drawn = hypot(region.to.x - region.from.x, region.to.y - region.from.y) > 3
             pick(drawn ? regionPicks(region.from, region.to, whole: event.modifierFlags.contains(.option)) : [])
-            if !drawn { onClickEmpty?() }
+            if !drawn {
+                showGroup(nil)
+                onClickEmpty?()
+            }
             return
         }
         if let group = groupDrag {
@@ -2843,6 +3380,7 @@ final class CardCanvasView: NSView {
             dropGroup(group)
             return
         }
+        showReceiving(nil)
         if let drag, let box = boxes[drag.id] {
             // On the cell it was dropped nearest, like a spreadsheet's — or, too close
             // to another card, the nearest that keeps the margin clear.
@@ -2850,25 +3388,51 @@ final class CardCanvasView: NSView {
             let others = boxes.filter { $0.key != drag.id }.map { gridRect(of: $0.value) }
             let at = keepsPlaces ? wanted : settings.clearSpot(near: wanted, width: gridRect(of: box).w,
                                                                height: Grid.rows(forHeight: Double(box.height)), avoiding: others)
-            boxes[drag.id] = CGRect(origin: points(at), size: box.size)
-            withoutAnimation {
-                cardLayers[drag.id]?.frame = layerFrame(drag.id)
-                followPart(drag.id)
-                cutEdges()
+            let dropped = CGRect(origin: points(at), size: box.size)
+            boxes[drag.id] = dropped
+            let stayed = dropped == drag.box
+            // Dropped elsewhere, or moved on the way and its lines cut as curves: put where it lies and its
+            // lines cut again — back where it was, from the ways kept. Pressed and let go where it was, its
+            // lines are as they were.
+            if !stayed || dragMoved {
+                withoutAnimation {
+                    cardLayers[drag.id]?.frame = layerFrame(drag.id)
+                    followPart(drag.id)
+                    cutEdges()
+                }
             }
-            // A part pressed and let go where it was: picked, not moved — nothing to write.
-            if !(isPart(drag.id) && boxes[drag.id] == drag.box) { onMoveByHand?(drag.id, at) }
+            // Let go on the cell it is kept at: nothing to write — a click is not a placement. A part pressed and
+            // let go where it was: picked, not moved.
+            if !(stayed && (isPart(drag.id) || keptCell(of: drag.id) == at)) {
+                heldByHand = true
+                droppedAt[drag.id] = at
+                onMoveByHand?(drag.id, at)
+            }
         }
         // A click on no card, not a pan: the reader is done with what was open — in a ui section, with
         // the part picked too, whose outline would otherwise stay.
         if pressedEmpty != nil, drag == nil {
             if drawsParts { letGoOfPick() }
+            showGroup(nil)
             onClickEmpty?()
         }
         pressedEmpty = nil
         drag = nil
+        dragMoved = false
         dragPoint = nil
         panning = nil
+    }
+
+    /// The cell the box `id` is kept at as last read, or last dropped here: a card's, a card ghost's or a gone
+    /// card's own place; another section's card's or a section ghost's place on this diagram. Nil where none
+    /// is kept — such a box is drawn where it would go, and is written when let go there.
+    private func keptCell(of id: String) -> GridPoint? {
+        if let dropped = droppedAt[id] { return dropped }
+        if let card = drawnCard(id) {
+            guard let x = card.posX, let y = card.posY else { return nil }
+            return Grid.nearest(x: x, y: y)
+        }
+        return surroundings.positions[id].map { Grid.nearest(x: Double($0.x), y: Double($0.y)) }
     }
 
     /// Put the dragged card back under the pointer.
@@ -2885,13 +3449,15 @@ final class CardCanvasView: NSView {
         withoutAnimation {
             cardLayers[drag.id]?.frame = layerFrame(drag.id)
             followPart(drag.id)
-            cutEdges(curved: true)          // only geometry, and only because a card moved
+            cutEdges(curved: true, moving: [drag.id])          // only geometry, and only because a card moved
+            dragMoved = true
             updateOffscreenHints()
         }
+        showReceiving(of: boxes[drag.id])
     }
 
     private func updateEdgeScroll() {
-        guard drag != nil || marquee != nil || groupDrag != nil, let dragPoint,
+        guard drag != nil || marquee != nil || groupDrag != nil || frameDrag != nil, let dragPoint,
               Self.edgePull(dragPoint, in: bounds,
                             margin: edgeMargin, speed: edgeSpeed) != .zero else {
             stopEdgeScroll()
@@ -2912,7 +3478,7 @@ final class CardCanvasView: NSView {
         let done = probe.begin()
         defer { done() }
 
-        guard drag != nil || marquee != nil || groupDrag != nil, let dragPoint else { stopEdgeScroll(); return }
+        guard drag != nil || marquee != nil || groupDrag != nil || frameDrag != nil, let dragPoint else { stopEdgeScroll(); return }
         let pull = Self.edgePull(dragPoint, in: bounds, margin: edgeMargin, speed: edgeSpeed)
         guard pull != .zero else { stopEdgeScroll(); return }
 
@@ -2923,16 +3489,17 @@ final class CardCanvasView: NSView {
         if drag != nil { moveDraggedCard() }
         if marquee != nil { stretchMarquee() }
         if groupDrag != nil { moveGroup() }
+        if frameDrag != nil { moveFrames() }
     }
 
     override func mouseMoved(with event: NSEvent) {
         let content = toContent(convert(event.locationInWindow, from: nil))
         let id = schema(at: content)
-        toolTip = reviewTip(at: content, over: id)
+        toolTip = reviewTip(at: content, over: id) ?? listTip(at: content, over: id)
         applyHover(id)
         hoverPart(id)
         showHoveredRow(id, id.flatMap { row(at: content, in: $0) })
-        showGripCursor(id.map { onGrip(content, of: $0) } ?? false)
+        showGripCursor(id.map { onGrip(content, of: $0) } ?? onGroupGrip(content))
         updateHandle(at: content, over: id)
     }
 
@@ -2972,6 +3539,30 @@ final class CardCanvasView: NSView {
     func reviewTipAtViewPoint(_ point: CGPoint) -> String? {
         let content = toContent(point)
         return reviewTip(at: content, over: schema(at: content))
+    }
+
+    /// What a data card drawn as a list says on the pointer: over its head's counts, each role's mark, the values
+    /// it stands for and how many rows wear it; over a row, all of its text and its note, which the row may cut.
+    func listTip(at content: CGPoint, over id: String?) -> String? {
+        guard zoom >= rowPickZoom, let id, let card = drawnCard(id), let face = card.listFace, let box = boxes[id]
+        else { return nil }
+        if content.y < box.minY + CardGeometry.headerHeight {
+            let inset = CGRect(x: box.minX, y: box.minY, width: box.width, height: CardGeometry.headerHeight)
+                .insetBy(dx: 12, dy: 0)
+            let kindWidth = (CardRenderer.instanceWord(card) as NSString).size(withAttributes: [.font: Typeface.system(10)]).width
+            guard let counts = CardRenderer.countsRect(face, in: inset, kindWidth: kindWidth),
+                  counts.insetBy(dx: -4, dy: 0).contains(content) else { return nil }
+            return ListFaceRows.countsTip(face, values: ListFaceRows.markValues(card, lookup: lookup))
+        }
+        guard let index = row(at: content, in: id), let listed = rows[id]?.content.rows[index].listed else { return nil }
+        let said = ListFaceRows.tip(listed)
+        return said.isEmpty ? nil : said
+    }
+
+    /// The same for a point of the view, for the tests.
+    func listTipAtViewPoint(_ point: CGPoint) -> String? {
+        let content = toContent(point)
+        return listTip(at: content, over: schema(at: content))
     }
 
     // MARK: - Lines picked and drawn by hand (overview §13)
@@ -3023,8 +3614,12 @@ final class CardCanvasView: NSView {
         let reach = max(3, 6 / zoom)
         for edge in edges.reversed() {
             guard let path = edgeLayers[edge.key]?.path else { continue }
+            // The band stroked below lies inside the line's box grown by the reach: a point outside it is not on
+            // the line, and stroking every line on each press goes with the number of lines.
+            guard path.boundingBoxOfPath.insetBy(dx: -reach, dy: -reach).contains(local) else { continue }
             let drawn = edge.vias.first { $0.fromSchemaId == edge.from } ?? edge.vias[0]
             guard let line = drawn.connection != nil ? drawn : edge.vias.first(where: { $0.connection != nil }) else { continue }
+            linesStroked += 1
             let band = path.copy(strokingWithWidth: reach * 2, lineCap: .round, lineJoin: .round, miterLimit: 1)
             if band.contains(local) { return line }
         }
@@ -3043,8 +3638,10 @@ final class CardCanvasView: NSView {
             }
             selectField(previous, nil)
         }
+        let before = pickedLine
         pickedLine = id
-        withoutAnimation { restyleEdges() }
+        // Only the line let go of and the one picked look different.
+        withoutAnimation { restyleEdges(only: Set([before, id].compactMap { $0 })) }
     }
 
     /// A point of the drawn line `id` where no card covers it — its middle, else the nearest
@@ -3078,6 +3675,9 @@ final class CardCanvasView: NSView {
 
     /// Where a card sits, in content coordinates.
     func frame(ofCard id: String) -> CGRect? { boxes[id] }
+
+    /// The rows a card draws now, and where its window is.
+    func drawnRows(ofCard id: String) -> CardContent? { rows[id]?.content }
 
     /// The card under a point of the view, for the tests.
     func schemaAtViewPoint(_ point: CGPoint) -> String? { schema(at: toContent(point)) }
@@ -3230,8 +3830,9 @@ final class CardCanvasView: NSView {
     /// `nearestRow` already arranges.
     private func toggleFold(_ schemaId: String, path: String) {
         var folds = cardFolds[schemaId] ?? []
-        if folds.contains(path) { folds.remove(path) } else { folds.insert(path) }
-        setFolds(schemaId, folds)
+        let opening = folds.contains(path)
+        if opening { folds.remove(path) } else { folds.insert(path) }
+        setFolds(schemaId, folds, reveal: opening ? path : nil)
     }
 
     /// Every row that has anything under it, or none at all.
@@ -3257,7 +3858,9 @@ final class CardCanvasView: NSView {
         openRows(schemaId).contains(where: \.expandable)
     }
 
-    private func setFolds(_ schemaId: String, _ folded: Set<String>) {
+    /// `reveal`: the row just opened. A row opened at the foot of the window would open into the strip below
+    /// it, so the window moves down to show what it opened, as far as it fits, the row staying in sight.
+    private func setFolds(_ schemaId: String, _ folded: Set<String>, reveal: String? = nil) {
         touchedCards.insert(schemaId)
         guard cardFolds[schemaId] ?? [] != folded else { return }
         if folded.isEmpty { cardFolds.removeValue(forKey: schemaId) }
@@ -3265,10 +3868,15 @@ final class CardCanvasView: NSView {
 
         guard let schema = drawnCard(schemaId) else { return }
         let lookup = self.lookup
-        let content = cardRows(schema, lookup: lookup,
+        var content = cardRows(schema, lookup: lookup,
                                inlineReuse: filters.nesting.nests(schemaId),
                                from: cardScroll[schemaId] ?? 0, folded: folded, tree: tree,
                                form: forms[schemaId] ?? CardForm())
+        if let reveal, let index = content.all.firstIndex(where: { $0.path == reveal }) {
+            let depth = content.all[index].depth
+            let under = content.all[(index + 1)...].prefix { $0.depth > depth }.count
+            content = content.scrolled(to: content.first(showing: index, through: index + under))
+        }
         rows[schemaId] = CardIndex(content)
         cardScroll[schemaId] = content.first
         boxes[schemaId]?.size = boxSize(schemaId, content)
@@ -3320,10 +3928,8 @@ final class CardCanvasView: NSView {
                                folded: cardFolds[schemaId] ?? [], tree: tree,
                                form: forms[schemaId] ?? CardForm())
         rows[schemaId] = CardIndex(content)
-        // A strip is only drawn for a direction that has rows out of sight, so the
-        // card gains one leaving the top and loses one at the end. Its box has to
-        // follow, or the texture is drawn into a frame of the wrong height — unless
-        // it has a size of its own.
+        // The half rows are kept whichever way rows are out of sight, so the box stays as it was; it is asked again
+        // so that it is always the one the rows give.
         boxes[schemaId]?.size = boxSize(schemaId, content)
         withoutAnimation {
             cardLayers[schemaId]?.frame = layerFrame(schemaId)
@@ -3557,5 +4163,29 @@ final class InPlaceTextView: NSTextView {
             DispatchQueue.main.async { [weak self] in self?.done?(true, false) }
         }
         return resigned
+    }
+}
+
+// MARK: - The field a group is named in
+
+extension CardCanvasView: NSTextFieldDelegate {
+    /// Return makes the group, Esc lets it go.
+    func control(_ control: NSControl, textView: NSTextView, doCommandBy selector: Selector) -> Bool {
+        guard let field = namingField, control === field else { return false }
+        if selector == #selector(NSResponder.insertNewline(_:)) {
+            endNaming(keep: true)
+            return true
+        }
+        if selector == #selector(NSResponder.cancelOperation(_:)) {
+            endNaming(keep: false)
+            return true
+        }
+        return false
+    }
+
+    /// Left for somewhere else: let go, as Esc does — only Return makes it.
+    func controlTextDidEndEditing(_ note: Notification) {
+        guard let field = namingField, note.object as? NSTextField === field else { return }
+        endNaming(keep: false)
     }
 }

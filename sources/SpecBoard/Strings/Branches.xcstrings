@@ -218,7 +218,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Group edit in progress in the window on %@ (%@, since %@). This branch is read-only until it ends."
+            "value" : "Batch edit in progress in the window on %@ (%@, since %@). This branch is read-only until it ends."
           }
         },
         "ja" : {
@@ -236,7 +236,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Group edit in progress (%@, since %@). main is locked, so closing puts what you changed into main as one merge. Meanwhile MCP writes and merges are refused."
+            "value" : "Batch edit in progress (%@, since %@). main is locked, so closing puts what you changed into main as one merge. Meanwhile MCP writes and merges are refused."
           }
         },
         "ja" : {
@@ -254,7 +254,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Group edit in progress (%@, since %@). Edits until you close become one commit, and MCP writes to this branch are refused."
+            "value" : "Batch edit in progress (%@, since %@). Edits until you close become one commit, and MCP writes to this branch are refused."
           }
         },
         "ja" : {
@@ -344,7 +344,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main is locked (it can only be changed by a merge). Positions on the diagram, the size and look of writing cards, tags and the project's settings can still be changed. Change the contents in a branch or with “Group edit”."
+            "value" : "main is locked (it can only be changed by a merge). Positions on the diagram, the size and look of writing cards, tags and the project's settings can still be changed. Change the contents in a branch or with “Batch edit”."
           }
         },
         "ja" : {
@@ -1191,6 +1191,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "merge したあとの main を図とカードで開く（読むだけ。上の帯で merge する・閉じる）"
+          }
+        }
+      }
+    },
+    "merge.whole" : {
+      "comment" : "In a merge or undo conflict, the unit when one side removed the card or section the other changed: all of it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the whole"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全体"
           }
         }
       }

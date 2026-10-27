@@ -377,7 +377,7 @@ enum DiagramRows {
             let at = line.at.flatMap { PathText.hasSection($0) ? nil : $0 } ?? ""
             let path = detail.directory.full(target, row: at)
             let outcome = card.connections.first { $0.id == line.connection }?.text("outcome")
-            if let place = landing(path, outcome: line.line == Line.event ? outcome : nil, base: base, in: detail) {
+            if let place = landing(path, outcome: line.line == Line.awaits ? outcome : nil, base: base, in: detail) {
                 return .place(place)
             }
         }

@@ -129,7 +129,7 @@ nonisolated enum DocumentParts {
             let answer = try core.request("document_parts", ["project": project, "branch": tree, "documents": documents])
             return read(answer, documents)
         } catch {
-            let failed = Said(failure: error.localizedDescription)
+            let failed = Said(failure: ErrorText.said(error))
             return Dictionary(order.map { ($0, failed) }, uniquingKeysWith: { first, _ in first })
         }
     }

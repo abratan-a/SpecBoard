@@ -543,6 +543,37 @@ fn a_goal_inside_a_goal_has_a_row_for_the_branch_it_is_worked_in() {
     );
 }
 
+/// A goal's status is said in its head, never a row; its other fields are a row each only when
+/// written, a choice too.
+#[test]
+fn a_goals_status_is_in_its_head_and_its_fields_are_rows_when_written() {
+    let core = Core::open(script_store()).unwrap();
+    board(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Goals:Ship.Bare": {"kind": "goal"},
+            "Goals:Ship.Started": {"kind": "goal", "status": "inProgress"},
+            "Goals:Ship.Urgent": {"kind": "goal", "priority": "high"}
+        }}),
+    )
+    .unwrap();
+    let boxes = places(&core, "Goals:Ship");
+    let tall = |path: &str| {
+        let b = boxes.iter().find(|b| b["card"] == path).unwrap();
+        b["bottomRight"]["y"].as_i64().unwrap() - b["topLeft"]["y"].as_i64().unwrap()
+    };
+    assert_eq!(
+        tall("Goals:Ship.Started"),
+        tall("Goals:Ship.Bare"),
+        "{boxes:?}"
+    );
+    assert!(
+        tall("Goals:Ship.Urgent") > tall("Goals:Ship.Bare"),
+        "{boxes:?}"
+    );
+}
+
 #[test]
 fn cards_with_no_place_on_the_map_go_in_the_order_the_goal_holds_them() {
     let core = Core::open(script_store()).unwrap();

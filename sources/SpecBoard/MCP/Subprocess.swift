@@ -64,4 +64,64 @@ nonisolated enum Subprocess {
         return Outcome(status: process.terminationStatus, out: read ? outRead.data : Data(),
                        err: read ? errRead.data : Data(), timedOut: timedOut)
     }
+
+    /// A process that ends by itself once it has put a child of its own in the background (`ssh -f`),
+    /// waited for no longer than `limit`. Its output goes to the null device, its errors to a pipe.
+    ///
+    /// Past the limit it is stopped — SIGTERM, then SIGKILL after `grace` — and waited for again:
+    /// the status of a process still running cannot be read (Foundation raises, and the app ends).
+    /// One that outlives even SIGKILL is said to have failed, its status left unread.
+    ///
+    /// Its errors are read without waiting: the child it backgrounded, or a helper it started (a
+    /// `ProxyCommand`), may hold the pipe open for as long as it lives, and reading to the end — or
+    /// waiting for data on an empty pipe — would hold whatever waits on this as long.
+    static func detached(_ executable: String, _ arguments: [String], limit: TimeInterval,
+                         grace: TimeInterval = 3) throws -> Outcome {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
+        let err = Pipe()
+        process.standardInput = FileHandle.nullDevice
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = err
+        try process.run()
+        try? err.fileHandleForWriting.close()
+
+        var timedOut = false
+        if !ended(process, within: limit) {
+            timedOut = true
+            process.terminate()
+            if !ended(process, within: grace) {
+                kill(process.processIdentifier, SIGKILL)
+                _ = ended(process, within: grace)
+            }
+        }
+        let said = buffered(err.fileHandleForReading)
+        try? err.fileHandleForReading.close()
+        guard !process.isRunning else {
+            return Outcome(status: -1, out: Data(), err: said, timedOut: true)
+        }
+        return Outcome(status: process.terminationStatus, out: Data(), err: said, timedOut: timedOut)
+    }
+
+    /// Whether `process` has ended, waited for up to `seconds`.
+    private static func ended(_ process: Process, within seconds: TimeInterval) -> Bool {
+        let deadline = Date().addingTimeInterval(seconds)
+        while process.isRunning && Date() < deadline { usleep(20_000) }
+        return !process.isRunning
+    }
+
+    /// What the pipe holds now, up to 64 KB, read without waiting for more.
+    private static func buffered(_ handle: FileHandle) -> Data {
+        let fd = handle.fileDescriptor
+        _ = fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
+        var data = Data()
+        var chunk = [UInt8](repeating: 0, count: 4096)
+        while data.count < 65_536 {
+            let count = read(fd, &chunk, chunk.count)
+            if count <= 0 { break }
+            data.append(contentsOf: chunk[0..<count])
+        }
+        return data
+    }
 }

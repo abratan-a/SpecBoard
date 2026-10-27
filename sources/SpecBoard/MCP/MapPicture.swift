@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 
 /// A map drawn as a picture for MCP's `as: picture` (`specboard://SpecBoard/Docs/Design:Overview`;
-/// the flow is `Behavior/Screen:DrawPicture`): a section map, a card's connections map, a flow's
+/// the flow is `Behavior/App/Screen:DrawPicture`): a section map, a card's connections map, a flow's
 /// diagram or a container's content map, drawn by the same canvas the screen draws them on —
 /// made for the picture and put in no window — and given back as a PNG.
 ///
@@ -22,6 +22,8 @@ enum MapPicture {
     nonisolated struct Request: @unchecked Sendable {
         enum Map: String {
             case sectionMap, connectionsMap, flowDiagram, contentMap
+            /// An actor section's chart: a frame for each flow it provides.
+            case sequence
         }
 
         var map: Map
@@ -31,6 +33,8 @@ enum MapPicture {
         var section: String?
         var card: String?
         var depth = 1
+        /// An actor's chart: the actors chosen to draw where they hold a partner.
+        var lifelines: [String]?
         /// The kinds of line to draw; nil for what the kind definitions draw.
         var kinds: [String]?
         /// The cards to frame, by id.
@@ -52,6 +56,7 @@ enum MapPicture {
             section = asked["section"] as? String
             card = asked["card"] as? String
             depth = asked["depth"] as? Int ?? depth
+            lifelines = asked["lifelines"] as? [String]
             kinds = asked["kinds"] as? [String]
             cards = asked["cards"] as? [String]
             if let area = asked["area"] as? [String: Any],
@@ -81,7 +86,8 @@ enum MapPicture {
         /// beside the board.
         var outside: ProjectDetail?
         var layout: LayoutSettings
-        var positions: [String: [String: CGPoint]] = [:]
+        /// Where each section's map puts what stands for another section, and the groups on every diagram.
+        var positions = MapPlaces()
         /// What a branch changed, made or saw main change, marked as the window marks it.
         var marks = BranchMarks()
         /// The tree as MCP names it, for reading a ui section's faces; nil when it has no such name.
@@ -130,7 +136,7 @@ enum MapPicture {
         do {
             read = try Self.read(request, core)
         } catch {
-            return refusal((error as? Refused)?.why ?? error.localizedDescription)
+            return refusal((error as? Refused)?.why ?? ErrorText.said(error, in: request.lang))
         }
         final class Box: @unchecked Sendable {
             var said = ""
@@ -172,7 +178,7 @@ enum MapPicture {
             return json(["image": ["data": drawn.png.base64EncodedString(), "mimeType": "image/png"],
                          "note": drawn.note])
         case .failure(let error):
-            return refusal((error as? Refused)?.why ?? error.localizedDescription)
+            return refusal((error as? Refused)?.why ?? ErrorText.said(error))
         }
     }
 
@@ -186,6 +192,8 @@ enum MapPicture {
         do {
             let detail = try core.readDetail(project, branch: tree).detail
             var read = Read(detail: detail, layout: try core.layout(project))
+            // A container's card map: its groups.
+            if request.map == .contentMap { read.positions = try core.sectionPositions(project, branch: tree) }
             guard request.map == .sectionMap || request.map == .connectionsMap else { return read }
             if tree == Board.id {
                 read.outside = try? core.readDetail(project, branch: nil).detail
@@ -200,7 +208,7 @@ enum MapPicture {
             }
             return read
         } catch {
-            throw Refused(why: L10n.text(.AppControl.pictureUnreadable(error.localizedDescription), in: request.lang))
+            throw Refused(why: L10n.text(.AppControl.pictureUnreadable(ErrorText.said(error, in: request.lang)), in: request.lang))
         }
     }
 
@@ -306,8 +314,9 @@ enum MapPicture {
             guard let key = request.section,
                   detail.sections.contains(where: { $0.id == key }) || (detail.sections.isEmpty && key == detail.directory.home)
             else { throw refused(.AppControl.pictureSectionGone, request) }
-            let surroundings = AppModel.surroundings(of: key, in: detail, positions: read.positions[key] ?? [:],
+            var surroundings = AppModel.surroundings(of: key, in: detail, positions: read.positions.positions[key] ?? [:],
                                                      outside: read.outside, gone: read.marks.gone.cards, forNow: [])
+            if AppModel.holdsGroups(section: key, in: detail) { surroundings.groups = read.positions.groups[key] ?? [] }
             content = Content(detail: detail.only(section: key), surroundings: surroundings, marks: read.marks,
                               framed: request.cards, drawsParts: detail.directory.section(id: key)?.kind == .ui)
         case .connectionsMap:
@@ -325,14 +334,21 @@ enum MapPicture {
             }
             guard !flow.nodes.isEmpty else { throw refused(.AppControl.pictureNothingDrawn, request) }
             if flow.diagramShape == "sequence" {
-                return try sequence(flow, in: detail, request)
+                return try sequence(card: flow.id, in: detail, request, core)
             }
             content = Content(detail: FlowCardMap.detail(flow, in: detail))
+        case .sequence:
+            guard let section = request.section, detail.sections.contains(where: { $0.id == section }) else {
+                throw refused(.AppControl.pictureSectionGone, request)
+            }
+            return try sequence(section: section, in: detail, request, core)
         case .contentMap:
             guard let card = detail.schemas.first(where: { $0.id == request.card }) else {
                 throw refused(.AppControl.pictureCardGone, request)
             }
-            content = Content(detail: GoalCardMap.detail(card, in: detail), framed: request.cards?.map(GoalCardMap.id))
+            content = Content(detail: GoalCardMap.detail(card, in: detail),
+                              surroundings: Surroundings(groups: read.positions.groups[card.id] ?? []),
+                              framed: request.cards?.map(GoalCardMap.id))
         }
         return try canvas(content, request, read, core)
     }
@@ -397,10 +413,10 @@ enum MapPicture {
         } else if let area = request.area {
             // The bottom right is the last cell taken in, as a box's is said.
             rect = CGRect(x: CGFloat(area.topLeft.x) * unit.width, y: CGFloat(area.topLeft.y) * unit.height,
-                          width: CGFloat(area.bottomRight.x - area.topLeft.x + 1) * unit.width,
-                          height: CGFloat(area.bottomRight.y - area.topLeft.y + 1) * unit.height)
+                          width: (CGFloat(area.bottomRight.x) - CGFloat(area.topLeft.x) + 1) * unit.width,
+                          height: (CGFloat(area.bottomRight.y) - CGFloat(area.topLeft.y) + 1) * unit.height)
         } else {
-            rect = canvas.groupFrames.values.reduce(canvas.diagramExtent) { $0.union($1) }
+            rect = (Array(canvas.groupFrames.values) + canvas.mapGroupFrames).reduce(canvas.diagramExtent) { $0.union($1) }
         }
         rect = rect.insetBy(dx: -margin * unit.width, dy: -margin * unit.height)
         rect.size = CGSize(width: max(rect.width, unit.width), height: max(rect.height, unit.height))
@@ -423,14 +439,18 @@ enum MapPicture {
         return .canvas(canvas, Frame(rect: rect, scale: scale, area: area), texts: texts, faces: faces)
     }
 
-    /// A flow kept as a sequence diagram, drawn as its editor draws it.
+    /// A flow kept as a sequence diagram (`card`), or an actor's chart (`section`), drawn from the core's chart
+    /// as the screen draws it — at the depth asked, not as it is chosen on this Mac, and with every provided
+    /// flow's frame open: a picture says what the diagram is, not how a window looks at it.
     @MainActor
-    private static func sequence(_ flow: SchemaNode, in detail: ProjectDetail, _ request: Request) throws -> Made {
+    private static func sequence(card: String? = nil, section: String? = nil, in detail: ProjectDetail, _ request: Request,
+                                 _ core: CoreClient) throws -> Made {
+        let fields = SequenceDiagram.request(project: request.project, tree: request.tree, card: card, section: section,
+                                             lifelines: section == nil ? nil : request.lifelines, language: request.lang)
+        let diagram = SequenceDiagram(chart: try core.request("sequence_chart", fields), detail: detail, language: request.lang)
         let view = SequenceView(frame: .zero)
         view.appearance = NSAppearance(named: .aqua)
-        let diagram = SequenceDiagram.make(flow, in: detail, language: Language.current)
-        view.update(diagram: diagram, kinds: Dictionary(detail.schemas.map { ($0.id, $0.kind) }, uniquingKeysWith: { a, _ in a }),
-                    lines: detail.lineKinds, selected: nil)
+        view.update(diagram: diagram, kinds: SequenceView.kinds(of: detail), lines: detail.lineKinds, selected: nil)
         let size = view.bounds.size
         guard size.width > 0, size.height > 0 else { throw refused(.AppControl.pictureNothingDrawn, request) }
         let scale = min(1, CGFloat(request.maxSize) / max(size.width, size.height))

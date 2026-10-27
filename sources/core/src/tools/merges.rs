@@ -38,10 +38,13 @@ pub(crate) fn unmatched_takes(bare: &MergePreview, take: &MergeTake) -> Result<(
         .iter()
         .flat_map(|(path, units)| units.keys().map(move |unit| (path, unit)))
         .filter(|(path, unit)| {
-            !bare
-                .conflicts
-                .iter()
-                .any(|c| &&c.path == path && (&&c.label == unit || &&c.unit == unit))
+            !bare.conflicts.iter().any(|c| {
+                &&c.path == path
+                    && (&&c.label == unit
+                        || &&c.unit == unit
+                        || (c.unit == crate::write::MergeWhole
+                            && crate::write::merge_is_whole(unit)))
+            })
         })
         .map(|(path, unit)| text!("merges.take.unitOf", path, unit))
         .collect();

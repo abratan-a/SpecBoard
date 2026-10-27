@@ -1,0 +1,51 @@
+{
+  "id": "kind_preview:made",
+  "name": "Sample",
+  "label": "",
+  "kind": "risk",
+  "description": "",
+  "tags": [],
+  "metadata": {},
+  "rules": [],
+  "absentFields": [],
+  "enumOpen": false,
+  "pinned": false,
+  "sortOrder": 0,
+  "fields": [],
+  "values": [],
+  "uses": [],
+  "signedBy": [],
+  "verifiedBy": [],
+  "next": [],
+  "body": "",
+  "rows": [],
+  "steps": [],
+  "customFields": {},
+  "customRows": [],
+  "form": {
+    "fields": {
+      "severity": "中",
+      "owner": "Claude",
+      "due": "2026-04-01",
+      "score": 10,
+      "areas": [
+        "db",
+        "web"
+      ],
+      "notes": "## A sample heading\n\nThe first line.\n\nThe second line."
+    },
+    "rows": {
+      "steps": [
+        {
+          "id": "kind_preview:made:0",
+          "fields": {
+            "name": "Sample text",
+            "done": false
+          }
+        }
+      ]
+    }
+  },
+  "connections": [],
+  "made": true
+}

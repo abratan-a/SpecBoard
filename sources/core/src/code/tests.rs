@@ -73,6 +73,15 @@ fn swift_s_extensions_join_their_types_and_its_inits_are_numbered() {
     check("sample.swift");
 }
 
+/// The grammar's scanner ends a multi-line raw string at a `"#` inside it; the core mends that
+/// (`super::mend`), so every function after one is still the struct's.
+#[test]
+fn swift_s_raw_strings_run_to_their_own_closing_delimiter() {
+    let got = outline("raw_strings.swift");
+    assert!(!got.contains("parse errors"), "{got}");
+    crate::fixtures::kept("symbols/raw_strings.swift.txt", &got);
+}
+
 #[test]
 fn typescript_s_exports_and_decorators_are_in_their_ranges_and_its_overloads_are_numbered() {
     check("sample.ts");
@@ -189,6 +198,32 @@ fn a_text_s_colours_are_spans_of_utf16_offsets_past_characters_of_two_units_and_
     assert!(got.contains(&("fn".to_string(), "keyword")), "{got:?}");
     assert!(got.contains(&("main".to_string(), "function")), "{got:?}");
     assert!(got.contains(&("\"é😀\"".to_string(), "string")), "{got:?}");
+}
+
+#[test]
+fn a_swift_raw_string_is_coloured_to_its_own_closing_delimiter() {
+    let literal = "#\"\"\"\n    { \"accent\": \"#3366FF\" }\n    \"\"\"#";
+    let text = format!(
+        "struct Palette {{\n    static let palette = {literal}\n    func accent() {{}}\n}}\n"
+    );
+    let swift = super::registry::registry().find("swift").unwrap();
+    let spans = super::highlight::spans(swift, &text).unwrap().unwrap();
+    // The literal is ASCII: its UTF-16 offsets are its bytes.
+    let from = text.find(literal).unwrap() as u32;
+    let to = from + literal.len() as u32;
+    let inside: Vec<&str> = spans
+        .chunks(3)
+        .filter(|s| s[0] < to && s[0] + s[1] > from)
+        .map(|s| super::highlight::CLASSES[s[2] as usize])
+        .collect();
+    assert!(
+        !inside.is_empty() && inside.iter().all(|c| *c == "string"),
+        "{inside:?}: {:?}",
+        covered(&text, &spans)
+    );
+    // The one `func` is after the literal.
+    let got = covered(&text, &spans);
+    assert!(got.contains(&("func".to_string(), "keyword")), "{got:?}");
 }
 
 #[test]
@@ -430,4 +465,81 @@ fn what_is_found_is_cut_at_the_most_and_read_past_what_cannot_be_parsed() {
     let read = super::read_text(rust, broken.as_bytes());
     assert!(read.found.parse_errors > 0, "{:?}", read.found);
     assert!(read.found.symbols.iter().any(|s| s.name == "a"));
+}
+
+/// The fingerprint of the one function `name` in `text`, read as `file`.
+fn fingerprint(file: &str, text: &str, name: &str) -> String {
+    let language = language_of(file, &Parsers::new()).unwrap().unwrap();
+    let read = super::read_text(language, text.as_bytes());
+    assert!(read.problem.is_none(), "{file}: {:?}", read.problem);
+    read.found
+        .symbols
+        .iter()
+        .find(|s| s.name == name)
+        .unwrap_or_else(|| panic!("{file}: no {name}"))
+        .digest
+        .clone()
+}
+
+#[test]
+fn a_fingerprint_leaves_out_comments_and_spaces_and_keeps_every_word_in_each_language() {
+    // The function as written, then with comments, spaces and line breaks only; then with a word,
+    // and a string's text, changed.
+    let cases: [(&str, &str, [&str; 4]); 4] = [
+        (
+            "task.ts",
+            "isOverdue",
+            [
+                "function isOverdue(t: Task): boolean {\n  return t.due < now() && t.label != \"a b\";\n}\n",
+                "// Late?\nfunction isOverdue( t: Task ) : boolean\n{\n    // comment only\n    return t.due<now() && /* x */ t.label != \"a b\";\n}\n",
+                "function isOverdue(t: Task): boolean {\n  return t.due <= now() && t.label != \"a b\";\n}\n",
+                "function isOverdue(t: Task): boolean {\n  return t.due < now() && t.label != \"ab\";\n}\n",
+            ],
+        ),
+        (
+            "a.py",
+            "late",
+            [
+                "def late(t):\n    return t.due < now() and t.label != 'a b'\n",
+                "# late?\ndef late( t ):\n    # comment only\n    return t.due<now() and t.label != 'a b'  # end\n",
+                "def late(t):\n    return t.due <= now() and t.label != 'a b'\n",
+                "def late(t):\n    return t.due < now() and t.label != 'ab'\n",
+            ],
+        ),
+        (
+            "a.go",
+            "Late",
+            [
+                "package a\n\nfunc Late(t T) bool {\n\treturn t.Due < Now() && t.Label != \"a b\"\n}\n",
+                "package a\n\n// Late says.\nfunc Late(t T) bool {\n\t// comment only\n\treturn t.Due<Now() && t.Label != \"a b\" /* x */\n}\n",
+                "package a\n\nfunc Late(t T) bool {\n\treturn t.Due <= Now() && t.Label != \"a b\"\n}\n",
+                "package a\n\nfunc Late(t T) bool {\n\treturn t.Due < Now() && t.Label != \"ab\"\n}\n",
+            ],
+        ),
+        (
+            "a.rs",
+            "late",
+            [
+                "fn late(t: &T) -> bool {\n    t.due < now() && t.label != \"a b\"\n}\n",
+                "/// Late?\nfn late( t: &T )->bool {\n    // comment only\n    t.due<now() && /* x */ t.label != \"a b\"\n}\n",
+                "fn late(t: &T) -> bool {\n    t.due <= now() && t.label != \"a b\"\n}\n",
+                "fn late(t: &T) -> bool {\n    t.due < now() && t.label != \"ab\"\n}\n",
+            ],
+        ),
+    ];
+    for (file, name, [first, quiet, word, string]) in cases {
+        let made = fingerprint(file, first, name);
+        assert!(made.starts_with("t1:"), "{file}: {made}");
+        assert_eq!(
+            fingerprint(file, quiet, name),
+            made,
+            "{file}: comments and spaces"
+        );
+        assert_ne!(fingerprint(file, word, name), made, "{file}: a word");
+        assert_ne!(
+            fingerprint(file, string, name),
+            made,
+            "{file}: a string's text"
+        );
+    }
 }

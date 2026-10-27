@@ -56,11 +56,13 @@ struct NoticeBadge: View {
 }
 
 /// The bell's list: newest first, each with its kind's mark — the one its bubble has — its words and
-/// when; an AI's merge with the way to its project's history, as its bubble has. 「すべて削除」 at the foot.
+/// when; an AI's merge with the way to its project's history, and a new version with its download, as
+/// their bubbles have. 「すべて削除」 at the foot.
 struct NoticeList: View {
     var model: AppModel
     /// Shuts the popover: going to a history leaves the list behind.
     var close: () -> Void
+    var updater: Updater = .shared
 
     /// The height of the rows, to be as tall as they are up to `tallest`, and scroll past it.
     @State private var rowsHeight: CGFloat = 0
@@ -110,7 +112,7 @@ struct NoticeList: View {
                 .help(entry.kind.said)
                 .accessibilityLabel(entry.kind.said)
             VStack(alignment: .leading, spacing: 4) {
-                Text(entry.text)
+                Text(entry.text(in: Language.shared.code))
                     .font(.app(11.5))
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
@@ -125,6 +127,11 @@ struct NoticeList: View {
                         }
                         .font(.app(10.5))
                     }
+                    if let tag = entry.update, updater.offersDownload(tag) {
+                        Button(L10n[.Update.noticeDownload]) { Task { await updater.download() } }
+                            .font(.app(10.5))
+                            .help(L10n[.Update.noticeDownloadHelp])
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -138,6 +145,7 @@ struct NoticeList: View {
         case .error: Color(nsColor: theme.brassInk)
         case .notice: .green
         case .aiMerge: .purple
+        case .update: .accentColor
         }
     }
 }
@@ -161,6 +169,7 @@ extension NoticeLog.Kind {
         case .error: L10n[.Root.noticeKindError]
         case .notice: L10n[.Root.noticeKindNotice]
         case .aiMerge: L10n[.Root.noticeKindAiMerge]
+        case .update: L10n[.Root.noticeKindUpdate]
         }
     }
 }

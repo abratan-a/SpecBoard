@@ -28,6 +28,19 @@ extension AppModel {
         return DocumentPage(DocumentParts.page(source, said[card.id] ?? .init()), form: source.form)
     }
 
+    /// The page the map makes of `source` (`DocumentTexts.make`): its `[[…]]`, `{{…}}` and `![[…]]` read by the core
+    /// in the tree open, from its card's place — asked off the main thread, as the map asks. For the kinds' preview,
+    /// which draws a card of the tree with a definition not saved: what its text says does not hang on that.
+    func documentPage(_ source: DocumentParts.Source) async -> DocumentPage? {
+        guard let detail, let core = core(of: detail.project.id) else { return nil }
+        let project = detail.project.id, tree = openTrees[project] ?? ""
+        return await withCheckedContinuation { (done: CheckedContinuation<DocumentPage?, Never>) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                done.resume(returning: DocumentTexts.make([source], core, project: project, tree: tree)[source.card])
+            }
+        }
+    }
+
     /// What the ui part `shown` shows on the map: its face, read for its section in the tree open (`PartFaces`).
     /// None while what a merge would leave is looked at: its tree is the app's, and no tool names it.
     func partFace(_ shown: SchemaNode, ready: (() -> Void)?) -> PartFaces.Answer {

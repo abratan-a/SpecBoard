@@ -266,7 +266,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Can't move a project during a group edit (wait until the Group edit on screen or the MCP batch is done)"
+            "value" : "Can't move a project during a batch edit (wait until the Batch edit on screen or the MCP batch is done)"
           }
         },
         "ja" : {

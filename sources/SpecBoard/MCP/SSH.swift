@@ -97,47 +97,40 @@ nonisolated struct SSH: Sendable {
 
     /// Feed a script to `python3` on the host. Every JSON edit goes through this —
     /// hosts commonly have python3 and not jq, and quoting a program through a shell
-    /// argument is a way to get bitten.
-    func python(_ script: String, stdin: String = "") -> Result {
-        run(base + [destination, "python3 -"], input: Data((script + "\n" + stdin).utf8))
+    /// argument is a way to get bitten. The script is all its standard input carries: whatever
+    /// came after it would run as more of the program, so data goes in the script as a literal.
+    func python(_ script: String) -> Result {
+        run(base + [destination, "python3 -"], input: Data(script.utf8))
     }
 
     // MARK: - Process
 
+    /// How long the master's `ssh` may take to authenticate and go to the background. A host the
+    /// network does not reach can keep it longer than `ConnectTimeout` (a name lookup is not bounded
+    /// by it); past this it is stopped and the connection said to have failed.
+    static let masterLimit: TimeInterval = 20
+
     /// `detached` is for the master, which uses `-f` to fork into the background
     /// after authenticating. The forked child inherits whatever descriptors it was
-    /// given, so handing it a pipe means reading to EOF never returns — the child
-    /// is meant to outlive this call. It gets the null device instead, and its
-    /// failures are read back from `-O check` rather than from stderr.
+    /// given, so reading its errors to EOF never returns — the child is meant to
+    /// outlive this call. What is in the pipe once the parent has ended is what it
+    /// said; whether the master is up is read back from `-O check`.
     private func run(_ arguments: [String], input: Data? = nil,
                      detached: Bool = false) -> Result {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/ssh")
-        process.arguments = arguments
-
         if detached {
-            let log = Pipe()
-            process.standardOutput = FileHandle.nullDevice
-            process.standardError = log
-            do { try process.run() } catch {
-                return Result(status: -1, out: "", error: error.localizedDescription)
+            do {
+                let ran = try Subprocess.detached("/usr/bin/ssh", arguments, limit: Self.masterLimit)
+                return Result(ran, limit: Self.masterLimit, trimmingOut: true)
+            } catch {
+                return Result(status: -1, out: "", error: ErrorText.said(error))
             }
-            // Bounded: the parent exits once the child is backgrounded, and the
-            // child holds the write end open for as long as it lives.
-            let deadline = Date().addingTimeInterval(20)
-            while process.isRunning && Date() < deadline { usleep(20_000) }
-            if process.isRunning { process.terminate() }
-            try? log.fileHandleForWriting.close()
-            let text = String(decoding: log.fileHandleForReading.availableData, as: UTF8.self)
-            return Result(status: process.terminationStatus, out: "",
-                          error: text.trimmingCharacters(in: .whitespacesAndNewlines))
         }
 
         do {
             let ran = try Subprocess.run("/usr/bin/ssh", arguments, input: input, timeout: Self.timeLimit)
             return Result(ran, limit: Self.timeLimit, trimmingOut: true)
         } catch {
-            return Result(status: -1, out: "", error: error.localizedDescription)
+            return Result(status: -1, out: "", error: ErrorText.said(error))
         }
     }
 }

@@ -589,9 +589,14 @@ const NOT_SAID: &[(&str, &str)] = &[
     ("src/kinds/mod.rs", "優先度"),
     ("src/kinds/mod.rs", "期限"),
     ("src/kinds/mod.rs", "担当"),
-    // The parts of a conflict a merge request keeps it took, met again when it is merged.
-    ("src/write/merge.rs", "（カード）"),
-    ("src/write/merge.rs", "（セクション）"),
+    // A goal's values of before, met again when a card of before is read.
+    ("src/kinds/mod.rs", "未着手"),
+    ("src/kinds/mod.rs", "進行中"),
+    ("src/kinds/mod.rs", "完了"),
+    ("src/kinds/mod.rs", "打ち切り"),
+    ("src/kinds/mod.rs", "高"),
+    ("src/kinds/mod.rs", "中"),
+    ("src/kinds/mod.rs", "低"),
     // The forms of the tools' values by their names in the catalog (`mcp/catalog.json`).
     ("src/tools/branches.rs", "branch（as: history）"),
     ("src/tools/reads.rs", "card・field"),
@@ -602,11 +607,7 @@ const NOT_SAID: &[(&str, &str)] = &[
     ("src/tools/mocks.rs", "section（as: mock）"),
     // A wide character a checkbox is measured as.
     ("src/tools/markdown_height.rs", "口{r}"),
-    // What a move of a store of before writes into a project: its commits' names, its cards'
-    // descriptions.
-    ("src/container_move.rs", "入れ物の中身を移した"),
-    ("src/ghost_move.rs", "カードゴーストを移した"),
-    ("src/key_move.rs", "goal の欄"),
+    // What a move of a store of before writes into a project: its cards' descriptions.
     ("src/nodes.rs", "ノードの移し替え"),
     // A full-width number sign stands in for `#`, which mermaid reads as its own, in every language.
     ("src/export/ident.rs", "＃"),

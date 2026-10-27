@@ -1,5 +1,5 @@
 {
-  "picture.area": "area は {topLeft: {x, y}, bottomRight: {x, y}}（マス）で、左上が右下より左・上です",
+  "picture.area": "area は {topLeft: {x, y}, bottomRight: {x, y}}（マス。どれも ±1,000,000 の中）で、左上が右下より左・上です",
   "picture.cardsAndArea": "cards か area のどちらか 1 つを渡します",
   "picture.depth": "depth は 1・2、0 で全部です（{given}）",
   "picture.ghost": "{path} はカードゴーストです。絵は着く先のカード {card} を描きます（use）",
@@ -18,6 +18,7 @@
   "picture.map.flowDiagram": "flow のノードの図",
   "picture.map.mock": "モック",
   "picture.map.sectionMap": "セクションマップ",
+  "picture.map.sequence": "アクターの図",
   "picture.margin": "margin は 0〜100 マスです（{given}）",
   "picture.maxSize": "maxSize は 400〜3000 ピクセルです（{given}）",
   "picture.noApp": "描く SpecBoard のアプリが繋いでいません",

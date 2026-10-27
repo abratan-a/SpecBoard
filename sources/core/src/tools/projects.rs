@@ -52,6 +52,8 @@ fn section_doc(
 
 /// A project's name, refused when another project of the store has it — in any case, as a call
 /// names a project (`project_summary_in`): two of one name and a call by it would reach either.
+/// Names are one to a store, whoever may see the projects; a key that may not see the one that has
+/// it is told only that the name cannot be used — not which project has it, nor its slug.
 fn unique_name(conn: &Connection, name: &str, excluding: Option<&str>) -> Result<(), String> {
     let mut stmt = conn
         .prepare("SELECT id, name, slug FROM projects")
@@ -72,6 +74,9 @@ fn unique_name(conn: &Connection, name: &str, excluding: Option<&str>) -> Result
             Some(id.as_str()) != excluding && crate::pathtext::same(other, name)
         });
     match taken {
+        Some((id, _, _)) if !crate::access::sees(conn, &id)? => {
+            Err(text!("projects.name.unavailable", name))
+        }
         Some((_, other, slug)) => Err(text!("projects.name.taken", other, slug)),
         None => Ok(()),
     }
@@ -434,16 +439,20 @@ pub(crate) fn set_slug(tx: &mut Tx, project: &str, raw: &str) -> Result<(), Stri
     if was == slug {
         return Ok(());
     }
-    let taken: Option<String> = tx
+    let taken: Option<(String, String)> = tx
         .conn()
         .query_row(
-            "SELECT name FROM projects WHERE slug = ? AND id <> ?",
+            "SELECT id, name FROM projects WHERE slug = ? AND id <> ?",
             params![slug, project],
-            |r| r.get(0),
+            |r| Ok((r.get(0)?, r.get(1)?)),
         )
         .optional()
         .map_err(db)?;
-    if let Some(other) = taken {
+    if let Some((id, other)) = taken {
+        // Not the name of a project the key may not see.
+        if !crate::access::sees(tx.conn(), &id)? {
+            return Err(text!("projects.slug.unavailable", slug));
+        }
         return Err(text!("projects.slug.taken", slug, other));
     }
     tx.conn()

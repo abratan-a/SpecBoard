@@ -313,6 +313,13 @@ pub(crate) fn check_rows(
                 let at = project.full(c);
                 check::flow_warnings(c, &project)
                     .into_iter()
+                    // Their own groups say them, at the begin, the row or the end.
+                    .filter(|problem| {
+                        !matches!(
+                            problem.key(),
+                            "check.flow.noPartner" | "check.flow.unlinkedPartner"
+                        )
+                    })
                     .map(move |problem| said(at.clone(), problem))
             })
             .collect(),
@@ -329,6 +336,70 @@ pub(crate) fn check_rows(
                     row.insert("carries".into(), m.carries.into());
                 }
                 row.insert("problem".into(), m.problem.json());
+                row
+            })
+            .collect(),
+    );
+    // The gaps the sequence charts draw: each at the place it is, where pressing it shows the gap.
+    put(
+        "missingPartners",
+        crate::export::charts::partner_gaps(&project)
+            .into_iter()
+            .map(|gap| {
+                let mut row = Map::new();
+                row.insert("at".into(), gap.at.into());
+                if !gap.callers.is_empty() {
+                    row.insert("callers".into(), gap.callers.into());
+                }
+                if let Some(op) = gap.op {
+                    row.insert("op".into(), op.into());
+                }
+                row
+            })
+            .collect(),
+    );
+    put(
+        "missingStores",
+        crate::export::charts::store_gaps(&project)
+            .into_iter()
+            .map(|gap| {
+                let mut row = Map::new();
+                row.insert("at".into(), gap.at.into());
+                row.insert("shapes".into(), gap.shapes.into());
+                if !gap.candidates.is_empty() {
+                    row.insert(
+                        "candidates".into(),
+                        Value::Object(
+                            gap.candidates
+                                .into_iter()
+                                .map(|(shape, stores)| (shape, stores.into()))
+                                .collect(),
+                        ),
+                    );
+                }
+                row.insert("op".into(), gap.op.into());
+                row.insert("data".into(), gap.data.into());
+                row
+            })
+            .collect(),
+    );
+    // The partners written as a program that has the name of a flow or an actor: at the start, the
+    // row or the end that writes it.
+    put(
+        "unlinkedPartners",
+        check::unlinked_partners(&project)
+            .into_iter()
+            .map(|partner| {
+                let mut row = Map::new();
+                row.insert("at".into(), partner.at.into());
+                row.insert("op".into(), partner.op.into());
+                row.insert("program".into(), partner.program.into());
+                if !partner.flows.is_empty() {
+                    row.insert("flows".into(), partner.flows.into());
+                }
+                if let Some(actor) = partner.actor {
+                    row.insert("actor".into(), actor.into());
+                }
                 row
             })
             .collect(),
@@ -365,6 +436,32 @@ pub(crate) fn check_rows(
                         .into(),
                 );
                 row
+            })
+            .collect(),
+    );
+    // A store with ghosts in two actors or more: each sequence diagram takes the one nearer the
+    // flow, which a reader may not expect.
+    let actors = crate::export::actors::Actors::new(&project);
+    put(
+        "storeActors",
+        detail
+            .schemas
+            .iter()
+            .filter(|c| c.kind == "store")
+            .filter_map(|c| {
+                let holders = actors.store_holders(c);
+                (holders.len() > 1).then(|| {
+                    let mut row = Map::new();
+                    row.insert("at".into(), project.full(c).into());
+                    row.insert(
+                        "actors".into(),
+                        holders
+                            .iter()
+                            .map(|a| Value::from(project.directory.full_section(a)))
+                            .collect(),
+                    );
+                    row
+                })
             })
             .collect(),
     );

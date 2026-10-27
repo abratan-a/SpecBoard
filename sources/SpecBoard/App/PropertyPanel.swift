@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// The panel on the right (`specboard://SpecBoard/Docs/Design:Overview` §13): the properties of what is
@@ -34,11 +35,14 @@ struct PropertyPanel: View {
         case section(ProjectSection)
         /// What the open branch removed, picked in the nav panel: shown, never changed.
         case gone(AppModel.GonePicked)
+        /// A group picked on a diagram.
+        case group(GroupRef, MapGroup)
         case nothing
     }
 
     private var subject: Subject {
         if let gone = model.goneShown { return .gone(gone) }
+        if let picked = model.pickedMapGroup { return .group(picked.ref, picked.group) }
         if let line = model.selectedLine { return .line(line) }
         if let ghost = model.selectedGhost { return .ghost(ghost) }
         if let schema = model.selectedSchema {
@@ -85,6 +89,9 @@ struct PropertyPanel: View {
                 let (name, kind) = Self.goneHeading(gone)
                 Text(name).font(.app(12, weight: .semibold, design: .monospaced)).lineLimit(1)
                 Text(kind).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
+            case .group(_, let group):
+                Text(group.name).font(.app(12, weight: .semibold, design: .monospaced)).lineLimit(1)
+                Text(L10n[.Properties.groupHeading]).font(.app(10.5)).foregroundStyle(.secondary)
             case .nothing:
                 Text(L10n[.Properties.headerProperties]).font(.app(12, weight: .semibold))
             }
@@ -119,6 +126,7 @@ struct PropertyPanel: View {
     /// the section open — as the panel shows it, for the tests too.
     static func heading(_ model: AppModel) -> (title: String, kind: String) {
         if let gone = model.goneShown { return goneHeading(gone) }
+        if let picked = model.pickedMapGroup { return (picked.group.name, L10n[.Properties.groupHeading]) }
         if let ref = model.selectedLine, let (_, line) = model.line(ref) {
             return (model.detail?.lineKinds.label(line.line) ?? line.line, L10n[.Common.wordLine])
         }
@@ -145,7 +153,7 @@ struct PropertyPanel: View {
         if let field = model.selectedField { return field.field.type.rawValue }
         switch model.selectedRow {
         case .value?: return L10n[.Properties.kindEnumValue]
-        case .hold?: return L10n[.Properties.rowHolds]
+        case .hold?: return BuiltinWords.line(Line.holds)
         case .formatRow?: return L10n[.Properties.kindFormatdocRow]
         case .node?: return L10n[.Properties.kindNode]
         case .nodeStep?: return L10n[.Properties.kindProcessRow]
@@ -201,7 +209,7 @@ struct PropertyPanel: View {
     static func title(of row: AppModel.CardRow, in card: SchemaNode, holds: [String] = []) -> String {
         switch row {
         case .value(let id): card.values.first { $0.id == id }?.value ?? L10n[.Common.wordValue]
-        case .hold(let index): holds.indices.contains(index) ? holds[index] : L10n[.Properties.rowHolds]
+        case .hold(let index): holds.indices.contains(index) ? holds[index] : BuiltinWords.line(Line.holds)
         case .formatRow(let path): path
         case .node(let name): name
         case .nodeStep(let name, let path):
@@ -239,6 +247,8 @@ struct PropertyPanel: View {
             SectionProperties(model: model, section: section, editable: editable)
         case .gone(let gone):
             goneContent(gone)
+        case .group(let ref, let group):
+            GroupProperties(model: model, ref: ref, group: group, editable: model.canWriteGroups)
         case .nothing:
             Text(L10n[.Properties.emptyNothing])
                 .font(.app(11)).foregroundStyle(.tertiary)
@@ -334,7 +344,7 @@ struct PropertyPanel: View {
             return Describable(key: "gone-\(node.id)", text: node.description, place: "node.description") { _ in }
         case .gone(.section(let section)):
             return Describable(key: "gone-\(section.id)", text: section.description, place: "section.description") { _ in }
-        case .ghost, .gone(.ghost), .nothing:
+        case .ghost, .gone(.ghost), .group, .nothing:
             return nil
         }
     }
@@ -516,6 +526,64 @@ struct PropertyLongText: View {
     }
 }
 
+/// What the section panel's type, figure and mark rows offer (`SectionProperties`): each a control where
+/// it may be changed, else said in words — a section directly under a root keeps the kind the project's
+/// tree gives it, and nothing is changed where the panel only reads.
+struct SectionPanelRows {
+    /// The kinds the type menu offers (the parent's kind's `sections` the section's own is among); nil
+    /// where its kind is said in words.
+    var types: [String]?
+    var typeText: String
+    /// What it is as an actor: the figure row, only on actors.
+    var figure: ActorFigure?
+    var figureEditable: Bool
+    /// Whether it has a mark row: not a working directory's section, whose mark is its kind's alone.
+    var hasMark: Bool
+    var markEditable: Bool
+    /// What it is drawn with, in a word, where it is said in words.
+    var markText: String
+    /// Whether "Use kind's mark" is offered: a mark of its own to take off.
+    var usesKindsMark: Bool
+    /// Whether its own mark names a symbol this Mac does not have (drawn as a folder).
+    var markMissing: Bool
+    /// What it takes for what it does not write of its own, and what that mark is called.
+    var kindsMark: SectionMark
+    var kindsMarkWord: String
+
+    static func of(_ section: ProjectSection, editable: Bool, in detail: ProjectDetail) -> SectionPanelRows {
+        let directory = detail.directory
+        let key = section.kind?.rawValue ?? section.kindName ?? ""
+        let workdir = key == WorkDirIds.workdirKind || key == WorkDirIds.directoryKind
+        let parent = section.parentId.flatMap { directory.section(id: $0) }
+        let underRoot = parent == nil || parent?.parentId == nil
+        var types: [String]?
+        if editable, !underRoot, !workdir, section.kind?.isFixed != true, let parent {
+            let listed = detail.sectionInside[parent.kind?.rawValue ?? parent.kindName ?? ""] ?? []
+            let offered = listed.filter { !$0.isEmpty && SectionKind(rawValue: $0)?.isFixed != true }
+            if offered.count > 1, offered.contains(key) { types = offered }
+        }
+        let figure = section.actorFigure
+        let own = section.icon
+        let missing = own?.icon.map { NSImage(systemSymbolName: $0, accessibilityDescription: nil) == nil } ?? false
+        return SectionPanelRows(
+            types: types, typeText: typeText(key, in: detail),
+            figure: figure, figureEditable: editable,
+            hasMark: !workdir, markEditable: editable && !workdir,
+            markText: own?.icon.map { KindsEditing.word(for: $0) ?? $0 } ?? L10n[.Kinds.markKindsShort],
+            usesKindsMark: editable && !workdir && own != nil,
+            markMissing: missing,
+            kindsMark: detail.kindMark(key, figure: figure),
+            kindsMarkWord: figure.map(KindsEditing.figureWord)
+                ?? SectionKind(rawValue: key)?.label ?? detail.sectionLabels[key] ?? key)
+    }
+
+    /// A kind as the type row says it: its heading and its name.
+    static func typeText(_ kind: String, in detail: ProjectDetail) -> String {
+        guard let known = SectionKind(rawValue: kind) else { return detail.sectionLabels[kind] ?? kind }
+        return L10n[.Properties.sectionTypeValue(known.label, known.rawValue)]
+    }
+}
+
 /// The section open, with nothing picked in it: its name, what it is, what it holds
 /// written out by default, its card ghosts.
 struct SectionProperties: View {
@@ -541,9 +609,58 @@ struct SectionProperties: View {
                     Text(path).font(.app(11, design: .monospaced)).textSelection(.enabled)
                         .lineLimit(1).truncationMode(.head).help(path)
                 }
+                let rows = SectionPanelRows.of(section, editable: editable, in: detail)
                 PropertyRow("type", help: section.kind?.help ?? "") {
-                    Text(section.kind.map { L10n[.Properties.sectionTypeValue($0.label, $0.rawValue)] } ?? section.kindName ?? "")
-                        .foregroundStyle(.secondary)
+                    if let types = rows.types {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Picker("", selection: Binding(
+                                get: { section.kind?.rawValue ?? section.kindName ?? "" },
+                                set: { model.setSectionType(section.id, to: $0) })) {
+                                ForEach(types, id: \.self) { kind in
+                                    Text(SectionPanelRows.typeText(kind, in: detail)).tag(kind)
+                                }
+                            }
+                            .labelsHidden().pickerStyle(.menu).fixedSize()
+                            Text(L10n[.Properties.sectionTypeNote]).font(.app(10.5)).foregroundStyle(.tertiary)
+                        }
+                    } else {
+                        Text(rows.typeText).foregroundStyle(.secondary)
+                    }
+                }
+                if let figure = rows.figure {
+                    PropertyRow("figure", help: L10n[.Properties.sectionFigureHelp]) {
+                        if rows.figureEditable {
+                            Picker("", selection: Binding(get: { figure }, set: { model.setSectionFigure(section.id, to: $0) })) {
+                                ForEach(ActorFigure.allCases, id: \.self) { Text($0.label).tag($0) }
+                            }
+                            .labelsHidden().pickerStyle(.segmented).fixedSize()
+                        } else {
+                            Text(figure.label).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                if rows.hasMark {
+                    PropertyRow("mark", help: L10n[.Properties.sectionMarkHelp]) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            if rows.markEditable {
+                                KindMarkPicker(mark: section.icon ?? SectionMark(), defaultMark: rows.kindsMark, label: "",
+                                               kindsMarkWord: rows.kindsMarkWord, editable: true) {
+                                    model.setSectionMark(section.id, to: $0)
+                                }
+                            } else {
+                                let shown = detail.mark(of: section)
+                                Label(rows.markText, systemImage: shown.symbol)
+                                    .foregroundStyle(.secondary)
+                            }
+                            if rows.markMissing {
+                                Text(L10n[.Properties.sectionMarkMissing]).font(.app(10.5)).foregroundStyle(.orange)
+                            }
+                            if rows.usesKindsMark {
+                                Button(L10n[.Properties.sectionUseKindsMark]) { model.setSectionMark(section.id, to: nil) }
+                                    .buttonStyle(.link).font(.app(11))
+                            }
+                        }
+                    }
                 }
                 PropertyRow("cardCount", help: L10n[.Properties.sectionCardCountHelp]) {
                     Text(L10n[.Properties.sectionCardCount(directory.members(section.id).count)]).foregroundStyle(.secondary)

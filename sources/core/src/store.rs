@@ -93,6 +93,26 @@ fn marked(conn: &Connection, mark: &str) -> Result<bool, String> {
     .map_err(sql)
 }
 
+/// The marks of the core's changes to the form (`core_…`) the store has and this core does not
+/// know (`schema::MARKS`): a newer core's.
+fn unknown_marks(conn: &Connection) -> Result<Vec<String>, String> {
+    if !table_exists(conn, "_migrations")? {
+        return Ok(Vec::new());
+    }
+    let mut stmt = conn
+        .prepare("SELECT name FROM _migrations WHERE name LIKE 'core\\_%' ESCAPE '\\'")
+        .map_err(sql)?;
+    let names = stmt
+        .query_map([], |r| r.get::<_, String>(0))
+        .map_err(sql)?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(sql)?;
+    Ok(names
+        .into_iter()
+        .filter(|name| !crate::schema::MARKS.contains(&name.as_str()))
+        .collect())
+}
+
 impl Store {
     /// A new, empty database of the core's form at `path` (where there is none yet).
     pub fn create(path: &Path) -> Result<(), String> {
@@ -127,6 +147,11 @@ impl Store {
         .map_err(|e| text!("store.error.open", e))?;
         if !marked(&conn, crate::schema::MARK)? {
             return Err(text!("store.error.notCoreForm"));
+        }
+        // A change to the form this core does not know was made by a newer core: what it moved,
+        // this one would read wrongly and write over.
+        if !unknown_marks(&conn)?.is_empty() {
+            return Err(text!("store.error.newer", path = path.display()));
         }
         for table in CORE_TABLES {
             // `projects` by its name of before `core_0014_projects` too: brought up below.
@@ -700,6 +725,27 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
         tx.execute(
             "INSERT INTO _migrations (name) VALUES (?1)",
             [crate::schema::CODE_MARKS],
+        )
+        .map_err(sql)?;
+    }
+    // A diagram's groups, rows of `places` (`schema::MAP_GROUPS`): the table made anew, its rows kept.
+    if !marked(&tx, crate::schema::MAP_GROUPS)? {
+        if !has_column(&tx, "places", "look")? {
+            tx.execute_batch(crate::schema::PLACES_NEW).map_err(sql)?;
+        }
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::MAP_GROUPS],
+        )
+        .map_err(sql)?;
+    }
+    // The built-in names of now (`schema::BUILTIN_NAMES`): after every move of before, which
+    // writes the names of before.
+    if !marked(&tx, crate::schema::BUILTIN_NAMES)? {
+        crate::name_move::move_all(&tx)?;
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::BUILTIN_NAMES],
         )
         .map_err(sql)?;
     }

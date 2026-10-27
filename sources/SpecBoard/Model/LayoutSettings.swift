@@ -108,9 +108,8 @@ nonisolated enum Grid {
     static let cardColumns = 10
     /// A card's row, in points (`CardGeometry.rowHeight`).
     static let unitHeight: Double = 27
-    /// A card's frame around its rows at its tallest, in points: border, header,
-    /// the list's padding, and the strips that say more rows are above and below
-    /// (both, while it is scrolled to the middle).
+    /// The frame of the project's whole card (a document's height when it has none of its own) around the
+    /// project's rows, in points: border, header, the list's padding and two rows more.
     static let frame: Double = 2 + 40 + 12 + 2 * 27
 
     /// Units down for a card `points` tall.
@@ -138,8 +137,8 @@ nonisolated enum Grid {
         GridPoint(x: units(x), y: units(y))
     }
 
-    // Positions given in points — an automatic layout's result, or an old form's —
-    // and the cells of the older way of putting cards on cells, read into grid units.
+    // Positions given in points — an old form's — and the cells of the older way of
+    // putting cards on cells, read into grid units.
 
     static func fromPoints(x: Double, y: Double, cardWidth: Double) -> GridPoint {
         nearest(x: x / unitWidth(cardWidth: cardWidth), y: y / unitHeight)

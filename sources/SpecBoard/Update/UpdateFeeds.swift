@@ -44,10 +44,16 @@ nonisolated enum UpdateFeeds {
                           url: url, repo: repo)
     }
 
+    /// The places added, as kept — each checked again as `make` checks what is typed: the
+    /// preferences are a file anything run as the person can write, and a place changed there to
+    /// `http`, or to carry a name and password, would take the token over the network in the clear.
+    /// One that does not pass is left out of the list.
     static func added(_ defaults: UserDefaults = .standard) -> [UpdateFeed] {
         guard let data = defaults.data(forKey: listKey),
               let feeds = try? JSONDecoder().decode([UpdateFeed].self, from: data) else { return [] }
-        return feeds.filter { !$0.isBuiltin }
+        return feeds.filter { !$0.isBuiltin }.compactMap { feed in
+            try? make(id: feed.id, name: feed.name, url: feed.url.absoluteString, repo: feed.repo)
+        }
     }
 
     static func save(_ feeds: [UpdateFeed], _ defaults: UserDefaults = .standard) {
@@ -67,7 +73,8 @@ nonisolated enum UpdateFeeds {
     }
 
     /// Checks what somebody typed. The URL must be https: a token for it would
-    /// otherwise travel in the clear.
+    /// otherwise travel in the clear. Nor may it carry a name or password: those would be kept in
+    /// the preferences as they are, and the token is what is sent.
     static func make(id: String = UUID().uuidString, name: String, url: String,
                      repo: String) throws -> UpdateFeed {
         let name = name.trimmingCharacters(in: .whitespaces)
@@ -76,6 +83,7 @@ nonisolated enum UpdateFeeds {
         while text.hasSuffix("/") { text.removeLast() }
         guard let parsed = URL(string: text), parsed.scheme?.lowercased() == "https",
               let host = parsed.host(), !host.isEmpty,
+              parsed.user == nil, parsed.password == nil,
               parsed.query == nil, parsed.fragment == nil else {
             throw UpdateInstaller.Failure(L10n.text(.Update.feedFormUrlShape, in: Language.current))
         }

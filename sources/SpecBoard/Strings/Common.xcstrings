@@ -361,6 +361,114 @@
         }
       }
     },
+    "error.hostUnreachable" : {
+      "comment" : "A network error said in the screen's language: the server cannot be reached. The argument is its host name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot reach %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ につながりません"
+          }
+        }
+      }
+    },
+    "error.network" : {
+      "comment" : "Any other network error said in the screen's language. The argument is the system's code for it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network error (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通信のエラー（%@）"
+          }
+        }
+      }
+    },
+    "error.offline" : {
+      "comment" : "A network error said in the screen's language: the Mac is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected to the internet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インターネットにつながっていません"
+          }
+        }
+      }
+    },
+    "error.secure" : {
+      "comment" : "A network error said in the screen's language: no secure connection could be made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot make a secure connection"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安全な接続を作れません"
+          }
+        }
+      }
+    },
+    "error.system" : {
+      "comment" : "An error of the system (files, processes) said in the screen's language. The argument is the system's code for it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System error (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムのエラー（%@）"
+          }
+        }
+      }
+    },
+    "error.timedOut" : {
+      "comment" : "A network error said in the screen's language: no answer in time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection timed out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "応答がないまま時間切れになりました"
+          }
+        }
+      }
+    },
     "problem.coreUnreadable" : {
       "comment" : "An error when the core's answer can't be decoded.",
       "extractionState" : "manual",
@@ -447,24 +555,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "エージェント"
-          }
-        }
-      }
-    },
-    "word.caller" : {
-      "comment" : "Who called a flow, drawn or listed as its partner.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caller"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "呼んだ側"
           }
         }
       }

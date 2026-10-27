@@ -437,6 +437,11 @@ impl Tx<'_> {
         // A designating line lands inside the card it reaches: one a
         // file of before keeps landing in another card, split in two.
         crate::line_move::split_project(self.conn(), &project_id)?;
+        // Before 33, the built-in kinds of line, an enum's value key and a goal's values went by
+        // the names of before: after every move of before, which writes those names.
+        if version < 33 {
+            crate::name_move::move_project(self.conn(), &project_id)?;
+        }
         // Each said by its card, and its tree when that is not main.
         let problems: Vec<String> = crate::line_move::problems(self.conn(), Some(&project_id))?
             .into_iter()
@@ -743,7 +748,7 @@ impl Tx<'_> {
         for place in list(body.get("places")).iter().filter_map(Value::as_object) {
             let n = |key: &str| place.get(key).and_then(Value::as_i64);
             conn.execute(
-                "INSERT OR REPLACE INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned, look) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 params![
                     project_id,
                     text(place, "branch_id"),
@@ -754,7 +759,11 @@ impl Tx<'_> {
                     n("y"),
                     n("w"),
                     n("h"),
-                    (n("pinned").unwrap_or(0) != 0) as i64
+                    (n("pinned").unwrap_or(0) != 0) as i64,
+                    place
+                        .get("look")
+                        .filter(|l| l.is_object())
+                        .map(Value::to_string)
                 ],
             )
             .map_err(db)?;

@@ -66,7 +66,7 @@ fn the_builtin_kinds_read() {
     // the stacked document `stackdoc`; 9 since the data card `instance` and its
     // section; and up by one with each
     // change since (builtin.json's history says which).
-    assert_eq!(kinds.version, 18);
+    assert_eq!(kinds.version, 23);
     let placeable: Vec<&str> = kinds.placeable().map(|k| k.name.as_str()).collect();
     assert_eq!(
         placeable,
@@ -174,6 +174,7 @@ fn the_builtin_sections_and_lines_read() {
             "schema",
             "definition",
             "chart",
+            "actor",
             "free",
             "goals",
             "complete",
@@ -193,6 +194,10 @@ fn the_builtin_sections_and_lines_read() {
     let trees = |kind: &str| -> Vec<Tree> { defs.section(kind).unwrap().trees.clone() };
     assert_eq!(trees("document"), [Tree::Main]);
     assert_eq!(trees("chart"), [Tree::Main]);
+    // An actor sits only inside a chart or another actor, which list each other.
+    assert_eq!(trees("actor"), []);
+    assert_eq!(defs.section("chart").unwrap().sections, ["chart", "actor"]);
+    assert_eq!(defs.section("actor").unwrap().sections, ["actor", "chart"]);
     assert_eq!(trees("free"), [Tree::Main, Tree::Board]);
     assert_eq!(trees("goals"), [Tree::Board]);
     // Where the card actions move cards: only inside a goals section, never directly under a root.
@@ -253,20 +258,20 @@ fn the_builtin_sections_and_lines_read() {
             "points",
             "link",
             "holds",
-            "of",
-            "notes",
+            "shapeOf",
+            "rules",
             "implementedBy",
             "mentions",
             "next",
-            "branch",
+            "condition",
             "else",
             "onError",
             "onTimeout",
             "runs",
-            "event",
+            "awaits",
             "reads",
             "writes",
-            "peer",
+            "partner",
             "key"
         ]
     );
@@ -277,7 +282,7 @@ fn the_builtin_sections_and_lines_read() {
     assert!(next.siblings && next.leaves("begin", &head) && !next.leaves("end", &head));
     assert_eq!(next.owner, ["flow"]);
     assert_eq!(defs.line("else").unwrap().max, Some(1));
-    assert!(defs.line("branch").unwrap().field("when").is_some());
+    assert!(defs.line("condition").unwrap().field("when").is_some());
     let reads = defs.line("reads").unwrap();
     assert!(reads.leaves("process", &step) && !reads.leaves("process", &head));
     assert!(!reads.siblings);
@@ -301,7 +306,7 @@ fn the_builtin_sections_and_lines_read() {
     );
     assert_eq!(link.to.said(), "どのカードの頭・欄・行");
     assert_eq!(
-        defs.line("notes").unwrap().to.said(),
+        defs.line("rules").unwrap().to.said(),
         "note・freedoc・formatdocの頭・行"
     );
     assert_eq!(defs.line("embed").unwrap().max, Some(1));
@@ -718,11 +723,16 @@ fn a_kind_takes_its_parents_fields_and_rows_first() {
     let base = ["label", "description", "tags", "metadata"];
     // A signature's keys are lines now (`connections`), not a shape's field.
     let shape = ["rules", "absentFields", "discriminator"];
-    assert_eq!(names("entity"), [&base[..], &shape[..]].concat());
+    // How data of a record's shape is drawn as a list.
+    let record = ["face"];
+    assert_eq!(
+        names("entity"),
+        [&base[..], &shape[..], &record[..]].concat()
+    );
     // How a value or an enum is drawn on its own section's diagram is how it looks.
     assert_eq!(
         names("value"),
-        [&base[..], &shape[..], &["standalone"][..]].concat()
+        [&base[..], &shape[..], &record[..], &["standalone"][..]].concat()
     );
     assert!(
         kinds
@@ -732,9 +742,10 @@ fn a_kind_takes_its_parents_fields_and_rows_first() {
             .unwrap()
             .look
     );
+    // An enum is a shape's in name only: rules, absent fields and a discriminator are not its.
     assert_eq!(
         names("enum"),
-        [&base[..], &shape[..], &["open", "standalone"][..]].concat()
+        [&base[..], &["open", "standalone"][..]].concat()
     );
     // A card ghost holds what it points at, by id, and nothing of a card's own.
     assert_eq!(names("ghost"), ["target"]);
@@ -926,7 +937,7 @@ fn a_card_of_every_kind_holds() {
         card(
             "enum",
             json!({ "open": true }),
-            json!({ "values": [{ "id": "v1", "fields": { "value": "a", "label": "A" } }, { "id": "v2", "fields": { "value": "b" } }] }),
+            json!({ "values": [{ "id": "v1", "fields": { "name": "a", "label": "A" } }, { "id": "v2", "fields": { "name": "b" } }] }),
         ),
         card("store", json!({}), json!({})),
         flow(),
@@ -940,7 +951,7 @@ fn a_card_of_every_kind_holds() {
         card("note", json!({ "body": "メモ [[Data:Order]]" }), json!({})),
         card(
             "goal",
-            json!({ "status": "進行中", "priority": "高", "due": "2026-10-31", "workBranch": "rust", "MR": 3, "body": "完成系" }),
+            json!({ "status": "inProgress", "priority": "high", "due": "2026-10-31", "workBranch": "rust", "MR": 3, "body": "完成系" }),
             json!({}),
         ),
         card(
@@ -994,7 +1005,7 @@ fn fields_hold_what_they_say() {
     );
     says(
         &doc,
-        "status: \"途中\" は選べません（未着手・進行中・完了・打ち切り）",
+        "status: \"途中\" は選べません（notStarted・inProgress・done・cancelled）",
     );
     says(&doc, "due: 日付（YYYY-MM-DD）です");
     says(&doc, "MR: MR の番号（1 以上の整数）です");
@@ -1132,7 +1143,7 @@ fn rows_beside_one_another_differ() {
     let doc = card(
         "enum",
         json!({}),
-        json!({ "values": [{ "id": "a", "fields": { "value": "x" } }, { "id": "a", "fields": { "value": "x" } }] }),
+        json!({ "values": [{ "id": "a", "fields": { "name": "x" } }, { "id": "a", "fields": { "name": "x" } }] }),
     );
     says(&doc, "values: 値「x」が重なっています");
     says(&doc, "values.x: 行の id「a」が重なっています");
@@ -1272,7 +1283,38 @@ fn the_wire_sets_aside_how_a_card_looks_and_refuses_what_it_cannot_hold() {
     }
 }
 
+/// The board's sections are told apart in the nav panel: the ones finished and cancelled are marked
+/// unlike Goals and unlike each other.
+#[test]
+fn the_boards_sections_are_marked_apart() {
+    let icon = |name: &str| {
+        builtin_written("sections")
+            .iter()
+            .find(|s| s["section"] == name)
+            .map(|s| s["icon"].clone())
+            .unwrap_or_else(|| panic!("{name}"))
+    };
+    let (goals, complete, cancelled) = (icon("goals"), icon("complete"), icon("cancelled"));
+    assert_ne!(complete["name"], goals["name"]);
+    assert_ne!(cancelled["name"], goals["name"]);
+    assert_ne!(cancelled["name"], complete["name"]);
+    assert_ne!(cancelled["color"], complete["color"]);
+}
+
 // MARK: - Lines
+
+/// Lines that may meet on one map are told apart by how they are drawn: no two built-in kinds share
+/// a colour, a dash and both ends.
+#[test]
+fn lines_that_meet_on_a_map_look_apart() {
+    let defs = builtin_defs();
+    let lines: Vec<&LineDef> = defs.lines.iter().collect();
+    for (i, a) in lines.iter().enumerate() {
+        for b in &lines[i + 1..] {
+            assert_ne!(a.look, b.look, "{} と {} が同じ見た目", a.name, b.name);
+        }
+    }
+}
 
 #[test]
 fn a_cards_lines_hold_what_their_kind_says() {
@@ -1294,7 +1336,7 @@ fn a_cards_lines_hold_what_their_kind_says() {
     for wanted in [
         "connections[0].fields.cardinality: \"many\" は選べません（1:1・1:N・N:1・N:N）",
         "connections[1]: 線の id「a」が重なっています",
-        "connections[1]: 「sideways」という線の種類はありません（あるのは embed・points・link・holds・notes・implementedBy・next・branch・else・onError・onTimeout・runs・event・reads・writes・peer・key）",
+        "connections[1]: 「sideways」という線の種類はありません（あるのは embed・points・link・holds・rules・implementedBy・next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）",
         "connections[2]: 線の id がありません",
         "connections[2]: to（相手のカード）がありません",
         "connections[3]: mentions（言及）は本文の [[ ]] から拾う線なので、connections には書きません",
@@ -1527,7 +1569,7 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
         let section = builtin_defs().section_label("schema");
         let line = defs::builtin_written("lines")
             .iter()
-            .find(|l| l["line"] == "peer")
+            .find(|l| l["line"] == "partner")
             .unwrap()["label"]
             .clone();
         let purpose = builtin_definition("flow").unwrap()["context"]["purpose"].clone();
@@ -1570,16 +1612,19 @@ fn a_choice_is_shown_in_the_language_and_keeps_the_values_cards_keep() {
         (field.options.clone(), field.default.clone(), written)
     };
     let (options, default, written) = status("ja");
-    assert_eq!(options, ["未着手", "進行中", "完了", "打ち切り"]);
-    assert_eq!(default, Some(json!("未着手")));
-    assert!(written.get("optionLabels").is_none(), "{written}");
-    let (options, default, written) = status("en");
-    assert_eq!(options, ["未着手", "進行中", "完了", "打ち切り"]);
-    assert_eq!(default, Some(json!("未着手")));
-    assert_eq!(written["done"], json!(["完了"]));
+    assert_eq!(options, ["notStarted", "inProgress", "done", "cancelled"]);
+    assert_eq!(default, Some(json!("notStarted")));
     assert_eq!(
         written["optionLabels"],
-        json!({"未着手": "Not started", "進行中": "In progress", "完了": "Done", "打ち切り": "Cancelled"})
+        json!({"notStarted": "未着手", "inProgress": "進行中", "done": "完了", "cancelled": "打ち切り"})
+    );
+    let (options, default, written) = status("en");
+    assert_eq!(options, ["notStarted", "inProgress", "done", "cancelled"]);
+    assert_eq!(default, Some(json!("notStarted")));
+    assert_eq!(written["done"], json!(["done"]));
+    assert_eq!(
+        written["optionLabels"],
+        json!({"notStarted": "Not started", "inProgress": "In progress", "done": "Done", "cancelled": "Cancelled"})
     );
 }
 

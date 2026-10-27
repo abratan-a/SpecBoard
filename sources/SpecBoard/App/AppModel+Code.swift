@@ -74,7 +74,7 @@ extension AppModel {
             for id in asked where outlineStore[id] == nil { outlineStore[id] = FileOutline(id: id) }
         case .failure(let error):
             for id in asked where outlineStore[id] == nil {
-                outlineStore[id] = FileOutline(id: id, problem: error.localizedDescription)
+                outlineStore[id] = FileOutline(id: id, problem: ErrorText.said(error))
             }
         }
         outlineStale.subtract(asked)
@@ -106,7 +106,7 @@ extension AppModel {
             let answer = try core.request("file_text", fields)
             return FileText(answer as? [String: Any] ?? [:])
         } catch {
-            return FileText(problem: error.localizedDescription)
+            return FileText(problem: ErrorText.said(error))
         }
     }
 

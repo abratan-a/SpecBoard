@@ -61,7 +61,7 @@ enum FlowCardMap {
         let index = ways.firstIndex { $0.id == relation.connection } ?? 0
         switch relation.line {
         case Line.next: return "#next.\(index)"
-        case Line.branch: return "#b.\(index)"
+        case Line.condition: return "#b.\(index)"
         case Line.otherwise: return "#else"
         case Line.onError: return "#err"
         case Line.onTimeout: return "#timeout"
@@ -78,9 +78,9 @@ enum FlowCardMap {
                                step: StepRow(label: label, text: text, detail: detail)))
         }
         func ways() {
-            if node.nexts.isEmpty { row("#next", "next", "—") }
+            if node.nexts.isEmpty { row("#next", BuiltinWords.line(Line.next), "—") }
             for (index, next) in node.nexts.enumerated() {
-                row("#next.\(index)", "next", "→ \(next)", node.nexts.count > 1 ? L10n[.Diagram.flowBranches] : nil)
+                row("#next.\(index)", BuiltinWords.line(Line.next), "→ \(next)", node.nexts.count > 1 ? L10n[.Diagram.flowBranches] : nil)
             }
         }
         switch node.kind {
@@ -109,14 +109,14 @@ enum FlowCardMap {
                     + (node.returns.isEmpty ? "" : " ⇠ \(node.returns.joined(separator: ", "))"))
             }
             ways()
-            if let onError = node.onError { row("#err", "onError", "→ \(onError)") }
+            if let onError = node.onError { row("#err", BuiltinWords.line(Line.onError), "→ \(onError)") }
         case "eval":
             if let value = node.value { row("#k", "value", value) }
             if node.branches.isEmpty { row("#b", "when", "—") }
             for (index, branch) in node.branches.enumerated() {
                 row("#b.\(index)", "when", NoteText.transform(branch.when) { $0.shown ?? $0.path }, "→ \(branch.next)")
             }
-            row("#else", "else", node.otherwise.map { "→ \($0)" } ?? "—")
+            row("#else", BuiltinWords.line(Line.otherwise), node.otherwise.map { "→ \($0)" } ?? "—")
         case "wait":
             let what = node.waitFor == "event" ? L10n[.Diagram.flowEventOutcome(node.event?.outcome ?? "", node.event?.flow ?? "")]
                 : node.waitFor ?? "—"

@@ -781,6 +781,146 @@ fn a_body_changed_in_part_is_answered_with_where_it_changed() {
     assert_eq!(read["body"], "頭\n行1");
 }
 
+/// A table of `rows` rows of three columns, each cell long enough that the whole table is far more
+/// than a change to one of its cells.
+fn big_table(core: &Core, rows: usize) -> usize {
+    let cells: Vec<Value> = (0..rows)
+        .map(|i| {
+            json!([
+                format!("op{i}"),
+                format!("引数{i}"),
+                format!("答え{i}の長い説明。{}", "あ".repeat(120))
+            ])
+        })
+        .collect();
+    mcp(
+        core,
+        "card_create",
+        json!({"project": SAMPLE, "target": "Docs:Api", "value": {"kind": "formatdoc", "rows": [
+            {"name": "ops", "kind": "table", "columns": ["op", "引数", "答え"], "cells": cells},
+        ]}}),
+    );
+    mcp_text(
+        core,
+        "card_read",
+        json!({"project": SAMPLE, "target": "Docs:Api.ops"}),
+    )
+    .chars()
+    .count()
+}
+
+/// A table's cells changed in part are answered with the rows that changed and the rows beside
+/// them, numbered as `set`, `add` and `remove` number them; written whole they are answered as
+/// before. What the next write is held to (`rev`) stays.
+#[test]
+fn a_tables_cells_changed_in_part_are_answered_with_the_rows_that_changed() {
+    let core = sample();
+    let whole_size = big_table(&core, 200);
+    let target = "Docs:Api.ops";
+    let ask =
+        |cells: Value| json!({"project": SAMPLE, "target": target, "value": {"cells": cells}});
+    // One cell.
+    let one = mcp(
+        &core,
+        "card_update",
+        ask(json!({"set": [{"row": {"op": "op100"}, "col": "引数", "value": "直した"}]})),
+    );
+    assert_eq!(one["path"], target);
+    assert_eq!(one["columns"], json!(["op", "引数", "答え"]));
+    let changed = &one["cells"];
+    assert_eq!(changed["rowCount"], 200);
+    let places = changed["changed"].as_array().unwrap();
+    assert_eq!(places.len(), 1, "{one}");
+    assert_eq!(places[0]["row"], 100);
+    assert!(places[0].get("to").is_none(), "{one}");
+    assert_eq!(places[0]["rows"][0][0], "op100");
+    assert_eq!(places[0]["rows"][0][1], "直した");
+    assert_eq!(places[0]["before"][0][0], "op99");
+    assert_eq!(places[0]["after"][0][0], "op101");
+    assert_eq!(places[0]["before"].as_array().unwrap().len(), 1);
+    let size = one.to_string().chars().count();
+    assert!(size * 20 < whole_size, "{size} / {whole_size}");
+    // Held to the card as it is now: the rev it answers is the one the next write is given.
+    let rev = one["rev"].as_str().unwrap().to_string();
+    let read = mcp(
+        &core,
+        "card_read",
+        json!({"project": SAMPLE, "target": target}),
+    );
+    assert_eq!(read["rev"], rev.as_str());
+    assert_eq!(read["cells"][100][1], "直した");
+    // Rows added (after one, at the end) and one taken away.
+    let added = mcp(
+        &core,
+        "card_update",
+        ask(json!({
+            "add": [
+                {"cells": ["new", "足した", "行"], "after": {"op": "op10"}},
+                {"cells": ["tail", "尾", "行"]}
+            ],
+            "remove": [{"row": {"op": "op50"}}]
+        })),
+    );
+    assert_eq!(added["cells"]["rowCount"], 201);
+    let places = added["cells"]["changed"].as_array().unwrap();
+    let rows: Vec<(u64, Value)> = places
+        .iter()
+        .map(|p| (p["row"].as_u64().unwrap(), p.clone()))
+        .collect();
+    assert_eq!(
+        rows.iter().map(|r| r.0).collect::<Vec<_>>(),
+        [11, 51, 200],
+        "{added}"
+    );
+    assert_eq!(places[0]["rows"][0][0], "new");
+    assert_eq!(places[0]["before"][0][0], "op10");
+    assert_eq!(places[0]["after"][0][0], "op11");
+    assert_eq!(places[1]["removed"], 1);
+    assert!(places[1].get("rows").is_none(), "{added}");
+    assert_eq!(places[1]["before"][0][0], "op49");
+    assert_eq!(places[1]["after"][0][0], "op51");
+    assert_eq!(places[2]["rows"][0][0], "tail");
+    assert!(places[2].get("after").is_none(), "{added}");
+    assert!(
+        added.to_string().chars().count() * 10 < whole_size,
+        "{added}"
+    );
+    // Many rows put in at once: the first and the last of them, the rest counted.
+    let many: Vec<Value> = (0..12).map(|i| json!([format!("m{i}"), "", ""])).collect();
+    let flood = mcp(
+        &core,
+        "card_update",
+        ask(
+            json!({"add": many.iter().map(|c| json!({"cells": c, "before": {"op": "op0"}})).collect::<Vec<_>>()}),
+        ),
+    );
+    let place = &flood["cells"]["changed"][0];
+    assert_eq!(place["row"], 0);
+    assert_eq!(place["to"], 11);
+    assert_eq!(place["omitted"], 6);
+    assert_eq!(place["rows"].as_array().unwrap().len(), 6);
+    assert_eq!(place["after"][0][0], "op0");
+    // Written whole, the rows come back as before.
+    let whole = mcp(&core, "card_update", ask(json!([["only", "一つ", "行"]])));
+    assert_eq!(whole["cells"], json!([["only", "一つ", "行"]]));
+    assert!(whole.get("rowCount").is_none(), "{whole}");
+}
+
+/// The window reads the rows whole, as it reads a body whole: it keeps them to draw.
+#[test]
+fn the_window_is_answered_a_changed_table_with_all_its_rows() {
+    let core = sample();
+    big_table(&core, 30);
+    let said = screen(
+        &core,
+        "card_update",
+        json!({"project": SAMPLE, "target": "Docs:Api.ops", "value": {"cells": {"set": [
+            {"row": {"op": "op3"}, "col": "引数", "value": "直した"}]}}}),
+    );
+    assert_eq!(said["cells"].as_array().unwrap().len(), 30, "{said}");
+    assert_eq!(said["cells"][3][1], "直した");
+}
+
 /// What a card list gives of a card when `include` names nothing: what the card holds itself.
 fn bare_of_the_rest(card: &Value) {
     for key in [
@@ -936,4 +1076,54 @@ fn a_card_list_gathers_the_sections_under_its_section_when_asked() {
         assert!(failed, "{text}");
         assert!(text.contains("recursive") && text.contains(said), "{text}");
     }
+}
+
+#[test]
+fn answers_leave_out_what_says_nothing() {
+    let core = sample();
+    let stores = mcp(
+        &core,
+        "card_list",
+        json!({"project": SAMPLE, "value": {"kind": "store"}}),
+    );
+    let store = stores["cards"][0]["path"].as_str().unwrap().to_string();
+    let section = store.split(':').next().unwrap().to_string();
+    let bare = format!("{section}:Bare");
+    mcp(
+        &core,
+        "card_create",
+        json!({"project": SAMPLE, "target": bare, "value": {"kind": "entity"}}),
+    );
+    mcp(
+        &core,
+        "card_create",
+        json!({"project": SAMPLE, "branch": "_project_board_", "target": "Goals:Empty", "value": {"kind": "goal"}}),
+    );
+    let list = mcp(
+        &core,
+        "card_list",
+        json!({"project": SAMPLE, "value": {"section": section}}),
+    );
+    assert_eq!(list["project"], SAMPLE, "{list}");
+    for card in list["cards"].as_array().unwrap() {
+        assert!(card.get("project").is_none(), "1 枚ずつに project: {card}");
+        if card["path"] == store.as_str() || card["path"] == bare.as_str() {
+            assert!(card.get("fields").is_none(), "空の fields: {card}");
+        }
+    }
+    let read = mcp(
+        &core,
+        "card_read",
+        json!({"project": SAMPLE, "target": store}),
+    );
+    assert!(read.get("fields").is_none(), "{read}");
+    let goal = mcp(
+        &core,
+        "card_read",
+        json!({"project": SAMPLE, "branch": "_project_board_", "target": "Goals:Empty"}),
+    );
+    assert!(
+        goal.get("cards").is_none() && goal.get("progress").is_none(),
+        "{goal}"
+    );
 }

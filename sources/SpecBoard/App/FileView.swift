@@ -47,7 +47,7 @@ struct FileView: View {
                     Text(CodeLanguages.name(language)).font(.app(10.5)).foregroundStyle(.secondary)
                 }
                 if let size = read.size {
-                    Text(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))
+                    Text(Int64(size).formatted(.byteCount(style: .file).locale(Language.shared.locale)))
                         .font(.app(10.5)).foregroundStyle(.tertiary)
                 }
                 if read.cut {

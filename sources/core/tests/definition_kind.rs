@@ -130,7 +130,7 @@ fn file_of_before(core: &Core, project: &str, own: Option<Value>) -> Value {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 28);
+    assert_eq!(file["version"], 33);
     file["version"] = 22.into();
     match own {
         // A project's own kind of the name: its sections are of it.
@@ -267,7 +267,7 @@ fn a_project_file_of_before_reads_its_instances_sections_as_definition_sections(
         .as_str()
         .unwrap()
         .to_string();
-    assert!(again.contains("\"version\": 28"), "{again}");
+    assert!(again.contains("\"version\": 33"), "{again}");
     assert!(!again.contains("\"instances\""));
 }
 

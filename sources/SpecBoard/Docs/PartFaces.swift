@@ -149,7 +149,7 @@ final class PartFaces {
             // One of an older reading, in after a newer was asked: kept only while there is nothing.
             if latest || kept[place] == nil { kept[place] = Kept(stamp: stamp, faces: faces) }
         case .failure(let error):
-            problems[place.section] = error.localizedDescription
+            problems[place.section] = ErrorText.said(error)
             // Nothing to show for this reading: what was kept before stays, as the reading's own.
             if latest { kept[place] = Kept(stamp: stamp, faces: kept[place]?.faces ?? [:]) }
         }

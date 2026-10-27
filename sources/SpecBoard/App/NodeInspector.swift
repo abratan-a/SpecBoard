@@ -32,7 +32,7 @@ struct NodeInspector: View {
             row("name", help: L10n[.Nodes.helpNodeName]) {
                 CommitField(L10n[.Common.wordName], text: node.name, monospaced: true) { name in
                     guard let renamed = try? FlowEditing.rename(node.name, to: name, in: flow.nodes) else {
-                        model.lastError = L10n[.Nodes.errorBadNodeName]
+                        model.tell(error: { L10n.text(.Nodes.errorBadNodeName, in: $0) })
                         return
                     }
                     model.setFlowNodes(flow.id, renamed, renamed: (node.name, name))
@@ -67,15 +67,7 @@ struct NodeInspector: View {
         case "begin":
             row("trigger", help: L10n[.Nodes.helpTrigger]) {
                 choice(node.trigger, FlowNode.Vocabulary.triggers, words: NodeInspector.triggerWords) { value in
-                    change { node, _ in
-                        node.trigger = value
-                        if value != "event" { node.event = nil }
-                        if value != "schedule" { node.every = nil }
-                        if value != "receive" {
-                            node.peers = []; node.program = nil; node.carries = []
-                            node.via = nil; node.initiator = nil; node.verifyWith = nil
-                        }
-                    }("")
+                    change { node, _ in node.setTrigger(value) }("")
                 }
             }
             if node.trigger == "receive" { receiveRows }
@@ -181,13 +173,29 @@ struct NodeInspector: View {
     /// What a begin that receives receives, and from whom.
     @ViewBuilder
     private var receiveRows: some View {
-        row("peer", help: StepEditor.help("peer", L10n[.Nodes.helpPeerReceive])) {
-            PathList(model: model, owner: flow, paths: node.peers, editable: editable, kinds: [.flow],
-                     each: L10n[.Nodes.wordPartnerFlow], adding: L10n[.Nodes.placeholderAddPartnerCaller]) { list in change { $0.peers = list }("") }
+        row(Line.partner, help: StepEditor.help(Line.partner, L10n[.Nodes.helpPeerReceive])) {
+            PathList(model: model, owner: flow, paths: node.peers, editable: editable && !node.anyCaller, kinds: [.flow],
+                     each: L10n[.Nodes.wordPartnerFlow], adding: L10n[.Nodes.placeholderAddPartner]) { list in change { $0.peers = list }("") }
+                .opacity(node.anyCaller ? 0.45 : 1)
+            // Anyone takes the place of the partners named: checking it lets them go.
+            Toggle(isOn: Binding(get: { node.anyCaller }, set: { on in change { $0.setAnyone(on) }("") })) {
+                HStack(spacing: 6) {
+                    Text(L10n[.Nodes.toggleAnyone]).font(.app(11.5))
+                    Text(L10n[.Nodes.helpAnyone]).font(.app(10.5)).foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(.checkbox)
+            .disabled(!editable)
+            if node.namesNoPartner {
+                Text(L10n[.Nodes.helpPartnerNotWritten]).font(.app(10.5)).foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         row("program", help: StepEditor.help("program", L10n[.Nodes.wordOutsideTool])) {
             CommitField(L10n[.Nodes.placeholderProgramBegin], text: node.program ?? "") { change { $0.program = $1.isEmpty ? nil : $1 }($0) }
                 .id("\(flow.id)|\(node.name)|program")
+                .disabled(node.anyCaller)
+                .opacity(node.anyCaller ? 0.45 : 1)
         }
         row("carries", help: StepEditor.help("carries", L10n[.Nodes.wordReceives])) {
             PathList(model: model, owner: flow, paths: node.carries, editable: editable) { list in change { $0.carries = list }("") }
@@ -249,9 +257,9 @@ struct NodeInspector: View {
                     change { $0.reply?.carries = list }("")
                 }
             }
-            row("peer", help: StepEditor.help("peer", L10n[.Nodes.helpPeerReturn])) {
+            row(Line.partner, help: StepEditor.help(Line.partner, L10n[.Nodes.helpPeerReturn])) {
                 PathList(model: model, owner: flow, paths: reply.peers, editable: editable, kinds: [.flow],
-                         each: L10n[.Nodes.wordPartnerFlow], adding: L10n[.Nodes.placeholderAddPartnerCaller]) { list in
+                         each: L10n[.Nodes.wordPartnerFlow], adding: L10n[.Nodes.placeholderAddPartner]) { list in
                     change { $0.reply?.peers = list }("")
                 }
             }

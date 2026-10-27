@@ -10,10 +10,9 @@
     "reads",
     "writes",
     "next",
-    "mentions",
     "run"
   ],
   "section": "Schemas",
   "fields": false,
-  "rev": "e1d47e69bb23"
+  "rev": "85c71f1a2c4c"
 }

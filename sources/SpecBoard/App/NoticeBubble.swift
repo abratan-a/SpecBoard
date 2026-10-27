@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// What the header's bubble tells: an error, a notice, an AI's merges into a locked main — the notices
-/// that only tell. Each is shown or not as this Mac's settings say (`NoticeSettings`), and goes by
+/// What the header's bubble tells: an error, a notice, an AI's merges into a locked main, a new version —
+/// the notices that only tell. Each is shown or not as this Mac's settings say (`NoticeSettings`), and goes by
 /// itself after the time set. What they said stays in the bell's list (`NoticeLog`). The bars that hold
 /// a state or wait for an answer are not these: they stay while what they say is so.
 enum NoticeBubble {
@@ -15,6 +15,8 @@ enum NoticeBubble {
         let project: String?
         /// Its place in the order told (`NoticeLog.Entry.id`): the newest is shown first.
         let told: Int
+        /// The release tag of a new version the notice offers to download.
+        var update: String? = nil
     }
 
     /// Narrower than this the bubble says too little to be worth the header's room; the bell's badge
@@ -32,19 +34,22 @@ enum NoticeBubble {
         free >= leastWidth ? min(free, mostWidth) : nil
     }
 
-    /// What is waiting to be told, newest first: the error, the notice and each project's AI merges,
-    /// leaving out the kinds this Mac keeps in the bell's list only.
+    /// What is waiting to be told, newest first: the error, the notice, each project's AI merges and the
+    /// new version, leaving out the kinds this Mac keeps in the bell's list only.
     @MainActor
     static func pending(in model: AppModel, shown: (NoticeLog.Kind) -> NoticeSettings.Shown) -> [Item] {
         let entries = model.noticeLog.entries
         var items: [Item] = []
+        let code = Language.shared.code
         if let text = model.lastError, shown(.error) == .bubble {
-            items.append(Item(kind: .error, id: "error|\(text)", text: text, project: nil,
-                              told: entries.first { $0.kind == .error && $0.text == text }?.id ?? 0))
+            let entry = entries.first { $0.kind == .error && $0.text == text }
+            items.append(Item(kind: .error, id: "error|\(text)", text: entry?.text(in: code) ?? text, project: nil,
+                              told: entry?.id ?? 0))
         }
         if let text = model.notice, shown(.notice) == .bubble {
-            items.append(Item(kind: .notice, id: "notice|\(text)", text: text, project: nil,
-                              told: entries.first { $0.kind == .notice && $0.text == text }?.id ?? 0))
+            let entry = entries.first { $0.kind == .notice && $0.text == text }
+            items.append(Item(kind: .notice, id: "notice|\(text)", text: entry?.text(in: code) ?? text, project: nil,
+                              told: entry?.id ?? 0))
         }
         if shown(.aiMerge) == .bubble {
             for told in model.aiMergesByProject {
@@ -52,6 +57,11 @@ enum NoticeBubble {
                                   text: model.aiMergeWords(told.merges), project: told.project,
                                   told: entries.first { $0.kind == .aiMerge && $0.project == told.project }?.id ?? 0))
             }
+        }
+        if let told = model.updateNotice, shown(.update) == .bubble {
+            let entry = entries.first { $0.id == told.told }
+            items.append(Item(kind: .update, id: "update|\(told.told)", text: entry?.text(in: code) ?? told.text,
+                              project: nil, told: told.told, update: told.download))
         }
         // Notices told before the log was cleared have no place in it; they keep the order they were
         // gathered in.
@@ -65,9 +75,10 @@ extension AppModel {
     /// A notice told and let go, as the bubble's close and its stay do.
     func closeNotice(_ item: NoticeBubble.Item) {
         switch item.kind {
-        case .error: if lastError == item.text { lastError = nil }
-        case .notice: if notice == item.text { notice = nil }
+        case .error: if let lastError, item.id == "error|\(lastError)" { self.lastError = nil }
+        case .notice: if let notice, item.id == "notice|\(notice)" { self.notice = nil }
         case .aiMerge: if let project = item.project { dismissAIMerges(of: project) }
+        case .update: if let told = updateNotice, item.id == "update|\(told.told)" { updateNotice = nil }
         }
     }
 }
@@ -86,6 +97,7 @@ struct NoticeBubbleSlot: View {
     @AppStorage(NoticeSettings.shownKey(.error)) private var errorShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.shownKey(.notice)) private var noticeShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.shownKey(.aiMerge)) private var aiMergeShown = NoticeSettings.standardShown.rawValue
+    @AppStorage(NoticeSettings.shownKey(.update)) private var updateShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.stayKey) private var stayChosen = NoticeSettings.standardStay.rawValue
 
     private var stay: NoticeSettings.Stay { NoticeSettings.stay(stored: stayChosen) }
@@ -95,6 +107,7 @@ struct NoticeBubbleSlot: View {
         case .error: NoticeSettings.shown(stored: errorShown)
         case .notice: NoticeSettings.shown(stored: noticeShown)
         case .aiMerge: NoticeSettings.shown(stored: aiMergeShown)
+        case .update: NoticeSettings.shown(stored: updateShown)
         }
     }
 
@@ -115,11 +128,12 @@ struct NoticeBubbleSlot: View {
 }
 
 /// The bubble itself: the kind's mark, the words on one line (the end cut with … when it does not fit), and at the right the ways to close
-/// it (and an AI merge's way to its history) with how many more wait behind it.
+/// it (and an AI merge's way to its history, a new version's download) with how many more wait behind it.
 struct NoticeBubbleView: View {
     var model: AppModel
     var item: NoticeBubble.Item
     var more: Int
+    var updater: Updater = .shared
 
     @Environment(\.colorScheme) private var colorScheme
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
@@ -145,6 +159,14 @@ struct NoticeBubbleView: View {
                             .buttonStyle(.plain)
                             .font(.app(10.5, weight: .medium))
                             .help(L10n[.Branches.aiMergeShowHistoryHelp])
+                    }
+                    // Only while that version still waits to be fetched: once it is on its way or fetched,
+                    // the button would do nothing.
+                    if let tag = item.update, updater.offersDownload(tag) {
+                        Button(L10n[.Update.noticeDownload]) { Task { await updater.download() } }
+                            .buttonStyle(.plain)
+                            .font(.app(10.5, weight: .medium))
+                            .help(L10n[.Update.noticeDownloadHelp])
                     }
                     Button { model.closeNotice(item) } label: {
                         Image(systemName: "xmark").font(.app(9, weight: .semibold)).contentShape(Rectangle())
@@ -176,6 +198,7 @@ struct NoticeBubbleView: View {
         case .error: Color(nsColor: theme.brassSoft)
         case .notice: Color.green.opacity(0.10)
         case .aiMerge: Color.purple.opacity(0.12)
+        case .update: Color.accentColor.opacity(0.12)
         }
     }
 
@@ -184,6 +207,7 @@ struct NoticeBubbleView: View {
         case .error: Color(nsColor: theme.brassLine)
         case .notice: Color.green.opacity(0.35)
         case .aiMerge: Color.purple.opacity(0.35)
+        case .update: Color.accentColor.opacity(0.35)
         }
     }
 }
@@ -254,6 +278,7 @@ extension NoticeLog.Kind {
         case .error: "exclamationmark.triangle.fill"
         case .notice: "checkmark.circle"
         case .aiMerge: "arrow.triangle.merge"
+        case .update: "arrow.down.circle"
         }
     }
 }

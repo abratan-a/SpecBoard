@@ -1,7 +1,12 @@
 {
   "boxes.arrange.atShape": "at of arrange is {\"x\": integer, \"y\": integer} (the cell for the top left of the arrangement)",
+  "boxes.arrange.by": "by of arrange is \"lines\" (rearrange the whole map, or inside group, along its lines) or \"order\" (put the boxes of cards or region in columns, in the order given)",
   "boxes.arrange.columns": "columns of arrange is a whole number from 1 to 12 (not {v})",
-  "boxes.arrange.shape": "arrange is {\"cards\": [paths…] or \"region\": {…}, \"columns\": number of columns, \"at\": {\"x\", \"y\"}}",
+  "boxes.arrange.groupWithAt": "group and at of arrange cannot be written together (arranging inside a group keeps the group's top-left)",
+  "boxes.arrange.linesKeys": "arrange with by: lines does not take {keys} (it rearranges the whole map, or inside group, along its lines; to place the boxes given, use by: order)",
+  "boxes.arrange.noGroup": "group {name} of arrange is not on this map (there are: {names})",
+  "boxes.arrange.notHere": "{path} is a ui section or a working directory section, so arrange by: lines cannot be used there (a ui section keeps positions as written, and a working directory's files are not boxes the core moves)",
+  "boxes.arrange.shape": "arrange is {\"by\": \"lines\", \"group\": a group's name, \"at\": {\"x\", \"y\"}} or {\"by\": \"order\", \"cards\": [paths…] or \"region\": {…}, \"columns\": number of columns, \"at\": {\"x\", \"y\"}}",
   "boxes.move.byOrTo": "Give either by (the cells to shift by) or to (the cell for the top left) for move",
   "boxes.move.byShape": "by of move is {\"x\": integer, \"y\": integer} (the cells to shift by; may be negative)",
   "boxes.move.shape": "move is {\"cards\": [paths…] or \"region\": {…}, \"by\": {\"x\", \"y\"} or \"to\": {\"x\", \"y\"}}",
@@ -24,5 +29,6 @@
   "boxes.region.keyShape": "{key} of region: {shape}",
   "boxes.region.modeShape": "mode of region: {shape}",
   "boxes.region.shape": "region is {\"from\": {\"x\": integer, \"y\": integer}, \"to\": {\"x\": integer, \"y\": integer}, \"mode\": \"intersect\" | \"contain\"} (cells; from and to may be any two corners and both cells are included; mode is intersect (boxes with any part inside; the default) or contain (boxes entirely inside))",
-  "boxes.region.strayKeys": "region has keys that are not accepted: {keys}. {shape}"
+  "boxes.region.strayKeys": "region has keys that are not accepted: {keys}. {shape}",
+  "boxes.tidy.notHere": "{path} is a ui section or a working directory section, so tidy cannot be used there (a ui section keeps positions as written, and a working directory's files are not boxes the core moves)"
 }

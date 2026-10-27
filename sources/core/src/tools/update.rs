@@ -33,7 +33,7 @@ const OWN_KEYS: [&str; 11] = [
 
 /// The order a change is said in its history line, after its name, label and kind
 /// (`updateSchema`'s `changed`).
-const SAID_ORDER: [&str; 16] = [
+const SAID_ORDER: [&str; 17] = [
     "of",
     "data",
     "fields",
@@ -48,6 +48,7 @@ const SAID_ORDER: [&str; 16] = [
     "rules",
     "absentFields",
     "discriminator",
+    "face",
     "open",
     "connections",
 ];
@@ -918,6 +919,16 @@ pub(crate) fn edit_card(
             )?);
         }
     }
+    // A shape's face held to its fields once it is written.
+    if (next_kind == "entity" || next_kind == "value")
+        && let Some(face) = value.get("face").filter(|f| !f.is_null())
+    {
+        let now = scope.detail(tx)?;
+        let project = Project::new(&now);
+        if let Some(card) = project.card(id) {
+            super::faces::said(&project, card, face)?;
+        }
+    }
     // A table's rules held to its shape once they are written.
     if is_table
         && (of_given.is_some()
@@ -1028,26 +1039,12 @@ pub(crate) fn grid_size(value: &Value) -> Result<super::grid::OwnSize, String> {
     Ok((w, h))
 }
 
-/// A card's box on its section's diagram, as the tree has it.
+/// A card's box on its section's diagram, as the tree has it (main's beneath a branch that has
+/// none).
 fn spot(tx: &Tx, scope: &Scope, id: &str) -> Result<Spot, String> {
-    let found = tx.conn().query_row(
-        "SELECT x, y, w, h, pinned FROM places WHERE project_id = ? AND branch_id = ? AND view = '' AND item_kind = 'card' AND item = ?",
-        rusqlite::params![scope.project, scope.tree, id],
-        |r| {
-            Ok(Spot {
-                x: r.get(0)?,
-                y: r.get(1)?,
-                w: r.get(2)?,
-                h: r.get(3)?,
-                pinned: r.get::<_, i64>(4)? != 0,
-            })
-        },
-    );
-    match found {
-        Ok(s) => Ok(s),
-        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(Spot::default()),
-        Err(e) => Err(crate::write::db(e)),
-    }
+    Ok(tx
+        .place_row(&scope.project, &scope.tree, "", "card", id)?
+        .unwrap_or_default())
 }
 
 /// What is said to a size asked of a card that cannot carry one (`Kinds::sizable`): a flow's
@@ -1384,6 +1381,8 @@ pub(crate) fn place_unplaced(tx: &mut Tx, scope: &Scope) -> Result<(), String> {
         }
         let project = seen.project();
         let layout = super::grid::Layout::read(tx.conn(), &scope.project)?;
+        // A card placed with no place said keeps out of the groups' frames, so it joins none unasked.
+        let frames = super::groups::frames(tx.conn(), &scope.project, &scope.tree)?;
         // Each flow's nodes are placed by its own alone: all worked out from this one view.
         let nodes_unplaced: Vec<_> = flows
             .into_iter()
@@ -1395,7 +1394,7 @@ pub(crate) fn place_unplaced(tx: &mut Tx, scope: &Scope) -> Result<(), String> {
         let inside = if maps_placed {
             Vec::new()
         } else {
-            super::card_map::unplaced(&seen, &layout)
+            super::card_map::unplaced(&seen, &layout, &frames)
         };
         let mut sections: Vec<String> = Vec::new();
         if !cards_placed {
@@ -1436,7 +1435,12 @@ pub(crate) fn place_unplaced(tx: &mut Tx, scope: &Scope) -> Result<(), String> {
                 .filter(|b| project.card(&b.id).is_none_or(|c| c.kind != "file"))
             {
                 let (w, h) = b.size;
-                let at = super::grid::next_spot(&taken, w, layout.margin);
+                let blocked: Vec<(i64, i64, i64, i64)> = taken
+                    .iter()
+                    .chain(frames.get(&section).into_iter().flatten())
+                    .copied()
+                    .collect();
+                let at = super::grid::next_spot(&blocked, w, layout.margin);
                 if b.drawn {
                     taken.push((at.0, at.1, w, h));
                 }
@@ -1526,6 +1530,7 @@ pub(crate) fn place_at(
             w: None,
             h: None,
             pinned: true,
+            look: None,
         };
         tx.place(
             &scope.project,
@@ -1588,7 +1593,7 @@ pub(crate) fn set_values(tx: &mut Tx, scope: &Scope, id: &str, raw: &Value) -> R
     for item in items {
         let (value, label, description) = match item {
             Value::String(v) => (v.clone(), String::new(), None),
-            Value::Object(o) => match o.get("value") {
+            Value::Object(o) => match o.get("name") {
                 Some(Value::String(v)) => (
                     v.clone(),
                     o.get("label")
@@ -1616,7 +1621,7 @@ pub(crate) fn set_values(tx: &mut Tx, scope: &Scope, id: &str, raw: &Value) -> R
         }
         let label = text(&label, &text!("common.label.displayName"), 120)?;
         let mut row = Map::new();
-        row.insert("value".into(), value.into());
+        row.insert("name".into(), value.into());
         if !label.is_empty() {
             row.insert("label".into(), label.into());
         }
@@ -1807,7 +1812,10 @@ pub(crate) fn move_cards(
             at.x = None;
             at.y = None;
             at.pinned = false;
-            let keep = at.w.is_some() || at.h.is_some();
+            // On a branch a row with no cells stays, so main's place in the section left does
+            // not show through.
+            let keep =
+                at.w.is_some() || at.h.is_some() || crate::write::is_branch_tree(&scope.tree);
             tx.place(
                 &scope.project,
                 &scope.tree,

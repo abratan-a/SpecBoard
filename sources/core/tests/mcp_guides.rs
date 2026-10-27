@@ -153,7 +153,7 @@ fn the_guides_tell_of_goal_and_task() {
         goal["fields"]["status"]
             .as_str()
             .unwrap()
-            .contains("進行中")
+            .contains("inProgress")
     );
     let task = json("task");
     let fields: Vec<&String> = task["fields"].as_object().unwrap().keys().collect();
@@ -259,7 +259,7 @@ fn a_card_tool_says_the_keys_of_every_kind_and_a_kind_its_own() {
     let entity = json("entity");
     assert_eq!(
         keys(&entity["keys"]["card_create"]),
-        ["fields", "absentFields", "discriminator"]
+        ["fields", "absentFields", "discriminator", "face"]
     );
     let formatdoc = json("formatdoc");
     assert_eq!(keys(&formatdoc["keys"]["card_create"]), ["rows"]);
@@ -325,4 +325,48 @@ fn what_each_do_of_a_process_row_means_is_said_in_the_tool_and_the_process_guide
     for word in words {
         assert_eq!(process.matches(word).count(), 1, "{word}: {process}");
     }
+}
+
+/// The glossary's legend says each built-in kind of line as its definition does (its label and its
+/// one-line description), and nothing more; the lines' guide names every one.
+#[test]
+fn the_glossarys_legend_says_each_line_as_its_definition() {
+    let builtin: Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("src/kinds/builtin.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let glossary = mcp::catalog()["glossary"].as_str().unwrap();
+    let start = glossary.rfind("| `embed` |").expect("凡例の表が無い");
+    let rows: Vec<&str> = glossary[start..]
+        .lines()
+        .take_while(|l| l.starts_with('|'))
+        .collect();
+    let lines = builtin["lines"].as_array().unwrap();
+    let said: Vec<String> = lines
+        .iter()
+        .map(|l| {
+            format!(
+                "| `{}` | {}: {} |",
+                l["line"].as_str().unwrap(),
+                l["label"].as_str().unwrap(),
+                l["description"]
+                    .as_str()
+                    .unwrap()
+                    .replace('|', "\\|")
+                    // A glossary writes how a body names a place in code, so a body that holds it
+                    // does not read it as a place.
+                    .replace("[[ ]]", "`[[ ]]`")
+            )
+        })
+        .collect();
+    assert_eq!(rows, said, "凡例は線の種類の定義のとおり");
+    let guide = mcp::catalog()["linesGuide"].as_str().unwrap();
+    for line in lines {
+        let name = line["line"].as_str().unwrap();
+        assert!(guide.contains(name), "linesGuide に {name} が無い");
+    }
+    assert!(!guide.contains("同じ木の中"), "{guide}");
 }

@@ -1,6 +1,6 @@
 {
   "format": "specboard/project",
-  "version": 28,
+  "version": 33,
   "project": {
     "id": "fd0ad89f-221b-5f4c-9505-88a5f38d3258",
     "name": "データモデルの見本",
@@ -293,21 +293,21 @@
           {
             "id": "55b9cd0e-0a6c-5f75-a132-6c9e1dc03e63",
             "fields": {
-              "value": "book",
+              "name": "book",
               "label": "図書"
             }
           },
           {
             "id": "5f57c86a-c249-59c6-8956-3f77def8be85",
             "fields": {
-              "value": "magazine",
+              "name": "magazine",
               "label": "雑誌"
             }
           },
           {
             "id": "4b94b1bc-4f91-52ae-9d6f-074da8143a93",
             "fields": {
-              "value": "disc",
+              "name": "disc",
               "label": "ディスク"
             }
           }
@@ -332,98 +332,98 @@
           {
             "id": "bfdcbd43-83af-59f0-b0ae-b3c42fa46cd7",
             "fields": {
-              "value": "novel",
+              "name": "novel",
               "label": "小説"
             }
           },
           {
             "id": "00425f20-762d-5d62-8102-0e3000ba8429",
             "fields": {
-              "value": "essay",
+              "name": "essay",
               "label": "随筆"
             }
           },
           {
             "id": "8e8e3fb4-18eb-5c11-bf47-196daf4f56f4",
             "fields": {
-              "value": "poetry",
+              "name": "poetry",
               "label": "詩"
             }
           },
           {
             "id": "ccbc0004-8052-5819-ad6b-f945f2018812",
             "fields": {
-              "value": "history",
+              "name": "history",
               "label": "歴史"
             }
           },
           {
             "id": "bc2dd2f8-ad07-5a52-a795-8402880f9682",
             "fields": {
-              "value": "science",
+              "name": "science",
               "label": "科学"
             }
           },
           {
             "id": "d8216474-bd7b-5839-9f5c-26a6c79d5de0",
             "fields": {
-              "value": "art",
+              "name": "art",
               "label": "美術"
             }
           },
           {
             "id": "5d7e265e-94b0-5a28-a4b7-8904f0800bfd",
             "fields": {
-              "value": "music",
+              "name": "music",
               "label": "音楽"
             }
           },
           {
             "id": "517ea361-6787-5fa7-b0d0-10db29c90069",
             "fields": {
-              "value": "travel",
+              "name": "travel",
               "label": "旅行"
             }
           },
           {
             "id": "2782e63f-ae15-544c-8e70-05ee5509f25d",
             "fields": {
-              "value": "cooking",
+              "name": "cooking",
               "label": "料理"
             }
           },
           {
             "id": "1c3339f8-8fc7-5bef-8861-d97c1b9b6f8b",
             "fields": {
-              "value": "children",
+              "name": "children",
               "label": "児童"
             }
           },
           {
             "id": "d7a4a453-dbb6-5112-8168-29c4fbeec354",
             "fields": {
-              "value": "comics",
+              "name": "comics",
               "label": "まんが"
             }
           },
           {
             "id": "be4d2fd5-36b6-5c81-a38b-fe9926415442",
             "fields": {
-              "value": "reference",
+              "name": "reference",
               "label": "参考図書"
             }
           },
           {
             "id": "c1c028f2-c43c-557c-84af-b252e3041cde",
             "fields": {
-              "value": "language",
+              "name": "language",
               "label": "語学"
             }
           },
           {
             "id": "244369da-baea-50d0-880a-241fc0b7f004",
             "fields": {
-              "value": "sports",
+              "name": "sports",
               "label": "スポーツ"
             }
           }
@@ -448,25 +448,25 @@
           {
             "id": "fd05f1c8-63da-5ba8-a10f-2033ca739da3",
             "fields": {
-              "value": "small"
+              "name": "small"
             }
           },
           {
             "id": "f2c73fc9-e4a4-5963-b26d-f111be717155",
             "fields": {
-              "value": "medium"
+              "name": "medium"
             }
           },
           {
             "id": "0d274ea6-7da1-58c6-bd6c-edba0e2eec6b",
             "fields": {
-              "value": "large"
+              "name": "large"
             }
           },
           {
             "id": "821082a0-db60-5584-9374-2f05427f60d2",
             "fields": {
-              "value": "oversize"
+              "name": "oversize"
             }
           }
         ]
@@ -491,35 +491,35 @@
           {
             "id": "73df74ad-59a3-5b61-8584-96b6c0e2ed35",
             "fields": {
-              "value": "library",
+              "name": "library",
               "label": "図書館"
             }
           },
           {
             "id": "79ffc863-9b3b-5f98-87a8-8088d2975037",
             "fields": {
-              "value": "branch",
+              "name": "branch",
               "label": "分館"
             }
           },
           {
             "id": "1c31c48c-a3aa-5abd-b0d3-6573491da6cb",
             "fields": {
-              "value": "item",
+              "name": "item",
               "label": "資料"
             }
           },
           {
             "id": "5a767ff4-cc6c-5a1d-aa54-c62bbaffa497",
             "fields": {
-              "value": "member",
+              "name": "member",
               "label": "利用者"
             }
           },
           {
             "id": "b4cef85e-b5a0-5e8f-a3a1-1cb1f5f5a281",
             "fields": {
-              "value": "loan",
+              "name": "loan",
               "label": "貸出"
             }
           }

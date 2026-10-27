@@ -14,6 +14,10 @@ WORK=$ROOT/build/core
 source "$ROOT/tools/build-env.sh"
 specboard_require_rust
 TARGET_DIR=${CARGO_TARGET_DIR:-$CORE/target}
+# Proc-macros and build scripts are not stripped: the rust-objcopy that strips them can leave the LINKEDIT
+# string table on a 4-byte boundary, and the dyld of macOS 27 then refuses to load them into rustc
+# (tools/build-core-lib.sh says more).
+export CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_STRIP=none
 TARGETS=(aarch64-apple-darwin)
 
 cd "$CORE"

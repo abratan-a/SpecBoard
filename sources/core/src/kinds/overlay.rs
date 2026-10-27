@@ -1,7 +1,7 @@
 //! The built-in definitions' words in the other languages (`specboard://SpecBoard/Docs/Design:Localization`
 //! §4): `builtin.json` is written in Japanese, and each other language has a file `text/<language>.json`
 //! of its words by their places in the definitions (`cards.entity.label`,
-//! `cards.entity.fields.name.description`, `lines.peer.label`, `cards.goal.fields.status.optionLabels.完了`).
+//! `cards.entity.fields.name.description`, `lines.partner.label`, `cards.goal.fields.status.optionLabels.done`).
 //! The definitions are read in the language of the call, so everything said of a kind (its label, what
 //! it is for, its fields' labels) is said in that language. A choice's values are data a card keeps,
 //! never changed: a language says how each is shown (`optionLabels`).

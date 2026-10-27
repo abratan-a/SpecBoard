@@ -283,3 +283,93 @@ fn an_app_reaches_the_agents_own_which_stays_when_it_goes() {
     assert!(said.contains("動いています"), "{said}");
     assert_eq!(run(agent, &home, "stop").0, 0);
 }
+
+#[test]
+fn a_database_a_newer_core_moved_on_is_not_opened_and_the_app_is_told_why() {
+    let home = home();
+    let agent = Path::new(AGENT);
+    let data = home.join("data");
+    std::fs::create_dir_all(&data).unwrap();
+    let place = data.join("specboard-core.db");
+    specboard_core::Core::create(&place).unwrap().close();
+    let newer = "core_9999_from_a_newer_core";
+    rusqlite::Connection::open(&place)
+        .unwrap()
+        .execute("INSERT INTO _migrations (name) VALUES (?1)", [newer])
+        .unwrap();
+
+    // Not opened: the app is told why where it is told the agent cannot be reached, and no daemon
+    // runs on it.
+    let (_app, said) = App::attach(agent, &home, "MacBook");
+    assert_eq!(said["t"], "failed", "{said}");
+    let message = said["message"].as_str().unwrap();
+    assert!(
+        message.contains("新しい版の SpecBoard で更新されていて、この版では開けません"),
+        "{message}"
+    );
+    assert!(message.contains(&place.display().to_string()), "{message}");
+    assert_eq!(run(agent, &home, "status").0, 3);
+    let (code, _) = run(agent, &home, "start");
+    assert_eq!(code, 1);
+    // Nothing was written to it.
+    let marks: Vec<String> = rusqlite::Connection::open(&place)
+        .unwrap()
+        .prepare("SELECT name FROM _migrations")
+        .unwrap()
+        .query_map([], |r| r.get(0))
+        .unwrap()
+        .collect::<Result<_, _>>()
+        .unwrap();
+    assert!(marks.contains(&newer.to_string()), "{marks:?}");
+}
+
+#[test]
+fn an_app_reads_why_the_agent_cannot_start_in_its_screens_language_on_a_host_with_none_set() {
+    let home = home();
+    let agent = Path::new(AGENT);
+    let place = home.join("data").join("specboard-core.db");
+    std::fs::create_dir_all(place.parent().unwrap()).unwrap();
+    specboard_core::Core::create(&place).unwrap().close();
+    rusqlite::Connection::open(&place)
+        .unwrap()
+        .execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            ["core_9999_from_a_newer_core"],
+        )
+        .unwrap();
+    // A host whose session says no language, an app whose screen is in English.
+    let mut child = Command::new(agent)
+        .args(["attach", "--lang", "en"])
+        .env("SPECBOARD_AGENT_HOME", &*home)
+        .env_remove("LC_ALL")
+        .env_remove("LC_MESSAGES")
+        .env_remove("LANG")
+        .env_remove("SPECBOARD_AGENT_BUILD")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut input = child.stdin.take().unwrap();
+    writeln!(
+        input,
+        "{}",
+        json!({"t": "hello", "client": "MacBook", "lang": "en"})
+    )
+    .unwrap();
+    drop(input);
+    let mut line = String::new();
+    BufReader::new(child.stdout.take().unwrap())
+        .read_line(&mut line)
+        .unwrap();
+    let _ = child.wait();
+    let said: Value = serde_json::from_str(&line).unwrap_or_else(|e| panic!("{line:?}: {e}"));
+    assert_eq!(said["t"], "failed", "{said}");
+    let message = said["message"].as_str().unwrap();
+    assert!(message.contains("newer SpecBoard"), "{message}");
+    assert!(
+        !message
+            .chars()
+            .any(|c| matches!(c, '\u{3040}'..='\u{30ff}' | '\u{4e00}'..='\u{9fff}')),
+        "{message}"
+    );
+}

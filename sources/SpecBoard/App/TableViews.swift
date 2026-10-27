@@ -25,7 +25,7 @@ struct TableEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            CardBar(kind: card.kind, badge: L10n[.Properties.tableBadge], name: card.name, label: card.label) {
+            CardBar(kind: card.kind, name: card.name, label: card.label) {
                 EmptyView()
             } tools: {
                 if let shape {

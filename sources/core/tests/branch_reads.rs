@@ -338,7 +338,7 @@ fn a_send_or_a_receive_the_other_flow_does_not_answer_is_checked_from_its_side()
             "Charts/Shop:Log": {"kind": "flow"},
             "Charts/Shop:Log.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "push"}]},
             "Charts/Shop:Log.push": {"kind": "process", "steps": [{"do": "send", "carries": ["Schemas/Ordering:Order.id"]}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Sink"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Sink"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Log.done": {"kind": "end", "outcome": "success"}
         }}),
     );
@@ -390,7 +390,7 @@ fn a_send_or_a_receive_the_other_flow_does_not_answer_is_checked_from_its_side()
     ok(
         &core,
         "card_update",
-        json!({"target": "Charts/Shop:Sink.start", "value": {"connections": {"add": [{"line": "peer", "to": "Charts/Shop:Refund"}]}}}),
+        json!({"target": "Charts/Shop:Sink.start", "value": {"connections": {"add": [{"line": "partner", "to": "Charts/Shop:Refund"}]}}}),
     );
     let said = peers(&checked(&core, "main"));
     assert!(
@@ -417,14 +417,14 @@ fn each_flow_a_place_names_is_checked_on_its_own_and_a_program_beside_them_is_no
             "Charts/Shop:Usher": {"kind": "flow"},
             "Charts/Shop:Usher.start": {"kind": "begin", "trigger": "receive", "program": "外の監視",
                 "carries": ["Schemas/Ordering:Order.id"],
-                "connections": [{"line": "peer", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "to": "Charts/Shop:Agent"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "to": "Charts/Shop:Agent"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Usher.done": {"kind": "end", "outcome": "success"},
             "Charts/Shop:Client": {"kind": "flow"},
             "Charts/Shop:Client.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "ask"}]},
             "Charts/Shop:Client.ask": {"kind": "process", "steps": [{"do": "send", "carries": ["Schemas/Ordering:Order.id"]}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Usher"},
-                    {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Agent"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Usher"},
+                    {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Agent"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Client.done": {"kind": "end", "outcome": "success"},
             "Charts/Shop:Agent": {"kind": "flow"},
             "Charts/Shop:Agent.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "done"}]},
@@ -461,7 +461,7 @@ fn each_flow_a_place_names_is_checked_on_its_own_and_a_program_beside_them_is_no
     );
     let problem = ours[0]["problem"].as_str().unwrap();
     assert!(
-        problem.contains("ここから Charts/Shop:Agent への peer の線を外します"),
+        problem.contains("ここから Charts/Shop:Agent への partner の線を外します"),
         "{problem}"
     );
 }
@@ -483,19 +483,19 @@ fn a_return_naming_no_one_answers_the_flow_that_called_and_waits() {
             "Charts/Shop:Caller.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "ask"}]},
             "Charts/Shop:Caller.ask": {"kind": "process",
                 "steps": [{"do": "send", "carries": ["Schemas/Ordering:Order.id"]}, {"do": "receive", "carries": ["Schemas/Ordering:Order.total"]}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Door"},
-                    {"line": "peer", "from": "steps[1]", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Door"},
+                    {"line": "partner", "from": "steps[1]", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Caller.done": {"kind": "end", "outcome": "success"},
             // Waits for the door but never calls it: no return comes back here.
             "Charts/Shop:Waiter": {"kind": "flow"},
             "Charts/Shop:Waiter.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "wait"}]},
             "Charts/Shop:Waiter.wait": {"kind": "process", "steps": [{"do": "receive"}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Waiter.done": {"kind": "end", "outcome": "success"},
             // Started by the door: a return to whoever called starts no new run.
             "Charts/Shop:Started": {"kind": "flow"},
             "Charts/Shop:Started.start": {"kind": "begin", "trigger": "receive",
-                "connections": [{"line": "peer", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Door"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Started.done": {"kind": "end", "outcome": "success"}
         }}),
     );
@@ -534,9 +534,9 @@ fn a_flow_another_runs_is_answered_by_the_run() {
         json!({"value": {
             "Charts/Shop:Chore": {"kind": "flow"},
             "Charts/Shop:Chore.start": {"kind": "begin", "trigger": "receive", "carries": ["Schemas/Ordering:Order.id"],
-                "connections": [{"line": "peer", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Chore.done": {"kind": "end", "outcome": "success", "return": {"carries": ["Schemas/Ordering:Order.total"]},
-                "connections": [{"line": "peer", "to": "Charts/Shop:Boss"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Boss"}]},
             "Charts/Shop:Boss": {"kind": "flow"},
             "Charts/Shop:Boss.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "chore"}]},
             "Charts/Shop:Boss.chore": {"kind": "run", "carries": ["Schemas/Ordering:Order.id"], "returns": ["Schemas/Ordering:Order.total"],
@@ -586,10 +586,10 @@ fn a_begin_naming_a_flow_that_neither_runs_nor_sends_to_it_is_said() {
             "Charts/Shop:Chore.done": {"kind": "end", "outcome": "success"},
             "Charts/Shop:Stray": {"kind": "flow"},
             "Charts/Shop:Stray.start": {"kind": "begin", "trigger": "receive",
-                "connections": [{"line": "peer", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "wait"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "wait"}]},
             // A run starts a new run of the flow it runs: a receive mid-flow is not what it answers.
             "Charts/Shop:Stray.wait": {"kind": "process", "steps": [{"do": "receive"}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Boss"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Stray.done": {"kind": "end", "outcome": "success"},
             "Charts/Shop:Boss": {"kind": "flow"},
             "Charts/Shop:Boss.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "chore"}]},
@@ -606,7 +606,7 @@ fn a_begin_naming_a_flow_that_neither_runs_nor_sends_to_it_is_said() {
     assert!(
         stray
             .1
-            .contains("Charts/Shop:Stray を実行する run。Charts/Shop:Stray へ peer の線を引くか、run の runs の線を Charts/Shop:Stray へ引く"),
+            .contains("Charts/Shop:Stray を実行する run。Charts/Shop:Stray へ partner の線を引くか、run の runs の線を Charts/Shop:Stray へ引く"),
         "{}",
         stray.1
     );
@@ -654,7 +654,7 @@ fn sender(name: &str, to: &str, carries: Value) -> Value {
         format!("Charts/Shop:{name}.start"): {"kind": "begin", "trigger": "manual",
             "connections": [{"line": "next", "to": "push"}]},
         format!("Charts/Shop:{name}.push"): {"kind": "process", "steps": [{"do": "send", "carries": carries}],
-            "connections": [{"line": "peer", "from": "steps[0]", "to": to}, {"line": "next", "to": "done"}]},
+            "connections": [{"line": "partner", "from": "steps[0]", "to": to}, {"line": "next", "to": "done"}]},
         format!("Charts/Shop:{name}.done"): {"kind": "end", "outcome": "success"}
     })
 }
@@ -680,8 +680,8 @@ fn a_begin_is_compared_with_what_all_its_senders_send() {
                 "Charts/Shop:Ledger": {"kind": "flow"},
                 "Charts/Shop:Ledger.start": {"kind": "begin", "trigger": "receive",
                     "carries": ["Schemas:Customer", "Schemas:Status"],
-                    "connections": [{"line": "peer", "to": "Charts/Shop:One"},
-                        {"line": "peer", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
+                    "connections": [{"line": "partner", "to": "Charts/Shop:One"},
+                        {"line": "partner", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
                 "Charts/Shop:Ledger.done": {"kind": "end", "outcome": "success"}
             }),
             sender("One", "Charts/Shop:Ledger", json!(["Schemas:Customer"])),
@@ -741,7 +741,7 @@ fn a_begin_is_compared_with_what_all_its_senders_send() {
     ok(
         &core,
         "card_update",
-        json!({"target": "Charts/Shop:Ledger.start", "value": {"connections": {"add": [{"line": "peer", "to": "Charts/Shop:Three"}]}}}),
+        json!({"target": "Charts/Shop:Ledger.start", "value": {"connections": {"add": [{"line": "partner", "to": "Charts/Shop:Three"}]}}}),
     );
     let said = peers_in(&core, &flows);
     assert!(
@@ -762,8 +762,8 @@ fn what_a_begin_takes_that_no_sender_sends_is_said_unless_a_sender_says_nothing(
                 "Charts/Shop:Ledger": {"kind": "flow"},
                 "Charts/Shop:Ledger.start": {"kind": "begin", "trigger": "receive",
                     "carries": ["Schemas:Customer", "Schemas:Status", "Schemas/Ordering:Order"],
-                    "connections": [{"line": "peer", "to": "Charts/Shop:One"},
-                        {"line": "peer", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
+                    "connections": [{"line": "partner", "to": "Charts/Shop:One"},
+                        {"line": "partner", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
                 "Charts/Shop:Ledger.done": {"kind": "end", "outcome": "success"}
             }),
             sender("One", "Charts/Shop:Ledger", json!(["Schemas:Customer"])),
@@ -877,8 +877,8 @@ fn login(takes: Value) -> Value {
         "Charts/Shop:Agent.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "ask"}]},
         "Charts/Shop:Agent.ask": {"kind": "process",
             "steps": [{"do": "send", "carries": ["Schemas:Customer.id"]}, {"do": "receive", "carries": takes}],
-            "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Login"},
-                {"line": "peer", "from": "steps[1]", "to": "Charts/Shop:Login"}, {"line": "next", "to": "done"}]},
+            "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Login"},
+                {"line": "partner", "from": "steps[1]", "to": "Charts/Shop:Login"}, {"line": "next", "to": "done"}]},
         "Charts/Shop:Agent.done": {"kind": "end", "outcome": "success"}
     }})
 }
@@ -957,20 +957,20 @@ fn a_receive_in_an_exchange_of_several_turns_takes_one_send() {
             "Charts/Shop:Client.talk": {"kind": "process",
                 "steps": [{"do": "send", "carries": ["Schemas:Customer"]}, {"do": "receive", "carries": ["Schemas:Status"]},
                     {"do": "send", "carries": ["Schemas/Ordering:Order"]}, {"do": "receive", "carries": ["Schemas/Ordering:Order.total"]}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Desk"},
-                    {"line": "peer", "from": "steps[1]", "to": "Charts/Shop:Desk"},
-                    {"line": "peer", "from": "steps[2]", "to": "Charts/Shop:Desk"},
-                    {"line": "peer", "from": "steps[3]", "to": "Charts/Shop:Desk"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Desk"},
+                    {"line": "partner", "from": "steps[1]", "to": "Charts/Shop:Desk"},
+                    {"line": "partner", "from": "steps[2]", "to": "Charts/Shop:Desk"},
+                    {"line": "partner", "from": "steps[3]", "to": "Charts/Shop:Desk"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Client.done": {"kind": "end", "outcome": "success"},
             "Charts/Shop:Desk": {"kind": "flow"},
             "Charts/Shop:Desk.start": {"kind": "begin", "trigger": "receive", "carries": ["Schemas:Customer"],
-                "connections": [{"line": "peer", "to": "Charts/Shop:Client"}, {"line": "next", "to": "talk"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Client"}, {"line": "next", "to": "talk"}]},
             "Charts/Shop:Desk.talk": {"kind": "process",
                 "steps": [{"do": "send", "carries": ["Schemas:Status"]}, {"do": "receive", "carries": ["Schemas/Ordering:Order"]},
                     {"do": "send", "carries": ["Schemas/Ordering:Order.total"]}],
-                "connections": [{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "from": "steps[1]", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "from": "steps[2]", "to": "Charts/Shop:Client"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "from": "steps[1]", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "from": "steps[2]", "to": "Charts/Shop:Client"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Desk.done": {"kind": "end", "outcome": "success"}
         }}),
     );
@@ -1011,8 +1011,8 @@ fn a_path_takes_what_is_inside_it_and_is_sent_by_what_is_inside_it() {
                 "Charts/Shop:Ledger": {"kind": "flow"},
                 "Charts/Shop:Ledger.start": {"kind": "begin", "trigger": "receive",
                     "carries": ["Schemas/Ordering:Order"],
-                    "connections": [{"line": "peer", "to": "Charts/Shop:One"},
-                        {"line": "peer", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
+                    "connections": [{"line": "partner", "to": "Charts/Shop:One"},
+                        {"line": "partner", "to": "Charts/Shop:Two"}, {"line": "next", "to": "done"}]},
                 "Charts/Shop:Ledger.done": {"kind": "end", "outcome": "success"}
             }),
             sender(

@@ -399,10 +399,13 @@ pub(crate) fn make_cards(
     // Data cards' values held to their shapes, against the project with every card of the
     // call in it (a shape may be made after it).
     let mut warnings = Vec::new();
-    if built
-        .iter()
-        .any(|(_, _, d)| d["kind"] == crate::kinds::INSTANCE || d["kind"] == crate::kinds::TABLE)
-    {
+    let faced = |d: &Map<String, Value>| {
+        (d["kind"] == "entity" || d["kind"] == "value")
+            && d.get("fields").and_then(|f| f.get("face")).is_some()
+    };
+    if built.iter().any(|(_, _, d)| {
+        d["kind"] == crate::kinds::INSTANCE || d["kind"] == crate::kinds::TABLE || faced(d)
+    }) {
         let now = scope.detail(tx).map_err(failed)?;
         let project = Project::new(&now);
         let mut wrong = Vec::new();
@@ -410,6 +413,16 @@ pub(crate) fn make_cards(
             let Some(card) = project.card(id) else {
                 continue;
             };
+            // A shape's face held to its fields.
+            if faced(doc) {
+                if let Err(text) = super::faces::said(&project, card, &doc["fields"]["face"]) {
+                    wrong.extend(
+                        text.split('\n')
+                            .map(|l| reason(&entries[*i].label, l.to_string())),
+                    );
+                }
+                continue;
+            }
             // A table's rules held to its shape.
             if doc["kind"] == crate::kinds::TABLE {
                 if let Err(text) = super::tables::said(&project, card) {

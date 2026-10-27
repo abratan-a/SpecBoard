@@ -184,6 +184,36 @@ fn a_section_map_is_cut_to_some_cards_or_an_area() {
 }
 
 #[test]
+fn an_area_past_the_grids_reach_is_refused_before_the_app_is_asked() {
+    let (core, painter) = painted();
+    let area = |left: f64, top: f64, right: f64, bottom: f64| json!({"as": "picture", "area": {"topLeft": {"x": left, "y": top}, "bottomRight": {"x": right, "y": bottom}}});
+    for value in [
+        area(0.0, 0.0, 1e300, 0.0),
+        area(-1e300, 0.0, 0.0, 0.0),
+        area(0.0, 0.0, 0.0, 1_000_001.0),
+    ] {
+        let result = read(
+            &core,
+            "section_read",
+            json!({"target": "Schemas/Ordering", "value": value}),
+        );
+        let message = message_of(&result);
+        assert!(message.contains("±1,000,000"), "{value}: {message}");
+    }
+    assert!(painter.asked.lock().unwrap().is_empty());
+    let result = read(
+        &core,
+        "section_read",
+        json!({"target": "Schemas/Ordering", "value": area(-1e6, -1e6, 1e6, 1e6)}),
+    );
+    note_of(&result);
+    assert_eq!(
+        last(&painter)["area"],
+        json!({"topLeft": {"x": -1_000_000, "y": -1_000_000}, "bottomRight": {"x": 1_000_000, "y": 1_000_000}})
+    );
+}
+
+#[test]
 fn each_card_is_drawn_as_the_map_the_screen_shows_it_in() {
     let (core, painter) = painted();
     // A flow: its node diagram, headed with the card's rev.

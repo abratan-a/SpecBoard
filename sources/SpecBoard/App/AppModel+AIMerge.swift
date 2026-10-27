@@ -42,24 +42,39 @@ extension AppModel {
     /// the last, and what they did together. The project named when it is not the one on screen.
     func aiMergeWords(_ merges: [AIMerge]) -> String {
         guard let last = merges.last else { return "" }
+        return Self.aiMergeWords(merges, elsewhere: elsewhere(last.project), in: Language.shared.code)
+    }
+
+    /// The project a merge went into, when it is not the one on screen: by its name, or none when it is
+    /// not known (`Branches.aiMergeOtherProject`); nil when it is the one on screen.
+    private func elsewhere(_ project: String) -> String?? {
+        guard project != detail?.project.id else { return nil }
+        return .some(projects.first { $0.id == project }?.name)
+    }
+
+    /// `aiMergeWords` in `code`, the project named as `elsewhere` says.
+    static func aiMergeWords(_ merges: [AIMerge], elsewhere: String??, in code: String) -> String {
+        guard let last = merges.last else { return "" }
         let added = merges.reduce(0) { $0 + $1.added }
         let changed = merges.reduce(0) { $0 + $1.changed }
         let removed = merges.reduce(0) { $0 + $1.removed }
-        let counts = L10n[.Branches.aiMergeCounts(added, changed, removed)]
+        let counts = L10n.text(.Branches.aiMergeCounts(added, changed, removed), in: code)
         let by = last.by ?? "MCP"
         let words = merges.count == 1
-            ? L10n[.Branches.aiMergeOne(by, last.branch, counts)]
-            : L10n[.Branches.aiMergeMany(merges.count, by, last.branch, counts)]
-        guard last.project != detail?.project.id else { return words }
-        let name = projects.first { $0.id == last.project }?.name ?? L10n[.Branches.aiMergeOtherProject]
-        return L10n[.Branches.aiMergeInProject(name, words)]
+            ? L10n.text(.Branches.aiMergeOne(by, last.branch, counts), in: code)
+            : L10n.text(.Branches.aiMergeMany(merges.count, by, last.branch, counts), in: code)
+        guard case .some(let name) = elsewhere else { return words }
+        return L10n.text(.Branches.aiMergeInProject(name ?? L10n.text(.Branches.aiMergeOtherProject, in: code), words),
+                         in: code)
     }
 
     /// A merge told of: in the bubble, with the project's others, and in the bell's list on its own — the
-    /// words as they are now, while the project's name is known.
+    /// words as they are now, while the project's name is known, and said again so in another language.
     func tell(_ merge: AIMerge) {
         aiMerges.append(merge)
-        noticeLog.add(.aiMerge, aiMergeWords([merge]), project: merge.project)
+        let elsewhere = elsewhere(merge.project)
+        noticeLog.add(.aiMerge, aiMergeWords([merge]), project: merge.project,
+                      sayIn: { Self.aiMergeWords([merge], elsewhere: elsewhere, in: $0) })
     }
 
     /// A project's merges told of, let go.

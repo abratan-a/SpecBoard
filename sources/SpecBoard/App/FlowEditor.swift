@@ -22,27 +22,21 @@ struct FlowEditor: View {
     @State private var askedShape: String?
     /// Drawn as mermaid — as it is written out — rather than on the app's canvas.
     @State private var asMermaid = false
+    /// Counts the lifelines folded or opened, so that the chart is asked again.
+    @State private var lifelinesChanged = 0
 
-    /// What is picked in the property panel, as the sequence diagram names where it came from.
-    private var selectedOrigin: SequenceDiagram.Origin? {
-        guard model.selectedSchemaId == flow.id, let row = model.selectedRow else { return nil }
-        switch row {
-        case .node(let name): return .init(node: name)
-        case .nodeStep(let name, let path):
-            if case .step(let index)? = StepEditing.parts(path)?.first { return .init(node: name, row: index) }
-            return .init(node: name)
-        default: return nil
-        }
+    /// What is picked in the property panel, as the sequence diagram names where it came from: a row or a node
+    /// of this flow, or of a flow whose call is opened in the diagram.
+    static func selectedOrigin(in diagram: SequenceDiagram, flow: String, model: AppModel) -> SequenceDiagram.Origin? {
+        guard let card = model.selectedSchemaId, card == flow || diagram.draws(card) else { return nil }
+        return model.sequenceSelection
     }
 
-    /// A node, or a row of a process node, picked on the sequence diagram.
-    private func pick(_ origin: SequenceDiagram.Origin?) {
-        guard let origin, flow.nodes.contains(where: { $0.name == origin.node }) else { model.clearRow(); return }
-        if let row = origin.row {
-            model.selectRow(flow.id, .nodeStep(origin.node, StepEditing.path([.step(row)])))
-        } else {
-            model.selectNode(flow.id, origin.node)
-        }
+    /// A node, or a row of a process node, picked on the sequence diagram: of this flow, or of a flow whose
+    /// call is opened in it.
+    static func pick(_ origin: SequenceDiagram.Origin?, flow: String, model: AppModel) {
+        guard let origin, origin.node != nil else { model.clearRow(); return }
+        model.pickSequence(SequenceDiagram.Origin(card: origin.card ?? flow, node: origin.node, row: origin.row))
     }
 
     /// The words for a shape a flow is drawn in.
@@ -77,17 +71,25 @@ struct FlowEditor: View {
             }
             if asMermaid && !flow.nodes.isEmpty {
                 // The same picture as written out, a document's embed and MCP give.
-                FlowMermaid(code: Self.mermaid(drawn, in: detail, shape: shape))
+                FlowMermaid(code: Self.mermaid(flow, model: model, shape: shape))
                 Divider()
                 Text(L10n[.Flow.mermaidNoteExported])
                     .font(.app(10.5)).foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 14).padding(.vertical, 6)
             } else if shape == "sequence" && !flow.nodes.isEmpty {
-                // Drawn on the app's own canvas, as the card map is.
-                SequenceCanvas(diagram: Self.drawn(drawn, in: detail, language: Language.shared.code),
-                               detail: detail, selected: selectedOrigin,
-                               controller: sequence, onPick: pick, onOpen: { model.open(.card($0)) })
+                // The core's chart drawn on the app's own canvas, as the card map is, with the actors chosen for
+                // this flow on this Mac: asked again once one is folded or opened.
+                let _ = lifelinesChanged
+                let diagram = Self.drawn(flow, model: model, language: Language.shared.code)
+                SequenceCanvas(diagram: diagram,
+                               detail: detail, selected: Self.selectedOrigin(in: diagram, flow: flow.id, model: model),
+                               controller: sequence, onPick: { Self.pick($0, flow: flow.id, model: model) }, onOpen: { model.open(.card($0)) },
+                               onOpenSection: { model.open(.section($0)) },
+                               onPress: { chip in
+                                   Self.pressed(chip, flow: flow.id, model: model)
+                                   lifelinesChanged &+= 1
+                               })
                 Divider()
                 Text(L10n[.Flow.sequenceNote])
                     .font(.app(10.5)).foregroundStyle(.tertiary)
@@ -166,18 +168,36 @@ struct FlowEditor: View {
 
     /// The flow as mermaid, as it is written out, on the pasteboard.
     private func copyMermaid() {
-        copyToPasteboard(Self.mermaid(flow, in: detail, shape: shape))
+        copyToPasteboard(Self.mermaid(flow, model: model, shape: shape))
     }
 
     /// The flow as mermaid, shown and copied as it is written out: in the project's export language, so
     /// that what is pasted is what an export of it says, whoever copies it.
-    static func mermaid(_ flow: SchemaNode, in detail: ProjectDetail, shape: String) -> String {
-        ChartDiagram.render(flow, in: detail, shape: shape, exported: true, language: detail.project.exportedIn)
+    static func mermaid(_ flow: SchemaNode, model: AppModel, shape: String) -> String {
+        model.flowMermaid(flow, shape: shape)
     }
 
-    /// The flow's sequence diagram drawn in the editor: in the language of the screen that shows it.
-    static func drawn(_ flow: SchemaNode, in detail: ProjectDetail, language: String) -> SequenceDiagram {
-        SequenceDiagram.make(flow, in: detail, language: language)
+    /// The flow's sequence diagram drawn in the editor, as the core builds it: in the language of the screen
+    /// that shows it, with the actors chosen for this flow on this Mac and the calls opened on it.
+    static func drawn(_ flow: SchemaNode, model: AppModel, language: String) -> SequenceDiagram {
+        let project = model.detail?.project.id
+        let chosen = project.flatMap { SequenceLifelines.kept(project: $0, of: flow.id) }
+        let opened = project.flatMap { SequenceCalls.kept(project: $0, of: flow.id) }
+        return model.sequenceChart(card: flow.id, lifelines: chosen, opened: opened, language: language)
+    }
+
+    /// A chip pressed on the diagram: a lifeline's ⌃ or ⌄ (the actors chosen for this flow), a called
+    /// flow's ⌄ or ⌃ (the calls opened on it) — both kept on this Mac —, or a called flow's ↗.
+    static func pressed(_ chip: SequenceLayout.Chip, flow: String, model: AppModel) {
+        guard let detail = model.detail else { return }
+        let project = detail.project.id
+        switch chip {
+        case .lifeline(let press): SequenceLifelines.press(press, project: project, of: flow, in: detail)
+        case .openCall(let call): SequenceCalls.setOpen(true, call: call, project: project, of: flow)
+        case .foldCall(let call): SequenceCalls.setOpen(false, call: call, project: project, of: flow)
+        case .openFlow(let card): model.open(.card(card))
+        case .foldFrame, .openFrame: break
+        }
     }
 
     private var picked: String? {

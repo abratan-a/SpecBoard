@@ -1,5 +1,6 @@
 {
   "code.cut": "It has more than {most} functions and types: only the first {most}",
+  "code.file.missing": "There is no {file} in its folder",
   "code.grammar": "The grammar of {language} cannot be used: {e}",
   "code.highlight": "Cannot colour {language}: {e}",
   "code.list.key": "card_list of functions and types (kind: symbol) takes no {key} in value (it takes section, of, name, limit and after)",
@@ -19,6 +20,7 @@
   "code.loader.open": "The library {library} cannot be opened: {e}",
   "code.loader.owner": "{path} is not owned by the user the agent runs as",
   "code.loader.problem": "The grammar {name} cannot be loaded: {why}",
+  "code.loader.queries": "The queries cannot be read: {why}",
   "code.loader.symbol": "The library {library} has no function {symbol}",
   "code.loader.taken": "{id} is a language loaded already",
   "code.loader.writable": "{path} is a file others can write, or its group can (fix it with chmod go-w)",

@@ -20,8 +20,8 @@ struct CodeTextView: NSViewRepresentable {
 
 /// What a file's text is drawn with, worked out apart from the view so it can be tested.
 enum CodeText {
-    static let font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
-    static let keywordFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
+    static let font = Typeface.mono(12, .regular)
+    static let keywordFont = Typeface.mono(12, .semibold)
 
     /// Where each line starts, in UTF-16 offsets: the first at 0, then one after each line feed.
     static func lineStarts(_ text: NSString) -> [Int] {
@@ -169,7 +169,7 @@ final class CodeTextNSView: NSTextView {
 /// largest number needs.
 final class LineNumberRuler: NSRulerView {
     private weak var textView: CodeTextNSView?
-    static let font = NSFont.monospacedDigitSystemFont(ofSize: 10.5, weight: .regular)
+    static let font = Typeface.digits(10.5, .regular)
 
     init(textView: CodeTextNSView, scrollView: NSScrollView) {
         self.textView = textView

@@ -9,6 +9,7 @@
   "store.error.keepRename": "Cannot give the copy its name: {e}",
   "store.error.keepWrite": "Cannot write the copy: {e}",
   "store.error.missing": "There is no database: {path}",
+  "store.error.newer": "The data at {path} was updated by a newer SpecBoard, and this version cannot open it. Update SpecBoard",
   "store.error.notCoreForm": "This is not a database of the core's form",
   "store.error.open": "Cannot open the database: {e}",
   "store.error.read": "Cannot read the database: {e}",

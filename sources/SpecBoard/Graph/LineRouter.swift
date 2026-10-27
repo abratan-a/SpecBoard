@@ -10,7 +10,7 @@ nonisolated enum LineRouter {
 
     /// One line to route: the card it leaves and the one it reaches, in the diagram's points,
     /// and the heights it leaves at (its row) and lands at (a row, or the header).
-    struct Request {
+    struct Request: Equatable {
         var key: String
         var from: CGRect
         var to: CGRect
@@ -250,7 +250,8 @@ nonisolated enum LineRouter {
                 k = Int(from[k])
             }
             steps.reverse()
-            for step in steps { used[index(step.x, step.y)] = used[index(step.x, step.y)] &+ 1 }
+            // Counted up to its most and kept there: a count that wrapped would make the most crowded cell look free.
+            for step in steps where used[index(step.x, step.y)] < .max { used[index(step.x, step.y)] += 1 }
             let goal = goals[reached.goal]
             let start = starts.first { $0.x == steps[0].x && $0.y == steps[0].y && $0.way == steps[0].way } ?? starts[0]
             return runs(steps, goalWay: goal.way, startEdge: start.edge, goalEdge: goal.edge,
@@ -432,5 +433,83 @@ nonisolated enum LineRouting {
 
     static var avoidsCards: Bool {
         UserDefaults.standard.object(forKey: key) as? Bool ?? standard
+    }
+}
+
+/// The ways round the cards found for the diagrams seen last (`LineRouter.route`), each with what it was
+/// found for — the lines' ends, the boxes, the cells: going back to a diagram whose boxes and lines are as
+/// they were takes its ways rather than searching again. A search is a function of those alone, so one
+/// kept is never stale: a write that moved a box or a line's end asks for another, which is not kept. The
+/// most recent `diagrams` are kept, and no more than `lines` lines in all, the oldest let go first.
+struct RouteMemory {
+    private struct Kept {
+        var hash: Int
+        var requests: [LineRouter.Request]
+        var boxes: [String: CGRect]
+        var cell: CGSize
+        var routes: [String: [CGPoint]]
+    }
+
+    let diagrams: Int
+    let lines: Int
+    /// The most recent last.
+    private var kept: [Kept] = []
+
+    init(diagrams: Int = 16, lines: Int = 20_000) {
+        self.diagrams = diagrams
+        self.lines = lines
+    }
+
+    /// How many diagrams are kept now.
+    var count: Int { kept.count }
+
+    /// The ways found for these, if kept — then the most recent.
+    mutating func routes(_ requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) -> [String: [CGPoint]]? {
+        let hash = Self.hash(requests, boxes, cell)
+        guard let at = kept.lastIndex(where: {
+            $0.hash == hash && $0.cell == cell && $0.requests == requests && $0.boxes == boxes
+        }) else { return nil }
+        let found = kept.remove(at: at)
+        kept.append(found)
+        return found.routes
+    }
+
+    /// The ways found for these, kept as the most recent; the oldest let go past the limits.
+    mutating func keep(_ routes: [String: [CGPoint]], for requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) {
+        let hash = Self.hash(requests, boxes, cell)
+        kept.removeAll { $0.hash == hash && $0.cell == cell && $0.requests == requests && $0.boxes == boxes }
+        kept.append(Kept(hash: hash, requests: requests, boxes: boxes, cell: cell, routes: routes))
+        var total = kept.reduce(0) { $0 + $1.requests.count }
+        while kept.count > 1, kept.count > diagrams || total > lines {
+            total -= kept.removeFirst().requests.count
+        }
+    }
+
+    /// Alike for the same lines, boxes and cells, whatever order the boxes are held in.
+    private static func hash(_ requests: [LineRouter.Request], _ boxes: [String: CGRect], _ cell: CGSize) -> Int {
+        func rect(_ r: CGRect, into h: inout Hasher) {
+            h.combine(r.origin.x); h.combine(r.origin.y); h.combine(r.size.width); h.combine(r.size.height)
+        }
+        var h = Hasher()
+        h.combine(cell.width)
+        h.combine(cell.height)
+        h.combine(requests.count)
+        for r in requests {
+            h.combine(r.key)
+            rect(r.from, into: &h)
+            rect(r.to, into: &h)
+            h.combine(r.tailY)
+            h.combine(r.landY)
+        }
+        var boxSum = 0
+        for (key, box) in boxes {
+            var one = Hasher()
+            one.combine(key)
+            rect(box, into: &one)
+            boxSum = boxSum &+ one.finalize()
+        }
+        h.combine(boxes.count)
+        h.combine(boxSum)
+        return h.finalize()
     }
 }

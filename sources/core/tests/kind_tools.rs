@@ -77,17 +77,18 @@ fn the_list_says_each_kind_in_a_line_and_where_it_goes() {
     let schema = listed(&list["sections"], "section", "schema");
     assert!(schema["purpose"].as_str().unwrap().contains("データの形"));
     assert_eq!(schema["trees"], json!(["main"]));
-    // A kind of line: the kinds it leaves and reaches.
+    // A kind of line: what it is for, the kinds it leaves and reaches.
     let embed = listed(&list["lines"], "line", "embed");
     assert_eq!(embed["to"], json!(["entity", "value", "enum"]));
-    assert!(embed.get("purpose").is_none(), "{embed}");
+    assert_eq!(embed["label"], "内包", "{embed}");
+    assert!(embed["purpose"].is_string(), "{embed}");
     // Short enough to read whole, in every language: the sample's working directories put their
-    // kinds of section in it too.
+    // kinds of section in it too, beside the actor.
     for lang in specboard_core::text::LANGUAGES {
         let _lang = specboard_core::text::bind(Some(lang));
         let list = ok(&core, "kind_list", json!({}));
         let chars = serde_json::to_string(&list).unwrap().chars().count();
-        assert!(chars <= 6_500, "{lang}: {chars}");
+        assert!(chars <= 9_000, "{lang}: {chars}");
     }
 }
 
@@ -505,4 +506,85 @@ fn listed_flow(list: &Value) -> &Value {
         .iter()
         .find(|k| k["kind"] == "flow")
         .unwrap_or_else(|| panic!("flow が一覧に無い: {list}"))
+}
+
+#[test]
+fn kind_list_says_what_each_kind_is_for() {
+    let core = Core::open(script_store()).unwrap();
+    let list = ok(&core, "kind_list", json!({}));
+    for line in list["lines"].as_array().unwrap() {
+        assert!(
+            line["label"].is_string() && line["purpose"].is_string(),
+            "線の種類に表示名と何のためかが無い: {line}"
+        );
+    }
+    assert_eq!(listed(&list["lines"], "line", "mentions")["label"], "言及");
+    // The first sentence says what the kind holds, not its label again.
+    for (of, key) in [
+        ("cards", "kind"),
+        ("sections", "section"),
+        ("lines", "line"),
+    ] {
+        for kind in list[of].as_array().unwrap() {
+            let label = kind["label"].as_str().unwrap_or_default();
+            let purpose = kind["purpose"].as_str().unwrap_or_default();
+            let bare = purpose
+                .trim_end_matches(['。', '.'])
+                .trim_end_matches("です");
+            let short = bare.chars().count() <= label.chars().count() + 12;
+            assert!(
+                !label.is_empty() && bare != label && !(short && bare.ends_with(label)),
+                "{} の何のためかが表示名の言い直し: {kind}",
+                kind[key]
+            );
+        }
+    }
+    // Only the kinds card_create and section_create refuse, made by the core alone.
+    let made_by_core = [
+        "file",
+        "symbol",
+        "section",
+        "complete",
+        "cancelled",
+        "workdir",
+        "directory",
+    ];
+    let mut marked = Vec::new();
+    for (of, key) in [("cards", "kind"), ("sections", "section")] {
+        for kind in list[of].as_array().unwrap() {
+            let name = kind[key].as_str().unwrap();
+            assert_eq!(
+                kind.get("systemOnly") == Some(&json!(true)),
+                made_by_core.contains(&name),
+                "{name} の systemOnly: {kind}"
+            );
+            if kind.get("systemOnly").is_some() {
+                marked.push(name.to_string());
+            }
+        }
+    }
+    assert!(marked.contains(&"complete".to_string()), "{marked:?}");
+}
+
+#[test]
+fn an_enum_has_no_shape_only_keys() {
+    let core = Core::open(script_store()).unwrap();
+    let read = ok(&core, "kind_read", json!({"target": ["enum"]}));
+    let kinds = read["kinds"].as_array().unwrap_or_else(|| panic!("{read}"));
+    let of = |name: &str| {
+        kinds
+            .iter()
+            .find(|k| k["kind"] == name)
+            .unwrap_or_else(|| panic!("{read}"))
+    };
+    // The keys only a shape has (rules, absentFields, discriminator) are the shape's own, not
+    // inherited by an enum.
+    assert_eq!(of("enum")["extends"], "base", "{read}");
+    let names: Vec<&str> = of("enum")["fields"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|f| f["name"].as_str())
+        .collect();
+    assert_eq!(names, ["open", "standalone"], "{read}");
 }

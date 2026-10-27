@@ -91,6 +91,12 @@ const WORKDIR_SECTIONS: &str = "core_0023_workdir_sections";
 /// The code the implementations' lines were recorded at (below): `code_marks`.
 const CODE_MARKS: &str = "core_0024_code_marks";
 
+/// The groups on the diagrams (below): `places` made anew to hold them.
+const MAP_GROUPS: &str = "core_0025_map_groups";
+
+/// The built-in names of now (`tests/name_move.rs`).
+const BUILTIN_NAMES: &str = "core_0026_builtin_names";
+
 /// A store of the form now named as before `core_0014_projects`: `plans`, every `plan_id`, and the
 /// mark let go. What turns a store back into one before an older mark does this too: a store of
 /// before was named so.
@@ -130,7 +136,7 @@ const REQUESTS_BEFORE: &str = "ALTER TABLE merge_requests DROP COLUMN keep;
              ALTER TABLE projects DROP COLUMN ai_merge;";
 
 /// Every mark a store of the form has now.
-const EVERY: [&str; 24] = [
+const EVERY: [&str; 26] = [
     "core_0001_kinds",
     MARK,
     GHOSTS,
@@ -155,6 +161,8 @@ const EVERY: [&str; 24] = [
     BOARD_SECTIONS,
     WORKDIR_SECTIONS,
     CODE_MARKS,
+    MAP_GROUPS,
+    BUILTIN_NAMES,
 ];
 
 /// Where the copy of the store at `place`, as it was before it was brought up from `mark`
@@ -312,7 +320,9 @@ fn a_new_store_is_of_the_form_now() {
             DEFINITION_KIND,
             BOARD_SECTIONS,
             WORKDIR_SECTIONS,
-            CODE_MARKS
+            CODE_MARKS,
+            MAP_GROUPS,
+            BUILTIN_NAMES
         ]
     );
     assert!(columns(&conn, "projects").ends_with(&[
@@ -461,7 +471,8 @@ fn a_store_made_before_is_brought_up_once() {
              DROP TABLE export_default_folders;
              DELETE FROM _migrations WHERE name IN ('{EXPORTS}', '{EXPORT_TARGETS}');
              ALTER TABLE projects DROP COLUMN export_language;
-             DELETE FROM _migrations WHERE name = '{EXPORT_LANGUAGE}';"
+             DELETE FROM _migrations WHERE name = '{EXPORT_LANGUAGE}';
+             DELETE FROM _migrations WHERE name = '{BUILTIN_NAMES}';"
         ))
         .unwrap();
         assert!(!columns(&conn, "projects").contains(&"mcp_writes".to_string()));
@@ -498,7 +509,9 @@ fn a_store_made_before_is_brought_up_once() {
                 DEFINITION_KIND,
                 BOARD_SECTIONS,
                 WORKDIR_SECTIONS,
-                CODE_MARKS
+                CODE_MARKS,
+                MAP_GROUPS,
+                BUILTIN_NAMES
             ]
         );
         assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -598,7 +611,7 @@ fn a_store_made_before_is_brought_up_once() {
         // by their names in English.
         let goal = card("c-goal");
         assert!(goal["fields"].get("items").is_none());
-        assert_eq!(goal["fields"], json!({ "status": "進行中" }));
+        assert_eq!(goal["fields"], json!({ "status": "inProgress" }));
         let task = card("c-task");
         assert_eq!(task["in"], "c-goal");
         assert_eq!(task["fields"]["body"], "[[Goals:Launch.Design]] を決める");
@@ -679,7 +692,9 @@ fn a_store_made_before_is_brought_up_once() {
             DEFINITION_KIND,
             BOARD_SECTIONS,
             WORKDIR_SECTIONS,
-            CODE_MARKS
+            CODE_MARKS,
+            MAP_GROUPS,
+            BUILTIN_NAMES
         ]
     );
     assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -833,7 +848,7 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
     mcp(
         "card_create",
         json!({"branch": "_project_board_", "value": {
-            "Goals:Ship": {"kind": "goal", "status": "進行中", "priority": "高", "due": "2026-10-31"},
+            "Goals:Ship": {"kind": "goal", "status": "inProgress", "priority": "high", "due": "2026-10-31"},
             "Goals:Ship.Design": {"kind": "task", "done": true, "body": "決めた"}
         }}),
     );
@@ -843,7 +858,7 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
     );
     mcp(
         "card_create",
-        json!({"target": "Free:Aim", "value": {"kind": "goal", "status": "未着手"}}),
+        json!({"target": "Free:Aim", "value": {"kind": "goal", "status": "notStarted"}}),
     );
     mcp("branch_create", json!({"target": "project-b"}));
     mcp(
@@ -866,13 +881,13 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
         let conn = Connection::open(&place).unwrap();
         let before = |column: &str| {
             format!(
-                "replace(replace(replace(replace({column}, '\"status\":\"進行中\"', '\"状態\":\"進行中\",\"担当\":\"Claude\"'), '\"status\":', '\"状態\":'), '\"priority\":', '\"優先度\":'), '\"due\":', '\"期限\":')"
+                "replace(replace(replace(replace({column}, '\"status\":\"inProgress\"', '\"状態\":\"進行中\",\"担当\":\"Claude\"'), '\"status\":', '\"状態\":'), '\"priority\":', '\"優先度\":'), '\"due\":', '\"期限\":')"
             )
         };
         conn.execute_batch(&format!(
             "UPDATE card_docs SET doc = {}, base = {};
              UPDATE commit_rows SET before = {};
-             DELETE FROM _migrations WHERE name = '{BOARD_KEYS}';",
+             DELETE FROM _migrations WHERE name IN ('{BOARD_KEYS}', '{BUILTIN_NAMES}');",
             before("doc"),
             before("base"),
             before("before")
@@ -908,17 +923,17 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
     let (ship, _) = docs("~board", "Ship");
     assert_eq!(
         ship["fields"],
-        json!({"status": "進行中", "担当": "Claude", "priority": "高", "due": "2026-10-31", "label": "1. 出す"})
+        json!({"status": "inProgress", "担当": "Claude", "priority": "high", "due": "2026-10-31", "label": "1. 出す"})
     );
     // The kinds' version now.
     assert_eq!(ship["v"], specboard_core::kinds::builtin().version);
     let (task, _) = docs("~board", "Design");
     assert_eq!(task["fields"], json!({"done": true, "body": "決めた"}));
     let (aim, _) = docs("", "Aim");
-    assert_eq!(aim["fields"]["status"], "未着手");
+    assert_eq!(aim["fields"]["status"], "notStarted");
     let (copy, base) = docs(&branch, "Aim");
-    assert_eq!(copy["fields"]["status"], "未着手");
-    assert_eq!(base.unwrap()["fields"]["status"], "未着手");
+    assert_eq!(copy["fields"]["status"], "notStarted");
+    assert_eq!(base.unwrap()["fields"]["status"], "notStarted");
     let left: i64 = conn
         .query_row(
             "SELECT count(*) FROM commit_rows WHERE before LIKE '%\"状態\"%' OR before LIKE '%\"優先度\"%' OR before LIKE '%\"期限\"%'",
@@ -933,7 +948,13 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
             &core,
             json!({"op": "commits", "project": project, "branch": tree}),
         );
-        let commit = read["result"]["commits"][0].clone();
+        // Past the built-in names' move, which runs after every other, in a tree it moved.
+        let commits = read["result"]["commits"].as_array().unwrap().clone();
+        let names = commits[0]["lines"][0]["summary"]
+            .as_str()
+            .unwrap()
+            .contains("組み込みの線の名前");
+        let commit = commits[usize::from(names)].clone();
         (
             commit["kind"].as_str().unwrap_or_default().to_string(),
             commit["lines"]
@@ -964,7 +985,7 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
     );
     assert!(!refused, "{said}");
     let read: Value = serde_json::from_str(&said).unwrap();
-    assert_eq!(read["status"], "進行中");
+    assert_eq!(read["status"], "inProgress");
     assert_eq!(read["strayFields"], json!({"担当": "Claude"}));
 
     // Opened again: nothing more.
@@ -1054,6 +1075,33 @@ fn a_store_that_cannot_be_kept_is_not_opened() {
     as_it_was(&place);
 }
 
+#[test]
+fn a_store_a_newer_core_moved_on_is_not_opened_and_left_as_it_is() {
+    let place = common::place("newer.sqlite");
+    let core = Core::create(&place).unwrap();
+    let (refused, said) = common::call(&core, "project_create", json!({"project": "机"}));
+    assert!(!refused, "{said}");
+    core.close();
+    let newer = "core_9999_from_a_newer_core";
+    Connection::open(&place)
+        .unwrap()
+        .execute("INSERT INTO _migrations (name) VALUES (?1)", [newer])
+        .unwrap();
+    let before = everything(&Connection::open(&place).unwrap());
+    let said = not_opened(&place);
+    assert_eq!(
+        said,
+        format!(
+            "{} のデータは新しい版の SpecBoard で更新されていて、この版では開けません。SpecBoard を新しくしてください",
+            place.display()
+        )
+    );
+    let conn = Connection::open(&place).unwrap();
+    assert!(marks(&conn).contains(&newer.to_string()));
+    assert_eq!(everything(&conn), before);
+    assert!(copies(&place).is_empty());
+}
+
 /// A store before `core_0009_merge_requests`: its requests' table named `pull_requests` and a
 /// goal's merge request kept as its `PR`. Opened, the table is `merge_requests` with the requests
 /// in it, the goal's `PR` its `MR` with the value it had, said in one commit of the board's; the
@@ -1073,7 +1121,7 @@ fn a_store_before_merge_requests_has_its_table_and_goals_named_once() {
     assert!(!refused, "{said}");
     mcp(
         "card_create",
-        json!({"branch": "_project_board_", "target": "Goals:Ship", "value": {"kind": "goal", "status": "進行中", "MR": 3}}),
+        json!({"branch": "_project_board_", "target": "Goals:Ship", "value": {"kind": "goal", "status": "inProgress", "MR": 3}}),
     );
     mcp("branch_create", json!({"target": "work"}));
     mcp(
@@ -1212,7 +1260,7 @@ fn a_store_before_work_branch_has_its_goals_named_once() {
         &core,
         "card_create",
         json!({"project": "前からの", "branch": "_project_board_", "target": "Goals:Ship",
-               "value": {"kind": "goal", "status": "進行中", "workBranch": "work"}}),
+               "value": {"kind": "goal", "status": "inProgress", "workBranch": "work"}}),
     );
     assert!(!refused, "{said}");
     let project: String = Connection::open(&place)
@@ -1423,6 +1471,112 @@ fn a_store_before_the_code_marks_has_their_table_made_once() {
     drop(core);
     Core::open(&place).unwrap().close();
     assert_eq!(copies(&place), [CODE_MARKS]);
+}
+
+/// A store of before the groups has `places` made anew: every box it had kept as it was, a group's row
+/// taken, and what a group looks like kept in a column of its own.
+#[test]
+fn a_store_before_the_map_groups_has_its_places_made_anew_once() {
+    let place = common::place("map-groups.sqlite");
+    let core = Core::create(&place).unwrap();
+    let (refused, said) = common::call(&core, "project_create", json!({"project": "前からの"}));
+    assert!(!refused, "{said}");
+    core.close();
+    drop(core);
+    let project: String = {
+        let conn = Connection::open(&place).unwrap();
+        let project: String = conn
+            .query_row("SELECT id FROM projects", [], |r| r.get(0))
+            .unwrap();
+        conn.execute_batch(&format!(
+            "CREATE TABLE places_before (
+               project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+               branch_id TEXT NOT NULL DEFAULT '',
+               view      TEXT NOT NULL DEFAULT '',
+               item_kind TEXT NOT NULL DEFAULT 'card' CHECK (item_kind IN ('card', 'section', 'node')),
+               item      TEXT NOT NULL,
+               x INTEGER, y INTEGER, w INTEGER, h INTEGER,
+               pinned INTEGER NOT NULL DEFAULT 0,
+               PRIMARY KEY (project_id, branch_id, view, item_kind, item)
+             );
+             INSERT INTO places_before SELECT project_id, branch_id, view, item_kind, item, x, y, w, h, pinned FROM places;
+             DROP TABLE places;
+             ALTER TABLE places_before RENAME TO places;
+             DELETE FROM _migrations WHERE name = '{MAP_GROUPS}';"
+        ))
+        .unwrap();
+        conn.execute(
+            "INSERT INTO places (project_id, view, item_kind, item, x, y, w, h, pinned) VALUES (?, 'v', 'card', 'c1', 3, 4, 12, 6, 1)",
+            [&project],
+        )
+        .unwrap();
+        // The form of before takes no group.
+        assert!(
+            conn.execute(
+                "INSERT INTO places (project_id, view, item_kind, item, x, y) VALUES (?, 'v', 'group', 'G', 0, 0)",
+                [&project],
+            )
+            .is_err()
+        );
+        project
+    };
+
+    let core = Core::open(&place).unwrap();
+    assert_eq!(copies(&place), [MAP_GROUPS]);
+    let conn = Connection::open(&place).unwrap();
+    assert_eq!(marks(&conn), EVERY);
+    assert_eq!(
+        columns(&conn, "places"),
+        [
+            "project_id",
+            "branch_id",
+            "view",
+            "item_kind",
+            "item",
+            "x",
+            "y",
+            "w",
+            "h",
+            "pinned",
+            "look"
+        ]
+    );
+    let kept: (i64, i64, i64, i64, i64, Option<String>) = conn
+        .query_row(
+            "SELECT x, y, w, h, pinned, look FROM places WHERE item = 'c1'",
+            [],
+            |r| {
+                Ok((
+                    r.get(0)?,
+                    r.get(1)?,
+                    r.get(2)?,
+                    r.get(3)?,
+                    r.get(4)?,
+                    r.get(5)?,
+                ))
+            },
+        )
+        .unwrap();
+    assert_eq!(kept, (3, 4, 12, 6, 1, None));
+    conn.execute(
+        "INSERT INTO places (project_id, view, item_kind, item, x, y, w, h, look) VALUES (?, 'v', 'group', 'G', 0, 0, 6, 3, '{\"color\":\"red\"}')",
+        [&project],
+    )
+    .unwrap();
+    // Opened again: nothing more, the group kept.
+    core.close();
+    drop(core);
+    Core::open(&place).unwrap().close();
+    assert_eq!(copies(&place), [MAP_GROUPS]);
+    let groups: i64 = Connection::open(&place)
+        .unwrap()
+        .query_row(
+            "SELECT count(*) FROM places WHERE item_kind = 'group'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(groups, 1);
 }
 
 #[test]
@@ -2007,7 +2161,7 @@ fn a_store_before_the_board_sections_has_them_added_or_named_once() {
     on("section_create", json!({"target": "Goals/cancelled"}));
     on(
         "card_create",
-        json!({"target": "Goals/Completed:Done", "value": {"kind": "goal", "status": "完了"}}),
+        json!({"target": "Goals/Completed:Done", "value": {"kind": "goal", "status": "done"}}),
     );
     core.close();
     drop(core);

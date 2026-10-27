@@ -35,7 +35,7 @@ fn a_board_card_links_to_main_s_card_by_its_path_and_keeps_it_by_its_id() {
         &core,
         "card_create",
         board(json!({"value": {
-            "Goals:Shape": {"kind": "goal", "label": "形を決める", "status": "進行中"},
+            "Goals:Shape": {"kind": "goal", "label": "形を決める", "status": "inProgress"},
             "Goals:Shape.Decide": {"kind": "task", "label": "決める",
                 "connections": [{"line": "link", "to": "Docs:Spec"}]},
             "Goals:Shape.Write": {"kind": "task", "label": "書く", "body": "直すのは [[Docs:Spec]] と [[Schemas/Ordering:Order.id]]"}
@@ -104,7 +104,7 @@ fn a_board_card_links_to_main_s_card_by_its_path_and_keeps_it_by_its_id() {
     ok(
         &core,
         "card_update",
-        board(json!({"target": "Goals:Shape", "value": {"status": "打ち切り"}})),
+        board(json!({"target": "Goals:Shape", "value": {"status": "cancelled"}})),
     );
     assert!(from_board(&core, "Docs:Spec").is_empty());
     let spec = ok(&core, "card_read", json!({"target": "Docs:Spec"}));
@@ -274,7 +274,7 @@ fn the_window_reads_the_board_s_lines_to_main_and_main_s_cards_with_what_to_do()
         &core,
         "card_create",
         board(json!({"value": {
-            "Goals:Shape": {"kind": "goal", "label": "形を決める", "status": "進行中",
+            "Goals:Shape": {"kind": "goal", "label": "形を決める", "status": "inProgress",
                 "body": "[[Docs:Spec]] の形を決める"},
             "Goals:Shape.Decide": {"kind": "task",
                 "connections": [{"line": "link", "to": "Docs:Spec", "at": "intro"}]},
@@ -343,7 +343,7 @@ fn the_window_reads_the_board_s_lines_to_main_and_main_s_cards_with_what_to_do()
         json!({"target": "Docs:Spec", "value": {"include": ["from_board"]}}),
     );
     assert_eq!(spec["fromBoard"][0]["path"], "Goals:Shape", "{spec}");
-    assert_eq!(spec["fromBoard"][0]["status"], "進行中", "{spec}");
+    assert_eq!(spec["fromBoard"][0]["status"], "inProgress", "{spec}");
     assert_eq!(spec["fromBoard"][1]["path"], "Goals:Shape.Decide", "{spec}");
     assert_eq!(spec["fromBoard"][1]["at"], "intro", "{spec}");
     let spec = ok(

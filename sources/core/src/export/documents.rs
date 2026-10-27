@@ -347,19 +347,19 @@ fn card_table(
     }
 }
 
-/// The flows of a chart section, its inner sections' after its own.
+/// The flows of a chart or an actor section, its inner sections' after its own.
 fn charts_in<'a>(target: &str, base: &str, project: &Project<'a>) -> Option<Vec<&'a Card>> {
     let name = target.strip_suffix(':').unwrap_or(target);
     let section = project.directory.section_from(name, base)?;
-    if project
-        .detail
-        .sections
-        .iter()
-        .find(|s| s.id == section)?
-        .kind
-        .as_deref()
-        != Some("chart")
-    {
+    if !crate::kinds::holds_flows(
+        project
+            .detail
+            .sections
+            .iter()
+            .find(|s| s.id == section)?
+            .kind
+            .as_deref(),
+    ) {
         return None;
     }
     let mut out = Vec::new();

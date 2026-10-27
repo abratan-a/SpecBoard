@@ -148,12 +148,12 @@ fn a_card_one_side_removed_and_the_other_changed_is_chosen_whole() {
         "branch_read",
         json!({"target": "work", "value": {"against": "main"}}),
     );
-    assert_eq!(preview["conflicts"][0]["unit"], "（カード）");
+    assert_eq!(preview["conflicts"][0]["unit"], "(whole)");
     assert!(preview["conflicts"][0]["source"].is_null());
     ok(
         &core,
         "branch_merge",
-        json!({"target": "work", "value": {"take": {"Schemas:Customer": {"（カード）": "target"}}}}),
+        json!({"target": "work", "value": {"take": {"Schemas:Customer": {"(whole)": "target"}}}}),
     );
     assert_eq!(
         read(&core, "main", "Schemas:Customer")["description"],

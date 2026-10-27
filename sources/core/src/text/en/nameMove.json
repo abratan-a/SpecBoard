@@ -1,0 +1,4 @@
+{
+  "nameMove.error.sql": "The built-in names cannot be moved: {e}",
+  "nameMove.line.builtinNames": "Gave {count} cards the built-in names of now: kinds of line, an enum's value key, a goal's values ({cards})"
+}

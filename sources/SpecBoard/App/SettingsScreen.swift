@@ -151,6 +151,9 @@ struct LanguageSetting: View {
             Text(L10n[.Settings.languageNote])
                 .font(.app(10.5)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+            Text(L10n[.Settings.languageMenusNote])
+                .font(.app(10.5)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

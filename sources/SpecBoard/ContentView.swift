@@ -53,6 +53,8 @@ struct CardCanvas: NSViewRepresentable {
     var pickedLine: String? = nil
     /// Lines drawn as curves whatever this Mac's setting (`CardCanvasView.curvesOnly`).
     var curvesOnly = false
+    /// What is done with the groups on it, and the one picked; nil on a diagram that holds none.
+    var groups: MapGroupHooks? = nil
 
     func makeNSView(context: Context) -> CardCanvasView {
         let view = CardCanvasView()
@@ -75,9 +77,11 @@ struct CardCanvas: NSViewRepresentable {
         view.partFace = partFace
         view.partLook = partLook
         view.onClickEmpty = onClickEmpty
+        wire(groups, view)
         view.show(detail, filters: controller.filters,
                   surroundings: surroundings, settings: settings, cardWidth: cardWidth, marks: marks)
         view.showLine(pickedLine)
+        view.showGroup(groups?.picked)
         // Made again — back from a card's editor, say: looking where it looked.
         if let look = controller.look(for: section) { view.restore(look) }
         context.coordinator.shown = revision
@@ -109,9 +113,11 @@ struct CardCanvas: NSViewRepresentable {
         view.partFace = partFace
         view.partLook = partLook
         view.onClickEmpty = onClickEmpty
+        wire(groups, view)
         context.coordinator.section = section
         view.curvesOnly = curvesOnly
         if view.pickedLine != pickedLine { view.showLine(pickedLine) }
+        defer { if view.pickedGroup != groups?.picked { view.showGroup(groups?.picked) } }
         guard context.coordinator.shown != revision else { return }
         context.coordinator.shown = revision
         // An arrangement rebuilt on purpose moves every card, so the viewport is
@@ -120,13 +126,25 @@ struct CardCanvas: NSViewRepresentable {
         let arranged = context.coordinator.arranged != layoutGeneration
         context.coordinator.arranged = layoutGeneration
         view.drawsParts = drawsParts
+        // Read again for a write that left all it draws as it was (another tree's, say): not rebuilt.
         view.show(detail, filters: controller.filters,
-                  fit: arranged, surroundings: surroundings, settings: settings, cardWidth: cardWidth, marks: marks)
+                  fit: arranged, surroundings: surroundings, settings: settings, cardWidth: cardWidth, marks: marks,
+                  keepIfSame: !arranged)
         controller.shownSection = section
         controller.shown()
     }
 
     func makeCoordinator() -> Coordinator { Coordinator() }
+
+    /// The groups' callbacks on the canvas: none where the diagram holds none, and none of the writing ones where
+    /// they may not be written.
+    private func wire(_ groups: MapGroupHooks?, _ view: CardCanvasView) {
+        view.onPickGroup = groups?.pick
+        view.onAddGroup = groups?.add
+        view.onFrameGroup = groups?.frame
+        view.onMoveGroup = groups?.move
+        view.onResizeGroup = groups?.resize
+    }
 
     /// "The drawn content may have changed."
     ///
@@ -373,6 +391,10 @@ struct ContentView: View {
             graph.resetLines()
             connections.resetLines()
         }
+        // A new version found or made ready is told in this window's notices, as every window's are.
+        .onChange(of: updater.announcement) { _, told in
+            if let told { model.tell(update: told) }
+        }
         .onChange(of: model.revealRequest) { _, id in
             // Back from a card's editor: the card picked, the view where it was.
             guard let id else { return }
@@ -447,36 +469,51 @@ struct ContentView: View {
                             .id(card.id)
                             .frame(maxWidth: .infinity)
                     } else {
-                        // The section's cards, in the frame every diagram has (`DiagramFrame`).
-                        DiagramFrame(model: model, definition: DiagramDefinition(
-                            detail: detail,
-                            surroundings: model.surroundings,
-                            key: model.shownSectionKey,
-                            controller: graph,
-                            dataGeneration: model.dataGeneration,
-                            presses: .relationPanel(model, graph),
-                            onMove: { model.moveByHand($0, to: $1) },
-                            keepsPlaces: detail.directory.section(id: model.shownSectionKey)?.kind?.keepsPlaces == true,
-                            drawsParts: detail.directory.section(id: model.shownSectionKey)?.kind == .ui,
-                            onResize: { model.resizeByHand($0, to: $1) },
-                            onFormPress: { model.pressForm($0, $1) },
-                            onPlaceOutside: { [section = model.shownSectionKey] placed in model.keepPlaced(placed, on: section) },
-                            onClickEmpty: { model.deselect() },
-                            marks: model.shownMarks,
-                            takesMenu: false,
-                            mermaid: { [section = model.shownSectionKey, path = detail.directory.full(section: model.shownSectionKey)] kinds in
-                                section.isEmpty ? nil : model.diagramMermaid("section_read", target: path, kinds: kinds)
-                            },
-                            caption: WorkDirCaption.of(model.shownSectionKey, model),
-                            bandTools: AnyView(mapBandTools),
-                            bandEnd: AnyView(filterButton(detail))))
-                            .frame(maxWidth: .infinity)
+                        // The section's map; an actor's, or what it provides in time order (`Map | Sequence`).
+                        SectionScreen(model: model, detail: detail,
+                                      actor: detail.directory.section(id: model.shownSectionKey).flatMap { $0.isActor ? $0 : nil }) {
+                            sectionMap(detail, switcher: $0)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
 
                     propertiesColumn(window: window)
                 }
             }
         }
+    }
+
+    /// The section's cards, in the frame every diagram has (`DiagramFrame`); an actor's switch to its
+    /// sequence at the band's end.
+    private func sectionMap(_ detail: ProjectDetail, switcher: AnyView?) -> some View {
+        // The section's cards, in the frame every diagram has (`DiagramFrame`).
+        DiagramFrame(model: model, definition: DiagramDefinition(
+            detail: detail,
+            surroundings: model.surroundings,
+            key: model.shownSectionKey,
+            controller: graph,
+            dataGeneration: model.dataGeneration,
+            presses: .relationPanel(model, graph),
+            onMove: { model.moveByHand($0, to: $1) },
+            keepsPlaces: detail.directory.section(id: model.shownSectionKey)?.kind?.keepsPlaces == true,
+            drawsParts: detail.directory.section(id: model.shownSectionKey)?.kind == .ui,
+            onResize: { model.resizeByHand($0, to: $1) },
+            onFormPress: { model.pressForm($0, $1) },
+            onPlaceOutside: { [section = model.shownSectionKey] placed in model.keepPlaced(placed, on: section) },
+            onClickEmpty: { model.deselect() },
+            marks: model.shownMarks,
+            takesMenu: false,
+            mermaid: { [section = model.shownSectionKey, path = detail.directory.full(section: model.shownSectionKey)] kinds in
+                section.isEmpty ? nil : model.diagramMermaid("section_read", target: path, kinds: kinds)
+            },
+            caption: WorkDirCaption.of(model.shownSectionKey, model),
+            bandTools: AnyView(mapBandTools),
+            bandEnd: AnyView(HStack(spacing: 8) {
+                arrangeMenu
+                filterButton(detail)
+                if let switcher { switcher }
+            }),
+            groups: model.sectionGroupHooks(model.shownSectionKey)))
     }
 
     /// Whether the property panel goes with what is open: a section's cards or a card,
@@ -580,10 +617,11 @@ struct ContentView: View {
         }
     }
 
-    /// The menu bar's: zoom and fit on the card map shown, else on the relation panel; 自動整列
-    /// on the relation panel alone (a card map's cards are put by hand).
+    /// The menu bar's: zoom and fit on the card map shown, else on the relation panel; 整える and
+    /// 線に沿って並べ直す on a section's map alone (a card map's cards are put by hand).
     private var diagramActions: DiagramActions {
         let canvas = { model.mapCanvas ?? graph }
+        let arrange = model.arrangeActions
         return DiagramActions(
             toggleNavPanel: { navPanelVisible.toggle() },
             toggleProperties: propertiesFit ? { propertiesOpen.toggle() } : nil,
@@ -591,7 +629,8 @@ struct ContentView: View {
             zoomOut: { canvas().zoomOut() },
             actualSize: { canvas().actualSize() },
             fit: { canvas().fit() },
-            autoLayout: { if model.mapCanvas == nil { model.autoLayout(filters: graph.filters) } },
+            tidy: arrange.tidy,
+            arrangeByLines: arrange.arrangeByLines,
             closesTabs: settingsPage == nil,
             closeTab: model.activeTab == nil ? nil : { model.closeTab() })
     }
@@ -655,6 +694,27 @@ struct ContentView: View {
             .fixedSize()
             .help(L10n[.Root.temporaryClearHelp])
         }
+    }
+
+    /// 「整列」 on a section map's band, left of the filter: 整える and 線に沿って並べ直す, as the Edit menu has them,
+    /// each saying on hover what it does. Shown on every section map; not pressed where neither can run.
+    private var arrangeMenu: some View {
+        let actions = model.arrangeActions
+        return Menu {
+            Button(L10n[.Root.arrangeTidy]) { actions.tidy?() }
+                .disabled(actions.tidy == nil)
+                .help(L10n[.Root.arrangeTidyHelp])
+            Button(L10n[.Root.arrangeByLines]) { actions.arrangeByLines?() }
+                .disabled(actions.arrangeByLines == nil)
+                .help(L10n[.Root.arrangeByLinesHelp])
+        } label: {
+            Label(L10n[.Root.arrangeTitle], systemImage: "square.grid.2x2")
+                .font(.app(10.5)).lineLimit(1)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
+        .disabled(actions.tidy == nil && actions.arrangeByLines == nil)
+        .help(L10n[.Root.arrangeHelp])
     }
 
     /// The relation panel's filters and legend, a click away. While one is on, the
@@ -808,7 +868,7 @@ struct ContentView: View {
             let offered = offeredKinds
             let picker = Picker("", selection: $draftSchemaKind) {
                 ForEach(offered, id: \.self) { name in
-                    Text(model.detail?.cardKinds[name].flatMap { $0.builtin ? nil : $0.badge } ?? name).tag(name)
+                    Text(model.detail?.cardKinds[name]?.badge ?? name).tag(name)
                 }
             }
             .labelsHidden()

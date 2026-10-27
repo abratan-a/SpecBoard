@@ -17,12 +17,15 @@ struct MarkdownView: View {
     var size: CGFloat = 12
     /// For a note: how its `[[path]]` and `{{path}}` read. Nil leaves them as text.
     var refs: MarkdownRefs? = nil
+    /// For a formatdoc read as a document (`RowMarks`): the right-click on a row, with the row's path in the
+    /// document, rearranges the menu WebKit is about to open — true when it did.
+    var rowMenu: ((String, NSMenu) -> Bool)? = nil
 
     @State private var height: CGFloat = 18
 
     var body: some View {
         MarkdownWebView(page: MarkdownPage.html(text, size: size * Typography.shared.scale, refs: refs),
-                        height: $height, open: refs?.open)
+                        height: $height, open: refs?.open, rowMenu: rowMenu)
             .frame(height: height)
             .frame(maxWidth: .infinity)
     }
@@ -128,10 +131,19 @@ enum MarkdownPage {
     /// so every diagram is shrunk to the column however far that takes it and code wraps;
     /// a table is laid out by its content and cut at the column's edge when wider. The
     /// card is widened or zoomed into to read them.
+    ///
+    /// A formatdoc's text with its rows marked (`RowMarks`) is drawn a row to a block, its items' brackets in
+    /// the left margin; on the card editor's page (not `card`), a row right-clicked is told to the app.
     static func html(_ markdown: String, size: CGFloat, refs: MarkdownRefs? = nil, card: Bool = false) -> String {
-        let body = Markdown.html(refs?.resolve(markdown) ?? markdown)
+        let resolved = refs?.resolve(markdown) ?? markdown
+        let rows = RowMarks.parse(resolved)
+        let body = rows.map { RowMarks.html($0) } ?? Markdown.html(resolved)
         let diagram = Markdown.hasDiagram(body)
         let px = String(format: "%.1f", size)
+        let classes = rows == nil ? [] : ["sb-rows"] + (rows?.outlined == true ? ["sb-outline"] : [])
+        let look = css(px) + (card ? cardCSS : "")
+            + (rows == nil ? "" : outlineCSS + (card ? cardOutlineCSS : editorOutlineCSS))
+        let menu = rows != nil && !card
         return """
         <!doctype html>
         <html><head><meta charset="utf-8">
@@ -139,9 +151,11 @@ enum MarkdownPage {
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; \
         style-src 'unsafe-inline'; font-src data:; script-src \(scheme): \(scriptHashes); \
         base-uri 'none'; form-action 'none'">
-        <style>\(css(px))\(card ? cardCSS : "")</style>
-        </head><body\(card ? " data-shrink=\"all\"" : "")><article>\(body)</article>
+        <style>\(look)</style>
+        </head><body\(classes.isEmpty ? "" : " class=\"\(classes.joined(separator: " "))\"")\
+        \(card ? " data-shrink=\"all\"" : "")><article>\(body)</article>
         <script>\(sizing)</script>
+        \(menu ? "<script>\(rowMenu)</script>" : "")
         \(diagram ? "<script src=\"\(scheme)://resources/mermaid.min.js\"></script><script>\(diagrams)</script>"
                   : "<script>\(readyNow)</script>")
         </body></html>
@@ -150,7 +164,7 @@ enum MarkdownPage {
 
     /// The page's own scripts, each allowed by its digest, and no other inline
     /// script: one that got into the page some other way does not run.
-    static let scriptHashes = [sizing, diagrams, readyNow]
+    static let scriptHashes = [sizing, diagrams, readyNow, rowMenu]
         .map { "'sha256-\(Data(SHA256.hash(data: Data($0.utf8))).base64EncodedString())'" }
         .joined(separator: " ")
 
@@ -210,6 +224,93 @@ enum MarkdownPage {
     private static let cardCSS = """
         pre { white-space: pre-wrap; overflow: hidden; }
         .mermaid { overflow: hidden; }
+        """
+
+    /// A formatdoc's rows as blocks (`RowMarks.html`): each item's bracket in the left margin, a colour to a
+    /// depth. The blocks keep the document's spacing — a section has no margin, padding or border of its own,
+    /// so its first and last child's margins pass through it — and draw a lit row and its item with shadows,
+    /// which take no room.
+    private static let outlineCSS = """
+        :root { --sb-c0: #4f6f94; --sb-c1: #4c6b58; --sb-c2: #7a5f3f; --sb-c3: #6a5c88; --sb-c4: #4f7f7a;
+                --sb-accent: #c98a1e; --sb-lit: rgba(224, 169, 81, 0.22); --sb-held: rgba(224, 169, 81, 0.06);
+                --sb-held-line: rgba(201, 138, 30, 0.6); }
+        @media (prefers-color-scheme: dark) {
+            :root { --sb-c0: #6f8db0; --sb-c1: #5f7f6c; --sb-c2: #8a7357; --sb-c3: #8a7db0; --sb-c4: #6f9a96;
+                    --sb-accent: #e0a951; --sb-lit: rgba(224, 169, 81, 0.14); --sb-held: rgba(224, 169, 81, 0.04);
+                    --sb-held-line: rgba(224, 169, 81, 0.55); }
+        }
+        section.sb-row { position: relative; border-radius: 3px; }
+        .sb-bracket { position: absolute; top: 0.25em; bottom: 0; }
+        .sb-bracket::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0;
+            border: solid var(--sb-c); border-right: none; border-radius: 2px 0 0 2px; }
+        section[data-depth="0"] > .sb-bracket { --sb-c: var(--sb-c0); }
+        section[data-depth="1"] > .sb-bracket { --sb-c: var(--sb-c1); }
+        section[data-depth="2"] > .sb-bracket { --sb-c: var(--sb-c2); }
+        section[data-depth="3"] > .sb-bracket { --sb-c: var(--sb-c3); }
+        section[data-depth="4"] > .sb-bracket { --sb-c: var(--sb-c4); }
+        .sb-tag { display: none; }
+        """
+
+    /// On the card editor's page: brackets 7pt apart, each 7pt wide to rest the pointer on; one rested on
+    /// lights its item and shows the item's heading and path after the heading, placed where the heading's
+    /// words end without taking room. A row right-clicked (`rowMenu`) is lit and its item outlined.
+    private static let editorOutlineCSS = """
+        body.sb-rows { padding: 0 \(Int(RowMarks.edge))px \(Int(RowMarks.edge))px 0; }
+        body.sb-outline { padding-left: \(Int(RowMarks.gutter))px; }
+        .sb-bracket { width: 7px; cursor: default; }
+        .sb-bracket::before { width: 5px; border-width: 1.5px; }
+        section[data-depth="0"] > .sb-bracket { left: \(Int(-RowMarks.gutter) + 6)px; }
+        section[data-depth="1"] > .sb-bracket { left: \(Int(-RowMarks.gutter) + 13)px; }
+        section[data-depth="2"] > .sb-bracket { left: \(Int(-RowMarks.gutter) + 20)px; }
+        section[data-depth="3"] > .sb-bracket { left: \(Int(-RowMarks.gutter) + 27)px; }
+        section[data-depth="4"] > .sb-bracket { left: \(Int(-RowMarks.gutter) + 34)px; }
+        section.sb-item > .sb-bracket:hover { --sb-c: var(--sb-accent); }
+        section.sb-item > .sb-bracket:hover::before { border-width: 2px; border-right: none; }
+        section.sb-item:has(> .sb-bracket:hover), .sb-held { background: var(--sb-held);
+            box-shadow: 0 0 0 6px var(--sb-held), 0 0 0 7px var(--sb-held-line); border-radius: 5px; }
+        .sb-lit { background: var(--sb-lit); box-shadow: 0 0 0 3px var(--sb-lit), 0 0 0 4px var(--sb-accent); }
+        section.sb-item:has(> .sb-bracket:hover) > :is(h1, h2, h3, h4, h5, h6) > .sb-tag {
+            display: inline-block; position: absolute; z-index: 2; margin: 0.15em 0 0 0.6em; padding: 0.1em 0.5em;
+            font-size: 11px; font-weight: 400; line-height: 1.4; white-space: nowrap; -webkit-user-select: none;
+            border-radius: 4px; border: 0.5px solid rgba(127, 127, 127, 0.4); background: -apple-system-control-background;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
+        .sb-tag::before { content: attr(data-heading); }
+        .sb-tag::after { content: attr(data-path); margin-left: 0.4em; font-family: ui-monospace, Menlo, monospace;
+            color: -apple-system-secondary-label; }
+        """
+
+    /// On a card's picture: thinner brackets 3pt apart in a narrower margin. Nothing on a picture is pointed at.
+    private static let cardOutlineCSS = """
+        body.sb-outline { padding-left: \(Int(RowMarks.cardGutter))px; }
+        .sb-bracket { width: 3px; }
+        .sb-bracket::before { width: 3px; border-width: 1px; }
+        section[data-depth="0"] > .sb-bracket { left: \(Int(-RowMarks.cardGutter) + 1)px; }
+        section[data-depth="1"] > .sb-bracket { left: \(Int(-RowMarks.cardGutter) + 4)px; }
+        section[data-depth="2"] > .sb-bracket { left: \(Int(-RowMarks.cardGutter) + 7)px; }
+        section[data-depth="3"] > .sb-bracket { left: \(Int(-RowMarks.cardGutter) + 10)px; }
+        section[data-depth="4"] > .sb-bracket { left: \(Int(-RowMarks.cardGutter) + 13)px; }
+        """
+
+    /// A right-click tells the app which row is under the pointer — the innermost, by its path in the
+    /// document; "" outside every row — before WebKit opens its menu, which the app rearranges as it opens
+    /// (`PassiveWebView.willOpenMenu`). The row is lit and the item holding it outlined until the menu closes
+    /// (`sbUnlight`, called by the app).
+    private static let rowMenu = """
+        const sbLit = [];
+        const sbUnlight = () => { for (const box of sbLit.splice(0)) box.classList.remove("sb-lit", "sb-held"); };
+        addEventListener("contextmenu", event => {
+            sbUnlight();
+            const row = event.target instanceof Element ? event.target.closest("section.sb-row") : null;
+            window.webkit.messageHandlers.row?.postMessage(row ? row.dataset.row : "");
+            if (!row) return;
+            row.classList.add("sb-lit");
+            sbLit.push(row);
+            const item = row.parentElement?.closest("section.sb-item");
+            if (item) {
+                item.classList.add("sb-held");
+                sbLit.push(item);
+            }
+        });
         """
 
     /// Tells the view how tall the page is, whenever that changes. What scrolls sideways —
@@ -348,6 +449,24 @@ final class PassiveWebView: WKWebView {
     /// The page is drawn — its diagrams too — and says so. A picture of the window
     /// waits for this (`WindowCapture`), or it shows a page half made.
     var ready = false
+    /// The row the page said is under the pointer of the right-click being opened (`MarkdownPage.rowMenu`),
+    /// by its path in the document: taken by the menu that opens next, and by no other.
+    var rowHit: String?
+    /// What the menu of a right-click on a row is made into (`MarkdownView.rowMenu`); nil leaves WebKit's.
+    var rowMenu: ((String, NSMenu) -> Bool)?
+
+    override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {
+        if let row = rowHit, let rowMenu { _ = rowMenu(row, menu) }
+        rowHit = nil
+        super.willOpenMenu(menu, with: event)
+    }
+
+    /// The row lit for the menu is let go of once the menu is gone, whatever was picked in it.
+    override func didCloseMenu(_ menu: NSMenu, with event: NSEvent?) {
+        super.didCloseMenu(menu, with: event)
+        guard rowMenu != nil else { return }
+        evaluateJavaScript("if (typeof sbUnlight === \"function\") sbUnlight();")
+    }
 
     override func scrollWheel(with event: NSEvent) {
         // Sideways is the page's own: a diagram wider than the column scrolls in it.
@@ -376,6 +495,7 @@ struct MarkdownWebView: NSViewRepresentable {
     @Binding var height: CGFloat
     /// A click on an `sb-nav:` link, with the path it names.
     var open: ((String) -> Void)? = nil
+    var rowMenu: ((String, NSMenu) -> Bool)? = nil
 
     func makeCoordinator() -> Coordinator { Coordinator(height: $height) }
 
@@ -385,7 +505,9 @@ struct MarkdownWebView: NSViewRepresentable {
         config.websiteDataStore = .nonPersistent()
         config.userContentController.add(context.coordinator, name: "size")
         config.userContentController.add(context.coordinator, name: "ready")
+        config.userContentController.add(context.coordinator, name: "row")
         let view = PassiveWebView(frame: .zero, configuration: config)
+        view.rowMenu = rowMenu
         view.navigationDelegate = context.coordinator
         PassiveWebView.transparent(view)
         view.setAccessibilityLabel(L10n[.Common.wordDescription])
@@ -397,6 +519,7 @@ struct MarkdownWebView: NSViewRepresentable {
         view.setAccessibilityLabel(L10n[.Common.wordDescription])
         context.coordinator.height = $height
         context.coordinator.open = open
+        view.rowMenu = rowMenu
         guard context.coordinator.page != page else { return }
         load(page, into: view, context.coordinator)
     }
@@ -404,6 +527,7 @@ struct MarkdownWebView: NSViewRepresentable {
     static func dismantleNSView(_ view: PassiveWebView, coordinator: Coordinator) {
         view.configuration.userContentController.removeScriptMessageHandler(forName: "size")
         view.configuration.userContentController.removeScriptMessageHandler(forName: "ready")
+        view.configuration.userContentController.removeScriptMessageHandler(forName: "row")
     }
 
     private func load(_ page: String, into view: PassiveWebView, _ coordinator: Coordinator) {
@@ -424,6 +548,11 @@ struct MarkdownWebView: NSViewRepresentable {
                                    didReceive message: WKScriptMessage) {
             if message.name == "ready" {
                 (message.webView as? PassiveWebView)?.ready = true
+                return
+            }
+            if message.name == "row" {
+                let row = message.body as? String ?? ""
+                (message.webView as? PassiveWebView)?.rowHit = row.isEmpty ? nil : row
                 return
             }
             guard let value = message.body as? NSNumber else { return }

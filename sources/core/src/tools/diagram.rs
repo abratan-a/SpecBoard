@@ -179,6 +179,17 @@ fn drawn(
     match at {
         At::Project => {}
         At::Section(path) => {
+            // An actor's chart, when its sequence is asked for; the section map otherwise.
+            match args.get("shape").and_then(Value::as_str) {
+                Some("sequence") => return actor_chart(&project, &args, path),
+                Some("map") | None => {
+                    if args.contains_key("lifelines") {
+                        return Err(text!("diagram.lifelines.sequenceOnly"));
+                    }
+                    args.remove("shape");
+                }
+                Some(other) => return Err(text!("diagram.section.shape", shape = other)),
+            }
             if let Ok(id) = section(&project, path)
                 && datachart::holds_data(&project, &id)
             {
@@ -288,6 +299,95 @@ fn section(project: &Project, name: &str) -> Result<String, String> {
         .section_problem(name, &project.directory.home))
 }
 
+/// The actor sections `lifelines` names, by id: each one an actor's, refused naming the path that is
+/// not (`specboard://SpecBoard/Docs/Design:Overview` §11「シーケンス図の生命線と帯」).
+pub(crate) fn lifelines(
+    project: &Project,
+    args: &Map<String, Value>,
+) -> Result<Vec<String>, String> {
+    let Some(given) = args.get("lifelines") else {
+        return Ok(Vec::new());
+    };
+    let paths = given
+        .as_array()
+        .ok_or_else(|| text!("diagram.lifelines.list"))?;
+    paths
+        .iter()
+        .map(|p| {
+            let path = p.as_str().ok_or_else(|| text!("diagram.lifelines.list"))?;
+            let id = section(project, path)?;
+            if project.section_kind(&id) != Some(crate::kinds::ACTOR) {
+                return Err(text!("diagram.lifelines.notActor", path));
+            }
+            Ok(id)
+        })
+        .collect()
+}
+
+/// An actor section drawn as its chart: a frame for each flow it provides
+/// (`charts::actor_sequence`). Another section has no sequence.
+fn actor_chart(project: &Project, args: &Map<String, Value>, path: &str) -> Result<Output, String> {
+    let others: Vec<&str> = [
+        "roots",
+        "depth",
+        "kinds",
+        "tags",
+        "fields",
+        "direction",
+        "field",
+    ]
+    .into_iter()
+    .filter(|k| args.contains_key(*k))
+    .collect();
+    if !others.is_empty() {
+        return Err(text!(
+            "diagram.chart.unused",
+            keys = crate::text::List::of(&others)
+        ));
+    }
+    let id = section(project, path)?;
+    let full = project.directory.full_section(&id);
+    if project.section_kind(&id) != Some(crate::kinds::ACTOR) {
+        return Err(text!(
+            "diagram.actorChart.notActor",
+            path = full,
+            kind = project
+                .section_kind(&id)
+                .map(|k| project.defs.section_label(k))
+                .unwrap_or_default()
+        ));
+    }
+    let chosen = lifelines(project, args)?;
+    let refused = |why: charts::TooLarge| {
+        text!(
+            "diagram.chart.tooLarge",
+            card = full.clone(),
+            why = why.said()
+        )
+    };
+    let written = &project.detail.project;
+    if Args::new(args).bool("revisionOnly", false) {
+        let rev = written
+            .in_export_language(|| charts::render_actor(&id, project, &chosen))
+            .map_err(refused)?;
+        let rev = rev
+            .lines()
+            .next()
+            .and_then(|l| l.rsplit_once("rev="))
+            .map(|(_, r)| r.to_string())
+            .unwrap_or_default();
+        return Ok(Output::Json(json!({
+            "rev": rev,
+            "spec": { "actor": full, "shape": "sequence" },
+        })));
+    }
+    Ok(Output::Blocks(vec![
+        written
+            .in_export_language(|| charts::render_actor(&id, project, &chosen))
+            .map_err(refused)?,
+    ]))
+}
+
 /// A flow drawn as its chart: in its own shape unless `shape` asks for the other;
 /// an action as its sequence diagram.
 fn chart(project: &Project, args: &Map<String, Value>, name: &str) -> Result<Output, String> {
@@ -349,17 +449,32 @@ fn chart(project: &Project, args: &Map<String, Value>, name: &str) -> Result<Out
             ));
         }
     };
+    let chosen = lifelines(project, args)?;
+    if !chosen.is_empty() && shape != "sequence" {
+        return Err(text!("diagram.lifelines.sequenceOnly"));
+    }
+    // Drawn in the project's words; refused, naming the flow, in the call's.
+    let refused = |why: charts::TooLarge| {
+        text!(
+            "diagram.chart.tooLarge",
+            card = project.full(card),
+            why = why.said()
+        )
+    };
+    let written = &project.detail.project;
     if Args::new(args).bool("revisionOnly", false) {
+        let rev = written
+            .in_export_language(|| charts::revision_seen(card, project, shape, &chosen))
+            .map_err(refused)?;
         return Ok(Output::Json(json!({
-            "rev": charts::revision_in(card, project, shape),
+            "rev": rev,
             "spec": { "chart": project.exported(card), "shape": shape },
         })));
     }
     Ok(Output::Blocks(vec![
-        project
-            .detail
-            .project
-            .in_export_language(|| charts::render_drawn(card, project, shape)),
+        written
+            .in_export_language(|| charts::render_drawn_seen(card, project, shape, &chosen))
+            .map_err(refused)?,
     ]))
 }
 
@@ -415,6 +530,7 @@ fn relations(
     let spec = spec(project, args)?;
     let graph = mermaid::select(project, &spec);
     refuse_roots(project, &spec, &graph)?;
+    refuse_too_large(&graph, at)?;
     if Args::new(args).bool("revisionOnly", false) {
         return Ok(Output::Json(revision_view(project, &spec, &graph)));
     }
@@ -423,9 +539,23 @@ fn relations(
         .project
         .in_export_language(|| mermaid::render_drawn(project, &spec, &graph, None));
     Ok(Output::Blocks(vec![match room {
-        Some(room) if !room.fits(&text) => smaller(project, &spec, &graph, at, room, &text),
+        Some(room) if !room.fits(&text) => smaller(project, &spec, &graph, at, room, &text)?,
         _ => text,
     }]))
+}
+
+/// A class diagram too large to draw refused, naming it and why: the caller asks again narrower
+/// rather than reading a note in place of the diagram.
+fn refuse_too_large(graph: &mermaid::Subgraph, at: At) -> Result<(), String> {
+    let Some(why) = graph.too_large else {
+        return Ok(());
+    };
+    let what = match at {
+        At::Project => text!("diagram.relations.whole"),
+        At::Section(path) => path.to_string(),
+        At::Cards(list) => crate::text::List::of(list).to_string(),
+    };
+    Err(text!("diagram.relations.tooLarge", what, why = why.said()))
 }
 
 /// A class diagram too big for its `room` (`text` as it was drawn) drawn smaller: the cards around
@@ -439,7 +569,7 @@ fn smaller(
     at: At,
     room: Room,
     text: &str,
-) -> String {
+) -> Result<String, String> {
     let rev = mermaid::revision(project, spec, graph);
     let cut = |hint: String| mermaid::Cut {
         rev: rev.clone(),
@@ -454,20 +584,21 @@ fn smaller(
                 ..spec.clone()
             };
             let drawn = mermaid::select(project, &lower);
+            refuse_too_large(&drawn, at)?;
             let hint = lowered(at, spec, depth);
             let text = project.detail.project.in_export_language(|| {
                 mermaid::render_drawn(project, &lower, &drawn, Some(&cut(hint)))
             });
             if room.fits(&text) {
-                return text;
+                return Ok(text);
             }
         }
     }
     let hint = cut(boxed(at, spec));
-    project
+    Ok(project
         .detail
         .project
-        .in_export_language(|| mermaid::render_sections(project, spec, graph, &hint, room.most))
+        .in_export_language(|| mermaid::render_sections(project, spec, graph, &hint, room.most)))
 }
 
 // What a diagram drawn smaller says it was drawn so for, and how to ask for less: said to the caller,
@@ -796,7 +927,9 @@ mod tests {
         let store = store();
         let seen = Seen::read(&store, "見本", None).unwrap();
         let project = seen.project();
-        let spec = spec(&project, &Map::new()).unwrap();
+        // Mentions asked for by name: drawn only when asked, and the lines that make the sections many.
+        let asked = json!({"kinds": ["embed", "points", "signedBy", "reads", "writes", "next", "mentions", "run"]});
+        let spec = spec(&project, asked.as_object().unwrap()).unwrap();
         let graph = mermaid::select(&project, &spec);
         let cut = mermaid::Cut {
             rev: "abc".into(),

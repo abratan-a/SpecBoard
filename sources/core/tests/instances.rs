@@ -283,7 +283,7 @@ fn a_data_card_is_read_and_written_a_value_at_a_time() {
     let line = refused(
         &core,
         "card_update",
-        json!({"target": "Data:first", "value": {"connections": {"add": [{"line": "of", "to": "Schemas:Customer"}]}}}),
+        json!({"target": "Data:first", "value": {"connections": {"add": [{"line": "shapeOf", "to": "Schemas:Customer"}]}}}),
     );
     assert!(line.contains("value のキー of"), "{line}");
     let moved = ok(

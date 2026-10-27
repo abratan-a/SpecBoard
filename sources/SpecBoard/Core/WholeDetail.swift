@@ -31,6 +31,9 @@ nonisolated struct WholeDetail: Decodable {
     /// The marks of the kinds of section, by the kind's name (`kinds.sections`): the built-in ones'
     /// (as the project writes them over) and the project's own.
     var sectionMarks: [String: SectionMark]
+    /// The kinds of section each kind's sections may have inside, and what each kind is called (`kinds.sections`).
+    var sectionInside: [String: [String]]
+    var sectionLabels: [String: String]
     /// What a flow's `via` may be (`kinds.vias`): the built-in values, then the project's own.
     var vias: [String]
     /// Each entry's hash as the core worked it out, by its key (`schemas/<id>`, `relations/<id>`, `project`,
@@ -51,10 +54,13 @@ nonisolated struct WholeDetail: Decodable {
         sections = try c.decodeIfPresent([WholeSection].self, forKey: .sections)?.map(\.section) ?? []
         context = try c.decodeIfPresent(String.self, forKey: .context)
         let kinds = try c.decodeIfPresent(WholeKinds.self, forKey: .kinds) ?? WholeKinds()
+        BuiltinWords.take(kinds)
         lineKinds = kinds.lines
         cardKinds = kinds.cards
         sectionHolds = kinds.holds
         sectionMarks = kinds.marks
+        sectionInside = kinds.inside
+        sectionLabels = kinds.labels
         vias = kinds.vias
         filePlaces = try c.decodeIfPresent([String: FilePlace].self, forKey: .filePlaces) ?? [:]
         hashes = try c.decodeIfPresent([String: String].self, forKey: .hashes) ?? [:]
@@ -63,10 +69,13 @@ nonisolated struct WholeDetail: Decodable {
 
     /// The kinds read anew (a reading's `kinds`) put in.
     mutating func take(_ kinds: WholeKinds) {
+        BuiltinWords.take(kinds)
         lineKinds = kinds.lines
         cardKinds = kinds.cards
         sectionHolds = kinds.holds
         sectionMarks = kinds.marks
+        sectionInside = kinds.inside
+        sectionLabels = kinds.labels
         vias = kinds.vias
     }
 
@@ -85,6 +94,8 @@ nonisolated struct WholeDetail: Decodable {
         detail.cardKinds = kinds
         detail.sectionHolds = sectionHolds
         detail.sectionMarks = sectionMarks
+        detail.sectionInside = sectionInside
+        detail.sectionLabels = sectionLabels
         detail.vias = vias
         return detail
     }
@@ -106,6 +117,15 @@ nonisolated struct WholeKinds: Decodable {
     var holds: [String: [String]] = [:]
     /// The marks of the kinds of section, by the kind's name.
     var marks: [String: SectionMark] = [:]
+    /// The kinds of section each kind's sections may have inside, by its name, the first the one taken
+    /// when none is asked for (`sections`).
+    var inside: [String: [String]] = [:]
+    /// What each kind of section is called, by its name (`label`).
+    var labels: [String: String] = [:]
+    /// What each kind of section holds, in a line, by its name (`description`).
+    var meanings: [String: String] = [:]
+    /// The kinds of section built in, not the project's own.
+    var builtinSections: Set<String> = []
     var vias: [String] = []
 
     private enum Keys: String, CodingKey { case lines, cards, sections, vias }
@@ -118,8 +138,12 @@ nonisolated struct WholeKinds: Decodable {
         var holds: [String]?
         var icon: String?
         var color: String?
+        var inside: [String]?
+        var label: String?
+        var description: String?
+        var builtin: Bool
 
-        enum Keys: String, CodingKey { case section, holds, icon }
+        enum Keys: String, CodingKey { case section, holds, icon, sections, label, description, builtin }
 
         /// `icon: {name, color}`. One written the way before (a string) reads as
         /// none: the core lets it go too.
@@ -132,6 +156,10 @@ nonisolated struct WholeKinds: Decodable {
             let c = try decoder.container(keyedBy: Keys.self)
             section = try c.decode(String.self, forKey: .section)
             holds = try? c.decodeIfPresent([String].self, forKey: .holds)
+            inside = try? c.decodeIfPresent([String].self, forKey: .sections)
+            label = try? c.decodeIfPresent(String.self, forKey: .label)
+            description = try? c.decodeIfPresent(String.self, forKey: .description)
+            builtin = (try? c.decodeIfPresent(Bool.self, forKey: .builtin)) ?? false
             let mark = (try? c.decodeIfPresent(Mark.self, forKey: .icon)) ?? nil
             icon = mark?.name
             color = mark?.color
@@ -149,6 +177,13 @@ nonisolated struct WholeKinds: Decodable {
         marks = Dictionary(sections.compactMap { def in
             def.icon == nil && def.color == nil ? nil : (def.section, SectionMark(icon: def.icon, color: def.color))
         }, uniquingKeysWith: { a, _ in a })
+        inside = Dictionary(sections.compactMap { def in def.inside.map { (def.section, $0) } },
+                            uniquingKeysWith: { a, _ in a })
+        labels = Dictionary(sections.compactMap { def in def.label.map { (def.section, $0) } },
+                            uniquingKeysWith: { a, _ in a })
+        meanings = Dictionary(sections.compactMap { def in def.description.map { (def.section, $0) } },
+                              uniquingKeysWith: { a, _ in a })
+        builtinSections = Set(sections.filter(\.builtin).map(\.section))
         vias = try c.decodeIfPresent([String].self, forKey: .vias) ?? []
     }
 }
@@ -167,7 +202,7 @@ nonisolated struct WholeCard: Decodable {
              discriminator, enumOpen, posX, posY, pinned, sortOrder, fields, values, uses, signedBy,
              verifiedBy, next, body, rows, trigger, steps, cell, diagram,
              size, docView, version, sectionId, customFields, customRows, form, itemPlaces, standalone,
-             connections, strayFields, faceRows, tableMarkdown, review, codeReview, container = "in"
+             connections, strayFields, faceRows, tableMarkdown, review, codeReview, face, listFace, container = "in"
     }
 
     private struct Form: Decodable {
@@ -217,6 +252,15 @@ nonisolated struct WholeCard: Decodable {
             // A data card: its shape's name, as its header says it.
             if card.kind == .instance || card.kind == .table, let of = card.shapeOf {
                 card.shapeName = directory.schema(id: of)?.name ?? directory.ghost(id: of)?.name
+                // Its list's head: a field holding an enum's value is drawn as a chip.
+                if let shape = directory.schema(id: of), var face = card.listFace {
+                    for index in face.header.indices {
+                        let name = PathText.quote(face.header[index].field)
+                        let embeds = shape.connections.first { $0.line == Line.embed && $0.from == name }?.to
+                        face.header[index].chip = embeds.flatMap(directory.schema(id:))?.kind == .enum
+                    }
+                    card.listFace = face
+                }
             }
             // A card of a kind the project defines: drawn and written by its definition, from its
             // fields and rows as kept.
@@ -314,8 +358,8 @@ nonisolated struct WholeCard: Decodable {
     /// written back (`AppModel.setCustomRows` leaves it out). `WholeCard.unfolded`.
     static let unfolded = "#unfold"
 
-    /// The row type of a card a container holds, as its rows of before named it.
-    static let heldCard = "タスク"
+    /// The row type of a card a container holds: an id, said by the held card's kind (`CustomRowPane`).
+    static let heldCard = "task"
 
     private static let ownPlaces: Set<String> = ["label", "description", "tags", "metadata", "body"]
 
@@ -383,6 +427,12 @@ nonisolated struct WholeCard: Decodable {
         card.tableMarkdown = try c.decodeIfPresent(String.self, forKey: .tableMarkdown)
         card.review = (try? c.decodeIfPresent([ReviewMark].self, forKey: .review)) ?? []
         card.codeReview = (try? c.decodeIfPresent([CodeReviewLine].self, forKey: .codeReview)) ?? []
+        // A shape's list face, and a data card's rows by it: one this build cannot read is drawn as the data tree.
+        if card.kind == .entity || card.kind == .value {
+            let face = try? c.decodeIfPresent(JSONValue.self, forKey: .face)
+            card.shapeFace = face?.asObject == nil ? nil : face
+        }
+        card.listFace = try? c.decodeIfPresent(ListFace.self, forKey: .listFace)
         self.card = card
         let form = try c.decodeIfPresent(Form.self, forKey: .form)
         self.form = form?.fields ?? [:]
@@ -405,7 +455,14 @@ nonisolated struct WholeSection: Decodable {
     /// The section's keys in `project_detail`. Its card ghosts are no longer its own: they are
     /// cards of their own (`ProjectDetail.ghosts`).
     enum Keys: String, CodingKey {
-        case id, projectId, name, description, sortOrder, parentId, kind, missing
+        case id, projectId, name, description, sortOrder, parentId, kind, missing, figure, icon, shownMark
+    }
+
+    /// A mark as the core writes it (`{name?, color?}`).
+    private struct Mark: Decodable {
+        var name: String?
+        var color: String?
+        var mark: SectionMark { SectionMark(icon: name, color: color) }
     }
 
     init(from decoder: Decoder) throws {
@@ -421,5 +478,8 @@ nonisolated struct WholeSection: Decodable {
                               kind: (try? c.decodeIfPresent(SectionKind.self, forKey: .kind)) ?? nil)
         section.kindName = try? c.decodeIfPresent(String.self, forKey: .kind)
         section.missing = (try? c.decodeIfPresent(Bool.self, forKey: .missing)) ?? false
+        section.figure = try? c.decodeIfPresent(String.self, forKey: .figure)
+        section.icon = ((try? c.decodeIfPresent(Mark.self, forKey: .icon)) ?? nil)?.mark
+        section.shownMark = ((try? c.decodeIfPresent(Mark.self, forKey: .shownMark)) ?? nil)?.mark
     }
 }

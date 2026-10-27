@@ -46,6 +46,8 @@ pub struct Language {
     pub rules: Rules,
     /// Only read inside another (Markdown's inline text): no file is of it.
     pub inner: bool,
+    /// Where its grammar reads a text wrong, mended by parsing again (`super::parse_mended`).
+    pub mend: Option<super::mend::Mend>,
     symbols_text: Option<String>,
     highlights_text: Option<String>,
     injections_text: String,
@@ -82,12 +84,18 @@ impl Language {
             grammar,
             rules,
             inner: false,
+            mend: None,
             symbols_text: symbols,
             highlights_text: highlights,
             injections_text: injections,
             symbols: OnceLock::new(),
             highlight: OnceLock::new(),
         }
+    }
+
+    fn mended(mut self, mend: super::mend::Mend) -> Language {
+        self.mend = Some(mend);
+        self
     }
 
     /// Whether its functions and types are read.
@@ -221,7 +229,8 @@ fn bundled() -> Vec<Language> {
             ours!("swift"),
             joined(&[tree_sitter_swift::HIGHLIGHTS_QUERY]),
             tree_sitter_swift::INJECTIONS_QUERY.to_string(),
-        ),
+        )
+        .mended(super::mend::SWIFT),
         Language::new(
             "typescript",
             "TypeScript",

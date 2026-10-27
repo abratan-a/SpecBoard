@@ -3,8 +3,9 @@ import SwiftUI
 /// The toolbar's word on updates, always in the same place.
 ///
 /// 設定 is not somewhere people go, so asking and acting both live in the bar: the
-/// button says 更新を確認 and asks now, and once a new version has been fetched and
-/// checked it says 今すぐアップデート and where from and replaces the app. A replacement
+/// button says 更新を確認 and asks now; a new version found and not fetched says
+/// ダウンロード and where from, outlined, since pressing it leaves the app running; once
+/// fetched and checked it says 今すぐアップデート, filled, and replaces the app. A replacement
 /// that failed takes the spot until it is dismissed; one that went through says
 /// nothing. A build outside Applications never updates itself, so it shows nothing
 /// here.
@@ -26,9 +27,18 @@ struct UpdatePill: View {
     @ViewBuilder
     private var button: some View {
         switch updater.phase {
+        case .available(let release):
+            Button {
+                Task { await updater.download() }
+            } label: {
+                label("arrow.down.circle", L10n[.Update.pillDownload(release.version, feedName)], filled: false)
+                    .fixedSize()
+            }
+            .buttonStyle(.plain)
+            .help(downloadHelp(release))
         case .ready(let release):
             Button {
-                updater.installAndRelaunch()
+                Task { await updater.updateNow() }
             } label: {
                 label("arrow.down.circle", readyLabel(release)).fixedSize()
             }
@@ -38,6 +48,8 @@ struct UpdatePill: View {
             label("arrow.triangle.2.circlepath", L10n[.Update.statusInstalling(release.label)])
         case .checking:
             working(L10n[.Update.statusChecking])
+        case .rechecking:
+            working(L10n[.Update.statusRechecking])
         case .downloading(let release):
             working(L10n[.Update.statusDownloading(release.label)])
         case .failed(let message):
@@ -75,11 +87,18 @@ struct UpdatePill: View {
         flash = nil
     }
 
+    private var feedName: String { updater.selectedFeed?.displayName ?? L10n[.Update.feedFallbackName] }
+
+    /// What pressing asks, and how often the place in use is asked without pressing.
     private var lastChecked: String {
         let when = updater.lastChecked.map {
-            L10n[.Update.statusCheckedAt($0.formatted(date: .omitted, time: .shortened))]
+            L10n[.Update.statusCheckedAt($0.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Language.shared.locale)))]
         } ?? ""
-        return L10n[.Update.pillCheckHelp(updater.selectedFeed?.displayName ?? L10n[.Update.feedFallbackName])] + when
+        let periodic = updater.selectedFeed.map { updater.periodic(for: $0.id) } ?? .standard
+        let help = periodic.on
+            ? L10n[.Update.pillCheckHelp(feedName, UpdateIntervals.inSentence(periodic.minutes))]
+            : L10n[.Update.pillCheckHelpOff(feedName)]
+        return help + when
     }
 
     /// Where it comes from and which version — the build is in the help.
@@ -89,19 +108,31 @@ struct UpdatePill: View {
     }
 
     private func readyHelp(_ release: Release) -> String {
-        var text = L10n[.Update.pillReadyHelp(updater.label, release.label)]
+        withNotes(L10n[.Update.pillReadyHelp(updater.label, release.label)], release)
+    }
+
+    private func downloadHelp(_ release: Release) -> String {
+        withNotes(L10n[.Update.pillDownloadHelp(updater.label, release.label)], release)
+    }
+
+    /// The release's notes, and why the last check failed when what was found before still stands.
+    private func withNotes(_ text: String, _ release: Release) -> String {
+        var text = text
         let notes = release.notes.trimmingCharacters(in: .whitespacesAndNewlines)
         if !notes.isEmpty { text += "\n\n" + notes }
+        if let problem = updater.lastProblem { text += "\n\n" + L10n[.Update.statusLastProblem(problem)] }
         return text
     }
 
-    private func label(_ symbol: String, _ text: String) -> some View {
+    /// Filled for the button that quits the app, outlined for one that leaves it running: the two sit
+    /// in the same place and must not be taken for each other.
+    private func label(_ symbol: String, _ text: String, filled: Bool = true) -> some View {
         HStack(spacing: 5) {
             Image(systemName: symbol).font(.app(10.5))
             Text(text).font(.app(11.5, weight: .medium))
         }
         .padding(.horizontal, 8).padding(.vertical, 3)
-        .background(RoundedRectangle(cornerRadius: 5).fill(Color(nsColor: theme.brassSoft)))
+        .background(RoundedRectangle(cornerRadius: 5).fill(filled ? Color(nsColor: theme.brassSoft) : Color.clear))
         .overlay(RoundedRectangle(cornerRadius: 5)
             .stroke(Color(nsColor: theme.brassLine), lineWidth: 1))
         .foregroundStyle(Color(nsColor: theme.brassInk))
@@ -120,8 +151,30 @@ struct UpdatePill: View {
     }
 }
 
-/// The アップデート section of 設定: where the app stands, where updates come from,
-/// and a way to ask now.
+/// How often a place is asked, as the screen says it.
+enum UpdateIntervals {
+    /// As a choice of its own.
+    static func choice(_ minutes: Int) -> String {
+        switch minutes {
+        case 60: L10n[.Update.intervalHour]
+        case 1440: L10n[.Update.intervalDay]
+        default: L10n[.Update.intervalSix]
+        }
+    }
+
+    /// Inside a sentence.
+    static func inSentence(_ minutes: Int) -> String {
+        switch minutes {
+        case 60: L10n[.Update.everyHour]
+        case 1440: L10n[.Update.everyDay]
+        default: L10n[.Update.everySix]
+        }
+    }
+}
+
+/// The アップデート section of 設定: where the app stands, where updates come from and how
+/// often each is asked, whether a new version is fetched as soon as it is found, and a way to
+/// ask now.
 struct UpdateSettingsView: View {
     let updater: Updater
 
@@ -147,36 +200,71 @@ struct UpdateSettingsView: View {
                 if updater.busy {
                     ProgressView().controlSize(.small)
                 }
-                if case .ready = updater.phase {
-                    Button(L10n[.Update.settingsUpdateNow]) { updater.installAndRelaunch() }
-                } else {
-                    Button(L10n[.Update.settingsCheckNow]) { Task { await updater.check() } }
-                        .disabled(updater.busy || !updater.installed)
-                }
+                topButton
             }
 
             feeds
 
+            Divider()
+            autoDownload
+            Divider()
+
             if case .failed = updater.phase {
                 // What went wrong is what to act on, and was missed in the faint type: it says
                 // so, with a mark.
-                Label {
-                    Text(status)
-                        .font(.app(11))
-                        .foregroundStyle(.primary)
-                        .textSelection(.enabled)
-                        .fixedSize(horizontal: false, vertical: true)
-                } icon: {
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                }
-                .font(.app(11))
+                warning(status)
             } else {
                 Text(status)
                     .font(.app(10.5))
                     .foregroundStyle(.tertiary)
                     .textSelection(.enabled)
                     .fixedSize(horizontal: false, vertical: true)
+                if let problem = updater.lastProblem {
+                    warning(L10n[.Update.statusLastProblem(problem)])
+                }
             }
+        }
+    }
+
+    /// What can be done now: fetch the version found, swap in the one fetched, or ask.
+    @ViewBuilder
+    private var topButton: some View {
+        switch updater.phase {
+        case .available(let release):
+            Button(L10n[.Update.settingsDownload(release.version)]) { Task { await updater.download() } }
+        case .ready:
+            Button(L10n[.Update.settingsUpdateNow]) { Task { await updater.updateNow() } }
+        default:
+            Button(L10n[.Update.settingsCheckNow]) { Task { await updater.check() } }
+                .disabled(updater.busy || !updater.installed)
+        }
+    }
+
+    private func warning(_ text: String) -> some View {
+        Label {
+            Text(text)
+                .font(.app(11))
+                .foregroundStyle(.primary)
+                .textSelection(.enabled)
+                .fixedSize(horizontal: false, vertical: true)
+        } icon: {
+            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+        }
+        .font(.app(11))
+    }
+
+    /// One switch for the whole app, not one per place: whether to spend the network and the disk on a
+    /// version nobody asked for is the person's, wherever it comes from.
+    private var autoDownload: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 8) {
+                Toggle(isOn: Binding(get: { updater.autoDownload }, set: { updater.setAutoDownload($0) })) { EmptyView() }
+                    .toggleStyle(.switch).controlSize(.mini).labelsHidden()
+                Text(L10n[.Update.settingsAutoDownload]).font(.app(11.5))
+            }
+            Text(L10n[.Update.settingsAutoDownloadNote])
+                .font(.app(10.5)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -205,6 +293,42 @@ struct UpdateSettingsView: View {
     }
 
     private func feedRow(_ feed: UpdateFeed) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            feedLine(feed)
+            periodicLine(feed)
+        }
+    }
+
+    /// Under every place, not only the one in use: each keeps its own, which takes effect once it is
+    /// chosen. The build's own is asked every six hours or not at all; an added one at a choice of
+    /// intervals, kept while its switch is off.
+    private func periodicLine(_ feed: UpdateFeed) -> some View {
+        let periodic = updater.periodic(for: feed.id)
+        return HStack(spacing: 8) {
+            Toggle(isOn: Binding(get: { periodic.on },
+                                 set: { updater.setPeriodic(.init(on: $0, minutes: periodic.minutes), for: feed.id) })) {
+                EmptyView()
+            }
+            .toggleStyle(.switch).controlSize(.mini).labelsHidden()
+            Text(feed.isBuiltin ? L10n[.Update.settingsPeriodicBuiltin] : L10n[.Update.settingsPeriodic])
+                .font(.app(10.5))
+            if !feed.isBuiltin {
+                Picker("", selection: Binding(get: { periodic.minutes },
+                                              set: { updater.setPeriodic(.init(on: periodic.on, minutes: $0), for: feed.id) })) {
+                    ForEach(UpdateSettings.choices, id: \.self) { minutes in
+                        Text(UpdateIntervals.choice(minutes)).tag(minutes)
+                    }
+                }
+                .labelsHidden().fixedSize()
+                .controlSize(.small).font(.app(10.5))
+                .disabled(!periodic.on)
+            }
+        }
+        // Under the place's name, past its radio button.
+        .padding(.leading, 22)
+    }
+
+    private func feedLine(_ feed: UpdateFeed) -> some View {
         let chosen = feed.id == updater.selectedFeed?.id
         return HStack(spacing: 6) {
             Button {
@@ -284,27 +408,36 @@ struct UpdateSettingsView: View {
             editing = nil
             error = nil
         } catch {
-            self.error = (error as? LocalizedError)?.errorDescription ?? String(describing: error)
+            self.error = ErrorText.said(error)
         }
     }
 
     private var status: String {
         let checked = updater.lastChecked.map {
-            L10n[.Update.statusCheckedAt($0.formatted(date: .omitted, time: .shortened))]
+            L10n[.Update.statusCheckedAt($0.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Language.shared.locale)))]
         } ?? ""
         let from = updater.selectedFeed?.displayName ?? L10n[.Update.feedFallbackName]
         switch updater.phase {
         case .idle:
-            return updater.installed
-                ? L10n[.Update.statusIdle(from)]
-                : L10n[.Update.statusDevBuild]
+            return updater.installed ? schedule : L10n[.Update.statusDevBuild]
         case .checking: return L10n[.Update.statusChecking]
-        case .current: return L10n[.Update.statusUpToDate] + checked
+        case .current: return L10n[.Update.statusJoined(L10n[.Update.statusUpToDate] + checked, schedule)]
+        case .available(let release): return L10n[.Update.statusAvailable(from, release.version)] + checked
         case .downloading(let release): return L10n[.Update.statusDownloading(release.label)]
         case .ready(let release): return L10n[.Update.statusReady(release.label)] + checked
+        case .rechecking: return L10n[.Update.statusRechecking]
         case .installing(let release): return L10n[.Update.statusInstalling(release.label)]
         case .failed(let message): return message + checked
         }
+    }
+
+    /// How often the place in use is asked without being told to.
+    private var schedule: String {
+        guard let feed = updater.selectedFeed else { return L10n[.Update.errorNoSource] }
+        let periodic = updater.periodic(for: feed.id)
+        return periodic.on
+            ? L10n[.Update.statusEvery(feed.displayName, UpdateIntervals.inSentence(periodic.minutes))]
+            : L10n[.Update.statusOff(feed.displayName)]
     }
 }
 

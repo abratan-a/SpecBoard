@@ -13,15 +13,16 @@ use crate::Core;
 use crate::mcp::Output;
 use crate::ops::{number, text, tree};
 use crate::store::{BOARD, Composition, Over, OverRow, Reader, Store, sql};
-use crate::write::{Spot, Tx, Who, db};
-use rusqlite::{Connection, OptionalExtension, params};
+use crate::write::{Tx, Who, db};
+use rusqlite::{Connection, params};
 use serde_json::{Map, Value, json};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 /// The requests of this module.
-const KNOWN: [&str; 24] = [
+const KNOWN: [&str; 26] = [
     "projects",
     "embed_diagram",
+    "sequence_chart",
     "inserted_values",
     "document_parts",
     "branches",
@@ -44,6 +45,7 @@ const KNOWN: [&str; 24] = [
     "release_screen_holds",
     "file_text",
     "file_outline",
+    "kind_preview",
 ];
 
 /// The widest a place reaches from the origin, in cells (`Grid.reach`).
@@ -115,6 +117,12 @@ impl Core {
                     }
                 }
             }
+            // A definition being written, drawn as though it were: nothing written, nothing held.
+            "kind_preview" => {
+                let store = self.reading()?;
+                let (project, tree) = tree(&store, request, op)?;
+                super::kind_preview::preview(&store.reader(), project, tree, request)
+            }
             "embed_diagram" => {
                 let store = self.reading()?;
                 let (project, tree) = tree(&store, request, op)?;
@@ -122,6 +130,15 @@ impl Core {
                 let detail =
                     crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
                 embed_diagram(&detail, request)
+            }
+            // A sequence diagram as the core builds it: the window draws it and builds none itself.
+            "sequence_chart" => {
+                let store = self.reading()?;
+                let (project, tree) = tree(&store, request, op)?;
+                let branch = (!tree.is_empty()).then_some(tree);
+                let detail =
+                    crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
+                sequence_chart(&detail, request)
             }
             "inserted_values" => {
                 let store = self.reading()?;
@@ -317,6 +334,59 @@ impl Core {
 /// document (`exported: false`, the head saying what it was drawn from) or as it is written
 /// out (`exported: true`): `{"mermaid": …}`, or why it cannot be drawn (`{"problem": …}`).
 /// The window draws a document's diagrams from this (`NoteEmbed`), not from lines of its own.
+/// A flow's sequence diagram (`card`) or an actor's chart (`section`), as the window draws it: the
+/// lifelines, then each item with where it comes from (`charts::chart_json`). `lifelines`, the actor
+/// sections by id to draw where they hold a partner. `open`, the keys of the calls on one lifeline
+/// to open, at any depth (the `call` of each in the chart); none open when it is left out.
+fn sequence_chart(detail: &crate::model::Detail, request: &Value) -> Result<Value, String> {
+    let project = crate::export::Project::new(detail);
+    let strings = |key: &str| -> Vec<String> {
+        request
+            .get(key)
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .map(str::to_string)
+            .collect()
+    };
+    let chosen = strings("lifelines");
+    let opened = strings("open");
+    if let Some(wrong) = chosen
+        .iter()
+        .find(|id| project.section_kind(id) != Some(crate::kinds::ACTOR))
+    {
+        return Err(text!("screen.sequence.notActor", id = wrong));
+    }
+    if let Some(section) = request.get("section").and_then(Value::as_str) {
+        if project.section_kind(section) != Some(crate::kinds::ACTOR) {
+            return Err(text!("screen.sequence.notActor", id = section));
+        }
+        return Ok(crate::export::charts::chart_json(
+            crate::export::charts::actor_sequence(section, &project, false, &chosen, &opened),
+        ));
+    }
+    let id = text(
+        request,
+        "card",
+        "sequence_chart",
+        &text!("screen.what.flowId"),
+    )?;
+    match project.card(id) {
+        Some(card) if card.kind == "flow" || card.kind == "action" => {
+            Ok(crate::export::charts::chart_json(
+                crate::export::charts::sequence_seen(card, &project, false, &chosen, &opened),
+            ))
+        }
+        Some(card) => Err(text!(
+            "screen.sequence.notFlow",
+            card = project.full(card),
+            kind = card.kind
+        )),
+        None => Err(text!("screen.sequence.missing", id)),
+    }
+}
+
 fn embed_diagram(detail: &crate::model::Detail, request: &Value) -> Result<Value, String> {
     let path = text(
         request,
@@ -942,7 +1012,9 @@ fn cut_cost(conn: &Connection, project: &str, tree: &str, before: i64) -> Result
 /// Where other sections' cards were put on each section's diagram (`sectionPositions`):
 /// the diagram's section → the card → its cell, as the tree sees them (a branch's over
 /// main's); and its section ghosts the same way, by the section each sums up
-/// (`sectionGhosts`). Not a goal's card map: it is read with the goal (`itemPlaces`).
+/// (`sectionGhosts`), `pinned` on those put by a hand or moved by tidying. Not a goal's card map:
+/// it is read with the goal (`itemPlaces`). And the groups on every diagram, a container's card
+/// map too (`groups`: the diagram → the name → its frame).
 fn section_positions(conn: &Connection, project: &str, tree: &str) -> Result<Value, String> {
     let mut trees = Vec::new();
     if !crate::store::is_own_tree(tree) {
@@ -957,7 +1029,7 @@ fn section_positions(conn: &Connection, project: &str, tree: &str) -> Result<Val
     let mut ghosts: BTreeMap<String, BTreeMap<String, Value>> = BTreeMap::new();
     let mut stmt = conn
         .prepare(
-            "SELECT view, item_kind, item, x, y FROM places WHERE project_id = ?1 AND branch_id = ?2 AND item_kind IN ('card', 'section') AND view <> '' AND x IS NOT NULL AND y IS NOT NULL AND view NOT IN (SELECT id FROM card_docs WHERE project_id = ?1)",
+            "SELECT view, item_kind, item, x, y, pinned FROM places WHERE project_id = ?1 AND branch_id = ?2 AND item_kind IN ('card', 'section') AND view <> '' AND x IS NOT NULL AND y IS NOT NULL AND view NOT IN (SELECT id FROM card_docs WHERE project_id = ?1)",
         )
         .map_err(sql)?;
     for tree in trees {
@@ -969,23 +1041,32 @@ fn section_positions(conn: &Connection, project: &str, tree: &str) -> Result<Val
                     r.get::<_, String>(2)?,
                     r.get::<_, i64>(3)?,
                     r.get::<_, i64>(4)?,
+                    r.get::<_, i64>(5)? != 0,
                 ))
             })
             .map_err(sql)?
             .collect::<Result<Vec<_>, _>>()
             .map_err(sql)?;
-        for (section, kind, item, x, y) in rows {
-            let to = if kind == "section" {
-                &mut ghosts
+        for (section, kind, item, x, y, pinned) in rows {
+            if kind == "section" {
+                // Put by a hand (or tidied) or by the screen's own stacking: the screen stacks
+                // again only what it put itself.
+                let mut place = json!({ "x": x, "y": y });
+                if pinned {
+                    place["pinned"] = true.into();
+                }
+                ghosts.entry(section).or_default().insert(item, place);
             } else {
-                &mut cards
-            };
-            to.entry(section)
-                .or_default()
-                .insert(item, json!({ "x": x, "y": y }));
+                cards
+                    .entry(section)
+                    .or_default()
+                    .insert(item, json!({ "x": x, "y": y }));
+            }
         }
     }
-    Ok(json!({ "positions": cards, "sectionGhosts": ghosts }))
+    // The groups on every diagram, a section's map or a container's card map.
+    let groups = super::groups::positions(conn, project, tree)?;
+    Ok(json!({ "positions": cards, "sectionGhosts": ghosts, "groups": groups }))
 }
 
 // MARK: - Writing
@@ -997,6 +1078,10 @@ fn put_box(tx: &mut Tx, project: &str, tree: &str, given: &Value) -> Result<(), 
     let text = |key: &str| given.get(key).and_then(Value::as_str);
     let view = text("view").unwrap_or_default();
     let kind = text("kind").unwrap_or("card");
+    // A group carries what is in it: written through `section_update`'s or `card_update`'s `groups`.
+    if kind == super::groups::KIND {
+        return Err(text!("screen.box.group"));
+    }
     if !["card", "section"].contains(&kind) {
         return Err(text!("screen.box.kind", kind = kind));
     }
@@ -1021,27 +1106,9 @@ fn put_box(tx: &mut Tx, project: &str, tree: &str, given: &Value) -> Result<(), 
         .and_then(Value::as_bool)
         .unwrap_or(false);
     // Its size as the tree has it: its own box, or main's beneath a branch.
-    let mut trees = vec![tree];
-    if !tree.is_empty() && !crate::store::is_own_tree(tree) {
-        trees.push("");
-    }
-    let mut spot = Spot::default();
-    for at in trees {
-        let found: Option<(Option<i64>, Option<i64>)> = tx
-            .conn()
-            .query_row(
-                "SELECT w, h FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = ? AND item = ?",
-                params![project, at, view, kind, item],
-                |r| Ok((r.get(0)?, r.get(1)?)),
-            )
-            .optional()
-            .map_err(db)?;
-        if let Some((w, h)) = found {
-            spot.w = w;
-            spot.h = h;
-            break;
-        }
-    }
+    let mut spot = tx
+        .place_row(project, tree, view, kind, item)?
+        .unwrap_or_default();
     spot.x = Some(x);
     spot.y = Some(y);
     spot.pinned = pinned;

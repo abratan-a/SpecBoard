@@ -46,18 +46,18 @@ fn cards_are_picked_by_the_values_of_their_fields() {
     // A goal's fields by their names in English.
     let going = list(
         &core,
-        json!({"fields": {"status": ["未着手", "進行中"], "due": "2026-10-10"}}),
+        json!({"fields": {"status": ["notStarted", "inProgress"], "due": "2026-10-10"}}),
     )
     .unwrap();
     assert_eq!(paths(&going), ["Goals:Ship"]);
-    let none = list(&core, json!({"fields": {"status": "完了"}})).unwrap();
+    let none = list(&core, json!({"fields": {"status": "done"}})).unwrap();
     assert_eq!(none["matched"], 0);
     let refused = list(&core, json!({"fields": ["done"]})).unwrap_err();
     assert!(
         refused.contains("value の fields は object で指定してください"),
         "{refused}"
     );
-    let refused = list(&core, json!({"fields": {"status": {"is": "完了"}}})).unwrap_err();
+    let refused = list(&core, json!({"fields": {"status": {"is": "done"}}})).unwrap_err();
     assert!(
         refused.contains("fields は {欄の名前: 値} です"),
         "{refused}"
@@ -85,7 +85,7 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
         serde_json::from_str::<Value>(&text).unwrap()
     };
     let ship = read("Goals:Ship");
-    assert_eq!(ship["status"], "進行中");
+    assert_eq!(ship["status"], "inProgress");
     assert_eq!(ship["due"], "2026-10-10");
     // Who had it is no field of a goal's: its value stays with the card, as 「定義に無い欄」, and
     // goes when it is let go of.
@@ -110,7 +110,7 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
         .unwrap()
         .clone();
     assert_eq!(card["strayFields"], json!({"担当": "Claude"}));
-    assert_eq!(card["form"]["fields"]["status"], "進行中");
+    assert_eq!(card["form"]["fields"]["status"], "inProgress");
     let summary = checked(&core, "_project_board_");
     let stray = summary["strayFields"].as_array().unwrap();
     assert_eq!(stray.len(), 1, "{summary}");
@@ -120,13 +120,13 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
     let (failed, text) = call(
         &core,
         "card_update",
-        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship", "value": {"status": "完了", "priority": "高"}}),
+        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship", "value": {"status": "done", "priority": "high"}}),
     );
     assert!(!failed, "{text}");
     let ship = read("Goals:Ship");
     assert_eq!(
         (&ship["status"], &ship["priority"]),
-        (&json!("完了"), &json!("高"))
+        (&json!("done"), &json!("high"))
     );
     assert_eq!(ship["strayFields"], json!({"担当": "Claude"}));
     // A name of before is said as it is now; one taken out, as gone.
@@ -229,19 +229,19 @@ fn a_goal_says_how_urgent_it_is_when_it_is_said() {
     // Not said is not decided: none of the three.
     let unsaid = list(
         &core,
-        json!({"kind": "goal", "fields": {"priority": ["高", "中", "低"]}}),
+        json!({"kind": "goal", "fields": {"priority": ["high", "medium", "low"]}}),
     )
     .unwrap();
     assert_eq!(unsaid["matched"], 0);
     let (failed, text) = call(
         &core,
         "card_update",
-        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship", "value": {"priority": "高"}}),
+        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship", "value": {"priority": "high"}}),
     );
     assert!(!failed, "{text}");
-    let urgent = list(&core, json!({"fields": {"priority": "高"}})).unwrap();
+    let urgent = list(&core, json!({"fields": {"priority": "high"}})).unwrap();
     assert_eq!(paths(&urgent), ["Goals:Ship"]);
-    assert_eq!(urgent["cards"][0]["priority"], "高");
+    assert_eq!(urgent["cards"][0]["priority"], "high");
     let (failed, text) = call(
         &core,
         "card_update",
@@ -253,7 +253,7 @@ fn a_goal_says_how_urgent_it_is_when_it_is_said() {
     let (failed, text) = call(
         &core,
         "card_update",
-        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship.t2", "value": {"priority": "高"}}),
+        json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship.t2", "value": {"priority": "high"}}),
     );
     assert!(failed, "{text}");
     assert!(text.contains("priority は goal にだけ書けます"), "{text}");
@@ -279,7 +279,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 28);
+    assert_eq!(file["version"], 33);
     // As 13 wrote it.
     file["version"] = 13.into();
     let ship = file["board"]["cards"]
@@ -306,7 +306,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
     let ship: Value = serde_json::from_str(&text).unwrap();
     assert_eq!(
         (&ship["status"], &ship["priority"], &ship["due"]),
-        (&json!("進行中"), &json!("中"), &json!("2026-10-10"))
+        (&json!("inProgress"), &json!("medium"), &json!("2026-10-10"))
     );
     assert_eq!(ship["strayFields"], json!({"担当": "Claude"}));
     let commits =
@@ -321,6 +321,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
     assert_eq!(
         said,
         [
+            "1 枚の組み込みの線の名前・列挙の値のキー・goal の値を今の名前にした（Ship）",
             "goal 1 枚の欄 状態・優先度・期限 を status・priority・due にした（値はそのまま。Ship）",
             "プロジェクトのファイル（版 13）から読み込んだ"
         ]
@@ -331,7 +332,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
             .unwrap(),
     )
     .unwrap();
-    assert_eq!(again["version"], 28);
+    assert_eq!(again["version"], 33);
     let ship = again["board"]["cards"]
         .as_array()
         .unwrap()
@@ -339,7 +340,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
         .find(|c| c["name"] == "Ship")
         .unwrap();
     assert!(ship["fields"].get("状態").is_none());
-    assert_eq!(ship["fields"]["status"], "進行中");
+    assert_eq!(ship["fields"]["status"], "inProgress");
 }
 
 #[test]
@@ -425,8 +426,8 @@ fn a_project_file_before_15_has_its_goals_merge_request_by_mr() {
     assert!(text.contains("今は MR"), "{text}");
 }
 
-/// How tall a goal's box is, as the screen draws it: a row for each choice — state and priority,
-/// written or not — one for each other field written (期限・branch・MR), one for each card inside it.
+/// How tall a goal's box is, as the screen draws it: a row for each field written (優先度・期限・branch・MR)
+/// but its state, which its head says, one for each card inside it.
 #[test]
 fn a_goal_is_as_tall_as_the_screen_draws_it() {
     let core = Core::open(script_store()).unwrap();
@@ -459,14 +460,16 @@ fn a_goal_is_as_tall_as_the_screen_draws_it() {
         let place = read["places"]["Goals:Sized"].clone();
         place["bottomRight"]["y"].as_i64().unwrap() - place["topLeft"]["y"].as_i64().unwrap() + 1
     };
-    // Five rows (状態・優先度・期限・a・b): 2 + 40 + 12 + 5 × 27 points, 7 grid rows of 27.
-    assert_eq!(rows(), 7);
-    // A choice written is still the one row; a branch written is one more.
+    // Three rows (期限・a・b): 2 + 40 + 12 + 3 × 27 points, 5 grid rows of 27.
+    assert_eq!(rows(), 5);
+    // A choice written is a row, and a branch written one more.
     call_ok(
         "card_update",
-        board(json!({"target": "Goals:Sized", "value": {"priority": "高", "workBranch": "work"}})),
+        board(
+            json!({"target": "Goals:Sized", "value": {"priority": "high", "workBranch": "work"}}),
+        ),
     );
-    assert_eq!(rows(), 8);
+    assert_eq!(rows(), 7);
 }
 
 /// The cards done in a goal are one row 「済み」, folded as the box first shows: a task checked, a
@@ -505,28 +508,28 @@ fn the_cards_done_in_a_goal_are_one_row() {
         place["bottomRight"]["y"].as_i64().unwrap() - place["topLeft"]["y"].as_i64().unwrap() + 1
     };
     let tall = |count: f64| ((2.0 + 40.0 + 12.0 + count * 27.0) / 27.0_f64).ceil() as i64;
-    // 状態・優先度 and four cards inside: six rows.
-    assert_eq!(rows(), tall(6.0));
-    // a done: 状態・優先度・b・c・Sub・済み — as tall as before.
+    // Four cards inside: four rows.
+    assert_eq!(rows(), tall(4.0));
+    // a done: b・c・Sub・済み — as tall as before.
     call_ok(
         "card_update",
         board(json!({"target": "Goals:Folded.a", "value": {"done": true}})),
     );
-    assert_eq!(rows(), tall(6.0));
-    // b and Sub done too: 状態・優先度・c・済み.
+    assert_eq!(rows(), tall(4.0));
+    // b and Sub done too: c・済み.
     call_ok(
         "card_update",
         board(
-            json!({"value": {"Goals:Folded.b": {"done": true}, "Goals:Folded.Sub": {"status": "完了"}}}),
+            json!({"value": {"Goals:Folded.b": {"done": true}, "Goals:Folded.Sub": {"status": "done"}}}),
         ),
     );
-    assert_eq!(rows(), tall(4.0));
-    // All of them: 状態・優先度・済み.
+    assert_eq!(rows(), tall(2.0));
+    // All of them: 済み.
     call_ok(
         "card_update",
         board(json!({"target": "Goals:Folded.c", "value": {"done": true}})),
     );
-    assert_eq!(rows(), tall(3.0));
+    assert_eq!(rows(), tall(1.0));
 }
 
 /// A goal's working branch is its `workBranch`, as `branch` heads every answer as the tree it is of.

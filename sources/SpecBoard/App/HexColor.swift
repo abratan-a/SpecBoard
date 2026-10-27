@@ -19,6 +19,9 @@ enum HexColor {
                      blue: Double(value & 0xFF) / 255)
     }
 
+    /// The same as AppKit draws it (a card's face).
+    static func nsColor(hex: String) -> NSColor? { color(hex: hex).map { NSColor($0) } }
+
     /// The colours this Mac kept for the nav panel's marks before they were the project's
     /// (`navigator.tint.<kind>`), let go of: they are not carried into the projects.
     static func forgetOldTints(in defaults: UserDefaults = .standard) {

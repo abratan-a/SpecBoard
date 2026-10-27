@@ -1,5 +1,6 @@
 {
   "board.fields.shape": "fields must be {field name: value} (give a list as the value to match any of them)",
+  "board.fields.valueBefore": "The value \"{before}\" of {name} is the value of before: write {now} now",
   "board.in.at": "in \"{path}\": {why}",
   "board.in.notContainer": "in must be the path of a container (goal or flow) ({path} is {kind})"
 }

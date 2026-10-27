@@ -161,7 +161,7 @@ struct AccessKeysView: View {
             draftName = ""
             reload()
         } catch {
-            self.error = error.localizedDescription
+            self.error = ErrorText.said(error)
         }
     }
 
@@ -176,7 +176,7 @@ struct AccessKeysView: View {
             said = nil
             reload()
         } catch {
-            self.error = error.localizedDescription
+            self.error = ErrorText.said(error)
         }
     }
 
@@ -368,7 +368,7 @@ struct AccessKeysView: View {
             read.selected = read.keys.contains { $0.id == selected } ? selected : read.keys.first?.id
             read.grants = rows.first { $0.id == read.selected }?.levels ?? [:]
         } catch {
-            read.error = error.localizedDescription
+            read.error = ErrorText.said(error)
         }
         return read
     }
@@ -401,7 +401,7 @@ struct AccessKeysView: View {
             try body(core)
             reload()
         } catch {
-            self.error = error.localizedDescription
+            self.error = ErrorText.said(error)
         }
     }
 

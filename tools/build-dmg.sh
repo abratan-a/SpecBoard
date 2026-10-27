@@ -11,7 +11,9 @@
 #   SPECBOARD_UPDATE_FEED_URL    the URL of the built-in update feed (public releases)
 #   SPECBOARD_UPDATE_FEED_REPO   the owner/repo of the built-in update feed
 #   Give both feed values or neither. Without them the app has no built-in feed
-#   (specboard://SpecBoard/Docs/Design:Release).
+#   (specboard://SpecBoard/Docs/Design:Release). The built-in feed is GitHub Releases and goes into every
+#   copy of the app, so the URL must be https://github.com as it is (no user name, port or path), and the
+#   repo owner/name.
 #   SPECBOARD_SIGN_IDENTITY      the signing certificate. Apple Development by default
 #                                (tools/publish-github.sh passes Developer ID Application)
 #   SPECBOARD_TEAM               the signing team. Without it, the project's setting is used
@@ -27,8 +29,13 @@
 # object file paths of the build machine) before signing (DEPLOYMENT_POSTPROCESSING, STRIP_STYLE=debugging).
 # The scheme turns code coverage on, so it is turned off for a release (ENABLE_CODE_COVERAGE,
 # CLANG_COVERAGE_MAPPING; it would leave counters and function names with source paths in the binary).
-# The build stops if either is left.
-# It builds in a temporary folder and leaves nothing in the source tree. Written for macOS's bash 3.2.
+# The build stops if either is left in any Mach-O file of the app (the app, the core, the agent), if a
+# build path is left in any of them, or if a Mach-O file has its LINKEDIT string table off an 8-byte
+# boundary (tools/check-linkedit.sh): the dyld of macOS 27 would not load it. A check whose tool fails
+# stops the build too (tools/check-app.sh).
+# It builds in a temporary folder and leaves nothing in the source tree. When the build fails, the log of
+# xcodebuild is kept in the output folder (xcodebuild.log), and the errors of the compilers, rustc's
+# error[E…] among them, are shown. Written for macOS's bash 3.2.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -38,6 +45,13 @@ SPECBOARD_UPDATE_FEED_URL="${SPECBOARD_UPDATE_FEED_URL:-}"
 SPECBOARD_UPDATE_FEED_REPO="${SPECBOARD_UPDATE_FEED_REPO:-}"
 [[ -z $SPECBOARD_UPDATE_FEED_URL && -z $SPECBOARD_UPDATE_FEED_REPO || -n $SPECBOARD_UPDATE_FEED_URL && -n $SPECBOARD_UPDATE_FEED_REPO ]] \
   || { echo "give both SPECBOARD_UPDATE_FEED_URL and SPECBOARD_UPDATE_FEED_REPO, or neither" >&2; exit 1; }
+# The built-in feed is GitHub Releases: nothing else is let into the app
+if [[ -n $SPECBOARD_UPDATE_FEED_URL ]]; then
+  [[ $SPECBOARD_UPDATE_FEED_URL == "https://github.com" ]] \
+    || { echo "SPECBOARD_UPDATE_FEED_URL must be https://github.com (the built-in feed is GitHub Releases): ${SPECBOARD_UPDATE_FEED_URL}" >&2; exit 1; }
+  [[ $SPECBOARD_UPDATE_FEED_REPO =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ && $SPECBOARD_UPDATE_FEED_REPO != *..* ]] \
+    || { echo "SPECBOARD_UPDATE_FEED_REPO must be owner/name: ${SPECBOARD_UPDATE_FEED_REPO}" >&2; exit 1; }
+fi
 [[ $BUILD_NUMBER =~ ^[0-9]{12}$ ]] || { echo "BUILD_NUMBER must be twelve digits, year to minute: ${BUILD_NUMBER}" >&2; exit 1; }
 identity="${SPECBOARD_SIGN_IDENTITY:-Apple Development}"
 team=()
@@ -65,34 +79,20 @@ if ! xcodebuild -project "$root/sources/SpecBoard.xcodeproj" -scheme SpecBoard \
     ENABLE_CODE_COVERAGE=NO CLANG_COVERAGE_MAPPING=NO \
     SPECBOARD_UPDATE_FEED_URL="$SPECBOARD_UPDATE_FEED_URL" SPECBOARD_UPDATE_FEED_REPO="$SPECBOARD_UPDATE_FEED_REPO" \
     build > "$log" 2>&1; then
-  grep -E "error:" "$log" | head -20 >&2 || true
-  echo "the build failed" >&2
+  # The temporary folder goes away on exit, so the log is copied out first. rustc names the error on its
+  # first line (error[E0463]: ...) and what it is about on the next ones; cargo then says only that the
+  # crate could not be compiled
+  cp -f "$log" "$out/xcodebuild.log"
+  grep -E -A2 "error(\[E[0-9]+\])?:" "$log" | head -40 >&2 || true
+  echo "the build failed (the whole log: ${out}/xcodebuild.log)" >&2
   exit 1
 fi
+rm -f "$out/xcodebuild.log"
 app="$work/build/Build/Products/Release/SpecBoard.app"
 
-# Checks before it goes out: the signature is intact, no get-task-allow, no build paths, the version,
-# build number and feed are in, and the agents are in
-codesign --verify --deep --strict "$app"
-bin="$app/Contents/MacOS/SpecBoard"
-if nm -ap "$bin" | grep -E " (SO|OSO) " > /dev/null; then
-  echo "the debug symbol table is left (it holds the build paths)" >&2
-  exit 1
-fi
-if otool -l "$bin" | grep -E "sectname __llvm_(prf|cov)" > /dev/null; then
-  echo "code coverage instrumentation is left in" >&2
-  exit 1
-fi
-for place in "$root" "$HOME" "$work"; do
-  if LC_ALL=C grep -aqF "$place" "$bin"; then
-    echo "the executable holds a build path: ${place}" >&2
-    exit 1
-  fi
-done
-if codesign -d --entitlements - --xml "$app" 2>/dev/null | grep "get-task-allow" > /dev/null; then
-  echo "get-task-allow is set" >&2
-  exit 1
-fi
+# Checks before it goes out: the signature, the entitlements and every binary in the app
+# (tools/check-app.sh), then the version, build number and feed
+bash "$root/tools/check-app.sh" "$app" "$root" "$HOME" "$work"
 plist="$app/Contents/Info.plist"
 check() {  # <key> <expected value>
   local found
@@ -103,35 +103,6 @@ check CFBundleShortVersionString "$version"
 check CFBundleVersion "$BUILD_NUMBER"
 check SpecBoardUpdateFeedURL "$SPECBOARD_UPDATE_FEED_URL"
 check SpecBoardUpdateFeedRepo "$SPECBOARD_UPDATE_FEED_REPO"
-
-# The agent the app installs on hosts over SSH (tools/build-agent.sh): arm64 only, signed with the app's
-# certificate, no build paths
-agent="$app/Contents/MacOS/specboard-agent"
-[[ -f $agent ]] || { echo "the agent is missing" >&2; exit 1; }
-archs=$(lipo -archs "$agent")
-[[ $archs == arm64 ]] || { echo "the agent is not arm64 only: ${archs}" >&2; exit 1; }
-codesign --verify --strict "$agent"
-[[ $(codesign -dv "$agent" 2>&1 | grep -E "^TeamIdentifier") == "$(codesign -dv "$app" 2>&1 | grep -E "^TeamIdentifier")" ]] \
-  || { echo "the agent is not signed like the app" >&2; exit 1; }
-for place in "$root" "$HOME" "$work"; do
-  if LC_ALL=C grep -aqF "$place" "$agent"; then
-    echo "the agent holds a build path: ${place}" >&2
-    exit 1
-  fi
-done
-
-# The Linux agent (tools/build-agent.sh): a statically linked x86_64 ELF, no build paths
-linux="$app/Contents/Resources/specboard-agent-linux-x86_64"
-[[ -f $linux ]] || { echo "the Linux agent is missing" >&2; exit 1; }
-kind=$(file -b "$linux")
-[[ $kind == "ELF 64-bit LSB executable, x86-64"*"statically linked"* ]] \
-  || { echo "the Linux agent is not a static x86_64 executable: ${kind}" >&2; exit 1; }
-for place in "$root" "$HOME" "$work"; do
-  if LC_ALL=C grep -aqF "$place" "$linux"; then
-    echo "the Linux agent holds a build path: ${place}" >&2
-    exit 1
-  fi
-done
 
 # A compressed DMG (UDZO) with the app and a link to /Applications
 stage="$work/dmg"

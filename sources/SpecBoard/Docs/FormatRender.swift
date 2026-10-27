@@ -89,12 +89,12 @@ enum FormatRender {
         }
     }
 
-    /// The flows and actions of a chart section, its inner sections' after its own, in
-    /// the order the section lists them. Nil when the section is not a chart section.
+    /// The flows and actions of a chart or actor section, its inner sections' after its own, in
+    /// the order the section lists them. Nil when the section holds no flows.
     static func charts(in target: String, from base: String, in detail: ProjectDetail) -> [SchemaNode]? {
         let directory = detail.directory
         let name = target.hasSuffix(":") ? String(target.dropLast()) : target
-        guard let section = directory.section(named: name, from: base), section.kind == .chart else { return nil }
+        guard let section = directory.section(named: name, from: base), section.kind?.holdsFlows == true else { return nil }
         var out: [SchemaNode] = []
         func walk(_ id: String) {
             out += directory.members(id).filter { $0.kind == .flow || $0.kind == .action }

@@ -558,9 +558,23 @@ fn follow_doc(
         doc["fields"]["data"] = next;
         count += renamed;
     }
-    // A table's rules, their paths named as its shape's fields are now.
+    // A table's rules, their paths named as its shape's fields are now; the section it reads,
+    // written from the root without the `:` a section's path ends in, as that section is named now.
     if let Some(card) = owner_old.filter(|c| c.kind == crate::kinds::TABLE) {
         count += super::tables::renamed(old, card, new_fields, &mut doc);
+        if let Some(within) = doc.pointer("/fields/within").and_then(Value::as_str)
+            && let Some(identity) = identify(old, &format!("{within}:"), None)
+            && let Some(now) = write(new, new_fields, within, &identity, None)
+            && let Some(now) = now.strip_suffix(':')
+            && now != within
+        {
+            doc["fields"]["within"] = now.into();
+            count += 1;
+        }
+    }
+    // A shape's face, its names as its fields are named now.
+    if let Some(card) = owner_old.filter(|c| c.kind == "entity" || c.kind == "value") {
+        count += super::faces::followed(card, &mut doc, new_fields);
     }
     (count > 0).then_some((doc, count))
 }
@@ -853,6 +867,7 @@ pub(crate) fn follow(
             let follows = moved.contains(id)
                 || kind == crate::kinds::INSTANCE
                 || kind == crate::kinds::TABLE
+                || kept.get("fields").and_then(|f| f.get("face")).is_some()
                 || saying.as_ref().is_none_or(|s| s.contains(id))
                 || reaches_moved()
                 || !seen.written_as(id, || {

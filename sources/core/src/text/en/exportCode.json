@@ -1,5 +1,6 @@
 {
   "exportCode.enumValue.described": "- `{value}`: {description}",
+  "exportCode.enumValue.labelOnly": "- `{value}` ({label})",
   "exportCode.enumValue.labelled": "- `{value}` ({label}): {description}",
   "exportCode.jsonSchema.enumOpen": "Open enumeration. The known values are in x-known-values. Unknown values are valid too",
   "exportCode.typescript.absent": "{name} is intentionally absent: {reason}",

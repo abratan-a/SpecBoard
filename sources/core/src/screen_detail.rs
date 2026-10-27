@@ -287,6 +287,21 @@ fn dress(
             }
         }
     }
+    // Each data card its shape draws as a list, its rows worked out (`faces::drawn`).
+    let lists: std::collections::HashMap<String, Value> = project
+        .detail
+        .schemas
+        .iter()
+        .filter(|c| c.kind == crate::kinds::INSTANCE)
+        .filter_map(|c| crate::tools::faces::drawn(&project, c).map(|l| (c.id.clone(), l)))
+        .collect();
+    for card in whole["schemas"].as_array_mut().into_iter().flatten() {
+        if let Some(list) = card["id"].as_str().and_then(|id| lists.get(id))
+            && let Some(c) = card.as_object_mut()
+        {
+            c.insert("listFace".into(), list.clone());
+        }
+    }
     for card in whole["schemas"].as_array_mut().into_iter().flatten() {
         if let Some(markdown) = card["id"].as_str().and_then(|id| tables.get(id))
             && let Some(c) = card.as_object_mut()
@@ -312,75 +327,77 @@ fn face_rows(
     project: &Project,
     layout: &crate::tools::grid::Layout,
 ) -> std::collections::HashMap<String, i64> {
-    use crate::tools::grid::{own_size, width_points};
     let kinds = project.defs.cards();
     project
         .detail
         .schemas
         .iter()
         .chain(project.detail.inner.iter())
-        .filter_map(|card| {
-            let own = own_size(card, kinds);
-            if own.is_some_and(|s| s.1.is_some()) {
-                return None;
-            }
-            let width = width_points(layout, own.map(|s| s.0));
-            let face = kinds.get(&card.kind)?.face.as_ref()?;
-            if face.page.is_some() || card.kind == crate::kinds::FRAME {
-                return Some((
-                    card.id.clone(),
-                    crate::tools::grid::face_rows(card, face, layout, width),
-                ));
-            }
-            face.markdown.as_ref()?;
-            let written = card
-                .form
-                .as_ref()
-                .and_then(|f| f["fields"].get(face.markdown.as_deref()?))
-                .and_then(Value::as_str)
-                .is_some_and(|t| !t.trim().is_empty());
-            written.then(|| {
-                (
-                    card.id.clone(),
-                    crate::tools::grid::face_rows(card, face, layout, width),
-                )
-            })
-        })
+        .filter_map(|card| face_rows_of(card, kinds, layout).map(|rows| (card.id.clone(), rows)))
         .collect()
 }
 
+/// The grid rows one card is drawn in by its kind's face (`face_rows`), when its height is the
+/// face's to say: none for a card with a height of its own, or whose face draws only its fields.
+pub(crate) fn face_rows_of(
+    card: &Card,
+    kinds: &crate::kinds::Kinds,
+    layout: &crate::tools::grid::Layout,
+) -> Option<i64> {
+    use crate::tools::grid::{own_size, width_points};
+    let own = own_size(card, kinds);
+    if own.is_some_and(|s| s.1.is_some()) {
+        return None;
+    }
+    let width = width_points(layout, own.map(|s| s.0));
+    let face = kinds.get(&card.kind)?.face.as_ref()?;
+    if face.page.is_some() || card.kind == crate::kinds::FRAME {
+        return Some(crate::tools::grid::face_rows(card, face, layout, width));
+    }
+    crate::tools::grid::face_text(card, face)
+        .map(|_| crate::tools::grid::face_rows(card, face, layout, width))
+}
+
 /// The strays of each card of a kind the project defines, or of the board's goal and task, that
-/// has any: by its id, where each is → its value (`kinds::strays`); and a data card's values whose
-/// fields its shape has lost (`instances::strays`).
+/// has any: by its id, where each is → its value (`strays_of`).
 fn strays(project: &Project) -> std::collections::HashMap<String, Value> {
-    let kinds = project.defs.cards();
     project
         .detail
         .schemas
         .iter()
-        .filter_map(|card| {
-            let found = if card.kind == crate::kinds::INSTANCE {
-                crate::tools::instances::strays(project, card)
-            } else {
-                let def = kinds
-                    .get(&card.kind)
-                    .filter(|_| kinds.keeps_strays(&card.kind))?;
-                crate::kinds::strays(def, &card.kept_form())
-            };
-            (!found.is_empty()).then(|| {
-                (
-                    card.id.clone(),
-                    Value::Object(found.into_iter().collect::<Map<String, Value>>()),
-                )
-            })
-        })
+        .filter_map(|card| strays_of(project, card).map(|found| (card.id.clone(), found)))
         .collect()
+}
+
+/// What one card holds that its kind's definition no longer has, where each is → its value
+/// (`kinds::strays`), and a data card's values whose fields its shape has lost
+/// (`instances::strays`); none when it holds nothing of the kind.
+pub(crate) fn strays_of(project: &Project, card: &Card) -> Option<Value> {
+    let found = if card.kind == crate::kinds::INSTANCE {
+        crate::tools::instances::strays(project, card)
+    } else {
+        let kinds = project.defs.cards();
+        let def = kinds
+            .get(&card.kind)
+            .filter(|_| kinds.keeps_strays(&card.kind))?;
+        crate::kinds::strays(def, &card.kept_form())
+    };
+    (!found.is_empty()).then(|| Value::Object(found.into_iter().collect::<Map<String, Value>>()))
 }
 
 /// The keys the core's typed reading takes the lines and the containers in, left out: what
 /// the screen reads of them is the cards' `connections`, the cards inside a container
 /// (`in`, `inner`) and `relations`.
 fn strip(whole: &mut Value) {
+    for card in whole["schemas"].as_array_mut().into_iter().flatten() {
+        if let Some(c) = card.as_object_mut() {
+            strip_card(c);
+        }
+    }
+}
+
+/// One card's entry with the keys of the core's typed reading left out (`strip`).
+pub(crate) fn strip_card(c: &mut Map<String, Value>) {
     fn fields(list: &mut Value) {
         for field in list.as_array_mut().into_iter().flatten() {
             if let Some(f) = field.as_object_mut() {
@@ -392,22 +409,17 @@ fn strip(whole: &mut Value) {
             }
         }
     }
-    for card in whole["schemas"].as_array_mut().into_iter().flatten() {
-        let Some(c) = card.as_object_mut() else {
-            continue;
-        };
-        for key in ["payloads", "notes", "holds", "nodes"] {
-            c.shift_remove(key);
-        }
-        if let Some(list) = c.get_mut("fields") {
-            fields(list);
-        }
-        if let Some(form) = c.get_mut("form").and_then(|f| f.get_mut("fields"))
-            && let Some(f) = form.as_object_mut()
-        {
-            f.shift_remove("links");
-            f.shift_remove("items");
-        }
+    for key in ["payloads", "notes", "holds", "nodes"] {
+        c.shift_remove(key);
+    }
+    if let Some(list) = c.get_mut("fields") {
+        fields(list);
+    }
+    if let Some(form) = c.get_mut("form").and_then(|f| f.get_mut("fields"))
+        && let Some(f) = form.as_object_mut()
+    {
+        f.shift_remove("links");
+        f.shift_remove("items");
     }
 }
 
@@ -416,7 +428,7 @@ fn strip(whole: &mut Value) {
 /// it to the card it reaches (through a card ghost, the card the ghost leads to, saying the
 /// ghost: `viaGhostId`). A card's lines come in the order of its fields, then its other
 /// lines, then what its text names.
-fn relations(project: &Project) -> Vec<Value> {
+pub(crate) fn relations(project: &Project) -> Vec<Value> {
     let mut out = Vec::new();
     for card in project
         .detail

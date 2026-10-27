@@ -20,7 +20,7 @@
 
 mod branches;
 mod bundle;
-mod history;
+pub(crate) mod history;
 mod holds;
 mod merge;
 mod projectfile;
@@ -36,8 +36,8 @@ pub(crate) use history::{insert_line, paths_over};
 pub use holds::{Batch, Hold, batch, holds as holds_on};
 pub use merge::{
     Change as MergeChange, Conflict as MergeConflict, Preview as MergePreview, Side as MergeSide,
-    Take as MergeTake, UnitChange, WHOLE as MergeWhole, places_from_main as merge_places_from_main,
-    unit_changes,
+    Take as MergeTake, UnitChange, WHOLE as MergeWhole, is_whole as merge_is_whole,
+    places_from_main as merge_places_from_main, unit_changes,
 };
 pub(crate) use projectfile::free_slug;
 pub use projectfile::{Landing, peek};
@@ -372,6 +372,8 @@ pub struct Spot {
     pub w: Option<i64>,
     pub h: Option<i64>,
     pub pinned: bool,
+    /// How a group looks, its JSON (`tools::groups`); none for every other box.
+    pub look: Option<String>,
 }
 
 /// One transaction of writes (`Store::write`). Commits with `commit`; dropped, it is
@@ -861,7 +863,7 @@ impl<'s> Tx<'s> {
         if gone {
             self.tx
                 .execute(
-                    "DELETE FROM places WHERE project_id = ?1 AND branch_id = ?2 AND ((item_kind = 'card' AND (item = ?3 OR view = ?3)) OR (item_kind = 'node' AND view = ?3))",
+                    "DELETE FROM places WHERE project_id = ?1 AND branch_id = ?2 AND ((item_kind = 'card' AND (item = ?3 OR view = ?3)) OR (item_kind IN ('node', 'group') AND view = ?3))",
                     params![project, tree, id],
                 )
                 .map_err(db)?;
@@ -1016,9 +1018,9 @@ impl<'s> Tx<'s> {
             Some(s) => self
                 .tx
                 .execute(
-                    "INSERT INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
-                     ON CONFLICT(project_id, branch_id, view, item_kind, item) DO UPDATE SET x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h, pinned = excluded.pinned",
-                    params![project, tree, view, item_kind, item, s.x, s.y, s.w, s.h, s.pinned as i64],
+                    "INSERT INTO places (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned, look) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
+                     ON CONFLICT(project_id, branch_id, view, item_kind, item) DO UPDATE SET x = excluded.x, y = excluded.y, w = excluded.w, h = excluded.h, pinned = excluded.pinned, look = excluded.look",
+                    params![project, tree, view, item_kind, item, s.x, s.y, s.w, s.h, s.pinned as i64, s.look],
                 )
                 .map_err(db)?,
             None => self
@@ -1031,6 +1033,48 @@ impl<'s> Tx<'s> {
         };
         self.touch(project, tree);
         Ok(())
+    }
+
+    /// A box's row as `tree` sees it: its own, or main's beneath a branch (the board sees only its
+    /// own). A write that changes part of a box starts from this, because a branch's row covers
+    /// main's whole: started from nothing, what the write does not say (a size, a place) would
+    /// be gone on the branch (`specboard://SpecBoard/Docs/Design:DesignBranches` §11「書き方」).
+    pub fn place_row(
+        &self,
+        project: &str,
+        tree: &str,
+        view: &str,
+        item_kind: &str,
+        item: &str,
+    ) -> Result<Option<Spot>, String> {
+        let mut trees = vec![tree];
+        if is_branch_tree(tree) {
+            trees.push("");
+        }
+        for at in trees {
+            let found = self
+                .tx
+                .query_row(
+                    "SELECT x, y, w, h, pinned, look FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = ? AND item = ?",
+                    params![project, at, view, item_kind, item],
+                    |r| {
+                        Ok(Spot {
+                            x: r.get(0)?,
+                            y: r.get(1)?,
+                            w: r.get(2)?,
+                            h: r.get(3)?,
+                            pinned: r.get::<_, i64>(4)? != 0,
+                            look: r.get(5)?,
+                        })
+                    },
+                )
+                .optional()
+                .map_err(db)?;
+            if found.is_some() {
+                return Ok(found);
+            }
+        }
+        Ok(None)
     }
 
     /// How a card (or a row of it, by its address) looks, or none to let it go back to

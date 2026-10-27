@@ -135,7 +135,7 @@ final class StatusLineView: NSView {
     var scale: CGFloat = 1 {
         didSet {
             guard scale != oldValue else { return }
-            label.font = .systemFont(ofSize: Self.textSize * scale)
+            label.font = Typeface.system(Self.textSize * scale)
             needsLayout = true
         }
     }
@@ -146,7 +146,7 @@ final class StatusLineView: NSView {
         spinner.controlSize = .small
         spinner.isDisplayedWhenStopped = false
         spinner.usesThreadedAnimation = true
-        label.font = .systemFont(ofSize: Self.textSize)
+        label.font = Typeface.system(Self.textSize)
         label.textColor = .secondaryLabelColor
         label.lineBreakMode = .byTruncatingTail
         label.maximumNumberOfLines = 1
@@ -192,14 +192,16 @@ final class StatusLineView: NSView {
     }
 }
 
-/// What a person does — presses and keys — while the window waits for a reading in the background, held
-/// and done once it is in, in the order it was done: on what was read, as it would have been had the
-/// window waited on the main thread. Moving the pointer and scrolling go on as they come. Held a few
-/// seconds at most: a reading that does not come in does not keep the window from being used.
+/// What a person does — presses and keys — while the window waits for the reading of their own write in
+/// the background, held and done once it is in, in the order it was done: on what was read, as it would
+/// have been had the window waited on the main thread. Moving the pointer and scrolling go on as they come.
+/// Held a few seconds at most: a reading that does not come in does not keep the window from being used.
 final class InputHold {
     private var monitor: Any?
     private var held: [NSEvent] = []
     private var round = 0
+    /// How many times holding has begun.
+    private(set) var begun = 0
     private static let longest: Double = 5
     private static let kinds: NSEvent.EventTypeMask = [
         .leftMouseDown, .leftMouseUp, .leftMouseDragged, .rightMouseDown, .rightMouseUp, .rightMouseDragged,
@@ -214,6 +216,7 @@ final class InputHold {
     }
 
     private func start() {
+        begun += 1
         round += 1
         let started = round
         monitor = NSEvent.addLocalMonitorForEvents(matching: Self.kinds) { [weak self] event in
@@ -251,14 +254,19 @@ nonisolated final class PendingReading: @unchecked Sendable {
     let core: CoreClient
     let project: String
     let tree: String?
+    /// Whether what a person does is held while it is on its way (`AppModel.begin`). Read and written on
+    /// the main thread.
+    var holds: Bool
     let make: @Sendable () throws -> Read
     /// Written off the main thread, then read on it once the main thread is told it is in.
     var read: Result<Read, Error>?
 
-    init(core: CoreClient, project: String, tree: String?, make: @escaping @Sendable () throws -> Read) {
+    init(core: CoreClient, project: String, tree: String?, holds: Bool,
+         make: @escaping @Sendable () throws -> Read) {
         self.core = core
         self.project = project
         self.tree = tree
+        self.holds = holds
         self.make = make
     }
 }

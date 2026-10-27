@@ -336,8 +336,8 @@ pub(crate) fn row(request: &Request) -> Map<String, Value> {
     if request.keep {
         out.insert("keep".into(), true.into());
     }
-    if let Some(reason) = &request.reason {
-        out.insert("reason".into(), reason.clone().into());
+    if let Some(reason) = reason_said(request) {
+        out.insert("reason".into(), reason.into());
     }
     out
 }
@@ -375,7 +375,7 @@ pub(crate) fn result_view(result: &Value, taken: bool) -> Map<String, Value> {
                     .map(|c| {
                         let mut row = Map::new();
                         row.insert("path".into(), c["path"].clone());
-                        row.insert("unit".into(), c["unit"].clone());
+                        row.insert("unit".into(), unit_said(&c["unit"]));
                         row.insert("took".into(), c["took"].clone());
                         for key in ["base", "source", "target"] {
                             row.insert(
@@ -393,7 +393,7 @@ pub(crate) fn result_view(result: &Value, taken: bool) -> Map<String, Value> {
         );
     }
     if let Some(warnings) = result["warnings"].as_array().filter(|w| !w.is_empty()) {
-        out.insert("warnings".into(), Value::Array(warnings.clone()));
+        out.insert("warnings".into(), warnings_said(warnings));
     }
     if let Some(places) = result["places"].as_u64().filter(|n| *n > 0) {
         if taken {
@@ -403,6 +403,58 @@ pub(crate) fn result_view(result: &Value, taken: bool) -> Map<String, Value> {
         }
     }
     out
+}
+
+/// What a merge would leave broken, kept as said to whoever made the request, said again in the
+/// language of the call.
+fn warnings_said(warnings: &[Value]) -> Value {
+    Value::Array(
+        warnings
+            .iter()
+            .map(|w| match w.as_str() {
+                Some(kept) => crate::text::said_as(&["merges.broken.item"], kept)
+                    .unwrap_or_else(|| kept.to_string())
+                    .into(),
+                None => w.clone(),
+            })
+            .collect(),
+    )
+}
+
+/// A conflict's unit as a request kept it: the whole card or section as `MergeWhole`, whatever
+/// language it was kept named in.
+fn unit_said(unit: &Value) -> Value {
+    match unit.as_str() {
+        Some(u) if crate::write::merge_is_whole(u) => crate::write::MergeWhole.into(),
+        _ => unit.clone(),
+    }
+}
+
+/// A request's result as it is shown: what it kept said in the language of the call.
+fn result_said(result: &Value) -> Value {
+    let mut out = result.clone();
+    if let Some(warnings) = result["warnings"].as_array() {
+        out["warnings"] = warnings_said(warnings);
+    }
+    if let Some(conflicts) = out["conflicts"].as_array_mut() {
+        for c in conflicts {
+            if c.get("unit").is_some() {
+                c["unit"] = unit_said(&c["unit"]);
+            }
+        }
+    }
+    out
+}
+
+/// The reason a request was closed, as it is shown: the one the core gives when a request takes
+/// another's place in the language of the call, one a person wrote as written.
+fn reason_said(request: &Request) -> Option<String> {
+    let reason = request.reason.as_ref()?;
+    Some(if request.state == "withdrawn" {
+        crate::text::said_as(&["requests.resubmitted"], reason).unwrap_or_else(|| reason.clone())
+    } else {
+        reason.clone()
+    })
 }
 
 /// The conflicts left and the overlaps of a preview, as a refusal shows them.
@@ -934,8 +986,8 @@ fn request_json(request: &Request) -> Value {
         "authorLabel": request.author_label(),
         "at": request.at,
         "state": request.state,
-        "reason": request.reason,
-        "result": request.result,
+        "reason": reason_said(request),
+        "result": result_said(&request.result),
         "places": request.places,
         "keep": request.keep,
     })

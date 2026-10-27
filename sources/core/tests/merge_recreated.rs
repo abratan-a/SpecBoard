@@ -200,7 +200,7 @@ fn main_taken_into_a_branch_brings_the_cards_main_made_again() {
     assert!(preview.get("overlaps").is_none(), "{preview}");
     let take: serde_json::Map<String, Value> = NAMES
         .iter()
-        .map(|n| (format!("Schemas:{n}"), json!({"（カード）": "source"})))
+        .map(|n| (format!("Schemas:{n}"), json!({"(whole)": "source"})))
         .collect();
     ok(
         &core,
@@ -225,7 +225,7 @@ fn a_branch_merged_into_a_branch_that_changed_the_old_cards_replaces_them_when_t
     make_again(&core, "work");
     let take: serde_json::Map<String, Value> = NAMES
         .iter()
-        .map(|n| (format!("Schemas:{n}"), json!({"（カード）": "source"})))
+        .map(|n| (format!("Schemas:{n}"), json!({"(whole)": "source"})))
         .collect();
     let preview = ok(
         &core,
@@ -257,13 +257,13 @@ fn a_card_made_again_where_main_changed_the_old_one_is_the_choice_of_the_whole()
     );
     let conflicts = preview["conflicts"].as_array().unwrap();
     assert_eq!(conflicts.len(), 1, "{preview}");
-    assert_eq!(conflicts[0]["unit"], "（カード）");
+    assert_eq!(conflicts[0]["unit"], "(whole)");
     assert!(conflicts[0]["source"].is_null(), "{preview}");
     // Not chosen yet: whether two cards meet at the path depends on the choice.
     assert!(preview.get("overlaps").is_none(), "{preview}");
 
     // Kept: main's card and the one made again would share the path.
-    let keep = json!({"Schemas:Alpha": {"（カード）": "target"}});
+    let keep = json!({"Schemas:Alpha": {"(whole)": "target"}});
     let said = refused(
         &core,
         "branch_merge",
@@ -275,6 +275,7 @@ fn a_card_made_again_where_main_changed_the_old_one_is_the_choice_of_the_whole()
         "main で直した"
     );
 
+    // The whole by the Japanese name a request kept before took it: taken the same.
     ok(
         &core,
         "branch_merge",

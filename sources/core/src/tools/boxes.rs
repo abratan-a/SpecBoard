@@ -10,10 +10,10 @@
 use super::Seen;
 use super::cards::Scope;
 use super::grid::{
-    CARD_COLUMNS, Layout, OwnSize, Rect, card_columns, card_rows, own_size, rows_for_rows,
+    CARD_COLUMNS, Layout, OwnSize, Rect, card_columns, card_rows, grows, own_size, rows_for_count,
     rows_sized, size_value,
 };
-use crate::store::Reader;
+use crate::store::{Composition, Reader};
 use crate::write::{Spot, Tx};
 use serde_json::{Map, Value};
 
@@ -56,8 +56,11 @@ struct Boxed {
     size: (i64, i64),
     written: Option<OwnSize>,
     /// Drawn as a card of its own: not a value object or an enum folded into the cards holding
-    /// it (`grid::folded`), which blocks nothing.
+    /// it (`grid::folded`), which blocks nothing; nor a section ghost no line reaches any more,
+    /// whose place is kept for when one does.
     drawn: bool,
+    /// Grows as rows of it are opened (`grid::grows`).
+    grows: bool,
 }
 
 impl Boxed {
@@ -82,9 +85,26 @@ fn boxes(
     layout: &Layout,
     section: &str,
 ) -> Result<Vec<Boxed>, String> {
-    let project = seen.project();
     let branch = (!seen.named.tree.is_empty()).then_some(seen.named.tree.as_str());
     let made = reader.compose(&seen.summary.id, branch)?;
+    Ok(boxes_in(
+        &made,
+        seen,
+        layout,
+        section,
+        &super::surround::Lines::default(),
+    ))
+}
+
+/// `boxes`, from the places of the tree as composed once.
+fn boxes_in(
+    made: &Composition,
+    seen: &Seen,
+    layout: &Layout,
+    section: &str,
+    lines: &super::surround::Lines,
+) -> Vec<Boxed> {
+    let project = seen.project();
     let folded = super::grid::folded(&project, section);
     let mut out = Vec::new();
     for &i in project.directory.members(section) {
@@ -104,6 +124,7 @@ fn boxes(
             ),
             written: own_size(card, project.defs.cards()),
             drawn: !folded.contains(&card.id),
+            grows: grows(card, &project, layout),
         });
     }
     // Its card ghosts: cards of its own, each where it sits as a card does.
@@ -120,6 +141,9 @@ fn boxes(
             size: super::grid::ghost_size(&project, ghost, layout),
             written: None,
             drawn: true,
+            grows: project
+                .ghost_card(ghost)
+                .is_some_and(|card| grows(card, &project, layout)),
         });
     }
     let mut outside: Vec<Boxed> = made
@@ -143,6 +167,7 @@ fn boxes(
                 },
                 written: place.size,
                 drawn: true,
+                grows: !matches!(place.size, Some((_, Some(_)))) && grows(card, &project, layout),
             })
         })
         .collect();
@@ -154,13 +179,26 @@ fn boxes(
             .position(|c| c.id == b.id)
             .unwrap_or(usize::MAX)
     });
-    out.extend(outside);
-    let mut section_ghosts: Vec<Boxed> = made
+    // The section ghosts: as tall as the rows the lines land on, counted only when one is placed.
+    let ghost_places: Vec<(&String, &crate::store::Place)> = made
         .section_ghost_places
         .iter()
         .filter(|((view, _), _)| view == section)
-        .filter_map(|((_, id), place)| {
+        .map(|((_, id), place)| (id, place))
+        .collect();
+    let rows = if ghost_places.is_empty() {
+        Default::default()
+    } else {
+        let placed_here = outside.iter().map(|b| b.id.clone()).collect();
+        super::surround::ghost_rows(&project, section, &placed_here, lines)
+    };
+    out.extend(outside);
+    let mut section_ghosts: Vec<Boxed> = ghost_places
+        .into_iter()
+        .filter_map(|(id, place)| {
             seen.section(id)?;
+            let drawn_rows = rows.get(id).copied();
+            let height = rows_for_count(drawn_rows.unwrap_or(0), layout);
             Some(Boxed {
                 of: Of::SectionGhost,
                 id: id.clone(),
@@ -168,17 +206,75 @@ fn boxes(
                 own: false,
                 at: (place.x?.round() as i64, place.y?.round() as i64),
                 size: match place.size {
-                    Some((w, h)) => (w, h.unwrap_or_else(|| rows_for_rows(layout.rows))),
-                    None => (CARD_COLUMNS, rows_for_rows(layout.rows)),
+                    Some((w, h)) => (w, h.unwrap_or(height)),
+                    None => (CARD_COLUMNS, height),
                 },
                 written: place.size,
-                drawn: true,
+                drawn: drawn_rows.is_some(),
+                grows: false,
             })
         })
         .collect();
     section_ghosts.sort_by(|a, b| a.path.cmp(&b.path));
     out.extend(section_ghosts);
-    Ok(out)
+    out
+}
+
+/// Every box placed on `section`'s diagram as a group takes it in (`groups::OnMap`), in the order
+/// `boxes` reads them.
+pub(crate) fn on_map(
+    reader: &Reader,
+    seen: &Seen,
+    layout: &Layout,
+    section: &str,
+) -> Result<Vec<super::groups::OnMap>, String> {
+    Ok(as_on_map(boxes(reader, seen, layout, section)?, section))
+}
+
+/// `on_map`, with the project's lines read once for what else the caller reads of them.
+pub(crate) fn on_map_with(
+    reader: &Reader,
+    seen: &Seen,
+    layout: &Layout,
+    section: &str,
+    lines: &super::surround::Lines,
+) -> Result<Vec<super::groups::OnMap>, String> {
+    let branch = (!seen.named.tree.is_empty()).then_some(seen.named.tree.as_str());
+    let made = reader.compose(&seen.summary.id, branch)?;
+    Ok(on_map_in(&made, seen, layout, section, lines))
+}
+
+/// `on_map`, from the places of the tree as composed once and the project's lines read once (the
+/// check reads every section's).
+pub(crate) fn on_map_in(
+    made: &Composition,
+    seen: &Seen,
+    layout: &Layout,
+    section: &str,
+    lines: &super::surround::Lines,
+) -> Vec<super::groups::OnMap> {
+    as_on_map(boxes_in(made, seen, layout, section, lines), section)
+}
+
+fn as_on_map(boxes: Vec<Boxed>, section: &str) -> Vec<super::groups::OnMap> {
+    boxes
+        .into_iter()
+        .map(|b| super::groups::OnMap {
+            view: if b.own {
+                String::new()
+            } else {
+                section.to_string()
+            },
+            kind: b.of.kept_as(),
+            key: b.of.key(),
+            item: b.id,
+            path: b.path,
+            at: b.at,
+            size: b.size,
+            drawn: b.drawn,
+            grows: b.grows,
+        })
+        .collect()
 }
 
 /// The boxes on `section`'s diagram as `section_read` returns them, in the shape `places` writes them:
@@ -220,26 +316,11 @@ struct Wanted {
     size: Option<Value>,
 }
 
-/// A box's row in the places, as the tree has it.
+/// A box's row in the places, as the tree has it (main's beneath a branch that has none).
 fn spot(tx: &Tx, scope: &Scope, view: &str, of: Of, id: &str) -> Result<Spot, String> {
-    let found = tx.conn().query_row(
-        "SELECT x, y, w, h, pinned FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = ? AND item = ?",
-        rusqlite::params![scope.project, scope.tree, view, of.kept_as(), id],
-        |r| {
-            Ok(Spot {
-                x: r.get(0)?,
-                y: r.get(1)?,
-                w: r.get(2)?,
-                h: r.get(3)?,
-                pinned: r.get::<_, i64>(4)? != 0,
-            })
-        },
-    );
-    match found {
-        Ok(s) => Ok(s),
-        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(Spot::default()),
-        Err(e) => Err(crate::write::db(e)),
-    }
+    Ok(tx
+        .place_row(&scope.project, &scope.tree, view, of.kept_as(), id)?
+        .unwrap_or_default())
 }
 
 /// `section_update`'s `places`: each box put where it says, then, with all of them put,
@@ -437,37 +518,6 @@ pub(crate) fn put_places(
     Ok((wanted.len(), jumped))
 }
 
-/// `section_update`'s `tidy`: the cards of `section` that lie over another
-/// moved to the nearest clear cell (`grid::untangled`), nothing else touched. Where each went,
-/// as `jumped` says it.
-pub(crate) fn tidy(tx: &mut Tx, scope: &Scope, section: &str) -> Result<Vec<Value>, String> {
-    let moves = {
-        let seen = Seen::in_tx(tx, scope)?;
-        let layout = Layout::read(tx.conn(), &scope.project)?;
-        super::grid::untangled(&seen.project(), &layout, section)
-    };
-    let mut out = Vec::new();
-    for (b, (x, y)) in moves {
-        let mut s = spot(tx, scope, "", Of::Card, &b.id)?;
-        s.x = Some(x);
-        s.y = Some(y);
-        s.pinned = true;
-        tx.place(
-            &scope.project,
-            &scope.tree,
-            "",
-            Of::Card.kept_as(),
-            &b.id,
-            Some(&s),
-        )?;
-        let mut row = Map::new();
-        row.insert(Of::Card.key().into(), b.path.into());
-        row.insert("topLeft".into(), point(x, y));
-        out.push(Value::Object(row));
-    }
-    Ok(out)
-}
-
 // MARK: - A region, and boxes moved and arranged together
 
 /// A region of a section's diagram, in cells (`card_list`'s and `section_update`'s `region`):
@@ -599,6 +649,8 @@ fn picked(
             }
             Ok(out)
         }
+        // Groups named alone (`move`'s `groups`): no box picked besides what they hold.
+        (None, None) if spec.contains_key("groups") => Ok(Vec::new()),
         _ => Err(text!("boxes.picked.oneOf", what)),
     }
 }
@@ -606,7 +658,12 @@ fn picked(
 /// How far a group of boxes moves: `by`, when none of them comes within the margin of a box
 /// left where it is; else the nearest offset where all of them are clear, the group kept as it
 /// is (looked for out to 40 cells; failing that, `by`).
-fn clear_offset(moving: &[Rect], others: &[Rect], margin: i64, by: (i64, i64)) -> (i64, i64) {
+pub(crate) fn clear_offset(
+    moving: &[Rect],
+    others: &[Rect],
+    margin: i64,
+    by: (i64, i64),
+) -> (i64, i64) {
     let fits = |(dx, dy): (i64, i64)| {
         moving.iter().all(|&(x, y, w, h)| {
             let room = (
@@ -676,7 +733,11 @@ fn went_row(b: &Boxed, at: (i64, i64)) -> Value {
 }
 
 /// The keys a value of `what` takes; refused when it has others.
-fn only_keys(spec: &Map<String, Value>, what: &str, keys: &[&str]) -> Result<(), String> {
+pub(crate) fn only_keys(
+    spec: &Map<String, Value>,
+    what: &str,
+    keys: &[&str],
+) -> Result<(), String> {
     let stray: Vec<&str> = spec
         .keys()
         .map(String::as_str)
@@ -729,8 +790,24 @@ pub(crate) fn move_boxes(
     raw: &Value,
 ) -> Result<Map<String, Value>, String> {
     let spec = raw.as_object().ok_or_else(|| text!("boxes.move.shape"))?;
-    only_keys(spec, "move", &["cards", "region", "by", "to"])?;
+    only_keys(spec, "move", &["cards", "region", "by", "to", "groups"])?;
     let (layout, all, picked) = read_picked(tx, scope, section, spec, "move")?;
+    let keeps = super::grid::keeps_places(&Seen::in_tx(tx, scope)?.project(), section);
+    // Groups named: they and what they hold move with the boxes picked, by one offset.
+    if let Some(names) = spec.get("groups") {
+        let by = spec
+            .get("by")
+            .map(|v| cell(v).ok_or_else(|| text!("boxes.move.byShape")))
+            .transpose()?;
+        let to = spec
+            .get("to")
+            .map(|v| cell(v).ok_or_else(|| text!("boxes.move.toShape")))
+            .transpose()?;
+        if by.is_some() == to.is_some() {
+            return Err(text!("boxes.move.byOrTo"));
+        }
+        return super::groups::move_with(tx, scope, section, Some(names), &picked, by, to, !keeps);
+    }
     let by = match (spec.get("by"), spec.get("to")) {
         (Some(by), None) => cell(by).ok_or_else(|| text!("boxes.move.byShape"))?,
         (None, Some(to)) => {
@@ -748,7 +825,7 @@ pub(crate) fn move_boxes(
         .filter(|&&i| all[i].drawn)
         .map(|&i| all[i].rect())
         .collect();
-    let went = if super::grid::keeps_places(&Seen::in_tx(tx, scope)?.project(), section) {
+    let went = if keeps {
         by
     } else {
         clear_offset(&moving, &staying(&all, &picked), layout.margin, by)
@@ -767,11 +844,8 @@ pub(crate) fn move_boxes(
     Ok(out)
 }
 
-/// `section_update`'s `arrange`: the boxes named — `cards` in their order, or
-/// those a `region` takes, from the top down — put in `columns` columns (4 when not said) from `at`
-/// (the top left of them when not said), left to right and each under the one above it in its
-/// column, the project's margin between them, each as tall as the screen draws it; the group kept clear
-/// of the boxes left where they are as `move` keeps it. Where each went, as `arranged` says it.
+/// `section_update`'s `arrange`: along the map's lines (`by: "lines"`, `arrange::by_lines`), or the
+/// boxes named in columns in the order given (`by: "order"`). Without `by`, refused naming both.
 pub(crate) fn arrange_boxes(
     tx: &mut Tx,
     scope: &Scope,
@@ -781,7 +855,26 @@ pub(crate) fn arrange_boxes(
     let spec = raw
         .as_object()
         .ok_or_else(|| text!("boxes.arrange.shape"))?;
-    only_keys(spec, "arrange", &["cards", "region", "columns", "at"])?;
+    match spec.get("by").and_then(Value::as_str) {
+        Some("lines") => super::arrange::by_lines(tx, scope, section, spec),
+        Some("order") => in_order(tx, scope, section, spec),
+        _ => Err(text!("boxes.arrange.by")),
+    }
+}
+
+/// `arrange` with `by: "order"`: the boxes named — `cards` in their order, or
+/// those a `region` takes, from the top down — put in `columns` columns (4 when not said) from `at`
+/// (the top left of them when not said), left to right and each under the one above it in its
+/// column, the project's margin between them, each as tall as the screen draws it; the group kept clear
+/// of the boxes left where they are as `move` keeps it. Groups are not looked at. Where each went, as
+/// `arranged` says it.
+fn in_order(
+    tx: &mut Tx,
+    scope: &Scope,
+    section: &str,
+    spec: &Map<String, Value>,
+) -> Result<Map<String, Value>, String> {
+    only_keys(spec, "arrange", &["by", "cards", "region", "columns", "at"])?;
     let (layout, all, picked) = read_picked(tx, scope, section, spec, "arrange")?;
     // A value object or an enum folded into the cards holding it takes no room: left as it is.
     let picked: Vec<usize> = picked.into_iter().filter(|&i| all[i].drawn).collect();

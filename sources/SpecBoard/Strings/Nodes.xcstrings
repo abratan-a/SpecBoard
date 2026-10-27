@@ -181,6 +181,24 @@
         }
       }
     },
+    "help.anyone" : {
+      "comment" : "Beside the Anyone check of a receiving begin.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "any flow or program may call it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの flow・program から呼ばれてもよい"
+          }
+        }
+      }
+    },
     "help.branchNext" : {
       "comment" : "Help beside the next of a branch of a decision node.",
       "extractionState" : "manual",
@@ -469,6 +487,24 @@
         }
       }
     },
+    "help.partnerNotWritten" : {
+      "comment" : "Under a receiving begin's partners while it names none and takes no caller: a gap.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner not written — add a partner or a program, or check Anyone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手が書かれていない — 相手か program を足すか、誰からでもを入れる"
+          }
+        }
+      }
+    },
     "help.peerReceive" : {
       "comment" : "Help beside the peer key of a begin node that receives.",
       "extractionState" : "manual",
@@ -476,13 +512,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flows that send it (as many as needed; may be combined with a program). Leave both peer and program out for the caller"
+            "value" : "Flows that send it (as many as needed; may be combined with a program). Leaving both peer and program out is a gap (partner not written); if any caller may call it, check Anyone below"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "送ってくる flow（何本でも。program と一緒にも書ける）。peer も program も省くと呼んだ側"
+            "value" : "送ってくる flow（何本でも。program と一緒にも書ける）。peer も program も省くのは穴（相手が書かれていない）。呼び手を問わないなら下の「誰からでも」"
           }
         }
       }
@@ -494,13 +530,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flows it returns to (as many as needed; may be combined with a program). Leave both peer and program out for the caller"
+            "value" : "Flows it returns to (as many as needed; may be combined with a program). Leave both peer and program out to return to the one the start receives from"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "返す先の flow（何本でも。program と一緒にも書ける）。peer も program も省くと呼んだ側"
+            "value" : "返す先の flow（何本でも。program と一緒にも書ける）。peer も program も省くと開始が受ける相手へ"
           }
         }
       }
@@ -512,13 +548,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What it gives back to the caller (or to the peer or program). An end that gives nothing back leaves it out"
+            "value" : "What it gives back to the one the start receives from (or to the peer or program). An end that gives nothing back leaves it out"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "呼んだ側（か peer・program の相手）へ返すもの。返さない終了は書かない"
+            "value" : "開始が受ける相手（か peer・program の相手）へ返すもの。返さない終了は書かない"
           }
         }
       }
@@ -807,42 +843,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "相手の flow を足す（例: Payments:Charge）"
-          }
-        }
-      }
-    },
-    "placeholder.addPartnerCaller" : {
-      "comment" : "Placeholder of the field that adds a partner flow to a node's list.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add a partner flow (leave out for the caller)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相手の flow を足す（省くと呼んだ側）"
-          }
-        }
-      }
-    },
-    "placeholder.addPartnerReceive" : {
-      "comment" : "Placeholder of the field that adds a partner flow to a receive row's list.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add a partner flow (leave out for the caller; e.g. Payments:Charge)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相手の flow を足す（省くと呼んだ側。例: Payments:Charge）"
           }
         }
       }
@@ -1419,6 +1419,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "trigger.on は %@ のいずれかです（%@）"
+          }
+        }
+      }
+    },
+    "toggle.anyone" : {
+      "comment" : "The check under a receiving begin's partners: it takes any caller (anyCaller).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anyone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "誰からでも"
           }
         }
       }

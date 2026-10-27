@@ -1375,7 +1375,7 @@ pub fn move_project(conn: &Connection, project: &str) -> Result<(), String> {
         &current,
         &Trees {
             one: &one,
-            name: "線の書き方を移した",
+            name: &crate::write::history::migrated(keyed!("history.migrate.lineForm")),
             say: &say,
         },
     )
@@ -1495,7 +1495,7 @@ pub fn split_project(conn: &Connection, project: &str) -> Result<(), String> {
         &current,
         &Trees {
             one: &one,
-            name: "線の着く所を移した",
+            name: &crate::write::history::migrated(keyed!("history.migrate.lineEnds")),
             say: &say,
         },
     )

@@ -6,7 +6,7 @@ import SwiftUI
 /// section's cards and those of the sections under it, into a file or a folder) and what it leaves
 /// out — the project's settings, not a branch's, made, changed and let go here as MCP does with
 /// `export_create`, `export_update` and `export_delete` — and, kept for the machine the project is
-/// on, the folder it is written to by default (`Behavior/Screen:SetExportFolder`). Under each, the
+/// on, the folder it is written to by default (`Behavior/App/Screen:SetExportFolder`). Under each, the
 /// files it writes with their cards and how each stands against what it wrote last (the core keeps
 /// that beside them in the folder written to, `.specboard/<project>/<export>.json`), what writing
 /// again takes away, and the write (`export_execute`) — main, whatever branch is open, into its

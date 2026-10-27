@@ -91,96 +91,6 @@
         }
       }
     },
-    "badge.freedoc" : {
-      "comment" : "Badge in the card editor bar of a freedoc.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "freedoc (free document)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "freedoc（自由文書）"
-          }
-        }
-      }
-    },
-    "badge.goal" : {
-      "comment" : "Badge in the card editor bar of a goal.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "goal"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "goal（目標）"
-          }
-        }
-      }
-    },
-    "badge.note" : {
-      "comment" : "Badge in the card editor bar of a note.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "note (sticky note)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "note（付箋）"
-          }
-        }
-      }
-    },
-    "badge.openEnum" : {
-      "comment" : "Small badge in the card editor header of an enum whose values are not exhaustive.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open enum"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開いた列挙型"
-          }
-        }
-      }
-    },
-    "badge.task" : {
-      "comment" : "Badge in the card editor bar of a task.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "task"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "task（タスク）"
-          }
-        }
-      }
-    },
     "branch.madeHere" : {
       "comment" : "Note in the history window about a card made in the branch.",
       "extractionState" : "manual",
@@ -1297,24 +1207,6 @@
         }
       }
     },
-    "help.openEnum" : {
-      "comment" : "Tooltip of the open enum badge in the card editor header.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The listed values are the known ones, not necessarily all of them"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "列挙した値は既知の値であって網羅ではありません"
-          }
-        }
-      }
-    },
     "help.ownFieldShown" : {
       "comment" : "Help of a goal's or task's field in the properties panel; the arguments are the field's label and its description.",
       "extractionState" : "manual",
@@ -1538,13 +1430,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heading of the version. If left out, the version (key) is used. e.g. 0.2.21 (2026-10-10)"
+            "value" : "Heading of the version. If left out, the version (key) is used. e.g. 1.2.0 (2026-01-15)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版の見出し。省くと版（key）。例 0.2.21 (2026-10-10)"
+            "value" : "版の見出し。省くと版（key）。例 1.2.0 (2026-01-15)"
           }
         }
       }
@@ -1556,13 +1448,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The version name shown in the selector (one per version in the card, e.g. 0.2.21)"
+            "value" : "The version name shown in the selector (one per version in the card, e.g. 1.2.0)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セレクタに出す版の名前（カードの中で 1 つずつ。例 0.2.21）"
+            "value" : "セレクタに出す版の名前（カードの中で 1 つずつ。例 1.2.0）"
           }
         }
       }
@@ -1671,6 +1563,132 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "見つからない"
+          }
+        }
+      }
+    },
+    "listFace.helpFold" : {
+      "comment" : "Tooltip of the list face key fold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The fields a row's › opens under it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の › で下に開く欄。"
+          }
+        }
+      }
+    },
+    "listFace.helpHeader" : {
+      "comment" : "Tooltip of the list face key header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields shown on the card's header, after its name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの頭に、名前のあとに出す欄。"
+          }
+        }
+      }
+    },
+    "listFace.helpList" : {
+      "comment" : "Tooltip of the list face key list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The array whose elements are the rows of a data card of this shape."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この形のデータのカードで、要素を 1 行ずつにする並びの欄。"
+          }
+        }
+      }
+    },
+    "listFace.helpMark" : {
+      "comment" : "Tooltip of the list face key mark.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The field a row's mark (✓ ✗ – ○) is read from, and the mark each value gives."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の頭の印（✓ ✗ – ○）を読む欄と、値ごとの印。"
+          }
+        }
+      }
+    },
+    "listFace.helpNote" : {
+      "comment" : "Tooltip of the list face key note.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The field shown small and grey after a row's text."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の字の後ろに小さく灰色で出す欄。"
+          }
+        }
+      }
+    },
+    "listFace.helpText" : {
+      "comment" : "Tooltip of the list face key text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The field a row says; without a value, the element's key."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の字にする欄。値が無ければ要素の鍵。"
+          }
+        }
+      }
+    },
+    "listFace.writtenByMCP" : {
+      "comment" : "Note under the list face section: it is shown here and written over MCP.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Written over MCP (card_update's face)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くのは MCP（card_update の face）。"
           }
         }
       }
@@ -2006,13 +2024,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Version (e.g. 0.2.21)"
+            "value" : "Version (e.g. 1.2.0)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版（例 0.2.21）"
+            "value" : "版（例 1.2.0）"
           }
         }
       }
@@ -2107,24 +2125,6 @@
         }
       }
     },
-    "section.absentFields" : {
-      "comment" : "Section of the properties panel listing fields the card deliberately does not have.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fields deliberately absent"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "意図的に持たないフィールド"
-          }
-        }
-      }
-    },
     "section.branchChanges" : {
       "comment" : "Section of the history window listing what the branch changed in the card.",
       "extractionState" : "manual",
@@ -2175,24 +2175,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "固定値"
-          }
-        }
-      }
-    },
-    "section.discriminator" : {
-      "comment" : "Section of the properties panel with the field that tells the variants of a card apart.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Discriminator"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "判別子"
           }
         }
       }
@@ -2305,24 +2287,6 @@
         }
       }
     },
-    "section.rules" : {
-      "comment" : "Section of the properties panel listing the validation rules of a card or field.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Validation rules"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検証ルール"
-          }
-        }
-      }
-    },
     "section.usedByActions" : {
       "comment" : "Section of the connections window listing the actions that read or write the card.",
       "extractionState" : "manual",
@@ -2373,24 +2337,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "読み書きする場所（古い欄・使われていません）"
-          }
-        }
-      }
-    },
-    "section.variantOnly" : {
-      "comment" : "Section of the properties panel of a field listing the variants it exists in.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Present only for this variant"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この variant のときだけ存在"
           }
         }
       }
@@ -2503,24 +2449,6 @@
         }
       }
     },
-    "word.holds" : {
-      "comment" : "Label of the cards a store holds, in the card editor header and the properties panel.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "置くもの"
-          }
-        }
-      }
-    },
     "word.mention" : {
       "comment" : "Short label before a path that a note's text names or an action's text mentions; narrow.",
       "extractionState" : "manual",
@@ -2571,6 +2499,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "はい"
+          }
+        }
+      }
+    },
+    "written.byMcp" : {
+      "comment" : "Said at the head of a section of the properties panel the screen shows but cannot write.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Written through MCP (card_update)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP（card_update）で書きます"
           }
         }
       }

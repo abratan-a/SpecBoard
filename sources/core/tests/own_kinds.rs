@@ -983,8 +983,15 @@ fn a_line_hidden_from_the_start_is_left_out_of_a_diagram_unless_asked_for() {
             .map(|k| k.as_str().unwrap().to_string())
             .collect()
     };
-    // Every kind, as before, while none says otherwise.
-    assert!(drawn(&core, None).is_empty());
+    // Every kind but the built-in ones hidden from the start (mentions), while none of the
+    // project's says otherwise.
+    let before = drawn(&core, None);
+    assert!(
+        !before.is_empty()
+            && !before.contains(&"mentions".to_string())
+            && before.contains(&"signedBy".to_string()),
+        "{before:?}"
+    );
 
     let mut wrong = kept.clone();
     wrong[signed]["visible"] = json!("no");

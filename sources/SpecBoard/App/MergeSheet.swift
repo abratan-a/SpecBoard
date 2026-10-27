@@ -176,7 +176,7 @@ struct MergeSheet: View {
             get: { take[conflict.path]?[conflict.conflict.label] },
             set: { take[conflict.path, default: [:]][conflict.conflict.label] = $0 })
         return VStack(alignment: .leading, spacing: 3) {
-            Text(L10n[.Branches.mergeConflictOf(conflict.path, conflict.conflict.label)]).font(.app(11.5, weight: .semibold, design: .monospaced))
+            Text(L10n[.Branches.mergeConflictOf(conflict.path, Merge3.shown(conflict.conflict.label))]).font(.app(11.5, weight: .semibold, design: .monospaced))
             value(L10n[.Branches.mergeBase], conflict.conflict.base)
             value(L10n[.Branches.mergeSource], conflict.conflict.source)
             value(L10n[.Branches.mergeTarget], conflict.conflict.target)

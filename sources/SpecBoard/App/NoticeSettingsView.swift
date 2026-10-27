@@ -6,6 +6,7 @@ struct NoticeSettingsView: View {
     @AppStorage(NoticeSettings.shownKey(.error)) private var errorShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.shownKey(.notice)) private var noticeShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.shownKey(.aiMerge)) private var aiMergeShown = NoticeSettings.standardShown.rawValue
+    @AppStorage(NoticeSettings.shownKey(.update)) private var updateShown = NoticeSettings.standardShown.rawValue
     @AppStorage(NoticeSettings.stayKey) private var stay = NoticeSettings.standardStay.rawValue
 
     var body: some View {
@@ -15,6 +16,7 @@ struct NoticeSettingsView: View {
                     shownRow(.error, $errorShown)
                     shownRow(.notice, $noticeShown)
                     shownRow(.aiMerge, $aiMergeShown)
+                    shownRow(.update, $updateShown)
                 }
                 note(L10n[.Settings.noticesShownNote])
             }

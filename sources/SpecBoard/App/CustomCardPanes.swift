@@ -104,6 +104,14 @@ struct CustomRowPane: View {
     var path: String
     var editable: Bool
 
+    /// The row's type as the screen says it: a card the container holds by its kind's name in the
+    /// screen's language (`WholeCard.heldCard` is an id, not a word).
+    private func typeShown(_ row: CustomRow) -> String {
+        guard row.type == WholeCard.heldCard else { return row.type }
+        let held = card.inside.lazy.compactMap { model.schema($0) }.first { $0.name == row.name }
+        return model.detail?.cardKinds[held?.kindName ?? "task"]?.label ?? row.type
+    }
+
     var body: some View {
         if let custom = CustomKind.of(card.kind), let row = CustomRows.row(at: path, in: card.customRows) {
             let type = custom.rowType(row.type)
@@ -119,11 +127,11 @@ struct CustomRowPane: View {
                                           change { CustomRowEditing.update($0, at: path) { $0.type = next } }
                                       }))
                     } else {
-                        Text(row.type).font(.app(11.5))
+                        Text(typeShown(row)).font(.app(11.5))
                     }
                 }
                 PropertyRow("text", help: L10n[.CardEditor.helpRowText]) {
-                    CommitField(row.type, text: row.text) { text in
+                    CommitField(typeShown(row), text: row.text) { text in
                         change { CustomRowEditing.update($0, at: path) { $0.text = text } }
                     }
                     .id("\(card.id)|\(path)|text")

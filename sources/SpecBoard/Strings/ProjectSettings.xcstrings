@@ -386,7 +386,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "While locked, main can only be changed by a merge (from the screen or from MCP). Change cards and sections in a branch and merge it, or use “Group edit” (when closed, it goes into main as a single merge). When an AI merges into main, it becomes an MR that a person approves in the MR tab of the dashboard. Still editable while locked: the position and order of cards inside a section, the size and look of writing cards, the position of flow nodes, tags, and the project settings. You can also lock and unlock with a right-click on main in the Navigator."
+            "value" : "While locked, main can only be changed by a merge (from the screen or from MCP). Change cards and sections in a branch and merge it, or use “Batch edit” (when closed, it goes into main as a single merge). When an AI merges into main, it becomes an MR that a person approves in the MR tab of the dashboard. Still editable while locked: the position and order of cards inside a section, the size and look of writing cards, the position of flow nodes, tags, and the project settings. You can also lock and unlock with a right-click on main in the Navigator."
           }
         },
         "ja" : {

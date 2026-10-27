@@ -1,5 +1,6 @@
 {
   "exportCode.enumValue.described": "- `{value}`: {description}",
+  "exportCode.enumValue.labelOnly": "- `{value}`（{label}）",
   "exportCode.enumValue.labelled": "- `{value}`（{label}）: {description}",
   "exportCode.jsonSchema.enumOpen": "開いた列挙型。既知の値は x-known-values。未知の値も正当",
   "exportCode.typescript.absent": "{name} は意図的に持たない: {reason}",

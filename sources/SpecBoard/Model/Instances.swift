@@ -8,13 +8,13 @@ import Foundation
 extension SchemaNode {
     /// A data card's shape, by id: where its line `of` goes.
     var instanceOf: String? {
-        kind == .instance ? connections.first { $0.line == Line.of }?.to : nil
+        kind == .instance ? connections.first { $0.line == Line.shapeOf }?.to : nil
     }
 
     /// The shape a data card is of, or whose data a table gathers: where its line
     /// `of` goes.
     var shapeOf: String? {
-        kind == .instance || kind == .table ? connections.first { $0.line == Line.of }?.to : nil
+        kind == .instance || kind == .table ? connections.first { $0.line == Line.shapeOf }?.to : nil
     }
 }
 
@@ -77,6 +77,16 @@ enum InstanceRows {
     /// value in a line. None when its shape is gone.
     static func rows(_ card: SchemaNode, lookup: SchemaLookup?, folded: Set<String>) -> [CardRow] {
         guard let shape = card.instanceOf.flatMap({ lookup?($0) }), shape.kind.holdsFields else { return [] }
+        // Its shape says it is drawn as a list of records: a row an element (`ListFaceRows`).
+        if let face = card.listFace { return ListFaceRows.rows(card, face: face, lookup: lookup, folded: folded) }
+        return tree(shape.fields, values: card.data?.asObject, depth: 0, prefix: "", seen: [shape.id],
+                    lookup: lookup, folded: folded)
+    }
+
+    /// The rows of `fields` holding `values`, at `depth` under the row at `prefix` (none for the card's top),
+    /// nested as the shapes are — the shapes in `seen` not unfolded again.
+    static func tree(_ fields: [FieldNode], values: [String: JSONValue]?, depth: Int, prefix: String, seen: Set<String>,
+                     lookup: SchemaLookup?, folded: Set<String>) -> [CardRow] {
         var out: [CardRow] = []
         func row(_ path: String, _ depth: Int, _ datum: InstanceDatum, expandable: Bool = false, folded: Bool = false) {
             out.append(CardRow(path: path, depth: depth, field: nil, value: nil, fromType: nil,
@@ -125,7 +135,7 @@ enum InstanceRows {
                 }
             }
         }
-        emit(shape.fields, card.data?.asObject, 0, "", [shape.id])
+        emit(fields, values, depth, prefix, seen)
         return out
     }
 

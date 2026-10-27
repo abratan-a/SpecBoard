@@ -33,7 +33,7 @@ FIXTURES = HERE.parent
 REPO = FIXTURES.parents[3]
 SWIFT_FIXTURES = REPO / "sources" / "SpecBoardTests" / "Fixtures"
 
-VERSION = 28
+VERSION = 33
 VERSION_BEFORE = 18
 CARD_V = 7
 
@@ -90,6 +90,15 @@ def f(
         "key": key,
         "sub": sub,
     }
+
+
+def before_values(card):
+    """A card as a file of before held it: an enum's values keyed by `value`."""
+    if card.get("kind") != "enum":
+        return card
+    rows = [{**v, "fields": {("value" if k == "name" else k): x for k, x in v["fields"].items()}}
+            for v in card["rows"]["values"]]
+    return {**card, "rows": {**card["rows"], "values": rows}}
 
 
 def enum(name, label, d, values):
@@ -1093,7 +1102,7 @@ class Project:
         if spec["kind"] == "enum":
             values = []
             for v, label in spec["values"]:
-                body = {"value": v}
+                body = {"name": v}
                 if label:
                     body["label"] = label
                 values.append({"id": self.id("value", name, v), "fields": body})
@@ -1196,7 +1205,7 @@ class Project:
             if form:
                 s["format"] = form
             settings.append(s)
-        before_cards = [{**c, "exportTo": settings} for c in cards]
+        before_cards = [before_values({**c, "exportTo": settings}) for c in cards]
         before = {
             "format": "specboard/project",
             "version": VERSION_BEFORE,

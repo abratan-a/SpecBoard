@@ -145,11 +145,12 @@ pub(crate) const CARD_KINDS: [&str; 17] = [
 /// The keys of a card's value that only some kinds take, each with those kinds. Every other key of
 /// the card's form is every kind's (where it sits and its size are every boxed card's): the topics
 /// of `card_create` and `card_update` say those, and a kind's topic its own.
-const KIND_KEYS: [(&str, &[&str]); 25] = [
+const KIND_KEYS: [(&str, &[&str]); 26] = [
     ("fields", &["entity", "value"]),
     ("rules", &["entity", "value"]),
     ("absentFields", &["entity", "value"]),
     ("discriminator", &["entity", "value"]),
+    ("face", &["entity", "value"]),
     ("standalone", &["value", "enum"]),
     ("values", &["enum"]),
     ("open", &["enum"]),
@@ -187,11 +188,12 @@ const KIND_FORMS: [(&str, &[&str]); 6] = [
 
 /// The keys of a node's value that only some kinds of node take; the rest of the node's form is
 /// every node's.
-const NODE_KEYS: [(&str, &[&str]); 15] = [
+const NODE_KEYS: [(&str, &[&str]); 16] = [
     ("trigger", &["begin"]),
     ("every", &["begin"]),
     ("program", &["begin"]),
     ("initiator", &["begin"]),
+    ("anyCaller", &["begin"]),
     ("carries", &["begin", "run"]),
     ("via", &["begin", "run"]),
     ("returns", &["run"]),

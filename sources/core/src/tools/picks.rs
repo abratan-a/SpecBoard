@@ -58,13 +58,18 @@ pub(crate) fn picks(path: &str) -> bool {
 /// A name of a path taken apart: the field's name (its quotes taken off), and how an element of it
 /// is picked (none for a name with no brackets, or the field's `[]`).
 pub(crate) fn step(name: &str) -> Result<(Cow<'_, str>, Option<Pick>), String> {
+    step_kept(name).map_err(String::from)
+}
+
+/// `step`, why it cannot be read kept by its key: said later, in the language of whoever reads it.
+pub(crate) fn step_kept(name: &str) -> Result<(Cow<'_, str>, Option<Pick>), crate::text::Keyed> {
     let name = name.trim_matches([' ', '\t']);
     let (base, rest) = pathtext::step(name);
     if rest.is_empty() {
         return Ok((base, None));
     }
     let Some(inner) = rest.strip_prefix('[').and_then(|r| r.strip_suffix(']')) else {
-        return Err(text!("picks.step.unclosed", name));
+        return Err(keyed!("picks.step.unclosed", name));
     };
     let inner = inner.trim_matches([' ', '\t']);
     if inner.is_empty() {
@@ -74,7 +79,7 @@ pub(crate) fn step(name: &str) -> Result<(Cow<'_, str>, Option<Pick>), String> {
         return inner
             .parse::<usize>()
             .map(|i| (base, Some(Pick::At(i))))
-            .map_err(|_| text!("picks.step.indexTooBig", name));
+            .map_err(|_| keyed!("picks.step.indexTooBig", name));
     }
     if let Some(value) = inner.strip_prefix('=') {
         return Ok((base, Some(Pick::Is(lit(name, value)?))));
@@ -95,7 +100,7 @@ pub(crate) fn step(name: &str) -> Result<(Cow<'_, str>, Option<Pick>), String> {
             return Err(shape_said(name));
         }
         if keys.iter().any(|(k, _): &(String, Lit)| *k == key) {
-            return Err(text!("picks.step.keyTwice", name, key));
+            return Err(keyed!("picks.step.keyTwice", name, key));
         }
         let lit = lit(name, value)?;
         keys.push((key, lit));
@@ -103,16 +108,16 @@ pub(crate) fn step(name: &str) -> Result<(Cow<'_, str>, Option<Pick>), String> {
     Ok((base, Some(Pick::Where(keys))))
 }
 
-fn shape_said(name: &str) -> String {
-    text!("picks.step.shape", name)
+fn shape_said(name: &str) -> crate::text::Keyed {
+    keyed!("picks.step.shape", name)
 }
 
 /// A value as written in a pick.
-fn lit(name: &str, raw: &str) -> Result<Lit, String> {
+fn lit(name: &str, raw: &str) -> Result<Lit, crate::text::Keyed> {
     let raw = raw.trim_matches([' ', '\t']);
     let Some(inner) = raw.strip_prefix('"') else {
         if raw.contains('"') {
-            return Err(text!("picks.lit.aroundValue", name));
+            return Err(keyed!("picks.lit.aroundValue", name));
         }
         return Ok(Lit {
             text: raw.to_string(),
@@ -123,17 +128,17 @@ fn lit(name: &str, raw: &str) -> Result<Lit, String> {
     let mut chars = inner.chars();
     loop {
         match chars.next() {
-            None => return Err(text!("picks.lit.unclosed", name)),
+            None => return Err(keyed!("picks.lit.unclosed", name)),
             Some('\\') => match chars.next() {
                 Some(c) => text.push(c),
-                None => return Err(text!("picks.lit.unclosed", name)),
+                None => return Err(keyed!("picks.lit.unclosed", name)),
             },
             Some('"') => break,
             Some(c) => text.push(c),
         }
     }
     if !chars.as_str().trim_matches([' ', '\t']).is_empty() {
-        return Err(text!("picks.lit.aroundValue", name));
+        return Err(keyed!("picks.lit.aroundValue", name));
     }
     Ok(Lit { text, quoted: true })
 }

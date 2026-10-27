@@ -27,7 +27,7 @@ struct TriStateCheckbox: NSViewRepresentable {
     func updateNSView(_ button: NSButton, context: Context) {
         context.coordinator.parent = self
         button.title = title
-        button.font = .systemFont(ofSize: 12 * Typography.shared.scale)
+        button.font = Typeface.system(12 * Typography.shared.scale)
         button.toolTip = help
         button.state = Self.value(state)
     }

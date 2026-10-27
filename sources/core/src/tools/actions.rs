@@ -430,10 +430,15 @@ pub(crate) fn branch_name_of(name: &str) -> String {
 fn usable(op: &str, facts: &Facts) -> Result<(), Why> {
     let status = facts.status.as_deref().unwrap_or_default();
     let open = || Status::NotStarted.is(status) || Status::InProgress.is(status);
+    // Said as the screen shows it (`optionLabels`), not the value a card keeps.
     let not_open = || {
+        let shown = crate::kinds::builtin()
+            .get("goal")
+            .and_then(|k| k.field("status"))
+            .map_or(status, |f| f.option_label(status));
         Why::plain(text!(
             "actions.why.status",
-            status = status,
+            status = shown,
             label = label(op)
         ))
     };
@@ -488,8 +493,17 @@ fn usable(op: &str, facts: &Facts) -> Result<(), Why> {
             Some(false) => Ok(()),
             _ => Err(Why::plain(text!("actions.why.done"))),
         },
-        "reviewed" if facts.review.is_empty() && !facts.code.iter().any(CodeLine::flagged) => {
-            Err(Why::plain(text!("actions.why.noReview")))
+        "reviewed" if facts.review.is_empty() && !facts.code.iter().any(CodeLine::to_record) => {
+            let broken = facts
+                .code
+                .iter()
+                .filter(|l| matches!(l.state, super::code_review::State::Broken(_)))
+                .count();
+            Err(Why::plain(if broken > 0 {
+                text!("actions.why.onlyBroken", count = broken)
+            } else {
+                text!("actions.why.noReview")
+            }))
         }
         "reviewed" => Ok(()),
         _ => Err(Why::plain(text!("actions.why.unknown", op))),
@@ -765,6 +779,7 @@ pub(crate) fn card_action(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut warnings: Vec<String> = Vec::new();
     let mut recorded: Vec<Value> = Vec::new();
     let mut not_read: Vec<Value> = Vec::new();
+    let mut broken: Vec<Value> = Vec::new();
     match op.as_str() {
         "start" => {
             let wanted = value
@@ -861,7 +876,7 @@ pub(crate) fn card_action(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             }
             // The code of its changed and unrecorded lines recorded as it is now: kept beside the
             // tree, not in it.
-            let flagged: Vec<&CodeLine> = code.iter().filter(|l| l.flagged()).collect();
+            let flagged: Vec<&CodeLine> = code.iter().filter(|l| l.to_record()).collect();
             if !flagged.is_empty() {
                 let by = super::inspection::by_of(tx.who());
                 let at = tx.now()?;
@@ -869,13 +884,35 @@ pub(crate) fn card_action(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                 changes.push(keyed!("actions.change.recorded", count = flagged.len()));
                 recorded = flagged.iter().map(|l| said_line(l, None)).collect();
             }
+            // What is not recorded, said apart: the code not read on this machine, and what a
+            // line points at not in the code — told in words a person reads, each with why.
             for line in &code {
-                if let super::code_review::State::NotRead(why) = &line.state {
-                    not_read.push(said_line(line, Some(why.render())));
+                match &line.state {
+                    super::code_review::State::NotRead(why) => {
+                        not_read.push(said_line(line, Some(why.render())));
+                    }
+                    super::code_review::State::Broken(why) => {
+                        broken.push(said_line(line, Some(why.render())));
+                    }
+                    _ => {}
                 }
             }
             if !not_read.is_empty() {
                 warnings.push(text!("actions.warn.notRead", count = not_read.len()));
+            }
+            if !broken.is_empty() {
+                let whys: Vec<String> = code
+                    .iter()
+                    .filter_map(|l| match &l.state {
+                        super::code_review::State::Broken(why) => Some(why.render()),
+                        _ => None,
+                    })
+                    .collect();
+                warnings.push(text!(
+                    "actions.warn.broken",
+                    count = broken.len(),
+                    whys = crate::text::list(&whys)
+                ));
             }
         }
         _ => {
@@ -980,6 +1017,9 @@ pub(crate) fn card_action(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     }
     if !not_read.is_empty() {
         out.insert("notRead".into(), Value::Array(not_read));
+    }
+    if !broken.is_empty() {
+        out.insert("broken".into(), Value::Array(broken));
     }
     Ok(Value::Object(out))
 }

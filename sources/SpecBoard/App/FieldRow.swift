@@ -194,21 +194,21 @@ struct FieldRow: View {
     @ViewBuilder
     private var badges: some View {
         HStack(spacing: 3) {
-            if field.isPk { badge("PK") }
-            if field.isUnique { badge("uniq") }
-            if field.isRequired { badge(L10n[.Common.wordRequired]) }
+            if field.isPk { badge(BuiltinWords.recordField("primaryKey")) }
+            if field.isUnique { badge(BuiltinWords.recordField("unique")) }
+            if field.isRequired { badge(BuiltinWords.recordField("required")) }
             // Shown separately from 必須 on purpose: presence and nullability are
             // different questions and a strict wire format needs both.
-            if field.isNullable { badge(L10n[.Properties.badgeNullable]) }
+            if field.isNullable { badge(BuiltinWords.recordField("nullable")) }
             if let constValue = field.constValue, !constValue.isNull {
                 badge("= \(constValue.display)")
             }
-            if !field.rules.isEmpty { badge("rule \(field.rules.count)") }
+            if !field.rules.isEmpty { badge("\(BuiltinWords.recordField("rules")) \(field.rules.count)") }
             // What its lines point at besides what it embeds (the core's `relations`).
             let pointing = model.detail?.relations.filter { $0.fieldId == field.id && $0.line != Line.embed }.count ?? 0
             if pointing > 0 { badge("→ \(pointing)") }
             if !field.variants.isEmpty { badge(field.variants.joined(separator: ",")) }
-            if let also = field.also, !also.isEmpty { badge(L10n[.Properties.badgeAlso(also.joined(separator: ","))]) }
+            if let also = field.also, !also.isEmpty { badge("\(BuiltinWords.recordField("also")): \(also.joined(separator: ","))") }
         }
     }
 

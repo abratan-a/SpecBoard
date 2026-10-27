@@ -38,7 +38,7 @@ impl LinkKind {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Link {
     pub kind: LinkKind,
-    /// The row it is drawn from: `#d0`, `#b2`, `#m1`, an item's names, `#top`.
+    /// The row it is drawn from: `#b2`, `#m1`, an item's names, `#top`; empty for the card's head.
     pub row: String,
     pub path: String,
     /// When it is taken: only an action's `next` said one.
@@ -54,9 +54,9 @@ fn link(kind: LinkKind, row: String, path: String) -> Link {
     }
 }
 
-/// In the order the card draws them (`SchemaNode.links`): a flow's notes, from a row
-/// each (`#d<n>`); for a note, every place its body names, once each, from the line of
-/// the body that names it first (`#b<line>`); for a freedoc, the same from a row each
+/// In the order the card draws them (`SchemaNode.links`): a flow's notes, from its head
+/// (a flow has no row for a rule); for a note, every place its body names, once each, from
+/// the line of the body that names it first (`#b<line>`); for a freedoc, the same from a row each
 /// (`#m<n>`); for a formatdoc, what each item's rows name and draw, from the item's row
 /// (`#top` for the rows at the top); for a stackdoc, what each version's body names, from the
 /// version; for a custom card, what each row is joined to.
@@ -65,8 +65,7 @@ pub(crate) fn links(card: &Card) -> Vec<Link> {
         "flow" => card
             .notes
             .iter()
-            .enumerate()
-            .map(|(i, path)| link(LinkKind::Rules, format!("#d{i}"), path.clone()))
+            .map(|path| link(LinkKind::Rules, String::new(), path.clone()))
             .collect(),
         "formatdoc" => {
             let mut out = Vec::new();
@@ -437,7 +436,7 @@ pub(crate) fn row_lines(project: &crate::export::Project, flow: &Card) -> Vec<Ro
         for line in head(node) {
             match line.line.as_str() {
                 "runs" => push(row.clone(), "run", line),
-                "event" => push(row.clone(), "event", line),
+                "awaits" => push(row.clone(), "event", line),
                 _ => {}
             }
         }
@@ -481,7 +480,7 @@ pub(crate) fn row_lines(project: &crate::export::Project, flow: &Card) -> Vec<Ro
                         },
                         line,
                     ),
-                    "peer" if ["send", "call"].contains(&step_op(node, index).as_str()) => {
+                    "partner" if ["send", "call"].contains(&step_op(node, index).as_str()) => {
                         push(step_row, "next", line)
                     }
                     _ => {}

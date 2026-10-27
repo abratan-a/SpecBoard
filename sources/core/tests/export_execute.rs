@@ -1023,13 +1023,14 @@ fn a_new_slug_takes_what_each_export_kept_in_its_default_folder() {
         json!({"op": "tool", "name": "project_create", "arguments": {"project": "Other One"}}),
     );
     assert!(made.get("error").is_none(), "{made}");
+    // Made by the window and given to no key: the key is not told whose slug it is.
     assert_eq!(
         refused(
             &core,
             "project_update",
             json!({"value": {"slug": "OTHER one"}})
         ),
-        "slug「other-one」はプロジェクト「Other One」が使っています"
+        "slug「other-one」は使えません。別の slug にしてください"
     );
     assert!(
         refused(

@@ -1283,6 +1283,17 @@ nonisolated public func FfiConverterTypeCoreError_lift(_ buf: RustBuffer) throws
 nonisolated public func FfiConverterTypeCoreError_lower(_ value: CoreError) -> RustBuffer {
     return FfiConverterTypeCoreError.lower(value)
 }
+/**
+ * 頼みが言語を言わないときにコアが話す言語（画面の言語）。開けなかったわけ（`open`・`create`）も、この言語で言う。
+ * 表の無い言語なら何も変えない。
+ */
+nonisolated public func setLanguage(lang: String)  {try! rustCall() {
+        uniffiCallStatus in
+    uniffi_specboard_ffi_fn_func_set_language(
+        FfiConverterString.lower(lang),uniffiCallStatus
+    )
+}
+}
 
 nonisolated private enum InitializationResult {
     case ok
@@ -1298,6 +1309,9 @@ nonisolated private let initializationResult: InitializationResult = {
     let scaffolding_contract_version = ffi_specboard_ffi_uniffi_contract_version()
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
+    }
+    if (uniffi_specboard_ffi_checksum_func_set_language() != 36226) {
+        return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_specboard_ffi_checksum_method_core_call() != 28956) {
         return InitializationResult.apiChecksumMismatch

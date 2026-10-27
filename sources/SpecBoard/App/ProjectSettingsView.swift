@@ -161,7 +161,7 @@ struct CardSizeSettings: View {
                 try model.setDefaultSettings(next)
                 model.lastError = nil
             } catch {
-                model.lastError = error.localizedDescription
+                model.lastError = ErrorText.said(error)
             }
         }
         return VStack(alignment: .leading, spacing: 12) {

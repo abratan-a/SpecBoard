@@ -718,7 +718,7 @@ pub(crate) fn export_read(store: &Store, args: &Args) -> Result<Output, String> 
         .problems
         .iter()
         .filter(|p| p.stops(&chosen))
-        .map(|p| p.text.clone())
+        .map(crate::export::Problem::text)
         .collect();
     problems.extend(folder_problems(&plan, &dests));
     if !problems.is_empty() {
@@ -931,7 +931,7 @@ impl crate::Core {
             .problems
             .iter()
             .filter(|p| p.stops(&chosen))
-            .map(|p| p.text.clone())
+            .map(crate::export::Problem::text)
             .collect();
         problems.extend(folder_problems(&plan, &dests));
         for at in &chosen {

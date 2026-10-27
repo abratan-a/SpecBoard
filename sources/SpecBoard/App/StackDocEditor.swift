@@ -67,7 +67,7 @@ struct StackDocEditor: View {
     // MARK: - Above
 
     private var header: some View {
-        CardBar(kind: doc.kind, badge: L10n[.Docs.stackdocBadge], name: doc.name, label: doc.label) {
+        CardBar(kind: doc.kind, name: doc.name, label: doc.label) {
             EmptyView()
         } tools: {
             if writing, let detail = model.detail { pickers(detail) }

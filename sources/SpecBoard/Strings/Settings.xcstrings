@@ -19,6 +19,24 @@
         }
       }
     },
+    "language.menusNote" : {
+      "comment" : "The note under the screen language choice: the menu bar and the system panels follow it from the next launch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menus and system panels change from the next launch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューなどは次の起動から変わります"
+          }
+        }
+      }
+    },
     "language.note" : {
       "comment" : "The note under the screen language choice on the General settings page.",
       "extractionState" : "manual",
@@ -242,13 +260,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "For the error, notice and AI merge bubbles. A bubble does not go away while the pointer is over it."
+            "value" : "For the error, notice, AI merge and update bubbles. A bubble does not go away while the pointer is over it."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エラー・知らせ・AI の merge の吹き出しに効きます。ポインタを載せているあいだは消えません。"
+            "value" : "エラー・知らせ・AI の merge・アップデートの吹き出しに効きます。ポインタを載せているあいだは消えません。"
           }
         }
       }

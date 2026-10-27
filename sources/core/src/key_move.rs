@@ -107,7 +107,7 @@ pub fn move_project(conn: &Connection, project: &str) -> Result<(), String> {
     crate::line_move::move_card_docs(
         conn,
         project,
-        "goal の欄の名前を英語にした",
+        &crate::write::history::migrated(keyed!("history.migrate.goalKeys")),
         &move_doc,
         &said,
     )
@@ -150,7 +150,7 @@ pub fn move_mr_project(conn: &Connection, project: &str) -> Result<(), String> {
     crate::line_move::move_card_docs(
         conn,
         project,
-        "goal の欄 PR を MR にした（merge request）",
+        &crate::write::history::migrated(keyed!("history.migrate.goalMr")),
         &move_mr_doc,
         &said,
     )
@@ -191,7 +191,7 @@ pub fn move_work_branch_project(conn: &Connection, project: &str) -> Result<(), 
     crate::line_move::move_card_docs(
         conn,
         project,
-        "goal の欄 branch を workBranch にした（答えの頭の branch と分ける）",
+        &crate::write::history::migrated(keyed!("history.migrate.goalWorkBranch")),
         &move_work_branch_doc,
         &said,
     )

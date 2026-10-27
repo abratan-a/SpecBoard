@@ -9,10 +9,15 @@
 //! content, so recording is no commit, a locked main takes it, and a line has one record whatever
 //! tree reads it (a branch's line keeps its id when it goes into main). The code is read only
 //! through this machine's folders (`code::files::Dirs`): where a working directory is bound to none,
-//! or the file or the function is not there, nothing is said of the line — what is not there is
-//! the check's (`brokenPaths`).
+//! or the file cannot be read here, nothing is said of the line. Where the folder is read and the
+//! file or the function is not there, the line is `broken`, with why (as the check's
+//! `brokenPaths` says it): said beside the others, never recorded — there is nothing to record.
+//!
+//! A fingerprint is made of the code's words (`symbols::tokens_digest`), so a comment or the
+//! spaces between words changed say nothing; one recorded the way before (`symbols::digest_of`) is
+//! held to the code made that way, until the line is recorded again.
 
-use crate::code::files::Dirs;
+use crate::code::files::{Dirs, Reached};
 use crate::export::Project;
 use crate::model::{Card, Connection as Line};
 use crate::text::Keyed;
@@ -31,6 +36,8 @@ pub(crate) enum State {
     /// Nothing was recorded of it, or what was is of another place (the line was pointed elsewhere
     /// in another tree) or made another way.
     Unrecorded,
+    /// What it points at is not in the code read here: why.
+    Broken(Keyed),
     /// Its code is not read here: why.
     NotRead(Keyed),
 }
@@ -40,6 +47,7 @@ impl State {
         match self {
             State::Changed => Some("changed"),
             State::Unrecorded => Some("unrecorded"),
+            State::Broken(_) => Some("broken"),
             _ => None,
         }
     }
@@ -67,16 +75,21 @@ pub(crate) struct CodeLine {
 }
 
 impl CodeLine {
-    /// Whether it is to be looked at: changed, or not recorded.
+    /// Whether it is to be looked at: changed, not recorded, or pointing at what is not there.
     pub fn flagged(&self) -> bool {
         self.state.word().is_some()
+    }
+
+    /// Whether `reviewed` records it: its code is read here and changed, or was never recorded.
+    pub fn to_record(&self) -> bool {
+        matches!(self.state, State::Changed | State::Unrecorded)
     }
 
     pub fn changed(&self) -> bool {
         matches!(self.state, State::Changed)
     }
 
-    /// As a read says it: `{line, from?, to, state, recordedAt?}`; with its id when `with_id` (the
+    /// As a read says it: `{line, from?, to, state, recordedAt?, why?}`; with its id when `with_id` (the
     /// screen's, which finds the line by it). `from` is `from_said` when given (where the line
     /// leaves, for a list of what it reaches).
     pub fn json(&self, with_id: bool, from_said: Option<&str>) -> Value {
@@ -100,6 +113,9 @@ impl CodeLine {
         }
         if let Some(at) = &self.recorded_at {
             out.insert("recordedAt".into(), at.clone().into());
+        }
+        if let State::Broken(why) = &self.state {
+            out.insert("why".into(), why.render().into());
         }
         Value::Object(out)
     }
@@ -190,9 +206,29 @@ pub(crate) fn written_to(project: &Project, file: &str, at: Option<&str>) -> Str
     }
 }
 
-/// The tag a fingerprint was made with (`w1:`).
+/// The tag a fingerprint was made with (`t1:`, `w1:`).
 fn tag_of(digest: &str) -> &str {
     digest.split_once(':').map_or("", |(t, _)| t)
+}
+
+/// Why a line is broken: the file, or the function or type in it, is not there.
+fn broken(project: &Project, file: &str, symbol: Option<&str>, near: &[String]) -> Keyed {
+    let file = project
+        .file_written(file)
+        .unwrap_or_else(|| file.to_string());
+    match symbol {
+        None => keyed!("code.file.missing", file),
+        Some(symbol) => keyed!(
+            "code.symbol.missing",
+            file,
+            symbol = symbol.to_string(),
+            near = if near.is_empty() {
+                text!("code.symbol.noneNear")
+            } else {
+                crate::text::list(near)
+            }
+        ),
+    }
 }
 
 /// The tree's lines to files and how each one's code stands, on this machine: of every card, or of
@@ -248,23 +284,29 @@ pub(crate) fn lines(
         .map(|((card, line), now)| {
             let mut out = made(card, line, State::Same);
             match now {
-                Err(why) => out.state = State::NotRead(why),
-                Ok(digest) => {
+                Reached::NotRead(why) => out.state = State::NotRead(why),
+                Reached::Missing { symbol, near } => {
+                    out.state = State::Broken(broken(project, &out.file, symbol.as_deref(), &near));
+                }
+                Reached::Read { digest, plain } => {
                     let symbol = out.at.clone().unwrap_or_default();
-                    out.state = match kept.get(&line.id) {
-                        Some(r)
-                            if r.file == out.file
-                                && r.symbol == symbol
-                                && tag_of(&r.digest) == tag_of(&digest) =>
-                        {
-                            if r.digest == digest {
-                                State::Same
-                            } else {
-                                out.recorded_at = Some(r.at.clone());
-                                State::Changed
-                            }
+                    // Held to the fingerprint made the way the record was.
+                    let record = kept
+                        .get(&line.id)
+                        .filter(|r| r.file == out.file && r.symbol == symbol);
+                    let now = record.and_then(|r| {
+                        [&digest, &plain]
+                            .into_iter()
+                            .find(|d| tag_of(d) == tag_of(&r.digest))
+                            .map(|d| (r, d))
+                    });
+                    out.state = match now {
+                        Some((r, d)) if &r.digest == d => State::Same,
+                        Some((r, _)) => {
+                            out.recorded_at = Some(r.at.clone());
+                            State::Changed
                         }
-                        _ => State::Unrecorded,
+                        None => State::Unrecorded,
                     };
                     out.digest = Some(digest);
                 }
@@ -373,8 +415,8 @@ pub(crate) fn record_written(core: &crate::Core, who: &Who, written: &[FileLine]
         let Ok(at) = crate::write::now(&store.conn) else {
             continue;
         };
-        for (line, digest) in lines.into_iter().zip(now) {
-            if let Ok(digest) = digest {
+        for (line, reached) in lines.into_iter().zip(now) {
+            if let Reached::Read { digest, .. } = reached {
                 let _ = put(
                     &store.conn,
                     project,

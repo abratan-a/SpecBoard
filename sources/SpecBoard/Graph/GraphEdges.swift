@@ -184,6 +184,12 @@ enum GraphEdges {
         var cards: [String: SchemaNode] = [:]
         /// Every card's lines, the nodes' too, by the card's id.
         var lines: [String: [Connection]] = [:]
+        /// The same by each line's id (the first of an id): a relation's line found without walking the
+        /// card's lines, which a card with many lines would do once for each of them.
+        private var byId: [String: [String: Connection]] = [:]
+        /// For a store's held lines, each line's place among its card's lines of that kind (`sourceRow`),
+        /// by the card's id and the line's id.
+        private var heldPlaces: [String: [String: Int]] = [:]
 
         init(_ detail: ProjectDetail, more: [SchemaNode] = []) {
             for node in detail.inner {
@@ -193,13 +199,41 @@ enum GraphEdges {
             for card in detail.schemas + more where cards[card.id] == nil {
                 cards[card.id] = card
                 lines[card.id] = card.connections
+                if let kind = GraphEdges.heldLine(of: card.kind) {
+                    let held = card.connections.filter { $0.line == kind && $0.from.isEmpty }
+                    heldPlaces[card.id] = Dictionary(held.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
+                }
+            }
+            for (id, list) in lines where !list.isEmpty {
+                byId[id] = Dictionary(list.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
             }
         }
 
         /// The line a relation is, in the card that holds it.
         func line(of relation: Relation) -> Connection? {
             guard let id = relation.connection else { return nil }
-            return lines[relation.fromSchemaId]?.first { $0.id == id }
+            return byId[relation.fromSchemaId]?[id]
+        }
+
+        /// `GraphEdges.sourceRow` of the relation's own card, as the project has it: a held line's place
+        /// read from what was counted once for the card.
+        func sourceRow(_ relation: Relation) -> String {
+            let card = cards[relation.fromSchemaId]
+            guard let card, let kind = GraphEdges.heldLine(of: card.kind), relation.line == kind,
+                  let places = heldPlaces[card.id] else {
+                return GraphEdges.sourceRow(relation, of: card)
+            }
+            let index = relation.connection.flatMap { places[$0] }
+            return index.map { "#h\($0)" } ?? ""
+        }
+    }
+
+    /// The kind of line a card of `kind` draws one row for each of, by its place among them: a store's
+    /// held shapes. A flow's notes leave its head with no row of their own.
+    static func heldLine(of kind: SchemaKind) -> String? {
+        switch kind {
+        case .store: Line.holds
+        default: nil
         }
     }
 
@@ -222,32 +256,21 @@ enum GraphEdges {
     }
 
     /// The row of the card `card` (drawn as a box) a line of `relation` leaves from: a
-    /// field's names, a formatdoc's item (`#top` for the rows at the top), the line of a
-    /// note's text that names the place first, a store's held row and a flow's rule row
-    /// (by the line's place among its kind's), the card's header for the rest.
+    /// field's names, a formatdoc's item (`#top` for the rows at the top), a store's held row
+    /// (by the line's place among its kind's), the card's header for the rest (a note's, whose
+    /// body is drawn as one page, and a flow's rules among them).
     static func sourceRow(_ relation: Relation, of card: SchemaNode?) -> String {
         guard let card else { return relation.from }
         switch (card.kind, relation.line) {
-        case (.store, Line.holds), (.flow, Line.notes):
-            let kind = relation.line
-            let index = card.connections.filter { $0.line == kind && $0.from.isEmpty }
+        case (.store, Line.holds):
+            let index = card.connections.filter { $0.line == Line.holds && $0.from.isEmpty }
                 .firstIndex { $0.id == relation.connection }
-            return index.map { kind == Line.holds ? "#h\($0)" : "#d\($0)" } ?? ""
-        case (.note, Line.mentions):
-            guard let written = relation.written else { return "" }
-            return noteLine(naming: written, in: card.body).map { "#b\($0)" } ?? ""
+            return index.map { "#h\($0)" } ?? ""
         case (.formatdoc, Line.mentions):
             return relation.from.isEmpty ? SchemaNode.topRow : relation.from
         default:
             return relation.from
         }
-    }
-
-    /// The line of a note's body that first names `path` (`[[path]]`, `{{path}}`,
-    /// `![[path]]`), as its card draws its lines (`#b<line>`).
-    static func noteLine(naming path: String, in body: String) -> Int? {
-        guard let ref = NoteText.refs(body).first(where: { $0.path == path }) else { return nil }
-        return body[..<ref.range.lowerBound].reduce(0) { $1 == "\n" ? $0 + 1 : $0 }
     }
 
     /// The row a line lands on in what it reaches: the row the reached card is drawn as
@@ -259,7 +282,7 @@ enum GraphEdges {
         if !reached.row.isEmpty { return reached.row }
         guard let card else { return relation.at }
         if card.kind == .flow {
-            if relation.line == Line.event, let outcome = line?.text("outcome"),
+            if relation.line == Line.awaits, let outcome = line?.text("outcome"),
                let end = card.nodes.first(where: { $0.kind == "end" && $0.outcome == outcome }) {
                 return SchemaNode.nodeRow(end.name)
             }
@@ -323,7 +346,8 @@ enum GraphEdges {
             } else if relation.fieldId.isEmpty,
                       let from = drawn(relation.fromSchemaId, visible: visibleIds, holders: holders, standIns: standIns) {
                 if from.row.isEmpty {
-                    sources = [(from.box, sourceRow(relation, of: holders.cards[relation.fromSchemaId] ?? shown[from.box]))]
+                    sources = [(from.box, holders.cards[relation.fromSchemaId] != nil
+                        ? holders.sourceRow(relation) : sourceRow(relation, of: shown[from.box]))]
                 } else if from.row.hasPrefix("#n."), let index = stepIndex(relation.from) {
                     // A process node's row, below its node's.
                     sources = [(from.box, "\(from.row).\(index)")]

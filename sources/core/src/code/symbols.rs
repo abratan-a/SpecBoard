@@ -92,9 +92,12 @@ pub struct Symbol {
     pub made: bool,
     /// The names it calls, each once, in the order first called.
     pub calls: Vec<String>,
-    /// Its own text's fingerprint (`digest_of`): its span, and the blocks elsewhere that are its
-    /// own (only those when it is made of them). What an implementation's line records of it.
+    /// Its own text's fingerprint (`tokens_digest`): its span, and the blocks elsewhere that are
+    /// its own (only those when it is made of them). What an implementation's line records of it.
     pub digest: String,
+    /// The same text's fingerprint as it was made before (`digest_of`): what a line recorded then
+    /// is held to.
+    pub plain_digest: String,
 }
 
 /// What the file's functions and types came to.
@@ -355,14 +358,82 @@ pub fn find(
     put_calls(&mut found.symbols, calls);
     for symbol in &mut found.symbols {
         let own = (!symbol.made).then_some(symbol.span);
-        symbol.digest = digest_of(
-            text,
-            own.iter()
-                .chain(symbol.parts.iter())
-                .map(|s| (s.start, s.end)),
-        );
+        let spans: Vec<(usize, usize)> = own
+            .iter()
+            .chain(symbol.parts.iter())
+            .map(|s| (s.start, s.end))
+            .collect();
+        symbol.digest = tokens_digest(tree, text, spans.iter().copied());
+        symbol.plain_digest = digest_of(text, spans);
     }
     found
+}
+
+/// What tells one form of a code's text from another by its words (`t1`): the text of each token
+/// the parser read in `spans` — its leaves, and what a node holds between them that is not space —
+/// its comments left out, each with every run of spaces, tabs and line ends made one space and
+/// trimmed, apart from the next; SHA-256's first 8 bytes in hex. So a comment written or changed,
+/// re-indenting, a line broken anew or a space put between two words (`a+b`, `a + b`) does not
+/// change it, and a change to any of its words, a string's among them, does.
+pub fn tokens_digest(
+    tree: &Tree,
+    text: &[u8],
+    spans: impl IntoIterator<Item = (usize, usize)>,
+) -> String {
+    use sha2::{Digest, Sha256};
+    let mut said: Vec<u8> = Vec::new();
+    for span in spans {
+        tokens(tree.root_node(), text, span, &mut said);
+    }
+    let digest = Sha256::digest(&said);
+    let hex: String = digest[..8].iter().map(|b| format!("{b:02x}")).collect();
+    format!("{TOKENS_TAG}{hex}")
+}
+
+/// The tag `tokens_digest` writes before each fingerprint.
+pub const TOKENS_TAG: &str = "t1:";
+
+/// What sets one token apart from the next in what is digested: no text holds it.
+const TOKEN_GAP: u8 = 0x1f;
+
+/// The tokens of `node` within `span`, as `tokens_digest` reads them, put after `said`.
+fn tokens(node: Node, text: &[u8], (from, to): (usize, usize), said: &mut Vec<u8>) {
+    if node.end_byte() <= from || node.start_byte() >= to || node.kind().contains("comment") {
+        return;
+    }
+    let put = |start: usize, end: usize, said: &mut Vec<u8>| {
+        let (start, end) = (start.max(from), end.min(to).min(text.len()));
+        if start >= end {
+            return;
+        }
+        let mut gap = false;
+        let began = said.len();
+        for &b in &text[start..end] {
+            if b.is_ascii_whitespace() {
+                gap = said.len() > began;
+                continue;
+            }
+            if said.len() == began && began > 0 {
+                said.push(TOKEN_GAP);
+            } else if gap {
+                said.push(b' ');
+            }
+            gap = false;
+            said.push(b);
+        }
+    };
+    if node.child_count() == 0 {
+        put(node.start_byte(), node.end_byte(), said);
+        return;
+    }
+    let mut at = node.start_byte();
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        put(at, child.start_byte(), said);
+        tokens(child, text, (from, to), said);
+        at = at.max(child.end_byte());
+    }
+    put(at, node.end_byte(), said);
 }
 
 /// What tells one form of a code's text from another (`w1`): the text of `spans`, each with every
@@ -598,6 +669,7 @@ impl Emit<'_> {
                 made: n.made,
                 calls: Vec::new(),
                 digest: String::new(),
+                plain_digest: String::new(),
             });
             let me = self.out.len() - 1;
             self.under(Some(i), Some(me), &path, Some(of));

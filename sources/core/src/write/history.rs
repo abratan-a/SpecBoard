@@ -46,6 +46,35 @@ pub(super) struct Gathered {
 /// is said in once its key is gone from the tables.
 const KEPT_IN: &str = "ja";
 
+/// The name of a commit a move of the store's form writes (`kind` `migrate`), kept as a sentence in
+/// `KEPT_IN` — what an app of before shows — and said again by `commit_name_said` in the language of
+/// whoever reads it.
+pub(crate) fn migrated(said: Keyed) -> String {
+    said.render_in(KEPT_IN)
+}
+
+/// The names the moves of the store's form give their commits (`migrated`).
+const MIGRATED: &[&str] = &[
+    "history.migrate.lineForm",
+    "history.migrate.lineEnds",
+    "history.migrate.containers",
+    "history.migrate.ghosts",
+    "history.migrate.goalKeys",
+    "history.migrate.goalMr",
+    "history.migrate.goalWorkBranch",
+];
+
+/// A commit's name as the call reading it says it: a move's of the store's form in its language, any
+/// other as it was written.
+pub(crate) fn commit_name_said(kind: &str, name: Option<String>) -> Option<String> {
+    match name {
+        Some(name) if kind == "migrate" => {
+            Some(crate::text::said_as(MIGRATED, &name).unwrap_or(name))
+        }
+        other => other,
+    }
+}
+
 /// A history line written as a row of `commit_lines` (`idx` its place in the commit): its text kept
 /// by key and values, and as a sentence in `KEPT_IN`.
 #[allow(clippy::too_many_arguments)]
@@ -80,10 +109,11 @@ pub(crate) fn insert_line(
 }
 
 /// A history line's text as the call reading it says it: by its key, when it was kept with one the
-/// tables still have; else as it was kept.
+/// tables still have; else its sentence (kept in `KEPT_IN`) read back by the table that made it
+/// (`text::said_again`), or as it was kept — so one history is said in one language.
 pub(crate) fn line_said(summary: String, key: Option<String>, values: Option<String>) -> String {
     let Some(key) = key.filter(|k| crate::text::has(k)) else {
-        return summary;
+        return crate::text::said_again(&summary).unwrap_or(summary);
     };
     let values: Option<Value> = match values {
         Some(raw) => match serde_json::from_str(&raw) {
@@ -442,7 +472,7 @@ pub fn commits_before(
                     author_kind: r.get(3)?,
                     author: r.get(4)?,
                     kind: r.get(5)?,
-                    name: r.get(6)?,
+                    name: commit_name_said(&r.get::<_, String>(5)?, r.get(6)?),
                     reverted: r.get::<_, i64>(7)? != 0,
                     lines: Vec::new(),
                 })
@@ -1516,4 +1546,26 @@ fn exists_seq(conn: &Connection, project: &str, tree: &str, seq: i64) -> Result<
     .optional()
     .map(|found| found.is_some())
     .map_err(db)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_line_kept_before_lines_had_keys_is_said_in_the_readers_language_as_the_newer_are() {
+        let old = keyed!("create.line.created", full = "Docs:Rules");
+        let kept = old.render_in(KEPT_IN);
+        let _en = crate::text::bind(Some("en"));
+        let newer = line_said(
+            String::new(),
+            Some("create.line.created".into()),
+            Some(old.values_json().to_string()),
+        );
+        assert_eq!(line_said(kept.clone(), None, None), newer);
+        // A key the tables no longer have: its sentence read back all the same.
+        assert_eq!(line_said(kept, Some("gone.key".into()), None), newer);
+        // What no table makes stays as it was written.
+        assert_eq!(line_said("手で書いた行".into(), None, None), "手で書いた行");
+    }
 }

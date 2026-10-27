@@ -12,7 +12,7 @@ enum Merge3 {
         /// `(whole)` for one side removing what the other changed.
         var unit: String
         /// The unit as a person names it, one of a card's alone: `description`,
-        /// `fields.total`, `values.paid`, `versions.v0_2`, `rows.auth.login`, `（カード）`.
+        /// `fields.total`, `values.paid`, `versions.v0_2`, `rows.auth.login`, `(whole)`.
         var label: String
         var base: OJSON?
         var source: OJSON?
@@ -20,4 +20,10 @@ enum Merge3 {
     }
 
     static let whole = "(whole)"
+
+    /// A unit as the screen says it: the whole card or section in the screen's language (the core names it
+    /// `whole`, the same in every language, as a choice is kept by it), any other as it is written.
+    static func shown(_ unit: String) -> String {
+        unit == whole ? L10n[.Branches.mergeWhole] : unit
+    }
 }

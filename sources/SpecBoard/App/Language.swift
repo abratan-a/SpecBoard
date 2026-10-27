@@ -44,6 +44,7 @@ final class Language {
         didSet {
             guard choice != oldValue else { return }
             UserDefaults.standard.set(choice, forKey: Self.key)
+            Self.launchIn(choice)
             code = Self.resolve(choice)
         }
     }
@@ -53,6 +54,7 @@ final class Language {
         didSet {
             guard code != oldValue else { return }
             Self.now.withLock { $0 = code }
+            setLanguage(lang: code)
             NotificationCenter.default.post(name: Self.changed, object: nil)
         }
     }
@@ -63,12 +65,37 @@ final class Language {
         choice = chosen
         code = resolved
         Self.now.withLock { $0 = resolved }
+        // What the core this app holds says without a request saying the language (why its store cannot
+        // be opened) is in the screen's too.
+        setLanguage(lang: resolved)
+        Self.launchIn(chosen)
+    }
+
+    // MARK: - The system's parts
+
+    /// Where AppKit reads the languages the app is launched in: the app's own defaults over the Mac's.
+    nonisolated static let appleLanguages = "AppleLanguages"
+
+    /// The menu bar, the open and save panels and a text field's menu are AppKit's, in the language the app
+    /// was launched in: the one chosen is set as the app's own (`AppleLanguages` of the app's defaults), so they
+    /// follow it from the next launch; following the system, none is set. Under tests only into defaults of
+    /// their own: the app's are those of whoever runs them.
+    nonisolated static func launchIn(_ choice: String, defaults: UserDefaults = .standard) {
+        guard !underTests || defaults !== UserDefaults.standard else { return }
+        if supported.contains(choice) {
+            defaults.set([choice], forKey: appleLanguages)
+        } else {
+            defaults.removeObject(forKey: appleLanguages)
+        }
     }
 
     // MARK: - Off the main thread
 
     /// The screen's language as any thread reads it: what each request to the core carries (`lang`).
     nonisolated static var current: String { now.withLock { $0 } }
+
+    /// How the screen writes times, sizes and numbers: in its language, not the Mac's.
+    var locale: Locale { Locale(identifier: code) }
 
     /// `code`, kept where any thread can read it — from the first request on, whether or not the
     /// screen has looked at `shared` yet.
@@ -92,9 +119,12 @@ final class Language {
             .contains { environment[$0] != nil }
     }()
 
-    /// The machine's languages, in the order its user prefers them; Japanese alone under tests.
+    /// The machine's languages, in the order its user prefers them; Japanese alone under tests. Read from the
+    /// Mac's defaults: the app's own (`launchIn`) would say the language chosen before rather than the Mac's.
     nonisolated static var machine: [String] {
-        underTests ? ["ja"] : Locale.preferredLanguages
+        if underTests { return ["ja"] }
+        let mac = UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?[appleLanguages] as? [String]
+        return mac ?? Locale.preferredLanguages
     }
 
     /// The language of `choice`: itself, or for `systemChoice` the first of `preferred` there are texts
@@ -143,11 +173,22 @@ enum L10n {
         return String(localized: resource)
     }
 
+    /// A text whose key is data rather than code (a word of the glossary: `term.<word>`), from the String
+    /// Catalog `table`, in `code`, else in `Language.fallback`; the key itself when neither has it. Nothing is
+    /// put into it.
+    nonisolated static func text(key: String, table: String, in code: String) -> String {
+        template(key: key, table: table, in: code) ?? template(key: key, table: table, in: Language.fallback) ?? key
+    }
+
     /// The text of `resource` as `code`'s table has it, before anything is put into it.
     private nonisolated static func template(_ resource: LocalizedStringResource, in code: String) -> String? {
+        template(key: resource.key, table: resource.table, in: code)
+    }
+
+    private nonisolated static func template(key: String, table name: String?, in code: String) -> String? {
         guard let table = table(code) else { return nil }
         let missing = "\u{0}"
-        let found = table.localizedString(forKey: resource.key, value: missing, table: resource.table)
+        let found = table.localizedString(forKey: key, value: missing, table: name)
         return found == missing ? nil : found
     }
 

@@ -74,7 +74,7 @@ struct WorkDirProperties: View {
                             Text(problem).font(.app(11)).foregroundStyle(.orange)
                                 .fixedSize(horizontal: false, vertical: true)
                         } else if let read = dir.entriesRead {
-                            Text(L10n[.Export.dirsFilesRead(read.formatted())]).font(.app(11)).foregroundStyle(.secondary)
+                            Text(L10n[.Export.dirsFilesRead(read.formatted(.number.locale(Language.shared.locale)))]).font(.app(11)).foregroundStyle(.secondary)
                         }
                         if let warning = dir.warning {
                             Text(warning).font(.app(10.5)).foregroundStyle(.orange)

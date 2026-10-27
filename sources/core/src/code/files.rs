@@ -169,16 +169,12 @@ impl Dirs {
         self.by_dir.values().any(|d| d.folder.is_some())
     }
 
-    /// The fingerprint of what each line to a file lands on, now (`symbols::digest_of`): the
-    /// function or type at its path in the file (`Some`, its names from the file's top as a path
-    /// writes them), or the whole file (`None`); or why it is not read on this machine. Each file
+    /// What each line to a file lands on, now: the function or type at its path in the file
+    /// (`Some`, its names from the file's top as a path writes them), or the whole file (`None`) —
+    /// its fingerprints, or that it is not there, or why it is not read on this machine. Each file
     /// is read once, side by side (`outlines`), and as kept while it is as it was.
-    pub fn digests(&self, wanted: &[(String, Option<String>)]) -> Vec<Result<String, Keyed>> {
-        let mut files: Vec<String> = wanted
-            .iter()
-            .filter(|(_, at)| at.is_some())
-            .map(|(f, _)| f.clone())
-            .collect();
+    pub fn digests(&self, wanted: &[(String, Option<String>)]) -> Vec<Reached> {
+        let mut files: Vec<String> = wanted.iter().map(|(f, _)| f.clone()).collect();
         files.sort();
         files.dedup();
         let outlines: HashMap<String, Outline> =
@@ -186,13 +182,32 @@ impl Dirs {
         wanted
             .iter()
             .map(|(file, at)| {
-                let abs = self.absolute(file)?;
-                let Some(at) = at else {
-                    return cache::digest(&abs);
+                let abs = match self.absolute(file) {
+                    Ok(abs) => abs,
+                    Err(why) => return Reached::NotRead(why),
                 };
+                if self.gone(file, &abs) {
+                    return Reached::Missing {
+                        symbol: None,
+                        near: Vec::new(),
+                    };
+                }
                 let outline = &outlines[file];
+                let Some(at) = at else {
+                    let plain = match cache::digest(&abs) {
+                        Ok(plain) => plain,
+                        Err(why) => return Reached::NotRead(why),
+                    };
+                    // By its words where it was parsed; else as its text is.
+                    let digest = outline
+                        .loaded
+                        .as_ref()
+                        .and_then(|l| l.read.digest.clone())
+                        .unwrap_or_else(|| plain.clone());
+                    return Reached::Read { digest, plain };
+                };
                 if !outline.read_whole() {
-                    return Err(match &outline.problem {
+                    return Reached::NotRead(match &outline.problem {
                         Some(why) => why.clone(),
                         None if outline.loaded.is_none() && outline.found.is_none() => {
                             keyed!("code.symbol.noLanguage")
@@ -202,23 +217,46 @@ impl Dirs {
                 }
                 let names = crate::pathtext::names(at);
                 match find(outline.symbols(), &names) {
-                    Some(symbol) => Ok(symbol.digest.clone()),
-                    None => {
-                        let near = nearest(outline.symbols(), at, 3);
-                        Err(keyed!(
-                            "code.symbol.missingHere",
-                            symbol = at.clone(),
-                            near = if near.is_empty() {
-                                text!("code.symbol.noneNear")
-                            } else {
-                                crate::text::list(&near)
-                            }
-                        ))
-                    }
+                    Some(symbol) => Reached::Read {
+                        digest: symbol.digest.clone(),
+                        plain: symbol.plain_digest.clone(),
+                    },
+                    None => Reached::Missing {
+                        symbol: Some(at.clone()),
+                        near: nearest(outline.symbols(), at, 3),
+                    },
                 }
             })
             .collect()
     }
+
+    /// Whether the file is not there while its folder is: what a line points at was taken away
+    /// or named anew, not out of this machine's reach.
+    fn gone(&self, file_id: &str, abs: &std::path::Path) -> bool {
+        let folder_here = crate::workdir::of_file_id(file_id)
+            .and_then(|(dir, _)| self.by_dir.get(dir))
+            .and_then(|d| d.folder.as_deref())
+            .is_some_and(|f| std::path::Path::new(&crate::tools::files::absolute(f, "")).is_dir());
+        folder_here
+            && matches!(std::fs::symlink_metadata(abs), Err(e) if e.kind() == std::io::ErrorKind::NotFound)
+    }
+}
+
+/// What a line to a file lands on, now (`Dirs::digests`).
+#[derive(Clone, Debug)]
+pub enum Reached {
+    /// Its fingerprint by its words (`symbols::tokens_digest`; as its text is, for a file not
+    /// parsed), and as fingerprints were made before (`symbols::digest_of`): a line recorded then
+    /// is held to that one.
+    Read { digest: String, plain: String },
+    /// Not there while its folder is: the file (`symbol` none), or the function or type at
+    /// `symbol` in it, with the names nearest it there.
+    Missing {
+        symbol: Option<String>,
+        near: Vec<String>,
+    },
+    /// Not read on this machine: why.
+    NotRead(Keyed),
 }
 
 /// What reading one file for its functions and types came to.

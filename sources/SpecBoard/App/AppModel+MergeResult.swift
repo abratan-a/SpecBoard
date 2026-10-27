@@ -48,7 +48,7 @@ extension AppModel {
                             gone: gone(projectId, opened.preview)),
                  in: projectId, card: card)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -63,7 +63,7 @@ extension AppModel {
                             back: back, stale: false, gone: gone(projectId, opened.preview)),
                  in: projectId, card: nil)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 

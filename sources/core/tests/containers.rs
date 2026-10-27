@@ -78,7 +78,7 @@ fn make_pay(core: &Core) -> Value {
         json!({"value": {
             "Charts/Shop:Pay": {"kind": "flow", "label": "支払う"},
             "Charts/Shop:Pay.start": {"kind": "begin", "trigger": "receive", "carries": ["Schemas/Ordering:Order.total"],
-                "connections": [{"line": "peer", "to": "Charts/Shop:Checkout"}, {"line": "next", "to": "check"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Checkout"}, {"line": "next", "to": "check"}]},
             "Charts/Shop:Pay.check": {"kind": "process", "label": "確かめる",
                 "steps": [{"do": "read"}, {"do": "write", "description": "記録に置く"}, {"do": "sign"}],
                 "connections": [
@@ -89,7 +89,7 @@ fn make_pay(core: &Core) -> Value {
                 ]},
             "Charts/Shop:Pay.decide": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "done", "fields": {"when": "[[Schemas:Status]] が paid"}},
+                    {"line": "condition", "to": "done", "fields": {"when": "[[Schemas:Status]] が paid"}},
                     {"line": "else", "to": "failed"}
                 ]},
             "Charts/Shop:Pay.done": {"kind": "end", "outcome": "success", "return": {"carries": ["Schemas/Ordering:Order.id"]}},
@@ -181,7 +181,7 @@ fn a_flow_and_its_nodes_are_made_in_one_call_and_read_as_cards() {
         nodes[1]["form"]["rows"]["steps"][1]["fields"]["description"],
         "記録に置く"
     );
-    assert_eq!(nodes[2]["connections"][0]["line"], "branch");
+    assert_eq!(nodes[2]["connections"][0]["line"], "condition");
     assert_eq!(nodes[2]["connections"][0]["to"], nodes[3]["id"]);
     // Each placed on the flow's card map.
     assert!(
@@ -253,7 +253,7 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
         json!({"value": {
             "Charts/Shop:Tell": {"kind": "flow", "label": "知らせる", "description": "返金が済んだら [[Schemas:Customer]] に知らせる"},
             "Charts/Shop:Tell.start": {"kind": "begin", "trigger": "event", "description": "返金の終わりを受ける",
-                "connections": [{"line": "event", "to": "Charts/Shop:Refund", "fields": {"outcome": "success"}}, {"line": "next", "to": "send"}]},
+                "connections": [{"line": "awaits", "to": "Charts/Shop:Refund", "fields": {"outcome": "success"}}, {"line": "next", "to": "send"}]},
             "Charts/Shop:Tell.send": {"kind": "process", "label": "送る",
                 "steps": [{"do": "send", "program": "mailer", "via": "http", "carries": ["Schemas/Ordering:Order.id"], "description": "メールで"}],
                 "connections": [{"line": "next", "to": "wait"}]},
@@ -300,8 +300,8 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
     for part in [
         "## start（begin）\n\n返金の終わりを受ける\n\n- きっかけ: `event`\n- event: [[Charts/Shop:Refund]] が `success`\n- 次: [[Charts/Shop:Tell.send]]\n",
         "## send（process）\n\n**送る**\n\n| 行 | do | 相手・パス | 運ぶもの | 説明 |\n|---|---|---|---|---|\n| `steps[0]` | send | `mailer`（via `http`） | [[Schemas/Ordering:Order.id]] | メールで |\n\n- 次: [[Charts/Shop:Tell.wait]]\n",
-        "## wait（wait）\n\n- 待つもの: `timer`\n- 期限: 1時間\n- 次: [[Charts/Shop:Tell.again]]\n- 時間切れのとき: [[Charts/Shop:Tell.gave_up]]\n",
-        "## again（run）\n\n- 呼ぶ flow: [[Charts/Shop:Checkout]]\n- 次: [[Charts/Shop:Tell.done]]\n- 失敗時: [[Charts/Shop:Tell.gave_up]]\n",
+        "## wait（wait）\n\n- 待つもの: `timer`\n- 期限: 1時間\n- 次: [[Charts/Shop:Tell.again]]\n- 期限切れ: [[Charts/Shop:Tell.gave_up]]\n",
+        "## again（run）\n\n- 呼ぶ flow: [[Charts/Shop:Checkout]]\n- 次: [[Charts/Shop:Tell.done]]\n- 失敗したら: [[Charts/Shop:Tell.gave_up]]\n",
         "## gave_up（end）\n\n- 結果: `cancelled`",
     ] {
         assert!(text.contains(part), "{part}\n---\n{text}");
@@ -314,8 +314,8 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
         "| `steps[0]` | call | `payment-gateway` | [[Schemas/Ordering:Order.total]] → [[Schemas/Ordering:Order.status]] |  |",
         "| `steps[1]` | send | [[Charts/Shop:Checkout]] | [[Schemas/Ordering:Order.id]] |  |",
         "- 次（並列）: [[Charts/Shop:Refund.a]]、[[Charts/Shop:Refund.b]]",
-        "- 判断に使う値: [[Schemas/Ordering:Order.status]]\n- when [[Schemas:Status]] が paid: [[Charts/Shop:Refund.done]]\n- else: [[Charts/Shop:Refund.ask]]",
-        "- 結果: `success`\n- 返す相手: 呼んだ側\n- 返すもの: [[Schemas/Ordering:Order.id]]",
+        "- 判断に使う値: [[Schemas/Ordering:Order.status]]\n- 条件 [[Schemas:Status]] が paid: [[Charts/Shop:Refund.done]]\n- それ以外: [[Charts/Shop:Refund.ask]]",
+        "- 結果: `success`\n- 返す相手: 開始の相手\n- 返すもの: [[Schemas/Ordering:Order.id]]",
     ] {
         assert!(refund.contains(part), "{part}\n---\n{refund}");
     }
@@ -327,7 +327,7 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
     );
     let page = page["files"][0]["text"].as_str().unwrap();
     for part in [
-        "### check（eval）\n\n- 判断に使う値: `Order.status`\n- when Status が paid: [`Refund.done`](charts.md#refund)\n",
+        "### check（eval）\n\n- 判断に使う値: `Order.status`\n- 条件 Status が paid: [`Refund.done`](charts.md#refund)\n",
         "| `steps[1]` | send | [購入](charts.md#checkout) | `Order.id` |  |",
         "### again（run）\n\n- 呼ぶ flow: [購入](charts.md#checkout)\n",
     ] {
@@ -354,7 +354,7 @@ fn a_nodes_lines_are_held_to_the_flows_kinds_of_line() {
             &core,
             "Charts/Shop:Pay.decide",
             json!([
-                {"line": "branch", "to": "Charts/Shop:Checkout.done", "fields": {"when": "x"}},
+                {"line": "condition", "to": "Charts/Shop:Checkout.done", "fields": {"when": "x"}},
                 {"line": "else", "to": "failed"}
             ]),
         ),
@@ -962,7 +962,7 @@ fn the_guide_tells_of_the_nodes_their_kinds_and_their_lines() {
     let said = lines["value"].as_str().unwrap();
     for line in [
         "next",
-        "branch",
+        "condition",
         "else",
         "onError",
         "onTimeout",
@@ -1100,7 +1100,7 @@ fn a_decisions_else_with_a_way_of_its_own_is_drawn_in_the_alts_else() {
             "Charts/Shop:Pick.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "who"}]},
             "Charts/Shop:Pick.who": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "warden", "fields": {"when": "warden"}},
+                    {"line": "condition", "to": "warden", "fields": {"when": "warden"}},
                     {"line": "else", "to": "notary"}
                 ]},
             "Charts/Shop:Pick.warden": {"kind": "process", "label": "warden が取り込む",
@@ -1114,14 +1114,20 @@ fn a_decisions_else_with_a_way_of_its_own_is_drawn_in_the_alts_else() {
     );
     let chart = sequence(&core, "Charts/Shop:Pick");
     assert_eq!(
-        lines_from(&chart, "alt warden", 6),
+        lines_from(&chart, "alt warden", 12),
         [
             "alt warden",
-            "Note over P1: warden が取り込む",
+            "Note over P1: warden warden が取り込む",
+            "activate P1",
+            "deactivate P1",
             "else それ以外",
-            "Note over P1: notary が取り込む",
+            "Note over P1: notary notary が取り込む",
+            "activate P1",
+            "deactivate P1",
             "end",
-            "Note over P1: 受け入れる",
+            "Note over P1: after 受け入れる",
+            "activate P1",
+            "deactivate P1",
         ],
         "{chart}"
     );
@@ -1138,13 +1144,19 @@ fn a_decisions_else_with_a_way_of_its_own_is_drawn_in_the_alts_else() {
     );
     let chart = sequence(&core, "Charts/Shop:Pick");
     assert_eq!(
-        lines_from(&chart, "alt warden", 5),
+        lines_from(&chart, "alt warden", 11),
         [
             "alt warden",
-            "Note over P1: warden が取り込む",
+            "Note over P1: warden warden が取り込む",
+            "activate P1",
+            "deactivate P1",
             "end",
-            "Note over P1: notary が取り込む",
-            "Note over P1: 受け入れる",
+            "Note over P1: notary notary が取り込む",
+            "activate P1",
+            "deactivate P1",
+            "Note over P1: after 受け入れる",
+            "activate P1",
+            "deactivate P1",
         ],
         "{chart}"
     );
@@ -1163,10 +1175,10 @@ fn ways_that_stop_at_ends_of_their_own_leave_the_others_to_come_together() {
             "Charts/Shop:Lock.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "check"}]},
             "Charts/Shop:Lock.check": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "refused", "fields": {"when": "ロック中"}},
-                    {"line": "branch", "to": "fix", "fields": {"when": "壊れた"}},
-                    {"line": "branch", "to": "done", "fields": {"when": "何もしない場合"}},
-                    {"line": "branch", "to": "write", "fields": {"when": "それ以外"}},
+                    {"line": "condition", "to": "refused", "fields": {"when": "ロック中"}},
+                    {"line": "condition", "to": "fix", "fields": {"when": "壊れた"}},
+                    {"line": "condition", "to": "done", "fields": {"when": "何もしない場合"}},
+                    {"line": "condition", "to": "write", "fields": {"when": "それ以外"}},
                     {"line": "else", "to": "done"}
                 ]},
             "Charts/Shop:Lock.refused": {"kind": "end", "outcome": "success", "description": "断る",
@@ -1180,20 +1192,64 @@ fn ways_that_stop_at_ends_of_their_own_leave_the_others_to_come_together() {
     );
     let chart = sequence(&core, "Charts/Shop:Lock");
     assert_eq!(
-        lines_from(&chart, "alt ロック中", 12),
+        lines_from(&chart, "alt ロック中", 15),
         [
             "alt ロック中",
-            "P1-->>P2: return Order.id （断る）",
+            "P2-->>P1: return Order.id · success",
             "else 壊れた",
-            "Note over P1: 直す",
-            "Note over P1: failure",
+            "Note over P2: fix 直す",
+            "activate P2",
+            "deactivate P2",
+            "Note over P2: failure",
             "else 何もしない場合",
-            "Note over P1: 何もしない",
+            "Note over P2: → done へ",
             "else それ以外",
-            "Note over P1: 書く",
+            "Note over P2: write 書く",
+            "activate P2",
+            "deactivate P2",
             "end",
-            "P1-->>P2: return Order.total",
+            "P2-->>P1: return Order.total · success",
         ],
+        "{chart}"
+    );
+}
+
+#[test]
+fn a_way_with_nothing_of_its_own_says_where_it_goes_on() {
+    // The place the ways meet is drawn after the alt, so a way that goes straight there has
+    // nothing of its own: it says where it goes, not that nothing is done.
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/Shop:Fetch": {"kind": "flow", "label": "取ってくる"},
+            "Charts/Shop:Fetch.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "found"}]},
+            "Charts/Shop:Fetch.found": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
+                "connections": [
+                    {"line": "condition", "to": "download", "fields": {"when": "入"}},
+                    {"line": "condition", "to": "tell", "fields": {"when": "切"}},
+                    {"line": "else", "to": "none"}
+                ]},
+            "Charts/Shop:Fetch.tell": {"kind": "process", "label": "知らせる", "connections": [{"line": "next", "to": "download"}]},
+            "Charts/Shop:Fetch.download": {"kind": "process", "label": "取ってきて確かめる", "connections": [{"line": "next", "to": "done"}]},
+            "Charts/Shop:Fetch.none": {"kind": "end", "outcome": "success"},
+            "Charts/Shop:Fetch.done": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    let chart = sequence(&core, "Charts/Shop:Fetch");
+    assert!(!chart.contains("何もしない"), "{chart}");
+    let from = lines_from(&chart, "alt 入", 12);
+    assert_eq!(from[1], "Note over P1: → 取ってきて確かめる へ", "{chart}");
+    assert!(
+        from.iter().any(|l| l == "Note over P1: tell 知らせる"),
+        "{chart}"
+    );
+    assert_eq!(
+        chart
+            .matches("Note over P1: download 取ってきて確かめる")
+            .count(),
+        1,
         "{chart}"
     );
 }
@@ -1211,7 +1267,7 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Charts/Shop:Dispatch.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "found"}]},
             "Charts/Shop:Dispatch.found": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "send", "fields": {"when": "いる"}},
+                    {"line": "condition", "to": "send", "fields": {"when": "いる"}},
                     {"line": "else", "to": "later"}
                 ]},
             "Charts/Shop:Dispatch.send": {"kind": "process", "label": "配る",
@@ -1229,24 +1285,30 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
     );
     let chart = sequence(&core, "Charts/Shop:Dispatch");
     assert_eq!(
-        lines_from(&chart, "alt いる", 12),
+        lines_from(&chart, "alt いる", 17),
         [
             "alt いる",
-            "Note over P1: 配る",
+            "Note over P1: send 配る",
+            "activate P1",
+            "deactivate P1",
             "Note over P1: wait approval（30秒 まで）",
             "alt 間に合ったとき",
             "Note over P1: 配った",
-            "else 時間切れのとき",
-            "Note over P1: リースを切る",
+            "else 期限切れ",
+            "Note over P1: expire リースを切る",
+            "activate P1",
+            "deactivate P1",
             "end",
             "else それ以外",
-            "Note over P1: あとで配る",
+            "Note over P1: later あとで配る",
+            "activate P1",
+            "deactivate P1",
             "end",
         ],
         "{chart}"
     );
 
-    // A time running out that stops at once in failure: a break, the way on after it.
+    // A time running out that stops at once in failure, with nothing on the way: one mark.
     ok(
         &core,
         "card_update",
@@ -1257,15 +1319,14 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
     );
     let chart = sequence(&core, "Charts/Shop:Dispatch");
     assert_eq!(
-        lines_from(&chart, "Note over P1: wait approval", 4),
+        lines_from(&chart, "Note over P1: wait approval", 2),
         [
             "Note over P1: wait approval（30秒 まで）",
-            "break 時間切れのとき",
-            "Note over P1: cancelled",
-            "end",
+            "Note right of P1: ✕ 期限切れ → cancelled",
         ],
         "{chart}"
     );
+    assert!(!chart.contains("break "), "{chart}");
 
     // Ways that come together again, inside ways that do too: each alt ends where its own
     // ways meet, what is after them drawn once.
@@ -1277,7 +1338,7 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Charts/Shop:Lease.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "found"}]},
             "Charts/Shop:Lease.found": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "send", "fields": {"when": "いる"}},
+                    {"line": "condition", "to": "send", "fields": {"when": "いる"}},
                     {"line": "else", "to": "later"}
                 ]},
             "Charts/Shop:Lease.send": {"kind": "process", "label": "配る", "connections": [{"line": "next", "to": "ack"}]},
@@ -1291,18 +1352,26 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
     );
     let chart = sequence(&core, "Charts/Shop:Lease");
     assert_eq!(
-        lines_from(&chart, "alt いる", 10),
+        lines_from(&chart, "alt いる", 18),
         [
             "alt いる",
-            "Note over P1: 配る",
+            "Note over P1: send 配る",
+            "activate P1",
+            "deactivate P1",
             "Note over P1: wait approval（30秒 まで）",
-            "alt 時間切れのとき",
-            "Note over P1: リースを切る",
+            "alt 期限切れ",
+            "Note over P1: expire リースを切る",
+            "activate P1",
+            "deactivate P1",
             "end",
             "else それ以外",
-            "Note over P1: あとで配る",
+            "Note over P1: later あとで配る",
+            "activate P1",
+            "deactivate P1",
             "end",
-            "Note over P1: 記録する",
+            "Note over P1: after 記録する",
+            "activate P1",
+            "deactivate P1",
         ],
         "{chart}"
     );
@@ -1387,7 +1456,7 @@ fn a_way_leads_to_a_node_named_with_a_capital_letter() {
             ]},
             "Charts/Shop:Draw.answered": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "noApp", "fields": {"when": "アプリが無い"}},
+                    {"line": "condition", "to": "noApp", "fields": {"when": "アプリが無い"}},
                     {"line": "else", "to": "done"}
                 ]},
             "Charts/Shop:Draw.noApp": {"kind": "end", "outcome": "failure"},
@@ -1437,7 +1506,7 @@ fn a_compute_row_says_what_it_works_out_and_takes_nothing_else() {
     );
     let flowchart = text_in(&flowchart, "mermaid");
     assert!(flowchart.contains("compute"), "{flowchart}");
-    assert!(!flowchart.contains("compute 呼んだ側"), "{flowchart}");
+    assert!(!flowchart.contains("compute 開始の相手"), "{flowchart}");
     // What it does is its description: what it would pass or read with is not its.
     for (row, key) in [
         (
@@ -1457,9 +1526,9 @@ fn a_compute_row_says_what_it_works_out_and_takes_nothing_else() {
         &core,
         "card_update",
         json!({"target": "Charts/Shop:Tally.count", "value": {"connections": {"add": [
-            {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Checkout"}]}}}),
+            {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Checkout"}]}}}),
     );
-    assert!(said.contains("peer"), "{said}");
+    assert!(said.contains("partner"), "{said}");
 }
 
 /// A door three flows send to and a program outside the project, its end answering two of them
@@ -1476,22 +1545,76 @@ fn make_login(core: &Core) {
             "Charts/Shop:Login.start": {"kind": "begin", "trigger": "receive", "program": "外の監視",
                 "carries": ["Schemas/Ordering:Order.id"],
                 "connections": [
-                    {"line": "peer", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "to": "Charts/Shop:Agent"},
-                    {"line": "peer", "to": "Charts/Shop:Mcp"},
+                    {"line": "partner", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "to": "Charts/Shop:Agent"},
+                    {"line": "partner", "to": "Charts/Shop:Mcp"},
                     {"line": "next", "to": "tell"}]},
             "Charts/Shop:Login.tell": {"kind": "process",
                 "steps": [{"do": "send", "carries": ["Schemas/Ordering:Order.total"]}],
                 "connections": [
-                    {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Agent"},
+                    {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Agent"},
                     {"line": "next", "to": "done"}]},
             "Charts/Shop:Login.done": {"kind": "end", "outcome": "success",
                 "return": {"carries": ["Schemas/Ordering:Order.status"], "program": "記録"},
                 "connections": [
-                    {"line": "peer", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "to": "Charts/Shop:Agent"}]}
+                    {"line": "partner", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "to": "Charts/Shop:Agent"}]}
         }}),
+    );
+}
+
+#[test]
+fn any_caller_is_only_for_a_receiving_begin_with_no_partner() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/Shop:Status": {"kind": "flow"},
+            "Charts/Shop:Status.start": {"kind": "begin", "trigger": "receive",
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/Shop:Status.done": {"kind": "end", "outcome": "success"},
+            "Charts/Shop:Tick": {"kind": "flow"},
+            "Charts/Shop:Tick.start": {"kind": "begin", "trigger": "manual",
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/Shop:Tick.done": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/Shop:Status.start", "value": {"anyCaller": true}}),
+    );
+    let start = ok(
+        &core,
+        "card_read",
+        json!({"target": "Charts/Shop:Status.start"}),
+    );
+    assert_eq!(start["anyCaller"], true, "{start}");
+    // Anyone, or the partners named: one or the other.
+    let alone = "start（開始）の anyCaller と相手（partner の線・program）は一緒に書けません。どちらかにします";
+    let with_peer = refused(
+        &core,
+        "card_update",
+        json!({"target": "Charts/Shop:Status.start", "value": {"connections": {
+            "add": [{"line": "partner", "to": "Charts/Shop:Checkout"}]}}}),
+    );
+    assert!(with_peer.contains(alone), "{with_peer}");
+    let with_program = refused(
+        &core,
+        "card_update",
+        json!({"target": "Charts/Shop:Status.start", "value": {"program": "外の監視"}}),
+    );
+    assert!(with_program.contains(alone), "{with_program}");
+    let manual = refused(
+        &core,
+        "card_update",
+        json!({"target": "Charts/Shop:Tick.start", "value": {"anyCaller": true}}),
+    );
+    assert!(
+        manual.contains("anyCaller: trigger が receive のときだけ書けます"),
+        "{manual}"
     );
 }
 
@@ -1508,9 +1631,9 @@ fn a_begin_takes_from_many_flows_and_a_program_together_and_is_read_back_whole()
     assert_eq!(
         lines(&start),
         [
-            ("peer".into(), "".into(), "Charts/Shop:Client".into()),
-            ("peer".into(), "".into(), "Charts/Shop:Agent".into()),
-            ("peer".into(), "".into(), "Charts/Shop:Mcp".into()),
+            ("partner".into(), "".into(), "Charts/Shop:Client".into()),
+            ("partner".into(), "".into(), "Charts/Shop:Agent".into()),
+            ("partner".into(), "".into(), "Charts/Shop:Mcp".into()),
             ("next".into(), "".into(), "Charts/Shop:Login.tell".into())
         ]
     );
@@ -1523,11 +1646,15 @@ fn a_begin_takes_from_many_flows_and_a_program_together_and_is_read_back_whole()
         lines(&tell)[..2],
         [
             (
-                "peer".into(),
+                "partner".into(),
                 "steps[0]".into(),
                 "Charts/Shop:Client".into()
             ),
-            ("peer".into(), "steps[0]".into(), "Charts/Shop:Agent".into())
+            (
+                "partner".into(),
+                "steps[0]".into(),
+                "Charts/Shop:Agent".into()
+            )
         ]
     );
     let done = ok(
@@ -1539,8 +1666,8 @@ fn a_begin_takes_from_many_flows_and_a_program_together_and_is_read_back_whole()
     assert_eq!(
         lines(&done),
         [
-            ("peer".into(), "".into(), "Charts/Shop:Client".into()),
-            ("peer".into(), "".into(), "Charts/Shop:Agent".into())
+            ("partner".into(), "".into(), "Charts/Shop:Client".into()),
+            ("partner".into(), "".into(), "Charts/Shop:Agent".into())
         ]
     );
     // The window reads every line of each node card, in their order.
@@ -1552,7 +1679,7 @@ fn a_begin_takes_from_many_flows_and_a_program_together_and_is_read_back_whole()
         .as_array()
         .unwrap()
         .iter()
-        .filter(|l| l["line"] == "peer")
+        .filter(|l| l["line"] == "partner")
         .count();
     assert_eq!(peers, 3, "{start}");
 }
@@ -1569,13 +1696,13 @@ fn two_peer_lines_from_one_place_to_one_flow_are_refused() {
             "Charts/Shop:Twice": {"kind": "flow"},
             "Charts/Shop:Twice.start": {"kind": "begin", "trigger": "receive",
                 "connections": [
-                    {"line": "peer", "to": "Charts/Shop:Client"},
-                    {"line": "peer", "to": "Charts/Shop:Client", "description": "もう 1 本"},
+                    {"line": "partner", "to": "Charts/Shop:Client"},
+                    {"line": "partner", "to": "Charts/Shop:Client", "description": "もう 1 本"},
                     {"line": "next", "to": "tell"}]},
             "Charts/Shop:Twice.tell": {"kind": "process", "steps": [{"do": "send"}],
                 "connections": [
-                    {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Agent"},
-                    {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Agent", "description": "もう 1 本"},
+                    {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Agent"},
+                    {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Agent", "description": "もう 1 本"},
                     {"line": "next", "to": "done"}]},
             "Charts/Shop:Twice.done": {"kind": "end", "outcome": "success"}
         }}),
@@ -1592,7 +1719,7 @@ fn two_peer_lines_from_one_place_to_one_flow_are_refused() {
         "card_update",
         json!({"target": "Charts/Shop:Login.tell", "value": {
             "steps": [{"do": "send", "carries": ["Schemas/Ordering:Order.total"]}, {"do": "receive"}],
-            "connections": {"add": [{"line": "peer", "from": "steps[1]", "to": "Charts/Shop:Client"}]}}}),
+            "connections": {"add": [{"line": "partner", "from": "steps[1]", "to": "Charts/Shop:Client"}]}}}),
     );
 }
 
@@ -1608,7 +1735,7 @@ fn a_call_row_names_a_program_alone_and_a_send_row_needs_someone_to_send_to() {
         "card_update",
         row(
             json!([{"do": "call", "program": "git"}]),
-            json!([{"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Client"}]),
+            json!([{"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Client"}]),
         ),
     );
     assert!(said.contains("実行ノード"), "{said}");
@@ -1631,8 +1758,8 @@ fn a_call_row_names_a_program_alone_and_a_send_row_needs_someone_to_send_to() {
         row(
             json!([{"do": "send", "program": "通知"}]),
             json!([
-                {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Client"},
-                {"line": "peer", "from": "steps[0]", "to": "Charts/Shop:Mcp"}
+                {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Client"},
+                {"line": "partner", "from": "steps[0]", "to": "Charts/Shop:Mcp"}
             ]),
         ),
     );
@@ -1698,11 +1825,11 @@ fn a_sequence_draws_a_way_for_each_sender_and_an_arrow_for_each_flow_sent_to() {
         lines_from(&chart, "alt Client へ", 7),
         [
             "alt Client へ",
-            "P1-->>P2: return Order.status",
+            "P1-->>P2: return Order.status · success",
             "else Agent へ",
-            "P1-->>P3: return Order.status",
+            "P1-->>P3: return Order.status · success",
             "else 記録 へ",
-            "P1-->>P6: return Order.status",
+            "P1-->>P6: return Order.status · success",
             "end",
         ],
         "{chart}"
@@ -1714,14 +1841,16 @@ fn a_sequence_draws_a_way_for_each_sender_and_an_arrow_for_each_flow_sent_to() {
         json!({"value": {
             "Charts/Shop:Solo": {"kind": "flow"},
             "Charts/Shop:Solo.start": {"kind": "begin", "trigger": "receive", "carries": ["Schemas/Ordering:Order.id"],
-                "connections": [{"line": "peer", "to": "Charts/Shop:Client"}, {"line": "next", "to": "done"}]},
+                "connections": [{"line": "partner", "to": "Charts/Shop:Client"}, {"line": "next", "to": "done"}]},
             "Charts/Shop:Solo.done": {"kind": "end", "outcome": "success", "return": {}}
         }}),
     );
     let chart = sequence(&core, "Charts/Shop:Solo");
     assert!(!chart.contains("alt "), "{chart}");
     assert!(chart.contains("P2->>P1: receive Order.id"), "{chart}");
-    assert!(chart.contains("participant P3 as 呼んだ側"), "{chart}");
+    // Its end names no one: it answers the one its begin receives from.
+    assert!(chart.contains("P1-->>P2: return success"), "{chart}");
+    assert!(!chart.contains("participant P3"), "{chart}");
 }
 
 #[test]

@@ -4,6 +4,7 @@
 //! is written (`tools::files`). The screen's preview reads it too (`export_read`, `card_read`'s
 //! `writtenTo`).
 
+pub(crate) mod actors;
 pub mod charts;
 pub(crate) mod data;
 pub mod datachart;
@@ -25,8 +26,10 @@ pub(crate) use mermaid::find_embed;
 use crate::model::{Card, Detail, ExportSetting, Field, Ghost, Rule};
 use crate::notetext::{self, plain_path};
 use crate::ojson;
+use crate::text::Keyed;
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, HashMap, HashSet};
+use std::fmt;
 use std::rc::Rc;
 
 /// What a file holds.
@@ -59,15 +62,15 @@ impl Content {
         }
     }
 
-    fn label(&self) -> String {
+    fn label(&self) -> Keyed {
         match self {
-            Content::Types(format) => format.clone(),
-            Content::Chart => text!("export.content.chart"),
-            Content::Document => text!("export.content.document"),
-            Content::Data => text!("export.content.data"),
-            Content::Svg => text!("export.content.svg"),
-            Content::Html => text!("export.content.html"),
-            Content::Mock => text!("export.content.mock"),
+            Content::Types(format) => keyed!("export.content.format", format),
+            Content::Chart => keyed!("export.content.chart"),
+            Content::Document => keyed!("export.content.document"),
+            Content::Data => keyed!("export.content.data"),
+            Content::Svg => keyed!("export.content.svg"),
+            Content::Html => keyed!("export.content.html"),
+            Content::Mock => keyed!("export.content.mock"),
         }
     }
 }
@@ -110,6 +113,9 @@ pub struct Project<'a> {
     /// the id the line holds, the path each had as the history last kept it — what the check says
     /// of the line, as it has no card to name.
     pub gone: HashMap<String, String>,
+    /// What a program's text is held against (`tools::PartnerNames`), made the first time a
+    /// flow with a program is checked and kept for the reading: a write checks every flow it touches.
+    pub(crate) partner_names: std::cell::OnceCell<crate::tools::PartnerNames>,
 }
 
 /// What a name names as written: a card, or a card ghost as itself.
@@ -214,6 +220,7 @@ impl<'a> Project<'a> {
             files: None,
             code: None,
             gone: HashMap::new(),
+            partner_names: std::cell::OnceCell::new(),
         }
     }
 
@@ -713,14 +720,20 @@ impl<'a> Project<'a> {
 
 // MARK: - Notes and rules as they are written out
 
-/// An enum's values that have a description, one line each as code comments say them: the
-/// value, its label, what it stands for. None when no value has one.
+/// An enum's values that have a description or a label, one line each as code comments say them:
+/// the value, its label, what it stands for. None when no value has either.
 pub fn described_values(card: &Card) -> Vec<String> {
     card.values
         .iter()
-        .filter(|v| !v.description.is_empty())
+        .filter(|v| !v.description.is_empty() || !v.label.is_empty())
         .map(|v| {
-            if v.label.is_empty() {
+            if v.description.is_empty() {
+                text!(
+                    "exportCode.enumValue.labelOnly",
+                    value = v.value,
+                    label = v.label
+                )
+            } else if v.label.is_empty() {
                 text!(
                     "exportCode.enumValue.described",
                     value = v.value,
@@ -1351,18 +1364,31 @@ fn path_of(card: &Card, setting: &ExportSetting) -> String {
 /// What stops an export from being written, with the exports it stops (by their place in the
 /// list): writing some exports is stopped only by their own problems.
 #[derive(Clone, Debug, PartialEq, Eq)]
+///
+/// Kept by its key and values rather than as text: the files are written in the project's export
+/// language, and the problems are said to whoever asked, in theirs.
 pub struct Problem {
     pub exports: Vec<usize>,
-    pub text: String,
+    pub said: Keyed,
 }
 
 impl Problem {
     /// A problem of the export at `export`.
-    pub fn of(export: usize, text: String) -> Problem {
+    pub fn of(export: usize, said: Keyed) -> Problem {
         Problem {
             exports: vec![export],
-            text,
+            said,
         }
+    }
+
+    /// A problem of the export at `export` with what it is about said before it (a card, a file).
+    pub fn at(export: usize, at: impl fmt::Display, problem: Keyed) -> Problem {
+        Problem::of(export, keyed!("export.problem.at", at, problem))
+    }
+
+    /// Said in the language of the call.
+    pub fn text(&self) -> String {
+        self.said.render()
     }
 
     /// Whether it stops any of `chosen`.
@@ -1370,9 +1396,9 @@ impl Problem {
         self.exports.iter().any(|e| chosen.contains(e))
     }
 
-    /// The texts of `problems`.
+    /// The texts of `problems`, in the language of the call.
     pub fn texts(problems: &[Problem]) -> Vec<String> {
-        problems.iter().map(|p| p.text.clone()).collect()
+        problems.iter().map(Problem::text).collect()
     }
 }
 
@@ -1401,10 +1427,7 @@ pub(crate) fn layout_named(
                 continue;
             };
             if let Some(problem) = ExportSetting::path_problem(&setting.path) {
-                problems.push(Problem::of(
-                    placed.export,
-                    format!("{}: {problem}", project.full(card)),
-                ));
+                problems.push(Problem::at(placed.export, project.full(card), problem));
                 continue;
             }
             let path = file_path(card, placed);
@@ -1430,7 +1453,7 @@ pub(crate) fn layout_named(
                 } else if file.content != content {
                     problems.push(Problem::of(
                         placed.export,
-                        text!(
+                        keyed!(
                             "export.layout.twoContents",
                             name,
                             path,
@@ -1445,7 +1468,7 @@ pub(crate) fn layout_named(
                 if file.row.is_some() || placed.row.is_some() {
                     problems.push(Problem::of(
                         placed.export,
-                        text!("export.layout.twoRows", name, path),
+                        keyed!("export.layout.twoRows", name, path),
                     ));
                     continue;
                 }
@@ -1475,7 +1498,7 @@ pub(crate) fn layout_named(
         if let Some(file) = files.get(&key) {
             problems.push(Problem::of(
                 page.export,
-                text!(
+                keyed!(
                     "export.layout.twoContents",
                     name,
                     path = page.path,
@@ -1527,7 +1550,7 @@ pub(crate) fn layout_named(
             .collect();
         problems.push(Problem::of(
             same[0].export,
-            text!(
+            keyed!(
                 "export.layout.sameFileName",
                 name = exports[same[0].export].name,
                 paths = crate::text::List::of(same.iter().map(|f| f.path.as_str())),
@@ -1549,7 +1572,7 @@ pub(crate) fn layout_named(
                 .collect();
             problems.push(Problem::of(
                 file.export,
-                text!(
+                keyed!(
                     "export.layout.manyDocuments",
                     name = exports[file.export].name,
                     path = file.path,
@@ -1679,7 +1702,7 @@ fn build_in_language(
         if let Some((name, same)) = by_name.iter().find(|(_, v)| v.len() > 1) {
             problems.push(Problem::of(
                 file.export,
-                text!(
+                keyed!(
                     "export.layout.sameSchema",
                     file = named(file),
                     name,
@@ -1804,10 +1827,7 @@ fn build_in_language(
             }
             Err(found) => {
                 for problem in found {
-                    problems.push(Problem::of(
-                        file.export,
-                        format!("{}: {problem}", named(file)),
-                    ));
+                    problems.push(Problem::at(file.export, named(file), problem));
                 }
             }
         }

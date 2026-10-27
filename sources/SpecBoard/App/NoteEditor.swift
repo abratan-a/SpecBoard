@@ -27,13 +27,7 @@ struct NoteEditor: View {
 
     /// What the badge calls the card.
     private var badge: String {
-        switch note.kind {
-        case .freedoc: L10n[.CardEditor.badgeFreedoc]
-        case .task: L10n[.CardEditor.badgeTask]
-        case .goal: L10n[.CardEditor.badgeGoal]
-        case .custom: note.kindDef?.badge ?? note.kindName
-        default: L10n[.CardEditor.badgeNote]
-        }
+        note.kind == .custom ? note.kindDef?.badge ?? note.kindName : BuiltinWords.badge(note.kind.rawValue)
     }
 
     @State private var writing = false

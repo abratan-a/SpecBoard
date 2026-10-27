@@ -22,7 +22,7 @@ extension AppModel {
             _ = try core.request("writing_rules_set", ["project": projectId, "place": place, "text": written])
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         readExports(projectId)
     }
@@ -115,7 +115,7 @@ extension AppModel {
                     ExportsRead.self,
                     from: Data(try exportTool("export_read", target: names, Self.defaultFolders).compact().utf8))
         } catch {
-            exports = ExportsRead(exports: [], problems: [error.localizedDescription])
+            exports = ExportsRead(exports: [], problems: [ErrorText.said(error)])
         }
         var marks: [String: ExportMark] = [:]
         for export in exports.exports {
@@ -138,7 +138,7 @@ extension AppModel {
             lastError = nil
             return nil
         } catch {
-            return error.localizedDescription
+            return ErrorText.said(error)
         }
     }
 
@@ -184,11 +184,15 @@ extension AppModel {
         Task {
             do {
                 let summary = try await executeExports(projectId, names: names, to: folder, branch: branch)
-                notice = L10n[.Export.noticeExported] + (branch.map { L10n[.Export.noticeFromBranch($0)] } ?? "")
-                    + L10n[.Export.noticeFileCount(summary.written.count)]
-                    + (summary.removed.isEmpty ? "" : L10n[.Export.noticeRemovedCount(summary.removed.count)])
+                let written = summary.written.count, removed = summary.removed.count
+                tell(notice: { code in
+                    let from = branch.map { L10n.text(.Export.noticeFromBranch($0), in: code) } ?? ""
+                    let gone = removed == 0 ? "" : L10n.text(.Export.noticeRemovedCount(removed), in: code)
+                    return L10n.text(.Export.noticeExported, in: code) + from
+                        + L10n.text(.Export.noticeFileCount(written), in: code) + gone
+                })
             } catch {
-                lastError = error.localizedDescription
+                lastError = ErrorText.said(error)
             }
             readExportSettings()
         }

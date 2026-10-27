@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 use specboard_core::Core;
 use std::collections::HashSet;
 
-const GROUPS: [&str; 14] = [
+const GROUPS: [&str; 17] = [
     "brokenPaths",
     "ambiguousPointers",
     "unresolvedPointers",
@@ -19,6 +19,9 @@ const GROUPS: [&str; 14] = [
     "strayFields",
     "flowProblems",
     "peerMismatches",
+    "missingPartners",
+    "missingStores",
+    "unlinkedPartners",
     "tagGroupViolations",
     "freeCards",
     "unreferenced",
@@ -146,17 +149,18 @@ fn the_list_gives_what_to_fix_by_default_and_counts_the_whole_tree() {
         "{fix}"
     );
     assert_eq!(fix["branch"], "main");
-    assert_eq!(fix["counts"], json!({"fix": 5, "info": 1, "accepted": 0}));
+    assert_eq!(fix["counts"], json!({"fix": 6, "info": 1, "accepted": 0}));
     assert_eq!(
         fix["groups"],
         json!({
             "brokenPaths": {"kind": "fix", "label": "壊れたパス", "count": 3, "accepted": 0},
             "peerMismatches": {"kind": "fix", "label": "flow のやり取りの食い違い", "count": 2, "accepted": 0},
+            "missingStores": {"kind": "fix", "label": "置き場が書かれていない", "count": 1, "accepted": 0},
             "freeCards": {"kind": "info", "label": "フリーセクションのカード", "count": 1, "accepted": 0}
         })
     );
     let items = fix["items"].as_array().unwrap();
-    assert_eq!(items.len(), 5);
+    assert_eq!(items.len(), 6);
     let first = &items[0];
     assert!(hex_id(first["id"].as_str().unwrap()), "{first}");
     assert_eq!(
@@ -177,7 +181,8 @@ fn the_list_gives_what_to_fix_by_default_and_counts_the_whole_tree() {
             "brokenPaths",
             "brokenPaths",
             "peerMismatches",
-            "peerMismatches"
+            "peerMismatches",
+            "missingStores"
         ]
     );
     // The information alone, then all: in the groups' order.
@@ -193,8 +198,8 @@ fn the_list_gives_what_to_fix_by_default_and_counts_the_whole_tree() {
     );
     assert_eq!(info["counts"], fix["counts"]);
     let all = list(&core, json!({"show": "all"}));
-    assert_eq!(all["items"].as_array().unwrap().len(), 6);
-    assert_eq!(all["items"][5]["group"], "freeCards");
+    assert_eq!(all["items"].as_array().unwrap().len(), 7);
+    assert_eq!(all["items"][6]["group"], "freeCards");
     assert_eq!(list(&core, json!({"show": "accepted"}))["items"], json!([]));
     // What is said is the check's groups alone: a document written from two sections is not one.
     for group in all["groups"].as_object().unwrap().keys() {
@@ -210,8 +215,8 @@ fn the_list_is_kept_to_groups_and_to_a_section_or_a_card() {
     let peers = list(&core, json!({"group": "peerMismatches"}));
     assert_eq!(peers["items"].as_array().unwrap().len(), 2);
     // The counts and the groups are the whole tree's still.
-    assert_eq!(peers["counts"]["fix"], 5);
-    assert_eq!(peers["groups"].as_object().unwrap().len(), 3);
+    assert_eq!(peers["counts"]["fix"], 6);
+    assert_eq!(peers["groups"].as_object().unwrap().len(), 4);
     let two = list(
         &core,
         json!({"show": "all", "group": ["brokenPaths", "freeCards"]}),
@@ -238,7 +243,8 @@ fn the_list_is_kept_to_groups_and_to_a_section_or_a_card() {
         at,
         [
             "Charts/Shop:Refund.start",
-            "Charts/Shop:Refund.ask.steps[1]"
+            "Charts/Shop:Refund.ask.steps[1]",
+            "Charts/Shop:Refund.a.steps[0]"
         ]
     );
     assert_eq!(
@@ -279,12 +285,12 @@ fn a_long_list_is_read_on_from_the_last_id_given() {
     let whole = ids(&list(&core, json!({"show": "all"})));
     let first = list(&core, json!({"show": "all", "limit": 2}));
     assert_eq!(first["truncated"], true);
-    assert_eq!(first["matched"], 6);
+    assert_eq!(first["matched"], 7);
     assert_eq!(ids(&first), whole[..2]);
     assert_eq!(first["next"], whole[1].as_str());
     // What describes the tree is never cut.
-    assert_eq!(first["groups"].as_object().unwrap().len(), 3);
-    assert_eq!(first["counts"]["fix"], 5);
+    assert_eq!(first["groups"].as_object().unwrap().len(), 4);
+    assert_eq!(first["counts"]["fix"], 6);
     let mut read = ids(&first);
     let mut after = first["next"].clone();
     loop {
@@ -470,7 +476,7 @@ fn an_item_marked_as_designed_leaves_what_to_fix_and_comes_back_when_unmarked() 
     assert!(mark["at"].is_string());
     let fix = list(&core, json!({}));
     assert!(!ids(&fix).contains(&peer));
-    assert_eq!(fix["counts"], json!({"fix": 4, "info": 1, "accepted": 1}));
+    assert_eq!(fix["counts"], json!({"fix": 5, "info": 1, "accepted": 1}));
     assert_eq!(
         fix["groups"]["peerMismatches"],
         json!({"kind": "fix", "label": "flow のやり取りの食い違い", "count": 1, "accepted": 1})
@@ -755,7 +761,7 @@ fn the_marks_go_with_the_project_file_and_a_file_of_before_has_none() {
     let peer = first_of(&core, "peerMismatches");
     accept(&core, json!([peer, broken]), "見本のまま");
     let written = file(&core);
-    assert_eq!(written["version"], 28);
+    assert_eq!(written["version"], 33);
     let marks = written["inspectionMarks"].as_array().unwrap();
     // In the order of their ids.
     let mut order = vec![broken.clone(), peer.clone()];
@@ -845,7 +851,7 @@ fn the_window_reads_the_whole_list_and_marks_as_the_window() {
         "inspection_list",
         json!({"project": PROJECT, "value": {"show": "all", "limit": 1}}),
     );
-    assert_eq!(all["items"].as_array().unwrap().len(), 6);
+    assert_eq!(all["items"].as_array().unwrap().len(), 7);
     assert!(all.get("truncated").is_none());
     let id = all["items"][0]["id"].clone();
     let marked = window(
@@ -870,7 +876,322 @@ fn a_project_that_denies_the_marks_to_mcp_reads_them_still() {
         json!({"target": broken, "value": {"accept": "理由"}}),
     );
     assert!(said.contains("点検の件に印を付ける"), "{said}");
-    assert_eq!(list(&core, json!({}))["counts"]["fix"], 5);
+    assert_eq!(list(&core, json!({}))["counts"]["fix"], 6);
+}
+
+/// The items of `group` in main, whole.
+fn items_of(core: &Core, group: &str) -> Vec<Value> {
+    list(core, json!({"show": "all", "group": group}))["items"]
+        .as_array()
+        .unwrap()
+        .clone()
+}
+
+#[test]
+fn a_begin_naming_no_one_is_a_missing_partner() {
+    let core = crate::actor_sections::shop_core();
+    let items = items_of(&core, "missingPartners");
+    let at: HashSet<&str> = items.iter().map(|i| i["at"].as_str().unwrap()).collect();
+    assert_eq!(
+        at,
+        HashSet::from([
+            "Charts/決済サービス:Charge.start",
+            "Charts/注文サーバ/在庫:Reserve.start"
+        ]),
+        "{items:?}"
+    );
+    let reserve = items
+        .iter()
+        .find(|i| i["at"] == "Charts/注文サーバ/在庫:Reserve.start")
+        .unwrap();
+    let read = ok(&core, "inspection_read", json!({"target": reserve["id"]}))["items"][0].clone();
+    assert_eq!(read["kind"], "fix", "{read}");
+    assert_eq!(read["label"], "相手が書かれていない");
+    assert_eq!(
+        read["problem"],
+        "受ける相手が書かれていません（今これを呼ぶ flow: Charts/注文サーバ/受付:TakeOrder）"
+    );
+    assert_eq!(read["callers"], json!(["Charts/注文サーバ/受付:TakeOrder"]));
+    assert!(
+        read["fix"].as_str().unwrap().contains("anyCaller: true"),
+        "{read}"
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/決済サービス:Charge.start", "value": {"anyCaller": true}}),
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/注文サーバ/在庫:Reserve.start", "value": {"connections": {
+            "add": [{"line": "partner", "to": "Charts/注文サーバ/受付:TakeOrder"}]}}}),
+    );
+    assert_eq!(items_of(&core, "missingPartners"), Vec::<Value>::new());
+    // Whoever writes one is told at once.
+    let made = ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/シナリオ:Ask": {"kind": "flow"},
+            "Charts/シナリオ:Ask.start": {"kind": "begin", "trigger": "receive",
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/シナリオ:Ask.done": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    assert!(
+        made["warnings"].as_array().into_iter().flatten().any(|w| w
+            .as_str()
+            .unwrap_or("")
+            .contains("受ける相手が書かれていません")),
+        "{made}"
+    );
+}
+
+#[test]
+fn a_row_keeping_a_shape_no_store_holds_is_a_missing_store() {
+    let core = crate::actor_sections::shop_core();
+    // The shop's own: the store the project it is made in already lacks is not its.
+    let take_order = |core: &Core| -> Vec<Value> {
+        list(
+            core,
+            json!({"show": "all", "group": "missingStores", "in": "Charts/注文サーバ/受付:TakeOrder"}),
+        )["items"]
+            .as_array()
+            .unwrap()
+            .clone()
+    };
+    let items = take_order(&core);
+    assert_eq!(items.len(), 1, "{items:?}");
+    assert_eq!(
+        items[0]["at"],
+        "Charts/注文サーバ/受付:TakeOrder.save.steps[2]"
+    );
+    let read = ok(&core, "inspection_read", json!({"target": items[0]["id"]}))["items"][0].clone();
+    assert_eq!(read["kind"], "fix", "{read}");
+    assert_eq!(read["label"], "置き場が書かれていない");
+    assert_eq!(
+        read["problem"],
+        "Receipt を置く store がありません（write Receipt.number）"
+    );
+    assert_eq!(read["shapes"], json!(["Schemas/Shop:Receipt"]));
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas/Shop:ShopDB", "value": {"connections": {
+            "add": [{"line": "holds", "to": "Schemas/Shop:Receipt"}]}}}),
+    );
+    assert_eq!(take_order(&core), Vec::<Value>::new());
+}
+
+#[test]
+fn a_shape_reaching_two_stores_is_a_missing_store_naming_them() {
+    let core = crate::actor_sections::shop_core();
+    crate::actor_sections::receipt_in_two_stores(&core);
+    let take_order = |core: &Core| -> Vec<Value> {
+        list(
+            core,
+            json!({"show": "all", "group": "missingStores", "in": "Charts/注文サーバ/受付:TakeOrder"}),
+        )["items"]
+            .as_array()
+            .unwrap()
+            .clone()
+    };
+    let items = take_order(&core);
+    assert_eq!(items.len(), 1, "{items:?}");
+    assert_eq!(
+        items[0]["at"],
+        "Charts/注文サーバ/受付:TakeOrder.save.steps[2]"
+    );
+    let read = ok(&core, "inspection_read", json!({"target": items[0]["id"]}))["items"][0].clone();
+    assert_eq!(
+        read["problem"],
+        "Receipt を置く store が決まりません（ShopDB・Archive のどれか。write Receipt.number）",
+        "{read}"
+    );
+    assert_eq!(read["shapes"], json!(["Schemas/Shop:Receipt"]));
+    assert_eq!(
+        read["candidates"],
+        json!({"Schemas/Shop:Receipt": ["Schemas/Shop:ShopDB", "Schemas/Shop:Archive"]})
+    );
+    // The row names the store by a path inside the shape it holds.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/注文サーバ/受付:TakeOrder.save", "value": {"connections": {
+            "remove": [{"line": "writes", "from": "steps[2]", "to": "Schemas/Shop:Receipt", "at": "number"}],
+            "add": [{"line": "writes", "from": "steps[2]", "to": "Schemas/Shop:Order", "at": "receipt.number"}]}}}),
+    );
+    assert_eq!(take_order(&core), Vec::<Value>::new());
+}
+
+#[test]
+fn a_shape_held_by_two_stores_is_a_missing_store_naming_them() {
+    let core = crate::actor_sections::shop_core();
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas/Shop:ShopDB", "value": {"connections": {
+            "add": [{"line": "holds", "to": "Schemas/Shop:Receipt"}]}}}),
+    );
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Schemas/Shop:Archive", "value": {"kind": "store", "connections": [
+            {"line": "holds", "to": "Schemas/Shop:Receipt"}]}}),
+    );
+    let take_order = |core: &Core| -> Vec<Value> {
+        list(
+            core,
+            json!({"show": "all", "group": "missingStores", "in": "Charts/注文サーバ/受付:TakeOrder"}),
+        )["items"]
+            .as_array()
+            .unwrap()
+            .clone()
+    };
+    let items = take_order(&core);
+    assert_eq!(items.len(), 1, "{items:?}");
+    assert_eq!(
+        items[0]["at"],
+        "Charts/注文サーバ/受付:TakeOrder.save.steps[2]"
+    );
+    let read = ok(&core, "inspection_read", json!({"target": items[0]["id"]}))["items"][0].clone();
+    assert_eq!(
+        read["problem"],
+        "Receipt を置く store が決まりません（ShopDB・Archive のどれか。write Receipt.number）",
+        "{read}"
+    );
+    assert_eq!(
+        read["candidates"],
+        json!({"Schemas/Shop:Receipt": ["Schemas/Shop:ShopDB", "Schemas/Shop:Archive"]})
+    );
+    // One store left holding it keeps it.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas/Shop:Archive", "value": {"connections": {
+            "remove": [{"line": "holds", "to": "Schemas/Shop:Receipt"}]}}}),
+    );
+    assert_eq!(take_order(&core), Vec::<Value>::new());
+}
+
+#[test]
+fn a_program_named_like_a_flow_or_an_actor_is_an_unlinked_partner() {
+    let core = crate::actor_sections::shop_core();
+    let made = ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/ブラウザ:Track": {"kind": "flow"},
+            "Charts/ブラウザ:Track.start": {"kind": "begin", "trigger": "receive", "program": "注文サーバ",
+                "connections": [{"line": "next", "to": "ask"}]},
+            "Charts/ブラウザ:Track.ask": {"kind": "process",
+                "steps": [
+                    {"do": "send", "program": "Charge"},
+                    {"do": "call", "program": "Charts/決済サービス:Charge"},
+                    {"do": "call", "program": "git"},
+                    {"do": "send", "program": "ブラウザ"},
+                    {"do": "send", "program": "Track"},
+                    {"do": "send", "program": "charge"},
+                    {"do": "send", "program": "DB"}],
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/ブラウザ:Track.done": {"kind": "end", "outcome": "success",
+                "return": {"program": "支払う"}}
+        }}),
+    );
+    // The rows of a name no flow or actor of the project has, of the actor around the flow, of the
+    // flow itself, of another case and of an actor with no flow are not told.
+    let items = items_of(&core, "unlinkedPartners");
+    let at: Vec<&str> = items.iter().map(|i| i["at"].as_str().unwrap()).collect();
+    assert_eq!(
+        at,
+        [
+            "Charts/ブラウザ:Track.start",
+            "Charts/ブラウザ:Track.ask.steps[0]",
+            "Charts/ブラウザ:Track.ask.steps[1]",
+            "Charts/ブラウザ:Track.done"
+        ],
+        "{items:?}"
+    );
+    for item in &items {
+        assert!(hex_id(item["id"].as_str().unwrap()), "{item}");
+    }
+    let before = ids(&json!({"items": items}));
+    let read = ok(&core, "inspection_read", json!({"target": before}));
+    let read = read["items"].as_array().unwrap();
+    for item in read {
+        assert_eq!(item["kind"], "fix", "{item}");
+        assert_eq!(item["label"], "相手が線になっていない", "{item}");
+    }
+    // A name the flows of the project have: the flows are told, and no actor.
+    let sent = &read[1];
+    assert_eq!(
+        sent["problem"],
+        "send の相手 Charge は文字ですが、flow Charts/決済サービス:Charge と同じ名前です"
+    );
+    assert_eq!(sent["op"], "send");
+    assert_eq!(sent["program"], "Charge");
+    assert_eq!(sent["flows"], json!(["Charts/決済サービス:Charge"]));
+    assert!(sent.get("actor").is_none(), "{sent}");
+    let fix = sent["fix"].as_str().unwrap();
+    for said in ["partner の線", "実行ノード", "send と receive の行"] {
+        assert!(fix.contains(said), "{said}: {fix}");
+    }
+    // A name an actor with flows in it has: the actor is told, and no flow.
+    let start = &read[0];
+    assert_eq!(
+        start["problem"],
+        "receive の相手 注文サーバ は文字ですが、アクター Charts/注文サーバ と同じ名前です"
+    );
+    assert_eq!(start["op"], "receive");
+    assert_eq!(start["program"], "注文サーバ");
+    assert_eq!(start["actor"], "Charts/注文サーバ");
+    assert!(start.get("flows").is_none(), "{start}");
+    // The path of a flow, and the heading of one, are its name as well.
+    assert_eq!(read[2]["op"], "call");
+    assert_eq!(read[2]["flows"], json!(["Charts/決済サービス:Charge"]));
+    assert_eq!(read[3]["op"], "return");
+    assert_eq!(read[3]["program"], "支払う");
+    assert_eq!(read[3]["flows"], json!(["Charts/決済サービス:Charge"]));
+    // Whoever writes it is told at once, and the flow's own group does not say it twice.
+    let warnings: Vec<&str> = made["warnings"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .filter(|w| w.contains("は文字ですが"))
+        .collect();
+    assert!(
+        warnings.iter().any(|w| w.contains("Charge は文字ですが")),
+        "{made}"
+    );
+    assert_eq!(warnings.len(), 4, "{made}");
+    assert!(
+        !items_of(&core, "flowProblems")
+            .iter()
+            .any(|i| i["problem"].as_str().unwrap_or("").contains("は文字ですが"))
+    );
+    // A peer line in place of the program takes the row out; the others stay as they were.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/ブラウザ:Track.ask", "value": {
+            "steps": [
+                {"do": "send"},
+                {"do": "call", "program": "Charts/決済サービス:Charge"},
+                {"do": "call", "program": "git"},
+                {"do": "send", "program": "ブラウザ"},
+                {"do": "send", "program": "Track"},
+                {"do": "send", "program": "charge"},
+                {"do": "send", "program": "DB"}],
+            "connections": {"add": [
+                {"line": "partner", "from": "steps[0]", "to": "Charts/決済サービス:Charge"}]}}}),
+    );
+    let after = ids(&json!({"items": items_of(&core, "unlinkedPartners")}));
+    assert_eq!(
+        after,
+        [before[0].clone(), before[2].clone(), before[3].clone()]
+    );
 }
 
 #[test]
@@ -987,12 +1308,12 @@ fn what_a_card_done_holds_is_information() {
         &core,
         "card_create",
         board(json!({
-            "Goals:Open": {"kind": "goal", "status": "進行中", "body": "[[Nope:Open]]"},
+            "Goals:Open": {"kind": "goal", "status": "inProgress", "body": "[[Nope:Open]]"},
             "Goals:Open.Doing": {"kind": "task", "body": "[[Nope:Doing]]"},
             "Goals:Open.Did": {"kind": "task", "done": true, "body": "[[Nope:Did]]"},
-            "Goals:Finished": {"kind": "goal", "status": "完了", "body": "[[Nope:Finished]]"},
+            "Goals:Finished": {"kind": "goal", "status": "done", "body": "[[Nope:Finished]]"},
             "Goals:Finished.Left": {"kind": "task", "body": "[[Nope:Left]]"},
-            "Goals:Dropped": {"kind": "goal", "status": "打ち切り", "body": "[[Nope:Dropped]]"},
+            "Goals:Dropped": {"kind": "goal", "status": "cancelled", "body": "[[Nope:Dropped]]"},
             "Goals:FinishedToo": {"kind": "goal", "body": "[[Nope:Too]]"}
         })),
     );
@@ -1096,7 +1417,7 @@ fn what_a_card_done_holds_is_information() {
     ok(
         &core,
         "card_update",
-        json!({"branch": tree, "target": "Goals:Finished", "value": {"status": "進行中"}}),
+        json!({"branch": tree, "target": "Goals:Finished", "value": {"status": "inProgress"}}),
     );
     let reopened = listed_in(&core, tree, json!({"show": "all"}));
     let kinds: Vec<(String, String)> = ours(&reopened)

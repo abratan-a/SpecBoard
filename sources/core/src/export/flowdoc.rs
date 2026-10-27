@@ -5,7 +5,7 @@
 //! gives the paths `[[…]]` as written, the other as a document writes them out.
 
 use super::Project;
-use super::charts::{self, caller, code};
+use super::charts::{self, begin_partner, code, start_partner};
 use super::documents;
 use crate::model::{Card, FlowNode, Step};
 use crate::notetext::exported_path;
@@ -25,16 +25,16 @@ fn labelled(label: String, value: impl std::fmt::Display) -> String {
     format!("{label}: {value}")
 }
 
-/// Who a row, a start or an end deals with: the flows it names and the program, or the one that
-/// called it.
-fn other(peers: &[String], program: Option<&str>) -> String {
+/// Who a row, a start or an end deals with: the flows it names and the program, or — naming
+/// none — `none`.
+fn other(peers: &[String], program: Option<&str>, none: impl FnOnce() -> String) -> String {
     let names: Vec<String> = peers
         .iter()
         .map(|p| place(p))
         .chain(program.map(code))
         .collect();
     if names.is_empty() {
-        caller()
+        none()
     } else {
         crate::text::list(&names)
     }
@@ -60,7 +60,7 @@ fn step_cells(index: usize, step: &Step) -> Vec<String> {
             }
             said
         }
-        _ => other(&step.peers, step.program.as_deref()),
+        _ => other(&step.peers, step.program.as_deref(), start_partner),
     };
     let mut about = Vec::new();
     if let Some(via) = &step.via {
@@ -120,7 +120,7 @@ fn own_lines(node: &FlowNode) -> Vec<String> {
             if node.trigger.as_deref() == Some("receive") {
                 lines.push(labelled(
                     text!("flowdoc.label.partner"),
-                    other(&node.peers, node.program.as_deref()),
+                    other(&node.peers, node.program.as_deref(), || begin_partner(node)),
                 ));
             }
             if let Some(said) = event(node) {
@@ -178,7 +178,7 @@ fn own_lines(node: &FlowNode) -> Vec<String> {
             if let Some(reply) = &node.reply {
                 lines.push(labelled(
                     text!("flowdoc.label.replyTo"),
-                    other(&reply.peers, reply.program.as_deref()),
+                    other(&reply.peers, reply.program.as_deref(), start_partner),
                 ));
                 if !reply.carries.is_empty() {
                     lines.push(labelled(
@@ -240,10 +240,13 @@ fn way_lines(node: &FlowNode, flow: &str) -> Vec<String> {
         ));
     }
     for branch in &node.branches {
-        lines.push(format!("when {}: {}", branch.when, to(&branch.next)));
+        lines.push(labelled(
+            text!("flowdoc.label.condition", when = branch.when),
+            to(&branch.next),
+        ));
     }
     if let Some(otherwise) = &node.otherwise {
-        lines.push(format!("else: {}", to(otherwise)));
+        lines.push(labelled(text!("flowdoc.label.otherwise"), to(otherwise)));
     }
     if let Some(error) = &node.on_error {
         lines.push(labelled(text!("flowdoc.label.onFailure"), to(error)));

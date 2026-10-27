@@ -12,6 +12,7 @@
   "mcp.complaint.prefix": "{path}: ",
   "mcp.complaint.replaced": "{prefix}{key} does not exist. {moved}",
   "mcp.complaint.required": "{prefix}{name} is required{hint}",
+  "mcp.complaint.requiredOneOf": "{prefix}{name} is required (one of {names}){hint}",
   "mcp.complaint.unknownNested": "{path} does not take these keys: {given}. It takes: {takes}{hint}",
   "mcp.complaint.unknownTop": "Arguments not accepted: {given}. This tool takes: {takes}",
   "mcp.complaint.wrongType": "{prefix}{key} must be given as {expected} (got {given})",

@@ -12,12 +12,20 @@ struct DiagramActions {
     var zoomOut: () -> Void
     var actualSize: () -> Void
     var fit: () -> Void
-    /// Nil while the cards are on cells: 自動整列 places them anywhere.
-    var autoLayout: (() -> Void)?
+    /// 「整える」 and 「線に沿って並べ直す」: nil where they cannot run (`AppModel.arrangeActions`).
+    var tidy: (() -> Void)?
+    var arrangeByLines: (() -> Void)?
     /// Whether ⌘W is the tab bar's: not while the app's settings cover the window.
     var closesTabs = true
     /// The tab in front closed (⌘W); nil on the map tab, which does not close.
     var closeTab: (() -> Void)?
+}
+
+/// The two ways the map on screen is put in order, each nil where it cannot run now: what the band's 「整列」 and
+/// the Edit menu offer.
+struct ArrangeActions {
+    var tidy: (() -> Void)?
+    var arrangeByLines: (() -> Void)?
 }
 
 struct DiagramActionsKey: FocusedValueKey {
@@ -31,7 +39,7 @@ extension FocusedValues {
     }
 }
 
-/// Zoom and fit in 表示, 自動整列 in 編集 — where a Mac keeps them — rather than
+/// Zoom and fit in 表示, 整える and 線に沿って並べ直す in 編集 — where a Mac keeps them — rather than
 /// in the diagram's bar, which ran out of room for the things used every minute.
 ///
 /// ⌘+ / ⌘- / ⌘0 already belong to the text size in the same menu, so the diagram
@@ -76,8 +84,12 @@ struct DiagramCommands: Commands {
         }
         CommandGroup(after: .pasteboard) {
             Divider()
-            Button(L10n[.Diagram.commandAutoLayout]) { diagram?.autoLayout?() }
-                .disabled(diagram?.autoLayout == nil)
+            Button(L10n[.Root.arrangeTidy]) { diagram?.tidy?() }
+                .disabled(diagram?.tidy == nil)
+                .help(L10n[.Root.arrangeTidyHelp])
+            Button(L10n[.Root.arrangeByLines]) { diagram?.arrangeByLines?() }
+                .disabled(diagram?.arrangeByLines == nil)
+                .help(L10n[.Root.arrangeByLinesHelp])
         }
     }
 }

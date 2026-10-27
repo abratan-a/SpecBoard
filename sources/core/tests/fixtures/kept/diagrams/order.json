@@ -10,10 +10,9 @@
     "reads",
     "writes",
     "next",
-    "mentions",
     "run"
   ],
   "fields": false,
   "direction": "out",
-  "rev": "3089a5f10b9b"
+  "rev": "899b0db3c07c"
 }

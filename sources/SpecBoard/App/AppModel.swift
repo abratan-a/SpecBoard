@@ -53,7 +53,10 @@ final class AppModel {
     private(set) var outsideDetail: ProjectDetail?
     private(set) var selectedSchemaId: String? {
         didSet {
-            if selectedSchemaId != nil { pickedGone = nil }
+            if selectedSchemaId != nil {
+                pickedGone = nil
+                selectedGroup = nil
+            }
             remember()
         }
     }
@@ -61,7 +64,26 @@ final class AppModel {
     /// A line picked — on a diagram, or in the property panel's つながり — by the card that
     /// holds it and its id (overview §13): the property panel shows it, the diagram marks it.
     /// Picking anything else lets it go.
-    private(set) var selectedLine: LineRef? { didSet { if selectedLine != nil { pickedGone = nil } } }
+    private(set) var selectedLine: LineRef? {
+        didSet {
+            if selectedLine != nil {
+                pickedGone = nil
+                selectedGroup = nil
+            }
+        }
+    }
+    /// A group picked on a diagram, by the diagram and its name: the property panel shows it, the diagram marks
+    /// it. Picking anything else lets it go.
+    var selectedGroup: GroupRef? {
+        didSet {
+            guard selectedGroup != nil else { return }
+            pickedGone = nil
+            selectedSchemaId = nil
+            selectedFieldId = nil
+            selectedRow = nil
+            selectedLine = nil
+        }
+    }
     /// What the open branch removed, picked in the nav panel by its id (a card, a card ghost, a
     /// node or a section): the property panel shows it, read only. Picking anything else lets it go.
     private(set) var pickedGone: String?
@@ -116,6 +138,9 @@ final class AppModel {
         return slice
     }
     @ObservationIgnored private var sectionSlice: (stamp: Int, section: String, outlines: Int, files: [String], slice: ProjectDetail)?
+    /// The sequence charts the core gave, by what was asked and the project as it was then
+    /// (`sequenceChart`): a view drawn again asks once.
+    @ObservationIgnored var sequenceCharts: [String: SequenceDiagram] = [:]
 
     /// Open a section on the map tab, which comes forward. The selection goes if it was in another one:
     /// it is not on this section's diagram.
@@ -158,7 +183,14 @@ final class AppModel {
     private(set) var surroundings = Surroundings()
 
     /// Section → schema → where that section put another's card.
-    @ObservationIgnored private var sectionPositions: [String: [String: CGPoint]] = [:]
+    @ObservationIgnored private(set) var sectionPositions: [String: [String: CGPoint]] = [:]
+    /// Section → its section ghosts put by a hand or by tidying: the diagram stacks the others again where they
+    /// grow into one another, never these.
+    @ObservationIgnored private(set) var pinnedGhosts: [String: Set<String>] = [:]
+
+    /// The groups on each diagram, by its id — a section's, or a container card's for its card map — as the
+    /// tree open has them (`section_positions`).
+    private(set) var mapGroups: [String: [MapGroup]] = [:]
 
     private func surround() {
         let key = shownSectionKey
@@ -168,6 +200,8 @@ final class AppModel {
                                          outside: outsideDetail,
                                          gone: resultView?.gone ?? shownMarks.gone.cards,
                                          forNow: temporaryCardGhosts[key] ?? [])
+        if Self.holdsGroups(section: key, in: detail) { surroundings.groups = mapGroups[key] ?? [] }
+        surroundings.pinned = pinnedGhosts[key] ?? []
     }
 
     /// What the diagram of section `key` draws from the others (`Surroundings`): its section ghosts where
@@ -348,6 +382,11 @@ final class AppModel {
     /// What the window waits for now: what it does on the main thread (`working`), else a reading in the
     /// background.
     private(set) var activity: Activity?
+    /// Whether the map on screen is being tidied or arranged (`arrangeActions`): asked off the main thread, and
+    /// said in the status bar meanwhile.
+    private(set) var arranging = false {
+        didSet { showActivity() }
+    }
     /// Something said in the status bar for a few seconds (`say`).
     private(set) var said: String?
     /// The status bar's line, drawn at once when the main thread is about to be busy (`working`).
@@ -362,8 +401,11 @@ final class AppModel {
     @ObservationIgnored private var afterReading: [() -> Void] = []
     /// The one saying in the status bar that is taken away when its time is up.
     @ObservationIgnored private var sayingNumber = 0
-    /// What a person does while a reading is on its way, held until it is in (`InputHold`).
+    /// What a person does while a reading of their own write is on its way, held until it is in (`InputHold`).
     @ObservationIgnored private let inputHold = InputHold()
+    /// Whether what a person does is held now, and how many times it has begun to be — for the tests.
+    var holdsInput: Bool { inputHold.holding }
+    var inputHolds: Int { inputHold.begun }
 
     init(databaseURL: URL? = nil, memory: SelectionMemory? = nil, readsOffMain: Bool = false) {
         self.databaseURL = databaseURL
@@ -538,7 +580,7 @@ final class AppModel {
                 openLink(link)
             }
         } catch {
-            phase = .failed(String(describing: error))
+            phase = .failed(ErrorText.said(error))
         }
     }
 
@@ -626,7 +668,7 @@ final class AppModel {
             }
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         inspectionMarks += 1
         readInspection(tree)
@@ -665,7 +707,7 @@ final class AppModel {
             if let table = answer?["markdown"] as? String { return .success(.markdown(table)) }
             return .failure(NoteEmbed.Problem(why: answer?["problem"] as? String ?? L10n[.Model.embedCantDraw]))
         } catch {
-            return .failure(NoteEmbed.Problem(why: error.localizedDescription))
+            return .failure(NoteEmbed.Problem(why: ErrorText.said(error)))
         }
     }
 
@@ -821,7 +863,7 @@ final class AppModel {
                 self.noticesHeard += 1
                 if let id = self.detail?.project.id, let core = self.core(of: id),
                    heard.contains(where: { $0.place == core.place && ($0.project == nil || $0.project == id) }) {
-                    self.showLater(id)
+                    self.showLater(id, holds: false)
                 }
             }
         }
@@ -838,7 +880,7 @@ final class AppModel {
             try? readProjects(core)
         }
         noticesHeard += 1
-        if let id = detail?.project.id { showLater(id) }
+        if let id = detail?.project.id { showLater(id, holds: true) }
     }
 
     /// What was told and not yet read again: the place told of, and the project (nil: any).
@@ -868,7 +910,7 @@ final class AppModel {
             try readProjects(core)
             try readPublic(core)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         defer { reportWindows() }
         guard let awaited, projects.contains(where: { $0.id == awaited.project && $0.place == place }) else { return }
@@ -953,6 +995,7 @@ final class AppModel {
                 tabs = []
                 activeTab = nil
                 mapHeld = nil
+                lastFront = nil
                 tabsSet = set
             }
             if detail?.project.id != projectId {
@@ -1011,7 +1054,7 @@ final class AppModel {
         var workDirs: [WorkDir]
         var writingRules: [String: String]?
         var layout: LayoutSettings
-        var positions: [String: [String: CGPoint]]
+        var positions: MapPlaces
         /// What was held of the tree, or of what it reaches beside it, was found not to be what the core has,
         /// and read again whole (`CoreClient.readDetail`).
         var drifted = false
@@ -1027,7 +1070,7 @@ final class AppModel {
         var detail: ProjectDetail
         var marks: BranchMarks
         var commits: [CommitInfo]
-        var positions: [String: [String: CGPoint]]
+        var positions: MapPlaces
         var workDirs: [WorkDir]
         /// What was held of the tree was found not to be what the core has, and read again whole.
         var drifted = false
@@ -1142,13 +1185,16 @@ final class AppModel {
     }
 
     /// What the window works out from a project read, and what was picked in it let go where it is gone.
-    private func settle(_ projectId: String, _ tree: String?, positions: [String: [String: CGPoint]]) {
+    private func settle(_ projectId: String, _ tree: String?, positions: MapPlaces) {
         let measuring = ContinuousClock.now
         measureCards()
         Self.said("measure cards", since: measuring)
+        // The groups first: a card given a place where it had none keeps out of their frames.
+        mapGroups = positions.groups
         placeUnplaced()
         placeUnplacedOnGoalMaps(projectId, branch: tree)
-        sectionPositions = positions
+        sectionPositions = positions.positions
+        pinnedGhosts = positions.pinned
         let surrounding = ContinuousClock.now
         surround()
         Self.said("surround", since: surrounding)
@@ -1160,6 +1206,10 @@ final class AppModel {
         }
         // A line taken off, or its card gone: nothing picked.
         if let selectedLine, line(selectedLine) == nil { self.selectedLine = nil }
+        // A group let go of, or the diagram it was on gone: nothing picked.
+        if let selectedGroup, MapGroups.named(selectedGroup.name, in: mapGroups[selectedGroup.view] ?? []) == nil {
+            self.selectedGroup = nil
+        }
         // A card or root that went: its tab with it.
         pruneTabs()
         reportWindows()
@@ -1178,7 +1228,7 @@ final class AppModel {
     /// A reading that failed: an agent's way lost on the way is said, and the project closes when the way is
     /// let go (`agentGone`); this Mac's store failing is the window's end.
     private func failedReading(_ error: Error, _ core: CoreClient) {
-        if core.isAgent { lastError = error.localizedDescription } else { phase = .failed(String(describing: error)) }
+        if core.isAgent { lastError = ErrorText.said(error) } else { phase = .failed(ErrorText.said(error)) }
     }
 
     /// What a write in the project open changed, read again: off the main thread when the window reads so
@@ -1199,27 +1249,34 @@ final class AppModel {
             }
             return
         }
-        begin(PendingReading(core: core, project: projectId, tree: tree) {
+        begin(PendingReading(core: core, project: projectId, tree: tree, holds: true) {
             try .written(Self.readWritten(core, project: projectId, tree: tree))
         })
     }
 
-    /// The whole of the project open read again off the main thread (another hand's change), put in
-    /// once it is in; at once when the window does not read so.
-    private func showLater(_ projectId: String) {
+    /// The whole of the project open read again off the main thread, put in once it is in; at once when
+    /// the window does not read so. `holds`: what a person does meanwhile is held (`begin`) — not for
+    /// another hand's change, which has no order to keep with a press: one before the notice would have
+    /// acted on what is held just the same, and a write meanwhile reads at once first (`settle`).
+    private func showLater(_ projectId: String, holds: Bool) {
         guard readsOffMain, let core = core(of: projectId), detail?.project.id == projectId else {
             show(projectId)
             return
         }
         let asked = wholeAsk(projectId)
-        begin(PendingReading(core: core, project: projectId, tree: asked.tree) { try .whole(Self.readWhole(core, asked)) })
+        begin(PendingReading(core: core, project: projectId, tree: asked.tree, holds: holds) {
+            try .whole(Self.readWhole(core, asked))
+        })
     }
 
-    /// A reading begun in the background, waited for: the status bar says so, and what a person does
-    /// meanwhile is held (`InputHold`) — done once it is in, on what was read, as it would have been had
-    /// the window waited on the main thread. Read on a queue of its own rather than Swift's own threads:
-    /// asking the core blocks the thread that asks until it answers (an agent's way, the store's lock).
+    /// A reading begun in the background, waited for: the status bar says so, and where it `holds`, what a
+    /// person does meanwhile is held (`InputHold`) — done once it is in, on what was read, as it would have
+    /// been had the window waited on the main thread. One that takes the place of a reading that held
+    /// holds too: what the person did is still to be done on what is read. Read on a queue of its own
+    /// rather than Swift's own threads: asking the core blocks the thread that asks until it answers (an
+    /// agent's way, the store's lock).
     private func begin(_ reading: PendingReading) {
+        if pending?.holds == true { reading.holds = true }
         pending = reading
         showActivity()
         let back = Handed(value: WeakModel(self))
@@ -1284,12 +1341,12 @@ final class AppModel {
     }
 
     /// What the window waits for, put in the status bar: what it does now, else a reading in the background.
-    /// While a reading is on its way, what a person does is held.
+    /// While a reading that holds is on its way, what a person does is held.
     private func showActivity() {
-        let now = busy ?? (pending == nil ? nil : .reading)
+        let now = busy ?? (pending == nil ? (arranging ? .writing : nil) : .reading)
         if activity != now { activity = now }
         statusLine?.show(activity: now, said: said)
-        inputHold.holding = pending != nil
+        inputHold.holding = pending?.holds == true
     }
 
     /// Something said in the status bar for a few seconds, then taken away — what the window did by
@@ -1312,6 +1369,7 @@ final class AppModel {
     /// section's card drawn here, and the point of drawing it is to stay.
     func selectSchema(_ id: String, follow: Bool = true) {
         if follow { self.follow(id) }
+        selectedGroup = nil
         selectedSchemaId = id
         selectedFieldId = nil
         selectedRow = nil
@@ -1321,6 +1379,7 @@ final class AppModel {
     /// Nothing picked on the diagram (an empty spot pressed): the property panel shows
     /// the section open.
     func deselect() {
+        selectedGroup = nil
         selectedSchemaId = nil
         selectedFieldId = nil
         selectedRow = nil
@@ -1331,6 +1390,7 @@ final class AppModel {
     /// What the open branch removed, picked (a card, a card ghost, a node or a section, by its id): shown
     /// read only in the property panel, nothing else picked.
     func pickGone(_ id: String) {
+        selectedGroup = nil
         selectedSchemaId = nil
         selectedFieldId = nil
         selectedRow = nil
@@ -1360,6 +1420,7 @@ final class AppModel {
     /// A line picked (overview §13): on a diagram, or in the property panel's つながり. What
     /// else was picked goes — the panel shows the line, and from there its two ends.
     func selectLine(_ ref: LineRef) {
+        selectedGroup = nil
         selectedSchemaId = nil
         selectedFieldId = nil
         selectedRow = nil
@@ -1379,6 +1440,7 @@ final class AppModel {
 
     func selectField(_ schemaId: String, _ fieldId: String, follow: Bool = true) {
         if follow { self.follow(schemaId) }
+        selectedGroup = nil
         selectedSchemaId = schemaId
         selectedFieldId = fieldId
         selectedRow = nil
@@ -1546,6 +1608,10 @@ final class AppModel {
     /// The section the map tab holds while another tab is in front, shown again when it comes forward.
     /// In front, the map tab shows the section on screen.
     private var mapHeld: String?
+    /// The tab other than the map tab that was in front last: where a new tab goes while the map tab is in
+    /// front. Pressing a card in the nav panel brings the map tab forward first, so cards opened one after
+    /// another from it would otherwise each go first after the map tab, the last opened leftmost.
+    @ObservationIgnored private var lastFront: Place?
     /// The way back, and the way forward again after going back: one for all the tabs, so back is
     /// always what was seen just before. The open project's only: another project starts them empty.
     private(set) var backward: [Place] = []
@@ -1821,16 +1887,19 @@ final class AppModel {
     }
 
     /// `place` in front in its tab: the tab it has (now showing it as `place` says), else a new one
-    /// right of the tab in front.
+    /// right of the tab in front — with the map tab in front, right of the tab that was in front before it
+    /// (`lastFront`), right of the map tab when there is none.
     private func front(_ place: Place) {
         if let at = tabs.firstIndex(where: { $0.sameTab(place) }) {
             tabs[at] = place
             activeTab = at
         } else {
-            let at = activeTab.map { $0 + 1 } ?? 0
+            let left = activeTab ?? lastFront.flatMap { last in tabs.firstIndex { $0.sameTab(last) } }
+            let at = left.map { $0 + 1 } ?? 0
             tabs.insert(place, at: at)
             activeTab = at
         }
+        lastFront = place
     }
 
     /// The tabs whose thing is no longer in the tree open (a card removed, a branch opened that does not
@@ -1863,6 +1932,7 @@ final class AppModel {
         let front = saved.active.flatMap { places.indices.contains($0) ? places[$0] : nil }
         tabs = places.filter(keepsTab)
         activeTab = nil
+        lastFront = nil
         if let map = saved.map, detail?.sections.contains(where: { $0.id == map }) == true { showSection(map) }
         if let front, tabs.contains(front) { arrive(at: front) }
         saveTabs()
@@ -2008,6 +2078,10 @@ final class AppModel {
             let section = shownSectionKey
             sectionPositions[section, default: [:]][id] = spot
             surroundings.positions[id] = spot
+            if SectionGhosts.isGhost(id) {
+                pinnedGhosts[section, default: []].insert(id)
+                surroundings.pinned.insert(id)
+            }
             try? place([box(id, on: section, at: point, pinned: true)])
             return
         }
@@ -2032,7 +2106,7 @@ final class AppModel {
             }
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2049,6 +2123,8 @@ final class AppModel {
             guard sectionPositions[section]?[id] != spot else { continue }
             sectionPositions[section, default: [:]][id] = spot
             surroundings.positions[id] = spot
+            pinnedGhosts[section]?.remove(id)
+            surroundings.pinned.remove(id)
             boxes.append(box(id, on: section, at: at, pinned: false))
         }
         guard !boxes.isEmpty else { return }
@@ -2103,7 +2179,7 @@ final class AppModel {
             try ownWrite { try place([["view": owner, "kind": kind, "item": item, "x": at.x, "y": at.y, "pinned": true]]) }
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
             return
         }
         guard let index = detail?.schemas.firstIndex(where: { $0.id == owner }) else { return }
@@ -2132,7 +2208,7 @@ final class AppModel {
             }
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2172,6 +2248,11 @@ final class AppModel {
         write { try tool("card_update", target: cardPath(id), value: ["view": view ?? NSNull()]) }
     }
 
+    /// An enum's 網羅でない (`open`): its values known, not all there are.
+    func setEnumOpen(_ id: String, _ open: Bool) {
+        write { try tool("card_update", target: cardPath(id), value: ["open": open]) }
+    }
+
     /// Cards with no place yet — new, moved from another section, or copied onto a
     /// card — get one where there is room in their section (§12), under the
     /// shortest column at their real height, and it is written: an agent reads it
@@ -2199,6 +2280,8 @@ final class AppModel {
                 return GridRect(x: Grid.units(x), y: Grid.units(y), w: cardGridColumns(card),
                                 h: cardGridRows(card, lookup: lookup, rows: rows, docView: docView))
             }
+            // Its groups' frames too: a card given a place does not join one by itself.
+            taken += (mapGroups[section] ?? []).map(\.cells)
             for card in cards where card.posX == nil || card.posY == nil {
                 let at = defaultSettings.nextSpot(avoiding: taken, width: cardGridColumns(card))
                 taken.append(GridRect(x: at.x, y: at.y, w: cardGridColumns(card),
@@ -2263,30 +2346,74 @@ final class AppModel {
         return min(max(widest, CGFloat(CardSize.widthRange.lowerBound)), CGFloat(CardSize.widthRange.upperBound))
     }
 
-    /// Drop the manual pins and rebuild the arrangement.
-    ///
-    /// Only what is currently shown gets arranged, so filtering and then arranging
-    /// is a usable pair — laying out cards that are not on screen would spread the
-    /// ones that are.
+    /// 「整える」 and 「線に沿って並べ直す」 where they can run (`DiagramActions`, the band's 「整列」): nil where they
+    /// cannot — not a section's map (a card's content map, a root, the settings), a ui section's or a working
+    /// directory's map (the core does not tidy those), an archived project, a tree another hand holds, a merge
+    /// looked at — and while one of them is running.
+    var arrangeActions: ArrangeActions {
+        guard canArrange else { return ArrangeActions() }
+        return ArrangeActions(tidy: { [weak self] in self?.tidy() },
+                              arrangeByLines: { [weak self] in self?.arrangeByLines() })
+    }
+
+    /// Whether the map on screen can be tidied or arranged now (`arrangeActions`).
+    var canArrange: Bool {
+        guard !arranging, detail != nil, case .section(let key) = here, canWriteGroups else { return false }
+        guard let section = detail?.directory.section(id: key) else { return true }
+        return section.kind != .ui && section.kindName != WorkDirIds.workdirKind
+            && section.kindName != WorkDirIds.directoryKind
+    }
+
+    /// 「整える」: the core's `section_update` `tidy` on the map on screen, asked off the main thread so the window
+    /// does not stop on a large map, then the project read again. The task, for what waits for it to be done.
     @discardableResult
-    func autoLayout(filters: GraphFilters = GraphFilters()) -> Int {
-        guard let detail, let section = sectionDetail, core != nil else {
-            return layoutGeneration
+    func tidy() -> Task<Void, Never>? {
+        arrange(["tidy": true])
+    }
+
+    /// 「線に沿って並べ直す」: the core's `section_update` `arrange` along the lines on the map on screen — every box
+    /// of it whatever a filter hides, or only what the group picked on it holds — asked off the main thread, then
+    /// the project read again.
+    @discardableResult
+    func arrangeByLines() -> Task<Void, Never>? {
+        arrange(["arrange": arrangeByLinesValue])
+    }
+
+    /// What 「線に沿って並べ直す」 asks the core to arrange: `by: lines`, with the group picked on the map on screen.
+    var arrangeByLinesValue: [String: Any] {
+        var value: [String: Any] = ["by": "lines"]
+        if let picked = selectedGroup, picked.view == shownSectionKey {
+            value["group"] = picked.name
         }
-        var filters = filters
-        filters.nesting = .always
-        let shown = Set(visibleSchemas(section, filters).map(\.id))
-        let placements = LayeredLayout.forProject(section, visible: shown, nesting: .always, settings: defaultSettings)
-        // Worked out in points for cards of the standard width: in grid units, the
-        // same arrangement at any width.
-        let boxes: [[String: Any]] = placements.map { p in
-            let point = Grid.fromPoints(x: Double(p.posX), y: Double(p.posY), cardWidth: Double(CardGeometry.cardWidth))
-            return ["item": p.id, "x": point.x, "y": point.y, "pinned": false]
+        return value
+    }
+
+    /// One `section_update` of the map on screen with `value`, asked off the main thread, then the project read
+    /// again and the map drawn anew.
+    private func arrange(_ value: [String: Any]) -> Task<Void, Never>? {
+        guard canArrange, let core, let projectId = detail?.project.id,
+              let target = try? sectionPath(shownSectionKey) else { return nil }
+        var arguments = openTreeArgument
+        arguments["project"] = projectId
+        arguments["target"] = target
+        arguments["value"] = value
+        let call = arguments
+        arranging = true
+        return Task { [weak self] in
+            do {
+                _ = try await Task.detached(priority: .userInitiated) {
+                    try core.request("tool", ["name": "section_update", "arguments": call])
+                }.value
+                guard let self else { return }
+                self.arranging = false
+                self.lastError = nil
+                self.layoutGeneration += 1
+                self.readWritten(projectId, now: true)
+            } catch {
+                self?.arranging = false
+                self?.lastError = ErrorText.said(error)
+            }
         }
-        try? place(boxes)
-        layoutGeneration += 1
-        readWritten(detail.project.id, now: true)
-        return layoutGeneration
     }
 
     // MARK: - Editing
@@ -2295,14 +2422,32 @@ final class AppModel {
     /// read, so they are shown rather than swallowed — and kept in the bell's list, as the bubble goes.
     /// Said again while it is still up, it is the same one, not another.
     var lastError: String? {
-        didSet { if let lastError, lastError != oldValue { noticeLog.add(.error, lastError) } }
+        didSet { if let lastError, lastError != oldValue { noticeLog.add(.error, lastError, sayIn: saying) } }
     }
     /// The AIs' merges let into a locked main without being approved, as the core told them
     /// (`AppModel+AIMerge`): said in the bubble at the bell.
     var aiMerges: [AIMerge] = []
     /// Something done that is worth saying, and nothing went wrong: kept in the bell's list too.
     var notice: String? {
-        didSet { if let notice, notice != oldValue { noticeLog.add(.notice, notice) } }
+        didSet { if let notice, notice != oldValue { noticeLog.add(.notice, notice, sayIn: saying) } }
+    }
+    /// A new version found or made ready, for the bubble (`AppModel+Update`): kept in the bell's list too.
+    var updateNotice: UpdateNotice?
+    /// How the error or notice being told is said in another language (`tell(error:)`, `tell(notice:)`).
+    @ObservationIgnored private var saying: (@MainActor (String) -> String)?
+
+    /// An error the screen words itself: the bell's list says it again when the screen's language changes.
+    func tell(error say: @escaping @MainActor (String) -> String) {
+        saying = say
+        defer { saying = nil }
+        lastError = say(Language.shared.code)
+    }
+
+    /// A notice the screen words itself, said again as `tell(error:)`.
+    func tell(notice say: @escaping @MainActor (String) -> String) {
+        saying = say
+        defer { saying = nil }
+        notice = say(Language.shared.code)
     }
     /// What the notice bubble said in this window, for the bell in the top bar (`NoticeBell`).
     var noticeLog = NoticeLog()
@@ -2320,7 +2465,7 @@ final class AppModel {
             lastError = nil
             readWritten(projectId, then: then)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2335,7 +2480,7 @@ final class AppModel {
             try readProjects(core)
             if detail?.project.id == projectId { select(projectId) }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2381,7 +2526,7 @@ final class AppModel {
     }
 
     /// A section as the tools name it.
-    private func sectionPath(_ id: String) throws -> String {
+    func sectionPath(_ id: String) throws -> String {
         guard let detail, detail.sections.contains(where: { $0.id == id }) else { throw CoreClient.Refusal(L10n[.Model.errorNoSection]) }
         return detail.directory.full(section: id)
     }
@@ -2404,7 +2549,7 @@ final class AppModel {
             selectedFieldId = nil
             select(id)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2424,7 +2569,7 @@ final class AppModel {
             lastError = nil
             return text
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
             return nil
         }
     }
@@ -2463,7 +2608,7 @@ final class AppModel {
             selectedFieldId = nil
             if detail?.project.id == id { refresh(id) } else { select(id) }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2497,7 +2642,7 @@ final class AppModel {
             try readPublic(core)
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2510,7 +2655,7 @@ final class AppModel {
             try readProjects(core)
             if let id = detail?.project.id { refresh(id) }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2561,7 +2706,7 @@ final class AppModel {
                 _ = try to.detail(projectId, branch: nil)
             } catch {
                 _ = try? ownWrite { () throws -> Any in try to.request("project_delete", ["project": projectId]) }
-                throw CoreClient.Refusal(L10n[.Model.errorMoveCantOpen(error.localizedDescription)])
+                throw CoreClient.Refusal(L10n[.Model.errorMoveCantOpen(ErrorText.said(error))])
             }
             let text = (try from.request("project_file", ["project": projectId]) as? [String: Any])?["text"] as? String ?? ""
             let kept = try keepMoved(text, slug: summary.slug)
@@ -2571,10 +2716,13 @@ final class AppModel {
             try? readPublic(to)
             if detail?.project.id == projectId { show(projectId) }
             lastError = nil
-            notice = L10n[.Model.noticeMoved(summary.name, place.flatMap { agentNames[$0] } ?? L10n[.Common.wordThisMac], kept.path)]
+            let host = place.flatMap { agentNames[$0] }
+            tell(notice: { code in
+                L10n.text(.Model.noticeMoved(summary.name, host ?? L10n.text(.Common.wordThisMac, in: code), kept.path), in: code)
+            })
             return kept
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
             return nil
         }
     }
@@ -2622,7 +2770,7 @@ final class AppModel {
                 detail = nil; events = []
             }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -2657,7 +2805,7 @@ final class AppModel {
                 return made
             }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         return nil
     }
@@ -2796,7 +2944,7 @@ final class AppModel {
             return row
         }
         if rows.contains(where: { !$0.rows.isEmpty }) {
-            lastError = L10n[.Model.errorNoRowsUnderTask]
+            tell(error: { L10n.text(.Model.errorNoRowsUnderTask, in: $0) })
             return
         }
         let directory = detail.directory
@@ -2940,7 +3088,7 @@ final class AppModel {
                 }
             }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -3070,7 +3218,7 @@ final class AppModel {
             lastError = nil
             readWritten(projectId)
         } catch {
-            rowsDraft = RowsDraft(schemaId: id, node: node, steps: steps, problem: error.localizedDescription)
+            rowsDraft = RowsDraft(schemaId: id, node: node, steps: steps, problem: ErrorText.said(error))
         }
     }
 
@@ -3135,7 +3283,7 @@ final class AppModel {
             lastError = nil
             readWritten(projectId)
         } catch {
-            rowsDraft = RowsDraft(schemaId: id, node: node, steps: steps, problem: error.localizedDescription)
+            rowsDraft = RowsDraft(schemaId: id, node: node, steps: steps, problem: ErrorText.said(error))
         }
     }
 
@@ -3197,6 +3345,8 @@ final class AppModel {
     /// A card to pick on the diagram without moving the view unless it is off screen —
     /// coming back from its editor.
     var revealRequest: String?
+    /// A provided flow whose frame an actor's sequence is to bring under its heads, once it has drawn it.
+    var sequenceFocus: String?
 
     /// Asked for from a right-click menu (the diagram's, a section's in the nav panel,
     /// a chart or document section's list): the window asks for the name. `kind` is
@@ -3250,17 +3400,22 @@ final class AppModel {
     // MARK: - Sections
 
     /// The same three for the window, which parks a refusal in `lastError` rather
-    /// than throwing it — and opens what it makes, like a new project.
-    func createSection(name: String, parentId: String? = nil, kind: SectionKind? = nil) {
+    /// than throwing it — and opens what it makes, like a new project. `type`: one of the kinds the
+    /// parent's lists (the parent's first when nil), an actor's `figure`, and its own mark (`icon`),
+    /// all in the one `section_create`.
+    func createSection(name: String, parentId: String? = nil, type: String? = nil, figure: ActorFigure? = nil,
+                       icon: SectionMark? = nil) {
         guard core != nil, let projectId = detail?.project.id, let detail else { return }
         do {
             let parent = parentId ?? detail.directory.home
             let name = PathText.trimmed(name)
             let path = detail.sections.contains(where: { $0.id == parent && $0.parentId == nil })
                 ? PathText.quote(name) : PathText.child(detail.directory.full(section: parent), name)
-            // What it holds is its parent's (`section_create`): `kind` only says which was asked for.
-            _ = kind
-            try ownWrite { _ = try tool("section_create", target: path) }
+            var value: [String: Any] = [:]
+            if let type { value["type"] = type }
+            if let written = figure?.written { value["figure"] = written }
+            if let icon { value["icon"] = Self.written(icon) }
+            try ownWrite { _ = try tool("section_create", target: path, value: value.isEmpty ? nil : value) }
             lastError = nil
             readWritten(projectId) { [weak self] in
                 if let made = self?.detail?.sections.first(where: { $0.name == name && ($0.parentId ?? "") == parent }) {
@@ -3268,7 +3423,7 @@ final class AppModel {
                 }
             }
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -3394,6 +3549,35 @@ final class AppModel {
         write { try tool("section_update", target: sectionPath(id), value: ["name": name]) }
     }
 
+    /// A section's kind changed, from the property panel: one the kind of its parent lists. What is in it
+    /// stays; an actor's figure goes once it is no actor.
+    func setSectionType(_ id: String, to kind: String) {
+        write { try tool("section_update", target: sectionPath(id), value: ["type": kind]) }
+    }
+
+    /// What an actor is, from the property panel.
+    func setSectionFigure(_ id: String, to figure: ActorFigure) {
+        write { try tool("section_update", target: sectionPath(id), value: ["figure": figure.rawValue]) }
+    }
+
+    /// A section's own mark, from the property panel: each part as given, a part not given taken off;
+    /// nil takes the whole mark off, so it is drawn with its kind's.
+    func setSectionMark(_ id: String, to mark: SectionMark?) {
+        let empty = mark.map { $0.icon == nil && $0.color == nil } ?? true
+        let icon: Any = empty ? NSNull() : Self.written(mark ?? SectionMark(), clearing: true)
+        write { try tool("section_update", target: sectionPath(id), value: ["icon": icon]) }
+    }
+
+    /// A mark as `section_create` and `section_update` take it (`{name, color}`): a part not said left out,
+    /// or — `clearing` — written null to take it off what is there.
+    static func written(_ mark: SectionMark, clearing: Bool = false) -> [String: Any] {
+        var out: [String: Any] = [:]
+        for (key, part) in [("name", mark.icon), ("color", mark.color)] {
+            if let part { out[key] = part } else if clearing { out[key] = NSNull() }
+        }
+        return out
+    }
+
     /// A section's description, from the property panel.
     func describeSection(_ id: String, _ text: String) {
         write { try tool("section_update", target: sectionPath(id), value: ["description": text]) }
@@ -3514,7 +3698,7 @@ final class AppModel {
             lastError = nil
             try readProjects(core)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         select(projectId)
     }
@@ -3528,7 +3712,7 @@ final class AppModel {
             lastError = nil
             try readProjects(core)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         select(projectId)
     }
@@ -3654,7 +3838,7 @@ final class AppModel {
             lastError = nil
             try readProjects(core)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         select(projectId)
     }
@@ -3744,7 +3928,7 @@ final class AppModel {
             try ownWrite { try body(core, projectId, openTrees[projectId]) }
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
         select(projectId)
     }
@@ -3758,7 +3942,7 @@ final class AppModel {
             guard let id = try core.branches(projectId).first(where: { $0.name == name })?.id else { return }
             openBranch(id)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -3776,7 +3960,7 @@ final class AppModel {
             lastError = nil
             select(projectId)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -3792,7 +3976,7 @@ final class AppModel {
             lastError = nil
             select(projectId)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
         }
     }
 
@@ -3869,7 +4053,7 @@ final class AppModel {
         do {
             return try core.mergePreview(projectId, source: source, target: target, take: take)
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
             return nil
         }
     }
@@ -3891,7 +4075,7 @@ final class AppModel {
             select(projectId)
             return result
         } catch {
-            lastError = error.localizedDescription
+            lastError = ErrorText.said(error)
             return nil
         }
     }
@@ -4059,6 +4243,8 @@ final class AppModel {
         case .openSection(let id, let root):
             pick(section: id, root: root)
         case .show(let card, let section, let focus, let row):
+            // In an actor's Sequence, a flow it frames is picked there, its frame opened and brought into view.
+            if row == nil, focus == card, pickFrame(of: card) { return }
             // The relation panel of the section it is drawn on, the card picked there, and
             // the view brought to it once the panel has drawn it (`ContentView`).
             open(.section(section))

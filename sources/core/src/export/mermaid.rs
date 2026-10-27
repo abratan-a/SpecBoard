@@ -721,6 +721,8 @@ pub struct Subgraph {
     kinds: Vec<String>,
     pub missing_roots: Vec<String>,
     pub excluded_roots: Vec<String>,
+    /// Too large to draw: nothing in it, drawn as a note saying why.
+    pub too_large: Option<TooLarge>,
 }
 
 impl Subgraph {
@@ -823,22 +825,54 @@ fn fans(project: &Project, r: &Relation) -> bool {
 }
 
 /// Edges between the cards that are drawn — through value objects and enums that are
-/// not, which only carry (`collectEdges`).
-struct Collector<'r> {
+/// not, which only carry (`collectEdges`). Only those: a flow, a document or any other card
+/// left undrawn ends the way, else a line would be drawn for every route through a web of
+/// them, and those routes grow as the web's lines to the sixth power.
+struct Collector<'r, 'f> {
     from: HashMap<&'r str, Vec<&'r Relation>>,
     keep: &'r HashSet<String>,
-    kind_of: HashMap<&'r str, &'r str>,
+    /// Whether a card is folded into what holds it (`select`'s own test, so the cards a hop
+    /// goes through and the cards a line is carried through are the same).
+    folded: &'f dyn Fn(&str) -> bool,
     out: BTreeMap<String, Relation>,
+    /// Lines looked at so far, against `most`.
+    steps: usize,
+    most: usize,
 }
 
-impl Collector<'_> {
+/// More lines to follow through folded cards than a diagram is drawn with: even value objects
+/// and enums alone, each holding many of the next, multiply their ways.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TooLarge;
+
+impl TooLarge {
+    /// In words, in the language of the moment.
+    pub fn said(self) -> String {
+        text!("exportDocs.mermaid.tooLarge", count = charts::MOST_STEPS)
+    }
+}
+
+impl Collector<'_, '_> {
     fn carrier(&self, id: &str) -> bool {
-        !self.keep.contains(id) && self.kind_of.get(id) != Some(&"entity")
+        !self.keep.contains(id) && (self.folded)(id)
     }
 
-    fn walk(&mut self, origin: &str, at: &str, path: &str, seen: &HashSet<String>, hops: usize) {
+    /// The lines from `at` on to the cards drawn, through folded cards; false once more than
+    /// `most` lines have been looked at.
+    fn walk(
+        &mut self,
+        origin: &str,
+        at: &str,
+        path: &str,
+        seen: &HashSet<String>,
+        hops: usize,
+    ) -> bool {
         let list: Vec<&Relation> = self.from.get(at).cloned().unwrap_or_default();
         for r in list {
+            self.steps += 1;
+            if self.steps > self.most {
+                return false;
+            }
             let next = format!("{path}.{}", r.path);
             if self.keep.contains(&r.to_schema_id) {
                 let key = format!(
@@ -860,16 +894,23 @@ impl Collector<'_> {
             }
             let mut deeper = seen.clone();
             deeper.insert(r.to_schema_id.clone());
-            self.walk(origin, &r.to_schema_id, &next, &deeper, hops + 1);
+            if !self.walk(origin, &r.to_schema_id, &next, &deeper, hops + 1) {
+                return false;
+            }
         }
+        true
     }
 }
 
+/// The lines between the cards of `keep`, carried through the cards `folded` says are folded —
+/// or `TooLarge` once more than `most` lines have been looked at.
 fn collect_edges(
     project: &Project,
     relations: &[Relation],
     keep: &HashSet<String>,
-) -> Vec<Relation> {
+    folded: &dyn Fn(&str) -> bool,
+    most: usize,
+) -> Result<Vec<Relation>, TooLarge> {
     let mut from: HashMap<&str, Vec<&Relation>> = HashMap::new();
     for r in relations {
         from.entry(r.from_schema_id.as_str()).or_default().push(r);
@@ -877,20 +918,19 @@ fn collect_edges(
     let mut collector = Collector {
         from,
         keep,
-        kind_of: project
-            .detail
-            .schemas
-            .iter()
-            .map(|c| (c.id.as_str(), c.kind.as_str()))
-            .collect(),
+        folded,
         out: BTreeMap::new(),
+        steps: 0,
+        most,
     };
     for card in &project.detail.schemas {
-        if keep.contains(&card.id) {
-            collector.walk(&card.id, &card.id, "", &HashSet::from([card.id.clone()]), 0);
+        if keep.contains(&card.id)
+            && !collector.walk(&card.id, &card.id, "", &HashSet::from([card.id.clone()]), 0)
+        {
+            return Err(TooLarge);
         }
     }
-    collector.out.into_values().collect()
+    Ok(collector.out.into_values().collect())
 }
 
 /// A card's top-level field lines — an enum's values: each type and name, a reference
@@ -1092,7 +1132,21 @@ pub fn select(project: &Project, spec: &Spec) -> Subgraph {
         keep
     };
 
-    let collected: Vec<Relation> = collect_edges(project, &by_kind, &keep)
+    let collected = match collect_edges(project, &by_kind, &keep, &folded, charts::MOST_STEPS) {
+        Ok(collected) => collected,
+        Err(why) => {
+            return Subgraph {
+                nodes: Vec::new(),
+                edges: Vec::new(),
+                fans: Vec::new(),
+                kinds,
+                missing_roots,
+                excluded_roots,
+                too_large: Some(why),
+            };
+        }
+    };
+    let collected: Vec<Relation> = collected
         .into_iter()
         .filter(|r| {
             home.as_ref()
@@ -1213,6 +1267,7 @@ pub fn select(project: &Project, spec: &Spec) -> Subgraph {
         kinds,
         missing_roots,
         excluded_roots,
+        too_large: None,
     }
 }
 
@@ -1237,7 +1292,7 @@ pub fn revision(project: &Project, spec: &Spec, graph: &Subgraph) -> String {
     {
         spec_json.insert("section".into(), json!(project.exported_section(section)));
     }
-    let canonical = json!({
+    let mut canonical = json!({
         "project": project.detail.project.slug,
         "spec": Value::Object(spec_json),
         "nodes": graph.nodes.iter().map(|n| {
@@ -1248,6 +1303,10 @@ pub fn revision(project: &Project, spec: &Spec, graph: &Subgraph) -> String {
         "edges": graph.edges.iter().map(|e| json!([e.from, e.to, e.path, e.kind,
             e.cardinality.clone().map(Value::String).unwrap_or(Value::Null), if e.array { 1 } else { 0 }])).collect::<Vec<_>>(),
     });
+    // Left out when it is drawn, so the revs of the diagrams drawn stand.
+    if graph.too_large.is_some() {
+        canonical["tooLarge"] = Value::Bool(true);
+    }
     let digest = Sha256::digest(ojson::compact(&canonical).as_bytes());
     digest
         .iter()
@@ -1377,6 +1436,7 @@ fn plainly(graph: Subgraph, project: &Project, spec: &Spec) -> Subgraph {
         kinds,
         missing_roots,
         excluded_roots,
+        too_large,
     } = graph;
     Subgraph {
         nodes: nodes
@@ -1425,12 +1485,17 @@ fn plainly(graph: Subgraph, project: &Project, spec: &Spec) -> Subgraph {
         kinds,
         missing_roots,
         excluded_roots,
+        too_large,
     }
 }
 
 /// The graph as mermaid, under its head line.
 fn draw(graph: &Subgraph, head: &str, project: &Project, plain: bool) -> String {
     let mut lines = vec![head.to_string(), "classDiagram".to_string()];
+    if let Some(why) = graph.too_large {
+        lines.push(too_large_note(why));
+        return lines.join("\n") + "\n";
+    }
     // With sections: each section a namespace, each class labelled with its path; the
     // members and the stereotypes after, where mermaid reads them for any class.
     if graph.nodes.iter().any(|n| n.title.is_some()) {
@@ -1534,6 +1599,14 @@ fn draw(graph: &Subgraph, head: &str, project: &Project, plain: bool) -> String 
     lines.join("\n") + "\n"
 }
 
+/// In place of a diagram too large to draw: a note saying why.
+fn too_large_note(why: TooLarge) -> String {
+    format!(
+        "    note \"{}\"",
+        ident::mermaid_text(&text!("charts.note.tooLarge", why = why.said()))
+    )
+}
+
 /// How a line of a kind is drawn.
 fn arrow(kind: &str) -> &'static str {
     match kind {
@@ -1544,19 +1617,16 @@ fn arrow(kind: &str) -> &'static str {
     }
 }
 
-/// The legend's word for a line kind.
+/// The legend's word for a line kind: the name of the kind of line it is drawn for.
 fn word(kind: &str) -> &str {
     match kind {
-        "embed" => "ref",
-        "reads" => "read",
-        "writes" => "write",
-        "run" => "run",
+        "run" => "runs",
         "flow.next" => "next",
-        "flow.when" => "when",
+        "flow.when" => "condition",
         "flow.else" => "else",
         "flow.onError" => "onError",
         "flow.onTimeout" => "onTimeout",
-        "note" => "notes",
+        "note" => "rules",
         other => other,
     }
 }
@@ -1725,7 +1795,7 @@ pub fn render_sections(
 
 /// A container's card map as mermaid (a goal's, a container kind's the project defines): the cards it holds, numbered in the
 /// order they are done in, each said by how far it has come — a check that says done, a choice that
-/// says where it is — and its label, then the lines between them (of `kinds`, every kind when none),
+/// says where it is — and its label, then the lines between them (of `kinds`; when none, every kind drawn at first),
 /// as the window's card map draws them. `head` is the comment above it.
 pub fn card_map(project: &Project, container: &Card, kinds: &[String], head: &str) -> String {
     let inside = project.inner_of(&container.id);
@@ -1758,7 +1828,13 @@ pub fn card_map(project: &Project, container: &Card, kinds: &[String], head: &st
     }
     for card in &inside {
         for line in &card.connections {
-            if !kinds.is_empty() && !kinds.contains(&line.line) {
+            // Unnamed, a kind drawn only when asked (`visible: false`) is left out.
+            let shown = if kinds.is_empty() {
+                project.defs.line(&line.line).is_none_or(|d| d.visible)
+            } else {
+                kinds.contains(&line.line)
+            };
+            if !shown {
                 continue;
             }
             let Some(to) = line

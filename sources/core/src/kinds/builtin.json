@@ -1,5 +1,5 @@
 {
-  "version": 18,
+  "version": 23,
   "kinds": [
     {
       "kind": "base",
@@ -67,6 +67,9 @@
           ]
         }
       ],
+      "fields": [
+        { "name": "face", "fieldtype": "json", "label": "一覧の顔", "description": "{list, header}（データのカードの形）か {text, note, mark, fold}（並びの要素の形）。この形のデータを図の上で記録の一覧として描く見かけ（名前は自分の一番上の欄）" }
+      ],
       "semantics": { "checks": "shape", "lines": "shape", "exports": ["typescript", "zod", "json-schema", "mermaid"], "editor": "schema" }
     },
     {
@@ -98,7 +101,7 @@
     },
     {
       "kind": "enum",
-      "extends": "shape",
+      "extends": "base",
       "label": "列挙",
       "color": "#BF8700",
       "as_row": "unfold",
@@ -112,9 +115,9 @@
         {
           "name": "values",
           "label": "値",
-          "address": "value",
+          "address": "name",
           "fields": [
-            { "name": "value", "fieldtype": "text", "required": true, "max": 80, "unique": true, "label": "値" },
+            { "name": "name", "fieldtype": "text", "required": true, "max": 80, "unique": true, "label": "値" },
             { "name": "label", "fieldtype": "text", "max": 120, "label": "表示名" },
             { "name": "description", "fieldtype": "text", "max": 500, "forbid": "\n\r", "label": "説明", "description": "その値が何を表すか（1 行。図のカードには出さない）" }
           ]
@@ -138,12 +141,12 @@
       "color": "#0E7C86",
       "connectable": true,
       "context": {
-        "purpose": "entity・value の形を持つ実際の値（実例）。形は線 of（MCP は value のキー of に形のパス）、値は data に形と同じ入れ子の JSON で持つ",
+        "purpose": "entity・value の形を持つ実際の値（実例）。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に形と同じ入れ子の JSON で持つ",
         "use_when": "「たとえばこういう値」を形と一緒に置くとき（API の要求と答えの例・設定の例・MCP のツール定義など）。定義のセクションに置く",
         "not_for": "形そのもの（entity・value）・値の集合（enum）"
       },
       "fields": [
-        { "name": "data", "fieldtype": "json", "label": "データ", "description": "形（線 of の先）と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）" }
+        { "name": "data", "fieldtype": "json", "label": "データ", "description": "形（線 shapeOf の先）と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）" }
       ],
       "semantics": { "checks": "instance", "exports": ["json-schema"], "editor": "instance" }
     },
@@ -154,7 +157,7 @@
       "color": "#0E7C86",
       "connectable": true,
       "context": {
-        "purpose": "形（entity・value）のデータ（instance）を決まり（絞り込み・列・並べ方・要素ごとの行）で集めた表。形は線 of（MCP は value のキー of に形のパス）。文書に ![[…]] か行 card で入れる",
+        "purpose": "形（entity・value）のデータ（instance）を決まり（絞り込み・列・並べ方・要素ごとの行）で集めた表。形は線 shapeOf（MCP は value のキー of に形のパス）。文書に ![[…]] か行 card で入れる",
         "use_when": "データを一覧の表にして文書に入れるとき（ホストの一覧・ツールの一覧など）。定義・ドキュメント・フリーのセクションに置く",
         "not_for": "手で書く表（formatdoc の行 table）・データ 1 枚の欄と値（formatdoc の行 card の target にデータ）"
       },
@@ -175,7 +178,7 @@
       "connectable": true,
       "holds": ["begin", "process", "run", "eval", "wait", "join", "end"],
       "opens": "card-map",
-      "context": { "purpose": "部品がすることと、部品をまたぐ処理の流れ。入れ物のカードで、中にノード（begin・process・run・eval・wait・join・end）のカードを置き、ノードの間を線（next・branch・else・onError・onTimeout）でつなぐ", "use_when": "リクエストを受ける・登録するなど、部品の入口と処理の順を書くとき" },
+      "context": { "purpose": "部品がすることと、部品をまたぐ処理の流れ。入れ物のカードで、中にノード（begin・process・run・eval・wait・join・end）のカードを置き、ノードの間を線（next・condition・else・onError・onTimeout）でつなぐ", "use_when": "リクエストを受ける・登録するなど、部品の入口と処理の順を書くとき" },
       "fields": [
         { "name": "diagram", "fieldtype": "radio", "options": ["flowchart", "sequence"], "default": "flowchart", "label": "図の形の既定" }
       ],
@@ -197,14 +200,15 @@
       "extends": "node",
       "label": "開始",
       "color": "#1A7F37",
-      "context": { "purpose": "flow の始まり。flow に 1 つ。きっかけ（trigger）と、受けるもの（receive）を持つ", "use_when": "flow の入口を書くとき。次へは線 next、受ける相手のフローは線 peer（何本でも。プロジェクトに無い相手は program に一緒に書ける）、受けたものを確かめる鍵は線 key（use: verify）、待つほかのフローの終わりは線 event" },
+      "context": { "purpose": "flow に 1 つの始まりで、きっかけ（trigger）と受けるもの（receive）を持つ", "use_when": "flow の入口を書くとき。次へは線 next、受ける相手のフローは線 partner（何本でも。プロジェクトに無い相手は program に一緒に書ける）、受けたものを確かめる鍵は線 key（use: verify）、待つほかのフローの終わりは線 awaits" },
       "fields": [
         { "name": "trigger", "fieldtype": "radio", "options": ["manual", "receive", "event", "schedule", "startup"], "required": true, "label": "きっかけ" },
         { "name": "every", "fieldtype": "text", "when": { "trigger": ["schedule"] }, "label": "間隔" },
         { "name": "program", "fieldtype": "text", "when": { "trigger": ["receive"] }, "label": "相手のプログラム" },
         { "name": "carries", "fieldtype": "path", "many": true, "when": { "trigger": ["receive"] }, "label": "運ぶもの" },
         { "name": "via", "fieldtype": "radio", "options": ["stdio", "file", "exec", "http", "grpc", "websocket", "queue"], "when": { "trigger": ["receive"] }, "label": "受け渡し" },
-        { "name": "initiator", "fieldtype": "radio", "options": ["self", "peer"], "when": { "trigger": ["receive"] }, "label": "呼びに行く側" }
+        { "name": "initiator", "fieldtype": "radio", "options": ["self", "peer"], "when": { "trigger": ["receive"] }, "label": "呼びに行く側" },
+        { "name": "anyCaller", "fieldtype": "checkbox", "when": { "trigger": ["receive"] }, "label": "誰からでも", "description": "呼び手を問わない受け口（どの flow・program から呼ばれてもよい）。相手（線 partner・program）とは一緒に書けない" }
       ]
     },
     {
@@ -212,7 +216,7 @@
       "extends": "node",
       "label": "処理",
       "color": "#2F6FEB",
-      "context": { "purpose": "まっすぐ続く処理の行（steps）を持つノード", "use_when": "読む・書く・署名する・確かめる・呼ぶ（プロジェクトに無いプログラム）・送る・受ける・計算する（外に出ない業務の検証や計算）を順に書くとき。行が読む・書く所は線 reads・writes、送る・受ける相手のフローは線 peer（何本でも）、鍵は線 key で、それぞれ from に行（steps[0] など）を書く。次へは線 next" },
+      "context": { "purpose": "まっすぐ続く処理の行（steps）を持つノード", "use_when": "読む・書く・署名する・確かめる・呼ぶ（プロジェクトに無いプログラム）・送る・受ける・計算する（外に出ない業務の検証や計算）を順に書くとき。行が読む・書く所は線 reads・writes、送る・受ける相手のフローは線 partner（何本でも）、鍵は線 key で、それぞれ from に行（steps[0] など）を書く。次へは線 next" },
       "rows": [
         {
           "name": "steps",
@@ -248,7 +252,7 @@
       "extends": "node",
       "label": "判断",
       "color": "#BF8700",
-      "context": { "purpose": "分かれ道・繰り返しのノード", "use_when": "条件ごとの行き先は線 branch（欄 when に条件の文）を当てる順に、どれにも当たらないときは線 else（必須）。繰り返しは前のノードへ戻す線" },
+      "context": { "purpose": "分かれ道・繰り返しのノード", "use_when": "条件ごとの行き先は線 condition（欄 when に条件の文）を当てる順に、どれにも当たらないときは線 else（必須）。繰り返しは前のノードへ戻す線" },
       "fields": [
         { "name": "value", "fieldtype": "path", "label": "判断に使う値" }
       ]
@@ -258,7 +262,7 @@
       "extends": "node",
       "label": "待つ",
       "color": "#1B7C83",
-      "context": { "purpose": "承認・時間・ほかのフローの終わりを待つノード", "use_when": "待つほかのフローの終わりは線 event、期限切れの行き先は線 onTimeout、次へは線 next" },
+      "context": { "purpose": "承認・時間・ほかのフローの終わりを待つノード", "use_when": "待つほかのフローの終わりは線 awaits、期限切れの行き先は線 onTimeout、次へは線 next" },
       "fields": [
         { "name": "for", "fieldtype": "radio", "options": ["approval", "timer", "event"], "required": true, "label": "待つもの" },
         { "name": "timeout", "fieldtype": "text", "label": "期限" }
@@ -280,7 +284,7 @@
       "extends": "node",
       "label": "終了",
       "color": "#CF222E",
-      "context": { "purpose": "flow の終わり。結果（outcome）がフローの戻り値で、呼んだ run の結果にも、ほかのフローの begin の event にもなる", "use_when": "返すものは欄 return（carries・program）、返す相手のフローは線 peer（何本でも。program と一緒にも書ける）、返すものに署名する鍵は線 key（use: sign）" },
+      "context": { "purpose": "flow の終わりで、結果（outcome）がフローの戻り値になる。呼んだ run の結果にも、ほかのフローの begin の event にもなる", "use_when": "返すものは欄 return（carries・program）、返す相手のフローは線 partner（何本でも。program と一緒にも書ける）、返すものに署名する鍵は線 key（use: sign）" },
       "fields": [
         { "name": "outcome", "fieldtype": "radio", "options": ["success", "failure", "cancelled"], "required": true, "label": "終わりの結果" },
         {
@@ -365,9 +369,9 @@
           "label": "版",
           "address": "name",
           "fields": [
-            { "name": "name", "fieldtype": "text", "required": true, "pattern": "identifier", "unique": true, "label": "名前", "description": "パスに使う名前（例 v0_2_21。区切りの字を含む名前は、パスでは一重引用符で囲む）" },
-            { "name": "key", "fieldtype": "text", "required": true, "unique": true, "max": 80, "label": "版", "description": "セレクタに出す名前（例 0.2.21）" },
-            { "name": "heading", "fieldtype": "text", "max": 200, "label": "見出し", "description": "省くと版（key）。例 0.2.21 (2026-10-10)" },
+            { "name": "name", "fieldtype": "text", "required": true, "pattern": "identifier", "unique": true, "label": "名前", "description": "パスに使う名前（例 v1_2_0。区切りの字を含む名前は、パスでは一重引用符で囲む）" },
+            { "name": "key", "fieldtype": "text", "required": true, "unique": true, "max": 80, "label": "版", "description": "セレクタに出す名前（例 1.2.0）" },
+            { "name": "heading", "fieldtype": "text", "max": 200, "label": "見出し", "description": "省くと版（key）。例 1.2.0 (2026-01-15)" },
             { "name": "body", "fieldtype": "markdown", "max": 200000, "label": "本文", "description": "[[path]]・{{path}}・![[path]] が使える" }
           ]
         }
@@ -381,13 +385,14 @@
       "color": "#D4A72C",
       "connectable": true,
       "on_double_click": "edit_in_place",
+      "face": { "markdown": "body" },
       "context": {
-        "purpose": "パパッと使えるメモ（付箋）。どのセクションにも置け、カードのそばに字のまま書く",
+        "purpose": "パパッと使えるメモ（付箋）。どのセクションにも置け、カードのそばに Markdown で書く",
         "use_when": "そばのカードについてのメモ・未決の問いを残すとき",
-        "not_for": "Markdown の文書（freedoc）・決めた書式の文書（formatdoc）"
+        "not_for": "長い文書（freedoc）・決めた書式の文書（formatdoc）"
       },
       "fields": [
-        { "name": "body", "fieldtype": "longtext", "max": 200000, "paths": true, "label": "本文", "description": "字のまま。[[path]] はパスとして読む" }
+        { "name": "body", "fieldtype": "markdown", "max": 200000, "label": "本文", "description": "Markdown（1 つの改行もそのまま改行）。[[path]]・{{path}}・![[path]] が使える" }
       ],
       "semantics": { "lines": "mentions", "exports": ["markdown"] }
     },
@@ -467,10 +472,10 @@
       "holds": ["goal", "task"],
       "opens": "card-map",
       "actions": ["start", "finish", "cancel"],
-      "context": { "purpose": "目標。入れ物のカードで、小目標（goal）とタスク（task）を中に置き、終わったら完了にする。進み具合は、中の task の done と、中の goal が完了かで数える", "use_when": "やることを束ねて進み具合を見たいとき。中の task の作業の順は goal の中の並び（card_update の position）" },
+      "context": { "purpose": "まとめてやりたいことを、中の goal と task で進める入れ物。終わったら完了にする。進み具合は、中の task の done と、中の goal が完了かで数える", "use_when": "やることを束ねて進み具合を見たいとき。中の task の作業の順は goal の中の並び（card_update の position）" },
       "fields": [
-        { "name": "status", "fieldtype": "radio", "options": ["未着手", "進行中", "完了", "打ち切り"], "default": "未着手", "done": ["完了"], "label": "状態", "description": "目標がどこまで進んだか" },
-        { "name": "priority", "fieldtype": "radio", "options": ["高", "中", "低"], "label": "優先度", "description": "どれだけ急ぐか（書かなければ決めていない）。予定の順（表示名の番号）とは別に持つ" },
+        { "name": "status", "fieldtype": "radio", "options": ["notStarted", "inProgress", "done", "cancelled"], "optionLabels": { "notStarted": "未着手", "inProgress": "進行中", "done": "完了", "cancelled": "打ち切り" }, "default": "notStarted", "done": ["done"], "label": "状態", "description": "目標がどこまで進んだか" },
+        { "name": "priority", "fieldtype": "radio", "options": ["high", "medium", "low"], "optionLabels": { "high": "高", "medium": "中", "low": "低" }, "label": "優先度", "description": "どれだけ急ぐか（書かなければ決めていない）" },
         { "name": "due", "fieldtype": "date", "label": "期限", "description": "いつまでに（YYYY-MM-DD）" },
         { "name": "workBranch", "fieldtype": "branch", "label": "branch", "description": "作業する branch" },
         { "name": "MR", "fieldtype": "mr", "label": "MR", "description": "出した merge request の番号" },
@@ -485,7 +490,7 @@
       "as_row": ["done", "label"],
       "connectable": true,
       "actions": ["done"],
-      "context": { "purpose": "タスク。本文に仕様・どこまで進んだか・経緯を書き、終わったらチェックする", "use_when": "goal の中の 1 つのやること。作業の順は goal の中の並び（card_update の position。画面は番号 1・2・3… で出す）。細かい確かめは本文の Markdown のチェックリスト（- [ ]）で書く" },
+      "context": { "purpose": "1 つのやること。本文に仕様・どこまで進んだか・経緯を書き、終わったらチェックする", "use_when": "goal の中の 1 つのやること。作業の順は goal の中の並び（card_update の position。画面は番号 1・2・3… で出す）。細かい確かめは本文の Markdown のチェックリスト（- [ ]）で書く" },
       "fields": [
         { "name": "done", "fieldtype": "checkbox", "done": [true], "label": "済み" },
         { "name": "body", "fieldtype": "markdown", "max": 200000, "show": "editor", "label": "本文", "description": "仕様・どこまで進んだか・経緯" }
@@ -505,7 +510,7 @@
       "label": "ファイル",
       "color": "#6E7781",
       "system_only": true,
-      "context": { "purpose": "作業ディレクトリのファイル。コアが作業ディレクトリを読んで、main と各 branch の作業ディレクトリのセクションの中に作る。名前と表示名はファイルの名前そのまま（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス", "use_when": "読むだけ。main・branch のカードから「実装」の線で指す（相手は木の中のパス: repo/src:'a.rs'）", "not_for": "書くもの（作業ディレクトリを読み直すと作り直される。card_create では作れない）" },
+      "context": { "purpose": "コアが作業ディレクトリから読む、ファイル 1 つ。main と各 branch の作業ディレクトリのセクションの中に作る。名前と表示名はファイルの名前そのまま（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス", "use_when": "読むだけ。main・branch のカードから「実装」の線で指す（相手は木の中のパス: repo/src:'a.rs'）", "not_for": "書くもの（作業ディレクトリを読み直すと作り直される。card_create では作れない）" },
       "fields": [
         { "name": "filePath", "fieldtype": "text", "label": "パス", "description": "作業ディレクトリからのパス（/ で区切る。カードのパス path とは別）" },
         { "name": "language", "fieldtype": "text", "label": "言語", "description": "拡張子かファイルの名前と、作業ディレクトリの parsers から決めた言語の id（rust・swift など。言語が無ければ書かない）" }
@@ -517,7 +522,7 @@
       "label": "関数と型",
       "color": "#6E7781",
       "system_only": true,
-      "context": { "purpose": "ファイルの中の関数や型。読むたびにファイルから作り、保存しない（パスはファイルのパスに続ける: repo/src:'a.rs'.Order.total）", "use_when": "読むだけ。関数 1 つのコードを card_read で読むとき・main・branch のカードから「実装」の線で指すとき（相手は repo/src:'a.rs'.Order.total）", "not_for": "書くもの（ファイルから作るので、card_create では作れない）" },
+      "context": { "purpose": "コアがファイルから読む関数や型（読むたびに作り、保存しない）。パスはファイルのパスに続ける: repo/src:'a.rs'.Order.total", "use_when": "読むだけ。関数 1 つのコードを card_read で読むとき・main・branch のカードから「実装」の線で指すとき（相手は repo/src:'a.rs'.Order.total）", "not_for": "書くもの（ファイルから作るので、card_create では作れない）" },
       "fields": [
         { "name": "of", "fieldtype": "radio", "options": ["function", "method", "type", "module", "constant", "macro"], "label": "何か", "description": "どの言語でも同じ分け方（関数・メソッド・型・モジュール・定数・マクロ）。画面の札はこれから" },
         { "name": "word", "fieldtype": "text", "label": "言語の言葉", "description": "その言語での呼び方（fn・struct・protocol・extension・class など）" },
@@ -539,18 +544,19 @@
     { "section": "ui", "label": "UI", "icon": { "name": "macwindow", "color": "#007AFF" }, "description": "画面の案を部品（html・svg）とはめ込み（frame）で組む。付箋（note）も置ける。開くとセクションマップに、部品を組み上げた画面と同じ見た目で描く", "context": { "use_when": "画面の見え方を、部品を置いて組み上げた画面そのもので決めるとき。いくつもの画面で使う組は別の UI のセクションにして、はめ込みで使う", "not_for": "文書のそばの図（document の svg・html）" }, "holds": ["html", "svg", "note", "frame"], "sections": ["ui"], "opens": "relations", "trees": ["main"] },
     { "section": "schema", "label": "スキーマ", "icon": { "name": "tablecells", "color": "#FF9500" }, "description": "データの形（entity・value・enum）と置き場（store）を置く", "context": { "use_when": "記録・値の形・列挙と、それを置く所を書くとき。部品ごとに中のセクションに分ける", "not_for": "処理の流れ（chart）・文書（document）" }, "holds": ["entity", "value", "enum", "store", "note"], "sections": ["schema"], "opens": "relations", "trees": ["main"] },
     { "section": "definition", "label": "定義", "icon": { "name": "curlybraces", "color": "#30B0C7" }, "description": "外へ約束する定義（API の引数・設定ファイル・メッセージの形）を、形（entity・value・enum・store）とデータ（instance）・表（table）で一緒に置く", "context": { "use_when": "API の引数・設定ファイル・メッセージの形のように外へ約束する定義を、形と実例（データ）で一緒に持つとき。部品ごとに中のセクションに分ける", "not_for": "外へ約束しない記録の形と置き場（schema）・処理の流れ（chart）" }, "holds": ["entity", "value", "enum", "store", "instance", "table", "note"], "sections": ["definition"], "opens": "relations", "trees": ["main"] },
-    { "section": "chart", "label": "チャート", "icon": { "name": "arrow.triangle.branch", "color": "#FF3B30" }, "description": "部品がすることと処理の流れ（flow）を置く", "context": { "use_when": "部品の入口と処理の順を flow で書くとき。部品ごとに中のセクションに分ける", "not_for": "データの形（schema）" }, "holds": ["flow", "note"], "sections": ["chart"], "opens": "relations", "trees": ["main"] },
+    { "section": "chart", "label": "チャート", "icon": { "name": "arrow.triangle.branch", "color": "#FF3B30" }, "description": "部品がすることと処理の流れ（flow）を置く", "context": { "use_when": "部品の入口と処理の順を flow で書くとき。部品ごとに中のセクションに分ける。部品は アクターのセクション（type actor）にする", "not_for": "データの形（schema）" }, "holds": ["flow", "note"], "sections": ["chart", "actor"], "opens": "relations", "trees": ["main"] },
+    { "section": "actor", "label": "アクター", "icon": { "name": "cube", "color": "#0A84FF" }, "description": "何かを提供し、何かを使う者（アプリ・サーバ・DB などの部品、人、外のサービス）。することを flow で持つ", "context": { "use_when": "部品ごとに分けるとき（チャートのセクションの中に置き、いくらでも中のアクターに分けられる）。人や外のサービスも、すること・提供する口（API）を flow で書いて置く。figure は system・person・outside。store のゴーストを置くと、その store はこのアクターのもの", "not_for": "目的でまとめるだけのもの（テスト・シナリオ。チャートのセクション）" }, "holds": ["flow", "note"], "sections": ["actor", "chart"], "opens": "relations", "trees": [] },
     { "section": "free", "label": "フリー", "icon": { "name": "tray", "color": "#8E8E93" }, "description": "どの種類のカードも置ける下書きの場所。合うセクションへ移して整理する", "context": { "use_when": "置き場の決まらないカードをいったん置くとき。あとで合うセクションへ移す", "not_for": "整理したあとのカードの置き場" }, "holds": ["*"], "sections": ["free"], "opens": "relations", "trees": ["main", "board"] },
-    { "section": "goals", "label": "ゴール", "icon": { "name": "checklist", "color": "#34C759" }, "description": "プロジェクトボードの目標（goal）とタスク（task）を置く", "context": { "use_when": "やることを目標とタスクで持つとき（ボードの根の直下）", "not_for": "仕様と設計（main に書く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals", "complete", "cancelled"], "opens": "relations", "trees": ["board"] },
-    { "section": "complete", "label": "完了", "icon": { "name": "checklist", "color": "#34C759" }, "description": "ボードの Goals の中の、完了した目標と済んだタスクの置き場。カードのアクション（finish・done）がここへ移す", "context": { "use_when": "読むとき・済んだものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
-    { "section": "cancelled", "label": "打ち切り", "icon": { "name": "checklist", "color": "#34C759" }, "description": "ボードの Goals の中の、打ち切った目標とタスクの置き場。カードのアクション（cancel）がここへ移す", "context": { "use_when": "読むとき・打ち切ったものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
-    { "section": "workdir", "label": "作業ディレクトリ", "icon": { "name": "folder", "color": "#8E8E93" }, "description": "作業ディレクトリ。コアがこの機械の結び付けたフォルダを読み、中のディレクトリをセクション（directory）、ファイルをカード（file）として作る。中身はどの branch でも同じで、読むだけ。置けるのはメモ（note）だけ", "context": { "use_when": "コードのファイルを読むとき・カードから「実装」の線でファイルを指すとき・フォルダのそばにメモを置くとき（プロジェクトの木に並べると作業ディレクトリができる）", "not_for": "書くもの（ディレクトリとファイルはコアが読んで作る。中にセクションは作れない）" }, "holds": ["file", "note"], "sections": ["directory"], "opens": "relations", "trees": ["main"], "actions": ["read"] },
-    { "section": "directory", "label": "ディレクトリ", "icon": { "name": "folder", "color": "#8E8E93" }, "description": "作業ディレクトリの中のディレクトリ。コアが作業ディレクトリのセクションの中に、読んだフォルダから作る（根の直下には置かない）", "context": { "use_when": "読むだけ。ファイルのカードへ「実装」の線を引くとき・フォルダのそばにメモを置くとき", "not_for": "作るもの（コアが作業ディレクトリを読んで作る）" }, "holds": ["file", "note"], "sections": ["directory"], "opens": "relations", "trees": [] }
+    { "section": "goals", "label": "ボード", "icon": { "name": "checklist", "color": "#34C759" }, "description": "プロジェクトボードの目標（goal）とタスク（task）を置く", "context": { "use_when": "やることを目標とタスクで持つとき（ボードの根の直下）", "not_for": "仕様と設計（main に書く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals", "complete", "cancelled"], "opens": "relations", "trees": ["board"] },
+    { "section": "complete", "label": "完了", "icon": { "name": "checkmark.circle", "color": "#34C759" }, "description": "ボードの Goals の中の、完了した目標と済んだタスクの置き場。カードのアクション（finish・done）がここへ移す", "context": { "use_when": "読むとき・済んだものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
+    { "section": "cancelled", "label": "打ち切り", "icon": { "name": "xmark.circle", "color": "#8E8E93" }, "description": "ボードの Goals の中の、打ち切った目標とタスクの置き場。カードのアクション（cancel）がここへ移す", "context": { "use_when": "読むとき・打ち切ったものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
+    { "section": "workdir", "label": "作業ディレクトリ", "icon": { "name": "folder", "color": "#8E8E93" }, "description": "この機械のフォルダを結び付け、コアが読んでディレクトリをセクション、ファイルをカードにする所。中身はどの branch でも同じで、読むだけ。置けるのはメモ（note）だけ", "context": { "use_when": "コードのファイルを読むとき・カードから「実装」の線でファイルを指すとき・フォルダのそばにメモを置くとき（プロジェクトの木に並べると作業ディレクトリができる）", "not_for": "書くもの（ディレクトリとファイルはコアが読んで作る。中にセクションは作れない）" }, "holds": ["file", "note"], "sections": ["directory"], "opens": "relations", "trees": ["main"], "actions": ["read"] },
+    { "section": "directory", "label": "ディレクトリ", "icon": { "name": "folder", "color": "#8E8E93" }, "description": "作業ディレクトリの中のフォルダ。コアが読んで作業ディレクトリのセクションの中に作る（根の直下には置かない）", "context": { "use_when": "読むだけ。ファイルのカードへ「実装」の線を引くとき・フォルダのそばにメモを置くとき", "not_for": "作るもの（コアが作業ディレクトリを読んで作る）" }, "holds": ["file", "note"], "sections": ["directory"], "opens": "relations", "trees": [] }
   ],
   "lines": [
     {
-      "line": "embed", "label": "内包", "description": "欄の型が相手になる（相手の形をそのまま持つ）。線を外すと欄の型は string に戻る",
-      "context": { "use_when": "住所や金額のように、相手の形を欄にそのまま持つとき", "not_for": "相手を ID で指すだけのとき（points）" },
+      "line": "embed", "label": "内包", "description": "欄の型が相手の形になる",
+      "context": { "purpose": "欄の型が相手の形になる。欄の型が相手になる（相手の形をそのまま持つ）。線を外すと欄の型は string に戻る", "use_when": "住所や金額のように、相手の形を欄にそのまま持つとき", "not_for": "相手を ID で指すだけのとき（points）" },
       "base": "embed",
       "look": { "color": "amber", "dash": "solid", "begin": "filled-diamond", "end": "arrow" },
       "from": [{ "kinds": ["entity", "value"], "at": "row" }],
@@ -558,8 +564,8 @@
       "max": 1
     },
     {
-      "line": "points", "label": "ID で指す", "description": "欄の値が相手の ID。型は変わらない",
-      "context": { "use_when": "欄が相手の記録の ID を持つとき（外部キー）", "not_for": "相手の形を持つとき（embed）" },
+      "line": "points", "label": "ID で指す", "description": "欄の値が相手の ID を指す",
+      "context": { "purpose": "欄の値が相手の ID を指す。欄の値が相手の ID。型は変わらない", "use_when": "欄が相手の記録の ID を持つとき（外部キー）", "not_for": "相手の形を持つとき（embed）" },
       "base": "designate",
       "look": { "color": "green", "dash": "solid", "begin": "open-diamond", "end": "arrow" },
       "from": [{ "kinds": ["entity", "value"], "at": "row" }],
@@ -580,8 +586,8 @@
       "export": { "as": "annotation", "key": "x-pointsAt", "word": "id" }
     },
     {
-      "line": "link", "label": "つながる", "description": "型に関係しない、つながりだけの線（task からほかの task・goal へ、欄から使ってよい値の一覧のある欄へ、など。ボードのカードから main のカードへもフルパスで引ける（直す予定の仕様・設計へ。逆向きと branch にしか無いカードへは引けない））",
-      "context": { "use_when": "型に関係なく、つながりだけを言いたいとき。task から仕様のカードへも", "not_for": "本文の [[ ]] のつながり（mentions。本文から拾う）" },
+      "line": "link", "label": "つながる", "description": "型に関係しない、つながりだけの線",
+      "context": { "purpose": "型に関係しない、つながりだけの線（task からほかの task・goal へ、欄から使ってよい値の一覧のある欄へ、など。ボードのカードから main のカードへもフルパスで引ける（直す予定の仕様・設計へ。逆向きと branch にしか無いカードへは引けない））", "use_when": "型に関係なく、つながりだけを言いたいとき。task から仕様のカードへも", "not_for": "本文の [[ ]] のつながり（mentions。本文から拾う）" },
       "base": "link",
       "look": { "color": "grey", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["*"], "at": ["card", "row"] }],
@@ -591,7 +597,7 @@
     },
     {
       "line": "holds", "label": "置く", "description": "store が置く記録の形",
-      "context": { "use_when": "store に置く記録の形を言うとき" },
+      "context": { "purpose": "store が置く記録の形", "use_when": "store に置く記録の形を言うとき" },
       "base": "link",
       "look": { "color": "green", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["store"], "at": "card" }],
@@ -601,8 +607,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "of", "label": "形", "description": "データ（instance）がどの形（entity・value）の実例か、表（table）がどの形のデータを集めるか。MCP は value のキー of で書き、connections には書かない",
-      "context": { "use_when": "読むだけ。データと表の形は value のキー of で書く", "not_for": "形どうしの線（embed・points）" },
+      "line": "shapeOf", "label": "形", "description": "データや表がどの形のものか",
+      "context": { "purpose": "データや表がどの形のものか。データ（instance）がどの形（entity・value）の実例か、表（table）がどの形のデータを集めるか。MCP は value のキー of で書き、connections には書かない", "use_when": "読むだけ。データと表の形は value のキー of で書く", "not_for": "形どうしの線（embed・points）" },
       "base": "link",
       "look": { "color": "teal", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["instance", "table"], "at": "card" }],
@@ -613,10 +619,10 @@
       "export": { "as": "none" }
     },
     {
-      "line": "notes", "label": "決まり", "description": "flow の決まりを書いた note・freedoc・formatdoc か、formatdoc の項目",
-      "context": { "use_when": "flow の決まりを書いた文書や項目をつなぐとき" },
+      "line": "rules", "label": "決まり", "description": "flow が従う決まりを書いた文書",
+      "context": { "purpose": "flow が従う決まりを書いた文書。flow の決まりを書いた note・freedoc・formatdoc か、formatdoc の項目", "use_when": "flow の決まりを書いた文書や項目をつなぐとき" },
       "base": "link",
-      "look": { "color": "grey", "dash": "dotted", "begin": "none", "end": "arrow" },
+      "look": { "color": "violet", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["flow"], "at": "card" }],
       "to": { "kinds": ["note", "freedoc", "formatdoc"], "at": ["card", "row"] },
       "max": null,
@@ -624,8 +630,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "implementedBy", "label": "実装", "description": "仕様・設計のカード（とその欄・行・ノード）から、それを実装している作業ディレクトリのファイルか、その中の関数と型へ。main と branch のカードから引け、相手は to に木の中のパス（repo/src:'a.rs'・repo/src:'a.rs'.Order.total。まだ無いファイルと関数も書ける）",
-      "context": { "use_when": "仕様・設計を実装しているファイルや関数を言うとき" },
+      "line": "implementedBy", "label": "実装", "description": "仕様・設計を実装しているファイルや関数",
+      "context": { "purpose": "仕様・設計を実装しているファイルや関数。仕様・設計のカード（とその欄・行・ノード）から、それを実装している作業ディレクトリのファイルか、その中の関数と型へ。main と branch のカードから引け、相手は to に木の中のパス（repo/src:'a.rs'・repo/src:'a.rs'.Order.total。まだ無いファイルと関数も書ける）", "use_when": "仕様・設計を実装しているファイルや関数を言うとき" },
       "base": "link",
       "look": { "color": "violet", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["*"], "at": ["card", "row"] }],
@@ -634,8 +640,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "mentions", "label": "言及", "description": "note と文書の本文の [[ ]] が指す所。本文から拾うので connections には書かない",
-      "context": { "use_when": "読むだけ。本文の [[ ]] から拾うので書かない", "not_for": "connections に書く線" },
+      "line": "mentions", "label": "言及", "description": "本文の [[ ]] が指す所",
+      "context": { "purpose": "本文の [[ ]] が指す所。note と文書の本文の [[ ]] が指す所。本文から拾うので connections には書かない", "use_when": "読むだけ。本文の [[ ]] から拾うので書かない", "not_for": "connections に書く線" },
       "base": "link",
       "look": { "color": "blue", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["note", "freedoc"], "at": "card" }, { "kinds": ["formatdoc", "stackdoc"], "at": ["card", "row"] }],
@@ -643,11 +649,12 @@
       "max": null,
       "owner": ["note", "freedoc", "formatdoc", "stackdoc"],
       "source": "text",
+      "visible": false,
       "export": { "as": "none" }
     },
     {
-      "line": "next", "label": "次", "description": "ノードの次の行き先。2 本以上で並列に分かれ、同じ合流（join）のノードで合わさる",
-      "context": { "use_when": "ノードの次の行き先を言うとき。2 本以上で並列に分かれる" },
+      "line": "next", "label": "次", "description": "ノードの次の行き先",
+      "context": { "purpose": "ノードの次の行き先。2 本以上で並列に分かれ、同じ合流（join）のノードで合わさる", "use_when": "ノードの次の行き先を言うとき。2 本以上で並列に分かれる" },
       "base": "link",
       "look": { "color": "grey", "dash": "solid", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["begin", "process", "run", "wait", "join"], "at": "card" }],
@@ -658,8 +665,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "branch", "label": "条件", "description": "判断（eval）の分かれ道: 条件（欄 when）が当たるときの行き先。並びの順に当てる",
-      "context": { "use_when": "判断の条件ごとの行き先を、当てる順に" },
+      "line": "condition", "label": "条件", "description": "判断の条件が当たるときの行き先",
+      "context": { "purpose": "判断の条件が当たるときの行き先。判断（eval）の分かれ道: 条件（欄 when）が当たるときの行き先。並びの順に当てる", "use_when": "判断の条件ごとの行き先を、当てる順に" },
       "base": "link",
       "look": { "color": "blue", "dash": "solid", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["eval"], "at": "card" }],
@@ -673,8 +680,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "else", "label": "それ以外", "description": "判断（eval）のどの条件にも当たらないときの行き先（判断に必須）",
-      "context": { "use_when": "判断のどの条件にも当たらないときの行き先（判断に必須）" },
+      "line": "else", "label": "それ以外", "description": "判断のどの条件にも当たらないときの行き先",
+      "context": { "purpose": "判断のどの条件にも当たらないときの行き先。判断（eval）のどの条件にも当たらないときの行き先（判断に必須）", "use_when": "判断のどの条件にも当たらないときの行き先（判断に必須）" },
       "base": "link",
       "look": { "color": "violet", "dash": "solid", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["eval"], "at": "card" }],
@@ -685,8 +692,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "onError", "label": "失敗したら", "description": "実行（run）が失敗したときの行き先",
-      "context": { "use_when": "実行が失敗したときの行き先" },
+      "line": "onError", "label": "失敗したら", "description": "実行が失敗したときの行き先",
+      "context": { "purpose": "実行が失敗したときの行き先。実行（run）が失敗したときの行き先", "use_when": "実行が失敗したときの行き先" },
       "base": "link",
       "look": { "color": "red", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["run"], "at": "card" }],
@@ -697,8 +704,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "onTimeout", "label": "期限切れ", "description": "待つ（wait）が期限（timeout）を過ぎたときの行き先",
-      "context": { "use_when": "待つが期限を過ぎたときの行き先" },
+      "line": "onTimeout", "label": "期限切れ", "description": "待つが期限を過ぎたときの行き先",
+      "context": { "purpose": "待つが期限を過ぎたときの行き先。待つ（wait）が期限（timeout）を過ぎたときの行き先", "use_when": "待つが期限を過ぎたときの行き先" },
       "base": "link",
       "look": { "color": "amber", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["wait"], "at": "card" }],
@@ -709,8 +716,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "runs", "label": "実行する", "description": "実行（run）が呼んで終わりを待つフロー",
-      "context": { "use_when": "実行が呼ぶフローを言うとき" },
+      "line": "runs", "label": "実行する", "description": "実行が呼んで終わりを待つフロー",
+      "context": { "purpose": "実行が呼んで終わりを待つフロー。実行（run）が呼んで終わりを待つフロー", "use_when": "実行が呼ぶフローを言うとき" },
       "base": "link",
       "look": { "color": "green", "dash": "solid", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["run"], "at": "card" }],
@@ -720,10 +727,10 @@
       "export": { "as": "none" }
     },
     {
-      "line": "event", "label": "待つ終わり", "description": "開始（trigger: event）や待つ（for: event）が待つ、ほかのフローの終わり（欄 outcome にその結果）",
-      "context": { "use_when": "開始や待つが、ほかのフローの終わりを待つとき" },
+      "line": "awaits", "label": "待つ終わり", "description": "開始や待つが待つ、ほかのフローの終わり",
+      "context": { "purpose": "開始や待つが待つ、ほかのフローの終わり。開始（trigger: event）や待つ（for: event）が待つ、ほかのフローの終わり（欄 outcome にその結果）", "use_when": "開始や待つが、ほかのフローの終わりを待つとき" },
       "base": "link",
-      "look": { "color": "amber", "dash": "dashed", "begin": "none", "end": "arrow" },
+      "look": { "color": "amber", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["begin", "wait"], "at": "card" }],
       "to": { "kinds": ["flow"], "at": ["card"] },
       "max": 1,
@@ -734,10 +741,10 @@
       "export": { "as": "none" }
     },
     {
-      "line": "reads", "label": "読む", "description": "処理の行（read）が読む所。from に行（steps[0] など）",
-      "context": { "use_when": "処理の行が読む所を言うとき（from に行）" },
+      "line": "reads", "label": "読む", "description": "処理の行が読む所",
+      "context": { "purpose": "処理の行が読む所。処理の行（read）が読む所。from に行（steps[0] など）", "use_when": "処理の行が読む所を言うとき（from に行）" },
       "base": "link",
-      "look": { "color": "grey", "dash": "dotted", "begin": "none", "end": "arrow" },
+      "look": { "color": "teal", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["process"], "at": "row" }],
       "to": { "kinds": ["*"], "at": ["card", "row"] },
       "max": null,
@@ -745,8 +752,8 @@
       "export": { "as": "none" }
     },
     {
-      "line": "writes", "label": "書く", "description": "処理の行（write）が書く所。from に行（steps[0] など）",
-      "context": { "use_when": "処理の行が書く所を言うとき（from に行）" },
+      "line": "writes", "label": "書く", "description": "処理の行が書く所",
+      "context": { "purpose": "処理の行が書く所。処理の行（write）が書く所。from に行（steps[0] など）", "use_when": "処理の行が書く所を言うとき（from に行）" },
       "base": "link",
       "look": { "color": "grey", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["process"], "at": "row" }],
@@ -756,10 +763,10 @@
       "export": { "as": "none" }
     },
     {
-      "line": "peer", "label": "相手", "description": "送る・受ける相手のフロー: 処理の行（send・receive）、開始の受ける（trigger: receive）、終了の返す相手。何本でも引け（同じ所から同じ flow へは 1 本）、program と一緒にも書ける",
-      "context": { "use_when": "送る・受ける・返す相手のフローを言うとき" },
+      "line": "partner", "label": "相手", "description": "送る・受ける・返す相手のフロー",
+      "context": { "purpose": "送る・受ける・返す相手のフロー。送る・受ける相手のフロー: 処理の行（send・receive）、開始の受ける（trigger: receive）、終了の返す相手。何本でも引け（同じ所から同じ flow へは 1 本）、program と一緒にも書ける", "use_when": "送る・受ける・返す相手のフローを言うとき" },
       "base": "link",
-      "look": { "color": "violet", "dash": "solid", "begin": "none", "end": "arrow" },
+      "look": { "color": "blue", "dash": "dashed", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["process"], "at": "row" }, { "kinds": ["begin", "end"], "at": "card" }],
       "to": { "kinds": ["flow"], "at": ["card"] },
       "max": null,
@@ -767,10 +774,10 @@
       "export": { "as": "none" }
     },
     {
-      "line": "key", "label": "鍵を使う", "description": "署名する（use: sign）・確かめる（use: verify）鍵: 処理の行（sign・verify の鍵、send・call の署名、receive・call の確かめ）、実行の渡すものと受けたもの、開始の受けたもの、終了の返すもの",
-      "context": { "use_when": "署名する鍵・確かめる鍵を言うとき（欄 use）" },
+      "line": "key", "label": "鍵", "description": "署名を作る・確かめるのに使う",
+      "context": { "purpose": "署名を作る・確かめるのに使う。署名する（use: sign）・確かめる（use: verify）鍵: 処理の行（sign・verify の鍵、send・call の署名、receive・call の確かめ）、実行の渡すものと受けたもの、開始の受けたもの、終了の返すもの", "use_when": "署名する鍵・確かめる鍵を言うとき（欄 use）" },
       "base": "link",
-      "look": { "color": "red", "dash": "dashed", "begin": "none", "end": "arrow" },
+      "look": { "color": "red", "dash": "dotted", "begin": "none", "end": "arrow" },
       "from": [{ "kinds": ["process"], "at": "row" }, { "kinds": ["begin", "run", "end"], "at": "card" }],
       "to": { "kinds": ["*"], "at": ["card", "row"] },
       "max": 2,
@@ -782,7 +789,7 @@
     }
   ],
   "actions": [
-    { "action": "start", "label": "開始", "description": "SB の branch を作り（名前は value の branch。省けばカードの名前から: McpPictures → mcp-pictures）、workBranch にその名前、status に進行中を書く。未着手の goal と、進行中で workBranch の branch が無い goal で使える", "value": ["branch"] },
+    { "action": "start", "label": "開始", "description": "プロジェクトの branch を作り（名前は value の branch。省けばカードの名前から: UserSignup → user-signup）、workBranch にその名前、status に進行中を書く。未着手の goal と、進行中で workBranch の branch が無い goal で使える", "value": ["branch"] },
     { "action": "finish", "label": "完了", "description": "status を完了に、workBranch を空にし、ボードの完了のセクションへ移す（中のカードも）。workBranch の branch に main へ入っていない変更か出している MR があれば断る。変更の無い branch は消す", "value": [] },
     { "action": "cancel", "label": "打ち切り", "description": "status を打ち切りに、workBranch を空にし、ボードの打ち切りのセクションへ移す。workBranch の branch は、変更が無ければ消し、変更が残れば value の discard: true のときだけ消す", "value": ["discard"] },
     { "action": "done", "label": "済みにする", "description": "done を入れる。goal の外に置いた task はボードの完了のセクションへ移す", "value": [] },

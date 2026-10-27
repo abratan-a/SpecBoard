@@ -48,7 +48,7 @@ impl Group {
 }
 
 /// Every group, in the order they are said.
-pub(crate) const GROUPS: [Group; 17] = [
+pub(crate) const GROUPS: [Group; 21] = [
     Group {
         name: "brokenPaths",
         info: false,
@@ -120,6 +120,27 @@ pub(crate) const GROUPS: [Group; 17] = [
         keys: &["peer", "carries"],
     },
     Group {
+        name: "missingPartners",
+        info: false,
+        label: "inspection.group.missingPartners.label",
+        fix: "inspection.group.missingPartners.fix",
+        keys: &[],
+    },
+    Group {
+        name: "missingStores",
+        info: false,
+        label: "inspection.group.missingStores.label",
+        fix: "inspection.group.missingStores.fix",
+        keys: &[],
+    },
+    Group {
+        name: "unlinkedPartners",
+        info: false,
+        label: "inspection.group.unlinkedPartners.label",
+        fix: "inspection.group.unlinkedPartners.fix",
+        keys: &[],
+    },
+    Group {
         name: "tagGroupViolations",
         info: false,
         label: "inspection.group.tagGroupViolations.label",
@@ -131,6 +152,13 @@ pub(crate) const GROUPS: [Group; 17] = [
         info: true,
         label: "inspection.group.freeCards.label",
         fix: "inspection.group.freeCards.fix",
+        keys: &[],
+    },
+    Group {
+        name: "storeActors",
+        info: true,
+        label: "inspection.group.storeActors.label",
+        fix: "inspection.group.storeActors.fix",
         keys: &[],
     },
     Group {
@@ -166,13 +194,15 @@ pub(crate) const GROUPS: [Group; 17] = [
         info: true,
         label: "inspection.group.codeChanged.label",
         fix: "inspection.group.codeChanged.fix",
-        keys: &[],
+        keys: &["line"],
     },
 ];
 
 /// What a row says to help fix it, not what it is: left out of its print, so a hint that changes
-/// does not bring a marked item back.
-const HINTS: [&str; 2] = ["hint", "moveTo"];
+/// does not bring a marked item back. A kind of line's label is said in the language of the call,
+/// and the item is the same in every language; the flows that call a begin with no partner now
+/// change as other flows do.
+const HINTS: [&str; 4] = ["hint", "moveTo", "lineLabel", "callers"];
 
 fn group_named(name: &str) -> Option<&'static Group> {
     GROUPS.iter().find(|g| g.name == name)
@@ -323,7 +353,38 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
         ),
         "freeCards" => text!("inspection.problem.freeCard", section = text("section")),
         "unreferenced" => text!("inspection.problem.unreferenced"),
+        "storeActors" => text!(
+            "inspection.problem.storeActors",
+            name = crate::pathtext::split_section(&text("at")).1.to_string(),
+            actors = joined("actors")
+        ),
         "overlaps" => text!("inspection.problem.overlap", over = joined("over")),
+        "missingPartners" if row.contains_key("op") => {
+            text!("inspection.problem.missingPartnerRow", op = text("op"))
+        }
+        "missingPartners" if row.contains_key("callers") => {
+            text!(
+                "inspection.problem.missingPartner",
+                callers = joined("callers")
+            )
+        }
+        "missingPartners" => text!("inspection.problem.missingPartnerNoCaller"),
+        "missingStores" => missing_store(row, &text("op"), &text("data")),
+        "unlinkedPartners" => {
+            let flows = joined("flows");
+            let actor = text("actor");
+            let names = match (row.contains_key("flows"), row.contains_key("actor")) {
+                (true, true) => text!("check.partner.flowsAndActor", flows, actor),
+                (true, false) => text!("check.partner.flows", flows),
+                _ => text!("check.partner.actor", actor),
+            };
+            text!(
+                "inspection.problem.unlinkedPartner",
+                op = text("op"),
+                program = text("program"),
+                names
+            )
+        }
         "review" => text!(
             "inspection.problem.review",
             cards = crate::text::list(
@@ -337,6 +398,7 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
         ),
         "codeChanged" => text!(
             "inspection.problem.codeChanged",
+            kind = text("lineLabel"),
             lines = crate::text::list(
                 &row.get("lines")
                     .and_then(Value::as_array)
@@ -352,6 +414,69 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
             .map(|k| k.render())
             .unwrap_or_default(),
     }
+}
+
+/// What a `missingStores` item says: the shapes no store keeps, and those whose store is not
+/// written as they reach two or more (`candidates`), each list by the cards' names alone.
+fn missing_store(row: &Map<String, Value>, op: &str, data: &str) -> String {
+    let named = |paths: Vec<&str>| {
+        crate::text::list(
+            &paths
+                .into_iter()
+                .map(|p| crate::pathtext::split_section(p).1)
+                .collect::<Vec<_>>(),
+        )
+    };
+    let candidates = row.get("candidates").and_then(Value::as_object);
+    let shapes: Vec<&str> = row
+        .get("shapes")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .collect();
+    let (undecided, none): (Vec<&str>, Vec<&str>) = shapes
+        .into_iter()
+        .partition(|s| candidates.is_some_and(|c| c.contains_key(*s)));
+    if undecided.is_empty() {
+        return text!(
+            "inspection.problem.missingStore",
+            shapes = named(none),
+            op = op,
+            data = data
+        );
+    }
+    let mut stores: Vec<&str> = Vec::new();
+    for shape in &undecided {
+        for store in candidates
+            .and_then(|c| c.get(*shape))
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+        {
+            if !stores.contains(&store) {
+                stores.push(store);
+            }
+        }
+    }
+    if none.is_empty() {
+        return text!(
+            "inspection.problem.missingStoreUndecided",
+            shapes = named(undecided),
+            stores = named(stores),
+            op = op,
+            data = data
+        );
+    }
+    text!(
+        "inspection.problem.missingStoreBoth",
+        none = named(none),
+        shapes = named(undecided),
+        stores = named(stores),
+        op = op,
+        data = data
+    )
 }
 
 /// The paths of the cards of the tree that are done (`cross::finished`): a goal finished or
@@ -380,7 +505,7 @@ fn in_done(at: &str, done: &HashSet<String>) -> bool {
 /// project's layout, which the overlaps are worked out on.
 pub(crate) fn items(seen: &Seen, conn: &Connection) -> Result<Vec<Item>, String> {
     let layout = super::grid::Layout::read(conn, &seen.summary.id)?;
-    let overlaps = super::grid::overlaps(&seen.project(), &layout);
+    let overlaps = super::tidy::overlaps(&crate::store::Reader { conn }, seen, &layout)?;
     // A branch an open goal works in is its plan: code its lines name may be still to write.
     let planned = if crate::write::is_branch_tree(&seen.named.tree) {
         let board = super::cross::board(&crate::store::Reader { conn }, &seen.summary.id)?;
@@ -412,28 +537,40 @@ pub(crate) fn items(seen: &Seen, conn: &Connection) -> Result<Vec<Item>, String>
         let Some(found) = code.get(&card.id) else {
             continue;
         };
-        let changed: Vec<Value> = found
-            .iter()
-            .filter(|l| l.changed())
-            .map(|l| {
-                let mut line = Map::new();
-                if !l.from.is_empty() {
-                    line.insert("from".into(), l.from.clone().into());
-                }
-                line.insert("to".into(), l.to.clone().into());
-                if let Some(at) = &l.recorded_at {
-                    line.insert("recordedAt".into(), at.clone().into());
-                }
-                Value::Object(line)
-            })
-            .collect();
-        if changed.is_empty() {
-            continue;
+        // One item a kind of line: an implementation's and a test's function read apart.
+        let mut kinds: Vec<&str> = Vec::new();
+        for l in found.iter().filter(|l| l.changed()) {
+            if !kinds.contains(&l.kind.as_str()) {
+                kinds.push(&l.kind);
+            }
         }
-        let mut row = Map::new();
-        row.insert("at".into(), project.full(card).into());
-        row.insert("lines".into(), Value::Array(changed));
-        rows.push(("codeChanged", row));
+        for kind in kinds {
+            let changed: Vec<Value> = found
+                .iter()
+                .filter(|l| l.changed() && l.kind == kind)
+                .map(|l| {
+                    let mut line = Map::new();
+                    if !l.from.is_empty() {
+                        line.insert("from".into(), l.from.clone().into());
+                    }
+                    line.insert("to".into(), l.to.clone().into());
+                    if let Some(at) = &l.recorded_at {
+                        line.insert("recordedAt".into(), at.clone().into());
+                    }
+                    Value::Object(line)
+                })
+                .collect();
+            let label = project
+                .defs
+                .line(kind)
+                .map_or_else(|| kind.to_string(), |d| d.said());
+            let mut row = Map::new();
+            row.insert("at".into(), project.full(card).into());
+            row.insert("line".into(), kind.into());
+            row.insert("lineLabel".into(), label.into());
+            row.insert("lines".into(), Value::Array(changed));
+            rows.push(("codeChanged", row));
+        }
     }
     let done = done_cards(seen);
     // Stable: in a group, as the check found them.
@@ -1025,8 +1162,12 @@ mod tests {
                 "strayFields",
                 "flowProblems",
                 "peerMismatches",
+                "missingPartners",
+                "missingStores",
+                "unlinkedPartners",
                 "tagGroupViolations",
                 "freeCards",
+                "storeActors",
                 "unreferenced",
                 "uncheckedPatterns",
                 "overlaps",
@@ -1039,6 +1180,7 @@ mod tests {
             info,
             [
                 "freeCards",
+                "storeActors",
                 "unreferenced",
                 "uncheckedPatterns",
                 "overlaps",

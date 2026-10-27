@@ -56,7 +56,8 @@ struct FormatDocEditor: View {
         .onChange(of: model.selectedRow) { if Self.opensToRows(model, doc) { writing = true } }
     }
 
-    /// The document as it reads: as it is written out.
+    /// The document as it reads: as it is written out, each row a block of its own — its path and its link
+    /// to copy from its right-click, and each item's bracket in the left margin (`RowMarks`).
     @ViewBuilder
     private func reader(padding: CGFloat) -> some View {
         if let detail = model.detail {
@@ -65,14 +66,33 @@ struct FormatDocEditor: View {
                     Text(writing ? L10n[.Docs.wordPreview] : L10n[.Docs.formatdocNothingWritten]).foregroundStyle(.tertiary)
                         .padding(padding).frame(maxWidth: .infinity, alignment: .leading)
                 } else {
+                    let margin = Self.margins(padding, outlined: doc.rows.contains { $0.kind == .item })
                     MarkdownView(text: Self.document(doc, in: detail), size: 13,
-                                 refs: NoteEditor.refs(doc, detail) { model.open(path: $0, from: $1) })
-                        .padding(.horizontal, padding).padding(.vertical, padding * 0.7)
+                                 refs: NoteEditor.refs(doc, detail) { model.open(path: $0, from: $1) },
+                                 rowMenu: { row, menu in
+                                     FormatDocMenus.rowMenu(menu, row: PathText.names(row), in: doc, directory: detail.directory,
+                                                            editable: editable) { names in
+                                         model.selectRow(doc.id, .formatRow(PathText.joinNames(names)))
+                                         writing = true
+                                     }
+                                 })
+                        .padding(.leading, margin.leading).padding(.trailing, margin.trailing)
+                        .padding(.vertical, padding * 0.7)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
     }
+
+    /// The reader's side paddings around the page: the page keeps its own room at the right for a lit row's
+    /// outline (`RowMarks.edge`), and its own margin at the left for the brackets (`RowMarks.gutter`), which
+    /// moves the text right by `outlineIndent` and takes the rest from the padding.
+    static func margins(_ padding: CGFloat, outlined: Bool) -> (leading: CGFloat, trailing: CGFloat) {
+        let leading = outlined ? max(0, padding + outlineIndent - RowMarks.gutter) : padding
+        return (leading, max(0, padding - RowMarks.edge))
+    }
+
+    static let outlineIndent: CGFloat = 18
 
     /// Its rows, or the first ones to add.
     @ViewBuilder
@@ -95,40 +115,56 @@ struct FormatDocEditor: View {
 
     /// The document as it reads: its title, each item a heading as deep as it
     /// is, each row what it says — as it is written out (`DocumentExport.markdown`), but
-    /// with the project's paths left for the view to resolve, link and draw.
+    /// with the project's paths left for the view to resolve, link and draw. Each row starts
+    /// with its mark (`RowMarks`): without them it is the same Markdown (`RowMarks.plain`).
     static func document(_ doc: SchemaNode, in detail: ProjectDetail) -> String {
         let directory = detail.directory
         let base = directory.sectionId(of: doc)
         func missing(_ target: String) -> String { "~~\(MarkdownRefs.code(target))~~" }
-        return "# \(doc.label.isEmpty ? doc.name : doc.label)\n\n"
-            + FormatRows.markdown(doc.rows) { row, _, _ in
-                switch row.kind {
-                case .item:
-                    return nil
-                case .text:
-                    return row.body
-                case .table:
-                    return FormatRows.table(row.columns, row.cells)
-                case .diagram:
-                    return "![[\(row.target)]]"
-                case .diagrams:
-                    guard let charts = FormatRender.charts(in: row.target, from: base, in: detail) else { return missing(row.target) }
-                    return charts.map { "**\($0.name)**\n\n![[\(directory.full($0))]]" }.joined(separator: "\n\n")
-                case .card:
-                    guard let card = directory.schema(row.target, from: base),
-                          let table = FormatRender.cardTable(card, in: detail, name: { directory.full($0) }) else {
-                        return missing(row.target)
-                    }
-                    return table
+        func said(_ row: FormatRow) -> String? {
+            switch row.kind {
+            case .item:
+                return nil
+            case .text:
+                return row.body
+            case .table:
+                return FormatRows.table(row.columns, row.cells)
+            case .diagram:
+                return "![[\(row.target)]]"
+            case .diagrams:
+                guard let charts = FormatRender.charts(in: row.target, from: base, in: detail) else { return missing(row.target) }
+                return charts.map { "**\($0.name)**\n\n![[\(directory.full($0))]]" }.joined(separator: "\n\n")
+            case .card:
+                guard let card = directory.schema(row.target, from: base),
+                      let table = FormatRender.cardTable(card, in: detail, name: { directory.full($0) }) else {
+                    return missing(row.target)
                 }
+                return table
             }
+        }
+        var parts = ["# \(doc.label.isEmpty ? doc.name : doc.label)"]
+        FormatRows.walk(doc.rows) { row, path, depth in
+            var mark = RowMarks.Mark(kind: .row, depth: depth, row: PathText.joinNames(path), path: directory.full(doc, path))
+            let text: String
+            if row.kind == .item {
+                mark.kind = .item
+                mark.heading = row.title
+                text = FormatRows.heading(row, depth: depth)
+            } else {
+                // A row that says nothing is not a block: nothing to right-click, as nothing is read there.
+                guard let written = said(row)?.trimmingCharacters(in: .newlines), !written.isEmpty else { return }
+                text = written
+            }
+            parts.append(RowMarks.line(mark) + "\n" + RowMarks.clean(text))
+        }
+        return parts.joined(separator: "\n\n")
     }
 
     // MARK: - Above
 
     private var header: some View {
         let foldable = foldablePaths
-        return CardBar(kind: .formatdoc, badge: L10n[.Docs.formatdocBadge], name: doc.name, label: doc.label) {
+        return CardBar(kind: .formatdoc, name: doc.name, label: doc.label) {
             EmptyView()
         } tools: {
             if !foldable.isEmpty && writing {
@@ -562,13 +598,13 @@ struct FormatRowEditor: View {
     private func rename(to typed: String, _ row: FormatRow) {
         let name: String
         do { name = try Validate.name(typed, field: "name") } catch {
-            model.lastError = error.localizedDescription
+            model.lastError = ErrorText.said(error)
             return
         }
         guard name != row.name else { return }
         let siblings = FormatRows.children(of: Array(names.dropLast()), in: note.rows)
         guard !siblings.contains(where: { $0.name == name }) else {
-            model.lastError = L10n[.Docs.errorRowNameTaken(name)]
+            model.tell(error: { L10n.text(.Docs.errorRowNameTaken(name), in: $0) })
             return
         }
         var next = row

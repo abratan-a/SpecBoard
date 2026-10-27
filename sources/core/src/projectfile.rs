@@ -1,11 +1,22 @@
-//! A project as one JSON file, in the form of version 28: the project's row, main's sections in tree order
+//! A project as one JSON file, in the form of version 33: the project's row, main's sections in tree order
 //! and its cards by section, order and name, the branches as the store keeps them, the
 //! board, the diagram's settings — with the cards in their kinds' form, and last every box
 //! on a diagram (`places`), how cards look (`looks`), the check's marks (`inspectionMarks`) and the
 //! code the implementations' lines were recorded at (`codeMarks`).
 //! A file's change notes (`changelog`, a
 //! table nothing wrote, gone: `schema::NO_CHANGELOG`) are let go when it is read; no
-//! version is given for it. Version 28 has the code the lines to working directories' files were
+//! version is given for it. Version 33 has the built-in names of now: the kinds of line `rules`,
+//! `shapeOf`, `condition`, `awaits` and `partner`, an enum's value keyed by `name`, a goal's values in
+//! English; a file of before has those of before, moved as it is read (`name_move`). Version 32 has, on a flow's begin, that it receives from anyone (`anyCaller`);
+//! a file of before has none, and an app of before refuses one of 32 as newer rather than read it as a
+//! field its kinds do not have. Version 31 has sections of the kind `actor`, and on a section's document
+//! what an actor is (`figure`) and the section's own mark (`icon`); a file of before has none, and an app
+//! of before refuses one of 31 as newer rather than leave out sections of a kind it does not know.
+//! Version 30 has, on an entity's and a value's card, how data of its shape is
+//! drawn as a list (`face`); a file of before has none, and an app of before refuses one of 30 as newer
+//! rather than as cards that do not fit its kinds. Version 29 has the groups on the diagrams among the boxes (`places` of
+//! the kind `group`, its name the `item`, how it looks its `look`); a file of before has none, and an
+//! app of before refuses one of 29 as newer rather than a box of a kind it does not know. Version 28 has the code the lines to working directories' files were
 //! recorded at (`codeMarks`: by the line's id, of the lines some tree holds); a file of before has
 //! none, and its lines read as not recorded. Version 27 has, in an enum's values, what each stands for
 //! (`description`); a file of before has none. An app of before refuses a file of 27 as newer
@@ -43,7 +54,7 @@ use serde_json::{Map, Value};
 use std::collections::{HashMap, HashSet};
 
 pub const FORMAT: &str = "specboard/project";
-pub const VERSION: i64 = 28;
+pub const VERSION: i64 = 33;
 
 /// The form's name before a plan was called a project (versions 11 to 17), read still.
 pub const FORMAT_BEFORE: &str = "specboard/plan";
@@ -426,9 +437,17 @@ pub fn write(conn: &Connection, project_id: &str) -> Result<String, String> {
         }
     };
     let mut stmt = conn
-        .prepare("SELECT branch_id, view, item_kind, item, x, y, w, h, pinned FROM places WHERE project_id = ?")
+        .prepare("SELECT branch_id, view, item_kind, item, x, y, w, h, pinned, look FROM places WHERE project_id = ?")
         .map_err(sql)?;
-    type Place = (String, String, String, String, [Option<i64>; 4], bool);
+    type Place = (
+        String,
+        String,
+        String,
+        String,
+        [Option<i64>; 4],
+        bool,
+        Option<String>,
+    );
     let mut places: Vec<Place> = stmt
         .query_map([project_id], |r| {
             Ok((
@@ -438,6 +457,7 @@ pub fn write(conn: &Connection, project_id: &str) -> Result<String, String> {
                 r.get(3)?,
                 [r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?],
                 r.get::<_, i64>(8)? != 0,
+                r.get(9)?,
             ))
         })
         .map_err(sql)?
@@ -448,7 +468,7 @@ pub fn write(conn: &Connection, project_id: &str) -> Result<String, String> {
     });
     let places: Vec<Value> = places
         .into_iter()
-        .map(|(branch, view, item_kind, item, at, pinned)| {
+        .map(|(branch, view, item_kind, item, at, pinned, look)| {
             let mut out = Map::new();
             if !branch.is_empty() {
                 out.insert("branch_id".into(), branch.into());
@@ -465,6 +485,10 @@ pub fn write(conn: &Connection, project_id: &str) -> Result<String, String> {
             }
             if pinned {
                 out.insert("pinned".into(), 1.into());
+            }
+            // How a group looks, as the object it is.
+            if let Some(look) = look.and_then(|t| serde_json::from_str::<Value>(&t).ok()) {
+                out.insert("look".into(), look);
             }
             Value::Object(out)
         })

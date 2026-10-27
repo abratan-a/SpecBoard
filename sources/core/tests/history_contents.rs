@@ -94,7 +94,7 @@ fn make_pay(core: &Core) {
             "Charts/Shop:Pay.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "decide"}]},
             "Charts/Shop:Pay.decide": {"kind": "eval", "value": "Schemas/Ordering:Order.status",
                 "connections": [
-                    {"line": "branch", "to": "done", "fields": {"when": "書類がそろっていない"}},
+                    {"line": "condition", "to": "done", "fields": {"when": "書類がそろっていない"}},
                     {"line": "else", "to": "failed"}
                 ]},
             "Charts/Shop:Pay.done": {"kind": "end", "outcome": "success"},
@@ -110,7 +110,7 @@ fn a_line_a_person_deleted_by_a_slip_can_be_read_back_with_its_condition() {
     window(
         &core,
         "card_update",
-        json!({"target": "Charts/Shop:Pay.decide", "value": {"connections": {"remove": [{"line": "branch", "to": "Charts/Shop:Pay.done"}]}}}),
+        json!({"target": "Charts/Shop:Pay.decide", "value": {"connections": {"remove": [{"line": "condition", "to": "Charts/Shop:Pay.done"}]}}}),
     );
     let seq = seq_of(&core, "main");
     let read = contents(&core, "main", json!({"seq": seq}));
@@ -123,8 +123,8 @@ fn a_line_a_person_deleted_by_a_slip_can_be_read_back_with_its_condition() {
             "path": "Charts/Shop:Pay.decide",
             "change": "change",
             "units": [{
-                "unit": "connections.branch",
-                "before": {"line": "branch", "to": "Charts/Shop:Pay.done", "fields": {"when": "書類がそろっていない"}},
+                "unit": "connections.condition",
+                "before": {"line": "condition", "to": "Charts/Shop:Pay.done", "fields": {"when": "書類がそろっていない"}},
                 "after": null
             }]
         }]),

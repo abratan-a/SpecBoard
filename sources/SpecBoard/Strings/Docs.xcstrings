@@ -163,24 +163,6 @@
         }
       }
     },
-    "formatdoc.badge" : {
-      "comment" : "The kind badge in the header of a formatdoc's card editor.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "formatdoc (formatted document)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "formatdoc（整形文書）"
-          }
-        }
-      }
-    },
     "formatdoc.foldMenu" : {
       "comment" : "Title of the header menu that expands or collapses every item of a formatdoc.",
       "extractionState" : "manual",
@@ -1057,6 +1039,60 @@
         }
       }
     },
+    "menu.copyAsLink" : {
+      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the row's path written as a link, [[path]].",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy as link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクとしてコピー"
+          }
+        }
+      }
+    },
+    "menu.copyItemAsLink" : {
+      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the path of the item that holds the row, written as a link, [[path]].",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy item as link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目をリンクとしてコピー"
+          }
+        }
+      }
+    },
+    "menu.copyItemPath" : {
+      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the path of the item that holds the row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy path of item"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目のパスをコピー"
+          }
+        }
+      }
+    },
     "menu.deleteRow" : {
       "comment" : "Context-menu item of a formatdoc row that deletes it.",
       "extractionState" : "manual",
@@ -1075,6 +1111,24 @@
         }
       }
     },
+    "menu.editRow" : {
+      "comment" : "Context-menu item of a row of a formatdoc read as a document: switch to Edit with that row picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit this row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行を編集"
+          }
+        }
+      }
+    },
     "menu.indent" : {
       "comment" : "Context-menu item of a formatdoc row: move it one level down in the nesting.",
       "extractionState" : "manual",
@@ -1089,6 +1143,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一段下げる"
+          }
+        }
+      }
+    },
+    "menu.itemHeader" : {
+      "comment" : "Context-menu section header of a row of a formatdoc read as a document: the item that holds the row, its path in the document and its heading.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Item: %1$@ — %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目: %1$@ — %2$@"
           }
         }
       }
@@ -1561,24 +1633,6 @@
         }
       }
     },
-    "stackdoc.badge" : {
-      "comment" : "The kind badge in the header of a stackdoc's card editor.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stackdoc (stacked document)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "stackdoc（積み重ね文書）"
-          }
-        }
-      }
-    },
     "table.glance" : {
       "comment" : "The one-line glance at a table row of a formatdoc: how many rows it has and its column headings.",
       "extractionState" : "manual",
@@ -1964,13 +2018,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Version (e.g. 0.2.24)"
+            "value" : "Version (e.g. 1.2.0)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版（例 0.2.24）"
+            "value" : "版（例 1.2.0）"
           }
         }
       }

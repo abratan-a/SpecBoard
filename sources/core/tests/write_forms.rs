@@ -209,6 +209,8 @@ fn a_sections_boxes_are_read_by_the_path_a_write_puts_them_by() {
     );
     let places = read["places"].as_object().unwrap();
     // A card, a card ghost of another section's card and a section ghost, each under its own path.
+    // Every line into Ordering lands on its Order, drawn whole there, so its section ghost is not
+    // drawn: its place is kept, marked so.
     assert_eq!(
         read["places"]["Schemas:Customer"]["topLeft"],
         json!({"x": 200, "y": 0})
@@ -219,7 +221,7 @@ fn a_sections_boxes_are_read_by_the_path_a_write_puts_them_by() {
     );
     assert_eq!(
         read["places"]["Schemas/Ordering"],
-        json!({"topLeft": {"x": 200, "y": 80}, "bottomRight": {"x": 211, "y": 85}, "size": {"w": 12, "h": 6}})
+        json!({"topLeft": {"x": 200, "y": 80}, "bottomRight": {"x": 211, "y": 85}, "size": {"w": 12, "h": 6}, "drawn": false})
     );
     assert!(places.values().all(|b| b["topLeft"].is_object()));
     // What was read is written back as it is: the same boxes, nothing moved.

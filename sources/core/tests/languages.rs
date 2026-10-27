@@ -242,7 +242,8 @@ fn a_mark_by_the_window_is_said_as_the_window_in_each_language() {
 }
 
 /// The sample with something of more of the check's groups: data its shape requires more of, a
-/// pattern the check cannot read, and a flow with a node nothing leads to.
+/// pattern the check cannot read, a flow with a node nothing leads to, and a flow whose start
+/// receives from a program named like another flow.
 fn much_to_check() -> Core {
     let core = Core::open(script_store()).unwrap();
     let read = ok(&core, "project_read", json!({}));
@@ -276,7 +277,9 @@ fn much_to_check() -> Core {
             "Charts/Shop:Lost.start": {"kind": "begin", "trigger": "receive",
                 "connections": [{"line": "next", "to": "work"}]},
             "Charts/Shop:Lost.work": {"kind": "process"},
-            "Charts/Shop:Lost.astray": {"kind": "process"}
+            "Charts/Shop:Lost.astray": {"kind": "process"},
+            "Charts/Shop:Called": {"kind": "flow"},
+            "Charts/Shop:Called.start": {"kind": "begin", "trigger": "receive", "program": "Refund"}
         }}),
     );
     core
@@ -291,6 +294,7 @@ fn an_item_of_the_check_is_the_same_in_every_language() {
         "cardProblems",
         "flowProblems",
         "peerMismatches",
+        "unlinkedPartners",
         "freeCards",
         "uncheckedPatterns",
     ] {
@@ -399,16 +403,6 @@ fn a_refusal_and_a_warning_are_said_in_the_language_of_the_call() {
     assert!(!japanese(&warnings), "{gone}");
 }
 
-/// Whether `text` has Japanese besides the values a goal keeps (its status and priority), which every
-/// language quotes as they are.
-fn japanese_but_kept(text: &str) -> bool {
-    let mut text = text.to_string();
-    for value in ["未着手", "進行中", "完了", "打ち切り", "高", "中", "低"] {
-        text = text.replace(value, "");
-    }
-    japanese(&text)
-}
-
 /// An MCP message answered in `lang`, as the agent sends it with its answer language.
 fn rpc_in(core: &Core, lang: &str, method: &str, params: Value) -> Value {
     let message = json!({"jsonrpc": "2.0", "id": 1, "method": method, "params": params});
@@ -442,15 +436,12 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
         english_entity.to_string().contains("Record"),
         "{english_entity}"
     );
-    assert!(
-        !japanese_but_kept(&english_entity.to_string()),
-        "{english_entity}"
-    );
+    assert!(!japanese(&english_entity.to_string()), "{english_entity}");
     let read = mcp_in(&core, "en", "kind_read", json!({"target": "goal"})).unwrap();
     let said = read.to_string();
     assert!(said.contains("\"Status\""), "{said}");
-    // The values a goal keeps stay as they are; how each is shown is said beside them.
-    assert!(said.contains("未着手"), "{said}");
+    // The values a goal keeps are in English; how each is shown is said beside them.
+    assert!(said.contains("notStarted"), "{said}");
     assert!(said.contains("Not started"), "{said}");
     let guide = rpc_in(
         &core,
@@ -489,21 +480,17 @@ fn the_tools_and_the_instructions_are_said_in_the_mcp_answer_language() {
             json!({"protocolVersion": "2025-06-18"}),
         );
         let instructions = started["instructions"].as_str().unwrap();
-        assert_eq!(
-            japanese_but_kept(instructions),
-            in_japanese,
-            "{instructions}"
-        );
+        assert_eq!(japanese(instructions), in_japanese, "{instructions}");
         let listed = rpc_in(&core, lang, "tools/list", json!({}));
         let tools = listed["tools"].as_array().unwrap();
         assert!(tools.len() > 40, "{listed}");
         for tool in tools {
             let said = format!("{} {}", tool["title"], tool["description"]);
-            assert_eq!(japanese_but_kept(&said), in_japanese, "{tool}");
+            assert_eq!(japanese(&said), in_japanese, "{tool}");
         }
         let card_create = tools.iter().find(|t| t["name"] == "card_create").unwrap();
         assert_eq!(
-            japanese_but_kept(&card_create["inputSchema"].to_string()),
+            japanese(&card_create["inputSchema"].to_string()),
             in_japanese,
             "{card_create}"
         );
@@ -514,7 +501,7 @@ fn the_tools_and_the_instructions_are_said_in_the_mcp_answer_language() {
             json!({"name": "guide", "arguments": {"about": "card_create"}}),
         );
         let guide = guide["content"][0]["text"].as_str().unwrap();
-        assert_eq!(japanese_but_kept(guide), in_japanese, "{guide}");
+        assert_eq!(japanese(guide), in_japanese, "{guide}");
         // A tool of before is said by what to use now.
         let gone = op(
             &core,
@@ -719,4 +706,89 @@ fn an_english_project_writes_its_own_words_in_english_and_its_cards_as_written()
     );
     assert_eq!(page("en"), japanese_page);
     assert_eq!(diagram("en"), japanese_diagram);
+}
+
+#[test]
+fn what_stops_an_export_is_said_in_the_language_of_the_call_whatever_the_files_are_written_in() {
+    let core = Core::open(script_store()).unwrap();
+    // The project writes its files out in Japanese; two documents into one file stop the export.
+    assert_eq!(export_language(&core, "en", PROJECT), "ja");
+    window_in(
+        &core,
+        "en",
+        "export_create",
+        json!({"target": "together", "value": {"entries": [{"from": "Docs", "to": "all.md"}]}}),
+    );
+    let problems = |said: &Value| -> Vec<String> {
+        said["problems"]
+            .as_array()
+            .unwrap_or_else(|| panic!("{said}"))
+            .iter()
+            .map(|p| p.as_str().unwrap().to_string())
+            .collect()
+    };
+    let english = problems(
+        &mcp_in(
+            &core,
+            "en",
+            "export_read",
+            json!({"targetdir": "[default]"}),
+        )
+        .unwrap(),
+    );
+    assert!(english.iter().any(|p| p.contains("all.md")), "{english:?}");
+    assert!(english.iter().all(|p| !japanese(p)), "{english:?}");
+    // The window in English hears the same; in Japanese, its own words.
+    let window = problems(&window_in(
+        &core,
+        "en",
+        "export_read",
+        json!({"targetdir": "[default]"}),
+    ));
+    assert_eq!(window, english);
+    let japanese_problems = problems(&window_in(
+        &core,
+        "ja",
+        "export_read",
+        json!({"targetdir": "[default]"}),
+    ));
+    assert!(
+        japanese_problems.iter().any(|p| japanese(p)),
+        "{japanese_problems:?}"
+    );
+    let files = op(
+        &core,
+        json!({"op": "export_files", "project": project_id(&core), "lang": "en"}),
+    );
+    let said = files["result"]["problems"].to_string();
+    assert!(!japanese(&said), "{said}");
+    // The files themselves are in the project's language.
+    assert!(
+        files["result"]["files"].to_string().contains("主キー"),
+        "{files}"
+    );
+}
+
+#[test]
+fn a_moves_commit_name_is_said_in_the_language_of_the_call() {
+    let core = Core::open(script_store()).unwrap();
+    let conn = rusqlite::Connection::open(core.place()).unwrap();
+    // A move of the store's form named its commit in Japanese, as every store of before keeps it.
+    conn.execute(
+        "UPDATE commits SET kind = 'migrate', name = 'カードゴーストを移した' WHERE project_id = ? AND branch_id = '' AND seq = (SELECT MAX(seq) FROM commits WHERE project_id = ? AND branch_id = '')",
+        [project_id(&core), project_id(&core)],
+    )
+    .unwrap();
+    let name = |lang: &str| -> String {
+        let read = op(
+            &core,
+            json!({"op": "commits", "project": project_id(&core), "limit": 1, "lang": lang}),
+        );
+        read["result"]["commits"][0]["name"]
+            .as_str()
+            .unwrap_or_else(|| panic!("{read}"))
+            .to_string()
+    };
+    assert_eq!(name("ja"), "カードゴーストを移した");
+    assert_eq!(name("en"), "Moved the card ghosts");
 }

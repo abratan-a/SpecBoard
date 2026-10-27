@@ -37,6 +37,60 @@
         }
       }
     },
+    "figure.outside" : {
+      "comment" : "An actor's figure: a service outside the system.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部"
+          }
+        }
+      }
+    },
+    "figure.person" : {
+      "comment" : "An actor's figure: a person.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Person"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "人"
+          }
+        }
+      }
+    },
+    "figure.system" : {
+      "comment" : "An actor's figure: a part of a system (the default).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム"
+          }
+        }
+      }
+    },
     "ghost.deadEndGone" : {
       "comment" : "Problem message about a card ghost whose card was deleted; the argument is the name written.",
       "extractionState" : "manual",
@@ -181,78 +235,6 @@
         }
       }
     },
-    "holding.board" : {
-      "comment" : "Tooltip line describing what a Project Board section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds to-dos (custom cards such as goal) and working documents (freedoc, note). Never merged."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "やること（goal などのカスタムカード）と作業の文書（freedoc・note）を置く。merge しない"
-          }
-        }
-      }
-    },
-    "holding.chart" : {
-      "comment" : "Tooltip line describing what a chart section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds flow. Viewed in the Contents map and the Sequence diagram. Notes can go here too."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "flow を置く。コンテンツマップとシーケンス図で見る。note も置ける"
-          }
-        }
-      }
-    },
-    "holding.definition" : {
-      "comment" : "Tooltip line describing what a definition section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds definitions promised to the outside (the shapes of API arguments, configuration files and messages): the shapes (entity, value, enum, store) beside their data and tables. Notes can go here too."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外へ約束する定義（API の引数・設定ファイル・メッセージの形）を置く。形（entity・value・enum・store）とそのデータ・表を並べる。note も置ける"
-          }
-        }
-      }
-    },
-    "holding.document" : {
-      "comment" : "Tooltip line describing what a document section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds freedoc (free-form document), formatdoc (formatted document) and stackdoc (stacked document). Notes can go here too."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "freedoc（自由文書）・formatdoc（整形文書）・stackdoc（積み重ね文書）を置く。note も置ける"
-          }
-        }
-      }
-    },
     "holding.export" : {
       "comment" : "Tooltip line describing what the export section holds.",
       "extractionState" : "manual",
@@ -267,24 +249,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "作業ディレクトリを置く。エクスポートから、できるファイルを見る"
-          }
-        }
-      }
-    },
-    "holding.free" : {
-      "comment" : "Tooltip line describing what a free section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A scratch place that takes cards of any kind. Move them to a section that fits their kind to tidy up."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どの種類のカードも置ける下書きの場所。種類の合うセクションへ移して整理する"
           }
         }
       }
@@ -307,150 +271,6 @@
         }
       }
     },
-    "holding.schema" : {
-      "comment" : "Tooltip line describing what a schema section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds entity, value, enum and store. Viewed in the Section map. Notes can go here too."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "entity・value・enum・store を置く。セクションマップで見る。note も置ける"
-          }
-        }
-      }
-    },
-    "holding.ui" : {
-      "comment" : "Tooltip line describing what a UI section holds.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Holds html and svg parts and frames (frame) that put other UI sections in, laid out as a screen. Notes can go here too. Opens on its mock."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "html・svg の部品と、ほかの UI のセクションをはめ込むはめ込み（frame）を置いて画面を組む。note も置ける。開くとモック"
-          }
-        }
-      }
-    },
-    "kind.board" : {
-      "comment" : "Heading of the Project Board section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Board"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ボード"
-          }
-        }
-      }
-    },
-    "kind.cancelled" : {
-      "comment" : "Heading of the board's built-in section kind that cancelled goals move into.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelled"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打ち切り"
-          }
-        }
-      }
-    },
-    "kind.chart" : {
-      "comment" : "Heading of a chart section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chart"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チャート"
-          }
-        }
-      }
-    },
-    "kind.complete" : {
-      "comment" : "Heading of the board's built-in section kind that finished goals (and done tasks not inside a goal) move into.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了"
-          }
-        }
-      }
-    },
-    "kind.definition" : {
-      "comment" : "Heading of a definition section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Definition"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "定義"
-          }
-        }
-      }
-    },
-    "kind.document" : {
-      "comment" : "Heading of a document section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Document"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ドキュメント"
-          }
-        }
-      }
-    },
     "kind.export" : {
       "comment" : "Heading of the export section kind.",
       "extractionState" : "manual",
@@ -465,24 +285,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "エクスポート"
-          }
-        }
-      }
-    },
-    "kind.free" : {
-      "comment" : "Heading of the free section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Free"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "フリー"
           }
         }
       }
@@ -519,42 +321,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ルール"
-          }
-        }
-      }
-    },
-    "kind.schema" : {
-      "comment" : "Heading of a schema section kind.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schema"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "スキーマ"
-          }
-        }
-      }
-    },
-    "kind.ui" : {
-      "comment" : "Heading of a UI section kind (a screen's design built of parts).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "UI"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "UI"
           }
         }
       }

@@ -87,6 +87,16 @@ fn a_request_is_made_with_its_conflicts_chosen_and_read_back() {
         (first["state"].as_str(), first["reason"].as_str()),
         (Some("withdrawn"), Some("出し直し"))
     );
+    // Kept as said then, read in the language of whoever reads it.
+    let english = op(
+        &core,
+        json!({"op": "tool", "name": "mr_read", "lang": "en",
+            "arguments": {"project": PROJECT, "target": "1"}}),
+    );
+    assert_eq!(
+        english["result"]["json"]["reason"], "Submitted again",
+        "{english}"
+    );
 }
 
 #[test]
@@ -393,6 +403,15 @@ fn what_the_merge_would_break_is_told_in_the_request() {
             .any(|w| w.as_str().unwrap().contains("Schemas/Ordering:Order.total")),
         "{made}"
     );
+    // Kept as said to whoever made it, read in the language of whoever reads it.
+    let english = op(
+        &core,
+        json!({"op": "tool", "name": "mr_read", "lang": "en",
+            "arguments": {"project": PROJECT, "target": "1"}}),
+    );
+    let said = english["result"]["json"]["result"]["warnings"].to_string();
+    assert!(said.contains("Schemas/Ordering:Order.total"), "{english}");
+    assert!(!said.contains('の') && !said.contains('「'), "{said}");
     // Only tried: main is as it was.
     ok(
         &core,

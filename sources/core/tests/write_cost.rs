@@ -411,7 +411,7 @@ fn cards_let_go_lines_added_and_the_board_written_work_the_project_out_a_few_tim
             json!({"done": t % 2 == 0, "body": format!("書き直した [[Schemas:Many{t}]]")}),
         );
     }
-    value.insert("Goals:Speed".into(), json!({"status": "進行中"}));
+    value.insert("Goals:Speed".into(), json!({"status": "inProgress"}));
     let n = rebuilds_in(|| {
         ok(
             &core,

@@ -502,11 +502,14 @@ pub(crate) fn delete_field(tx: &mut Tx, scope: &Scope, path: &str) -> Result<Val
         .position(|r| r["fields"]["name"].as_str() == Some(name.as_str()))
         .ok_or_else(|| fail(text!("fields.error.noField")))?;
     let gone = siblings.remove(at);
-    // The lines that left it go with it.
+    // The lines that left it go with it, and a face's name for it.
     super::lines::drop_from(
         &mut doc,
         &crate::pathtext::join_names(walked.iter().map(String::as_str)),
     );
+    if walked.len() == 1 {
+        super::faces::pruned(&mut doc);
+    }
     tx.put_card(&scope.project, &scope.tree, &doc)
         .map_err(fail)?;
     tx.line(

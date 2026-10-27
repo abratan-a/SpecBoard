@@ -32,8 +32,10 @@ nonisolated final class CoreClient: @unchecked Sendable {
     /// store this app holds, the Mac's name for an agent's, which the agent says with each request.
     let client: String
 
-    /// The store at `url` opened; a new, empty one made there when there is none.
+    /// The store at `url` opened; a new, empty one made there when there is none. Why it cannot be is said
+    /// in the screen's language.
     init(at url: URL) throws {
+        setLanguage(lang: Language.current)
         way = .here(FileManager.default.fileExists(atPath: url.path)
             ? try Core.open(place: url.path) : try Core.create(place: url.path))
         place = nil
@@ -53,8 +55,9 @@ nonisolated final class CoreClient: @unchecked Sendable {
     /// how big it was — read with `log show --predicate 'subsystem == "com.m-osone.SpecBoard"'` (or `log stream`).
     static let log = Logger(subsystem: "com.m-osone.SpecBoard", category: "core")
 
-    /// The requests asked since `keepAsked`, by name (`asked`): nil while none are kept.
-    private let kept = OSAllocatedUnfairLock<[String]?>(initialState: nil)
+    /// The requests asked since `keepAsked`, by name (`asked`), each with whether it was asked on the main
+    /// thread: nil while none are kept.
+    private let kept = OSAllocatedUnfairLock<[(name: String, onMain: Bool)]?>(initialState: nil)
     /// The answers given since `keepAsked`, by the request's name, with their size in bytes: nil while none
     /// are kept.
     private let keptAnswers = OSAllocatedUnfairLock<[Answered]?>(initialState: nil)
@@ -79,6 +82,12 @@ nonisolated final class CoreClient: @unchecked Sendable {
 
     /// The names of the requests asked since `keepAsked` or the last take, in the order asked.
     func takeAsked() -> [String] {
+        takeAskedWhere().map(\.name)
+    }
+
+    /// The requests asked since `keepAsked` or the last take, in the order asked, each with whether it was
+    /// asked on the main thread: what a test of work kept off it looks at.
+    func takeAskedWhere() -> [(name: String, onMain: Bool)] {
         kept.withLock { list in
             defer { if list != nil { list = [] } }
             return list ?? []
@@ -102,7 +111,8 @@ nonisolated final class CoreClient: @unchecked Sendable {
 
     /// A request's text, and the core's answer as it wrote it. `name`: what the log says it was (`asked`).
     private func call(_ name: String, _ request: String) throws -> String {
-        kept.withLock { $0?.append(name) }
+        let onMain = Thread.isMainThread
+        kept.withLock { $0?.append((name, onMain)) }
         let started = ContinuousClock.now
         let answer: String
         switch way {
@@ -135,15 +145,17 @@ nonisolated final class CoreClient: @unchecked Sendable {
     }
 
     /// A request: `op` and its fields. Returns what the core answered (`result`), or throws
-    /// its refusal (`error`). Every request carries the screen's language (`lang`): what the core
-    /// says is said in it.
+    /// its refusal (`error`). Every request carries the screen's language (`lang`) unless it names one of
+    /// its own: what the core says is said in it.
     func request(_ op: String, _ fields: [String: Any] = [:]) throws -> Any {
         var body = fields
         body["op"] = op
-        body["lang"] = Language.current
+        // A request asked in a language of its own (an export's words) keeps it.
+        if body["lang"] == nil { body["lang"] = Language.current }
         let sent = try JSONSerialization.data(withJSONObject: body)
         let reply = try call(Self.asked(op, tool: fields["name"] as? String), String(decoding: sent, as: UTF8.self))
-        guard let answer = try JSONSerialization.jsonObject(with: Data(reply.utf8)) as? [String: Any] else {
+        // Not the core's JSON: said as the screen says it, not as Foundation words it in the Mac's language.
+        guard let answer = (try? JSONSerialization.jsonObject(with: Data(reply.utf8))) as? [String: Any] else {
             throw Refusal.unreadable(reply)
         }
         if let error = answer["error"] as? String { throw Refusal(error) }
@@ -163,7 +175,8 @@ nonisolated final class CoreClient: @unchecked Sendable {
     nonisolated func reply(_ op: String, _ fields: [String: Any] = [:]) throws -> String {
         var body = fields
         body["op"] = op
-        body["lang"] = Language.current
+        // A request asked in a language of its own (an export's words) keeps it.
+        if body["lang"] == nil { body["lang"] = Language.current }
         let sent = try JSONSerialization.data(withJSONObject: body)
         return try call(Self.asked(op, tool: fields["name"] as? String), String(decoding: sent, as: UTF8.self))
     }

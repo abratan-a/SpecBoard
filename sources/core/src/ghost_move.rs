@@ -443,8 +443,14 @@ fn record(
         .map_err(sql)?;
     let id = crate::write::new_id();
     conn.execute(
-        "INSERT INTO commits (id, project_id, branch_id, seq, at, author_kind, author, kind, name) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), 'screen', NULL, 'migrate', 'カードゴーストを移した')",
-        params![id, project, tree, seq],
+        "INSERT INTO commits (id, project_id, branch_id, seq, at, author_kind, author, kind, name) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), 'screen', NULL, 'migrate', ?)",
+        params![
+            id,
+            project,
+            tree,
+            seq,
+            crate::write::history::migrated(keyed!("history.migrate.ghosts"))
+        ],
     )
     .map_err(sql)?;
     for (i, line) in lines.iter().enumerate() {

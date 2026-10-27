@@ -37,6 +37,114 @@
         }
       }
     },
+    "arrange.byLines" : {
+      "comment" : "Item of the Arrange menu on the diagram band and of the Edit menu that lays the whole map out along its lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrange by lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線に沿って並べ直す"
+          }
+        }
+      }
+    },
+    "arrange.byLinesHelp" : {
+      "comment" : "Hover help of the Arrange by lines item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rearranges the whole map along its lines (inside the selected group only, if one is selected): referenced shapes to the left, what is called, read or written to the right"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線に沿って図全体を並べ直します（グループを選んでいればその中だけ）。参照される形は左、呼ぶ・読む・書く先は右に置きます"
+          }
+        }
+      }
+    },
+    "arrange.help" : {
+      "comment" : "Hover help of the Arrange button on the diagram band.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidy or rearrange the map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図を整える・並べ直す"
+          }
+        }
+      }
+    },
+    "arrange.tidy" : {
+      "comment" : "Item of the Arrange menu on the diagram band and of the Edit menu that moves boxes down only, to clear overlaps.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tidy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整える"
+          }
+        }
+      }
+    },
+    "arrange.tidyHelp" : {
+      "comment" : "Hover help of the Tidy item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps every card where it is and only moves cards down to clear overlaps and leave room for rows that open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの位置はそのままで、重なりと、行を開いて伸びる分だけ下へずらします"
+          }
+        }
+      }
+    },
+    "arrange.title" : {
+      "comment" : "Button on the diagram band, left of Filter, that opens the menu of Tidy and Arrange by lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrange"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整列"
+          }
+        }
+      }
+    },
     "ask.cut" : {
       "comment" : "Title of the confirmation for discarding old history; arguments are the number of commits, the commit number and the size saved.",
       "extractionState" : "manual",
@@ -1771,6 +1879,24 @@
         }
       }
     },
+    "noticeKind.update" : {
+      "comment" : "Kind of notification: a new version is available or ready. Mark tooltip in the bell's list and a row of the Notifications settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート"
+          }
+        }
+      }
+    },
     "notices.clear" : {
       "comment" : "Button at the foot of the bell's list that empties it.",
       "extractionState" : "manual",
@@ -2426,7 +2552,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Group edit"
+            "value" : "Batch edit"
           }
         },
         "ja" : {
@@ -2462,7 +2588,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Edit the locked main. When you close the group edit, everything changed goes into main as one merge. Until then, MCP writes and merges are refused."
+            "value" : "Edit the locked main. When you close the batch edit, everything changed goes into main as one merge. Until then, MCP writes and merges are refused."
           }
         },
         "ja" : {

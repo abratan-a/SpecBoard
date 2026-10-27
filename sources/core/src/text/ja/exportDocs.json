@@ -16,6 +16,7 @@
   "exportDocs.mermaid.noSchemas": "条件に一致するスキーマがありません",
   "exportDocs.mermaid.sectionBox": "{name}（{count} 枚）",
   "exportDocs.mermaid.stateValue": "［{value}］",
+  "exportDocs.mermaid.tooLarge": "畳んだ value と enum を伝ってたどる線が {count} を超える",
   "exportDocs.note.diagram": "（図: {plain}）",
   "exportDocs.pointsAt.byField": "{here} が名指しする artifact",
   "exportDocs.pointsAt.byFieldMatched": "{here} が名指しする artifact（指し先の {there} と突き合わせ）",

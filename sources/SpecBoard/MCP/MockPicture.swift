@@ -66,7 +66,7 @@ enum MockPicture {
                                           "scale": (Double(shot.scale) * 1000).rounded() / 1000,
                                           "parts": shot.parts, "frames": shot.frames]])
             } catch {
-                box.said = refusal((error as? MapPicture.Refused)?.why ?? error.localizedDescription)
+                box.said = refusal((error as? MapPicture.Refused)?.why ?? ErrorText.said(error, in: request.lang))
             }
             done.signal()
         }

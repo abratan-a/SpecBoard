@@ -26,13 +26,13 @@ fn value_name(raw: &str) -> Result<String, String> {
     Ok(name)
 }
 
-/// The value's name in a wire entry (`{value, label?}`).
+/// The value's name in a wire entry (`{name, label?}`).
 fn named(entry: &Value) -> Option<&str> {
-    entry.get("value").and_then(Value::as_str)
+    entry.get("name").and_then(Value::as_str)
 }
 
 /// A card's `values` as MCP writes them (`[{name, label?}]`, a bare text a name alone) made the
-/// entries the rest of the core reads (`[{value, label?}]`).
+/// entries the rest of the core reads (`[{name, label?}]`).
 pub(crate) fn wired(values: &Value) -> Value {
     let Value::Array(items) = values else {
         return values.clone();
@@ -41,16 +41,9 @@ pub(crate) fn wired(values: &Value) -> Value {
         items
             .iter()
             .map(|item| match item {
-                Value::Object(o) if o.contains_key("name") => {
-                    let mut entry = Map::new();
-                    for (key, v) in o {
-                        entry.insert(if key == "name" { "value" } else { key }.into(), v.clone());
-                    }
-                    Value::Object(entry)
-                }
                 Value::String(name) => {
                     let mut entry = Map::new();
-                    entry.insert("value".into(), name.clone().into());
+                    entry.insert("name".into(), name.clone().into());
                     Value::Object(entry)
                 }
                 other => other.clone(),
@@ -194,7 +187,7 @@ pub(crate) fn create(
         return Err(text!("update.error.valueDuplicate", value = name));
     }
     let mut entry = Map::new();
-    entry.insert("value".into(), name.clone().into());
+    entry.insert("name".into(), name.clone().into());
     if let Some(said) = value.get("label").map(label).transpose()?.flatten() {
         entry.insert("label".into(), said.into());
     }
@@ -262,7 +255,7 @@ pub(crate) fn update(
         .as_object_mut()
         .ok_or_else(|| text!("inner.error.unreadable"))?;
     if let Some(name) = &renamed {
-        entry.insert("value".into(), name.clone().into());
+        entry.insert("name".into(), name.clone().into());
     }
     if let Some(given) = value.get("label") {
         match label(given)? {
@@ -305,7 +298,10 @@ pub(crate) fn update(
     };
     let said = write_back(tx, scope, id, list, &moves, line)?;
     let rewritten = match &renamed {
-        Some(name) => data_renamed(tx, scope, id, old, name)?,
+        Some(name) => {
+            faces_renamed(tx, scope, id, old, name)?;
+            data_renamed(tx, scope, id, old, name)?
+        }
         None => Vec::new(),
     };
     let mut out = answer(tx, scope, id, &now, &said)?;
@@ -318,6 +314,24 @@ pub(crate) fn update(
         );
     }
     Ok(out)
+}
+
+/// The shapes whose face marks by a field of the enum `id`, their mark's value `old` named `now`.
+fn faces_renamed(tx: &mut Tx, scope: &Scope, id: &str, old: &str, now: &str) -> Result<(), String> {
+    let docs: Vec<Map<String, Value>> = {
+        let seen = Seen::in_tx(tx, scope)?;
+        let shapes = super::faces::marking_enum(&seen.project(), id);
+        let mut docs = scope.docs(tx)?;
+        shapes
+            .iter()
+            .filter_map(|s| docs.remove(s))
+            .filter_map(|mut doc| super::faces::value_renamed(&mut doc, old, now).then_some(doc))
+            .collect()
+    };
+    for doc in docs {
+        put_checked(tx, scope, &doc)?;
+    }
+    Ok(())
 }
 
 /// The data cards' values that hold the value `old` of the enum `id`, written `now`: the full paths

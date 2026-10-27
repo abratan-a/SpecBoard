@@ -190,8 +190,40 @@ CREATE TABLE IF NOT EXISTS code_marks (
   PRIMARY KEY (project_id, line_id)
 );";
 
+/// The mark of the groups on a diagram (`tools::groups`): `places` made anew so a row can be a
+/// group's (`item_kind` `group`, its name the `item`) and hold how it looks (`look`). SQLite cannot
+/// change a CHECK, so the table is made again under another name, its rows copied as they are, and
+/// named back.
+pub const MAP_GROUPS: &str = "core_0025_map_groups";
+
+/// The mark of the built-in names of now (`name_move`): the kinds of line named as the screen
+/// says them, an enum's value keyed by `name`, a goal's values in English.
+pub const BUILTIN_NAMES: &str = "core_0026_builtin_names";
+
+/// `places` as `core_0025_map_groups` has it, made under the name `places_new` to take the rows of
+/// the one of before.
+pub const PLACES_NEW: &str = "
+CREATE TABLE places_new (
+  project_id   TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  branch_id TEXT NOT NULL DEFAULT '',
+  view      TEXT NOT NULL DEFAULT '',
+  item_kind TEXT NOT NULL DEFAULT 'card' CHECK (item_kind IN ('card', 'section', 'node', 'group')),
+  item      TEXT NOT NULL,
+  x         INTEGER,
+  y         INTEGER,
+  w         INTEGER,
+  h         INTEGER,
+  pinned    INTEGER NOT NULL DEFAULT 0,
+  look      TEXT,
+  PRIMARY KEY (project_id, branch_id, view, item_kind, item)
+);
+INSERT INTO places_new (project_id, branch_id, view, item_kind, item, x, y, w, h, pinned)
+  SELECT project_id, branch_id, view, item_kind, item, x, y, w, h, pinned FROM places;
+DROP TABLE places;
+ALTER TABLE places_new RENAME TO places;";
+
 /// Every mark a store of the form has now, in the order they came.
-pub const MARKS: [&str; 24] = [
+pub const MARKS: [&str; 26] = [
     MARK,
     MCP_WRITES,
     CARD_GHOSTS,
@@ -216,6 +248,8 @@ pub const MARKS: [&str; 24] = [
     BOARD_SECTIONS,
     WORKDIR_SECTIONS,
     CODE_MARKS,
+    MAP_GROUPS,
+    BUILTIN_NAMES,
 ];
 
 /// Every table of the form, created empty.
@@ -355,13 +389,14 @@ CREATE TABLE places (
   project_id   TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   branch_id TEXT NOT NULL DEFAULT '',
   view      TEXT NOT NULL DEFAULT '',
-  item_kind TEXT NOT NULL DEFAULT 'card' CHECK (item_kind IN ('card', 'section', 'node')),
+  item_kind TEXT NOT NULL DEFAULT 'card' CHECK (item_kind IN ('card', 'section', 'node', 'group')),
   item      TEXT NOT NULL,
   x         INTEGER,
   y         INTEGER,
   w         INTEGER,
   h         INTEGER,
   pinned    INTEGER NOT NULL DEFAULT 0,
+  look      TEXT,
   PRIMARY KEY (project_id, branch_id, view, item_kind, item)
 );
 CREATE TABLE commits (

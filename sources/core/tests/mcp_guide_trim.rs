@@ -54,33 +54,53 @@ fn room(family: &str, name: &str) -> usize {
         // The reads of a card and of a section say a form for each way they are read, a map as text
         // and as a picture among them, a ui section's mock with its parts' faces, and the functions
         // and types in a file, the implementation lines whose code changed, and what a goal or task
-        // needs gathered in one read, and a box drawn apart from the size written for it.
-        ("tools", "card_read") => 6_100,
+        // needs gathered in one read, and a box drawn apart from the size written for it, and the actors
+        // a flow's sequence diagram draws as lifelines.
+        ("tools", "card_read") => 6_400,
         // A working directory's section says how and from where it is read, and is set too (how its
         // files map to languages among it).
-        ("tools", "section_read") => 4_000,
-        ("tools", "section_update") => 3_500,
+        // And a map's groups, with what is in each, and an actor's chart in both its forms.
+        ("tools", "section_read") => 5_000,
+        // A map's groups are written there too: made (made only, refused over a name already there),
+        // moved with what they hold, and how they look. Tidying says what it keeps and how far it moves,
+        // and arranging its two ways: along the lines (the whole map or one group) and in order. A
+        // section's kind, what an actor is and the section's own mark are changed there too.
+        ("tools", "section_update") => 6_300,
         // The card tools write every kind's keys, a body read from a file (`bodyFrom`) among them,
-        // and a size of a width alone or of both.
-        ("tools", "card_create" | "card_update") => 4_300,
+        // and a size of a width alone or of both; the update's answer says how a body and a table's
+        // cells changed in part are answered. Making an element of a data card's array has its own form.
+        ("tools", "card_create") => 4_800,
+        // And the groups on a container's card map.
+        ("tools", "card_update") => 4_600,
         // The list narrows by every kind of card, and by a list of them, lists the functions and
         // types in files by what they are and their names, can leave the bodies out, and finds
-        // what is not linked to code and whose code changed.
-        ("tools", "card_list") => 4_250,
+        // what is not linked to code and whose code changed, a data card's values left out with the bodies.
+        ("tools", "card_list") => 4_350,
         // The batch says which steps may point at which, and takes its steps from a file.
         ("tools", "batch") => 3_650,
         // A tree is read four ways, and one commit of its history and a branch's changes by what
         // each unit was before and after.
         ("tools", "branch_read") => 4_800,
-        // The check names every group, the implementation whose code changed among them.
-        ("tools", "inspection_list") => 3_100,
+        // The check names every group, the code lines reach that changed, the gaps the sequence
+        // charts draw among them and the partners written as text that is a flow's or an actor's name.
+        ("tools", "inspection_list") => 3_600,
         ("tools", _) => 3_000,
         ("kinds", "ghost") => 3_500,
-        // The flow's nodes and how they are joined, dispatched to and waited at, and made in a batch.
-        ("kinds", "flow") => 4_100,
+        // A record's shape says how data of it is drawn as a list (`face`), key by key.
+        ("kinds", "entity" | "value") => 3_400,
+        // A data card's element is made by its path too.
+        ("kinds", "instance") => 2_800,
+        // The flow's nodes and how they are joined, dispatched to and waited at, and made in a batch;
+        // and what its sequence diagram draws, the gaps it shows among it; each node said by what it
+        // holds, not its name again.
+        ("kinds", "flow") => 4_800,
         // The formatdoc's rows, a text row's body read from a file among them, and its size.
         ("kinds", "formatdoc") => 2_700,
         ("kinds", _) => 2_500,
+        // Where boxes go says how groups are put, made only and moved too, and the two ways of arranging.
+        ("keys", "layout") => 2_600,
+        // Every built-in kind of line named, with where it goes.
+        ("keys", "connections") => 2_100,
         ("keys", _) => 2_000,
         // The branches' guide says how one commit is read and undone alone too.
         ("guides", "branch") => 3_700,

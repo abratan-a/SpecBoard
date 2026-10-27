@@ -9,6 +9,7 @@
   "store.error.keepRename": "控えに名前を付けられません: {e}",
   "store.error.keepWrite": "控えを書けません: {e}",
   "store.error.missing": "データベースがありません: {path}",
+  "store.error.newer": "{path} のデータは新しい版の SpecBoard で更新されていて、この版では開けません。SpecBoard を新しくしてください",
   "store.error.notCoreForm": "コアの形のデータベースではありません",
   "store.error.open": "データベースを開けません: {e}",
   "store.error.read": "データベースを読めません: {e}",

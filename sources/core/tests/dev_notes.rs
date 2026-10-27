@@ -1,25 +1,65 @@
 //! What the core says to a person or an agent — the tools and the guide (`src/mcp/catalog.json`,
 //! `src/mcp/tools.json`), the kinds built in (`src/kinds/builtin.json`), and the strings in its
 //! code but what is built only for its tests — carries no note
-//! of how it was made: no owner's date (`オーナー 2026-10-05`), no issue's number (`（#81）`),
-//! no name of the debugging machine (`<machine> の issue #3 の続き, オーナー 2026-10-06`). A colour
-//! (`#2F6FEB`) is not a number.
+//! of how it was made: no owner's date (the word for the owner, then a year), no issue's number
+//! (`#` and two or three digits), no name of a machine of the lab nor the name the product had
+//! before. A colour (`#2F6FEB`) is not a number.
 //!
 //! Nor do the comments of the code, the core's and the app's, their tests' and the tools', nor the
 //! titles of the app's tests: a comment says why the code is as it is, and how it came to be — who
 //! decided it when, the board's goal or task, the issue — goes in the board's task and the commit
 //! (`CLAUDE.md`). A link to a design (`specboard://SpecBoard/Docs/Design:…`) is not a note.
+//!
+//! The names looked for are kept as their digests (`NAMED`), not as words: this file is published
+//! with the rest, runs there as here, and must not carry the words it keeps out — whole or in
+//! pieces.
 
 use std::path::{Path, PathBuf};
 
+/// The SHA-256 (hex) of each name a note must not carry, lower-cased: the machine the app is tried
+/// on before it is given out, and the product's name before (both of its spellings).
+const NAMED: [&str; 3] = [
+    "3a21fba1390794f084dde2d77718deb65926b0a33d18f1f2e2a9c6593a27eb0f",
+    "8ecf62867693c8d6ef48ff2a293ae752c9ef3a3ece3c240f281dfb8e06409f7b",
+    "f8b93aad84679cc515e3decc000b223e8484b260bfa2a509d7a77b4c1c424434",
+];
+
+/// The word for the owner, as the notes of the making wrote it before a date.
+const OWNER: &str = "オーナー";
+
+/// The first word of `text` whose digest is one of `digests`: a word is a run of letters, digits,
+/// `-` and `_`, lower-cased.
+fn named(text: &str, digests: &[&str]) -> Option<String> {
+    use sha2::{Digest, Sha256};
+    text.split(|c: char| !(c.is_alphanumeric() || c == '-' || c == '_'))
+        .filter(|word| !word.is_empty())
+        .map(str::to_lowercase)
+        .find(|word| {
+            let digest: String = Sha256::digest(word.as_bytes())
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect();
+            digests.contains(&digest.as_str())
+        })
+}
+
+/// The owner's word with a year after it (a space between, either width), as the notes of the
+/// making dated what was decided.
+fn owner_dated(text: &str) -> Option<String> {
+    text.match_indices(OWNER).find_map(|(at, _)| {
+        let rest = &text[at + OWNER.len()..];
+        let year = rest
+            .strip_prefix(' ')
+            .or_else(|| rest.strip_prefix('\u{3000}'))?;
+        year.starts_with("20")
+            .then(|| text[at..at + OWNER.len() + (rest.len() - year.len()) + 2].to_string())
+    })
+}
+
 /// Where a note of the making is in `text`, if it is: the words found.
 fn note(text: &str) -> Option<String> {
-    // The machine's name is joined at compile time, so that this file does not hold the word that the
-    // check of the published tree forbids.
-    for word in ["オーナー 20", "オーナー　20", concat!("debug", "-mac")] {
-        if text.contains(word) {
-            return Some(word.to_string());
-        }
+    if let Some(word) = owner_dated(text).or_else(|| named(text, &NAMED)) {
+        return Some(word);
     }
     // `#` and two or three digits not running on into a colour's hex.
     let chars: Vec<char> = text.chars().collect();
@@ -197,7 +237,6 @@ fn history(text: &str) -> Option<String> {
         "ボードの目標 `",
         "ボードの goal `",
         "ボードの task `",
-        concat!("Schema", "Planner #"),
         "issue #",
     ] {
         if text.contains(word) {
@@ -292,7 +331,7 @@ fn the_comments_carry_no_note_of_how_the_code_came_to_be() {
         found.push(format!("{at}:{n}: {word}"));
     };
     for path in &code {
-        // This file names the words it looks for.
+        // This file speaks of the notes it looks for, by example.
         if path.ends_with("tests/dev_notes.rs") {
             continue;
         }
@@ -328,7 +367,7 @@ fn the_comments_carry_no_note_of_how_the_code_came_to_be() {
 #[test]
 fn a_comment_s_history_is_told_from_its_why() {
     assert_eq!(
-        history("// (オーナー 2026-10-13, the board's task `Goals:X`)"),
+        history("// (オーナー 2000-01-02, the board's task `Goals:X`)"),
         Some("the board's task `".into())
     );
     assert_eq!(
@@ -343,10 +382,7 @@ fn a_comment_s_history_is_told_from_its_why() {
         history("/// by its path (`Goals/Complete:Ship` → `Goals`)"),
         None
     );
-    assert_eq!(
-        history(concat!("// debug", "-mac #23 A1")),
-        Some(concat!("debug", "-mac").into())
-    );
+    assert_eq!(history("// see issue #12"), Some("issue #".into()));
     assert_eq!(
         history("// see specboard://SpecBoard/Docs/Design:CoreApi"),
         None
@@ -369,8 +405,13 @@ fn a_comment_s_history_is_told_from_its_why() {
 fn a_colour_is_not_a_number_and_a_number_is_a_note() {
     assert_eq!(note("color: #2F6FEB"), None);
     assert_eq!(note("#111111"), None);
-    assert_eq!(note("（#81）"), Some("#81".into()));
-    assert_eq!(note("（オーナー 2026-10-05）"), Some("オーナー 20".into()));
+    assert_eq!(note("（#12）"), Some("#12".into()));
+    assert_eq!(note("（オーナー 2000-01-02）"), Some("オーナー 20".into()));
+    assert_eq!(
+        note("（オーナー\u{3000}2000-01-02）"),
+        Some("オーナー\u{3000}20".into())
+    );
+    assert_eq!(note("オーナーが決める"), None);
     assert_eq!(
         literals("let a = \"一\"; // \"二\"\n#[cfg(test)]\nlet b = \"三\";"),
         vec![(1, "一".to_string())]
@@ -389,4 +430,49 @@ fn a_colour_is_not_a_number_and_a_number_is_a_note() {
         test_only(Path::new("/src/kinds.rs"), source),
         vec![PathBuf::from("/src/kinds/fixtures.rs")]
     );
+}
+
+/// The SHA-256 of `word`, in hex, as `NAMED` keeps the names.
+fn digest(word: &str) -> String {
+    use sha2::{Digest, Sha256};
+    Sha256::digest(word.as_bytes())
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect()
+}
+
+#[test]
+fn a_name_is_found_by_its_digest_as_a_whole_word_in_any_case() {
+    let kept = digest("plum-tree");
+    let digests = [kept.as_str()];
+    assert_eq!(
+        named("// tried on Plum-Tree #4", &digests),
+        Some("plum-tree".into())
+    );
+    assert_eq!(
+        named("（plum-tree の続き）", &digests),
+        Some("plum-tree".into())
+    );
+    assert_eq!(named("// plum-trees and a plum tree", &digests), None);
+    assert!(
+        NAMED
+            .iter()
+            .all(|d| d.len() == 64 && d.bytes().all(|b| b.is_ascii_hexdigit())),
+        "{NAMED:?}"
+    );
+}
+
+/// This file is published, so it must not carry the names it looks for — nor pieces of them put
+/// together when it is built (`concat!("…", "…")`): its text is read with every `", "` between
+/// two pieces taken out.
+#[test]
+fn this_file_does_not_carry_the_names_it_looks_for() {
+    let source =
+        std::fs::read_to_string(Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/dev_notes.rs"))
+            .unwrap();
+    for text in [source.clone(), source.replace("\", \"", "")] {
+        for (n, line) in text.lines().enumerate() {
+            assert_eq!(named(line, &NAMED), None, "tests/dev_notes.rs:{}", n + 1);
+        }
+    }
 }

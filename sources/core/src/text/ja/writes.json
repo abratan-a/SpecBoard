@@ -12,7 +12,7 @@
   "writes.bodyFrom.withBody": "bodyFrom は body と一緒には書けません（本文はどちらか一方で）",
   "writes.create.bodyOnly": "{name} は {kind} で、中に名前のある行はありません（本文は body で書きます。項目と行で書くなら kind: formatdoc のカード）",
   "writes.create.containerUnmade": "入れ物 {container} が作れなかったので、中の {path} は作っていません（入れ物の誤りを直してください）",
-  "writes.create.instanceValue": "{name} はデータ（instance）で、中の値は作るものではありません。値は data に書くか、値のパス（{path}）へ card_update の value {\"value\": …} で書きます",
+  "writes.create.instanceValue": "{name} はデータ（instance）で、中の値は作るものではありません（作れるのは並びの要素だけで、要素のパスへの card_create の value {\"value\": …, \"position\": …}）。値は data に書くか、値のパス（{path}）へ card_update の value {\"value\": …} で書きます",
   "writes.create.notCard": "{path} はカードではありません",
   "writes.create.notContainer": "{parent} は入れ物ではありません",
   "writes.create.sectionNeeded": "target はセクション付きで書いてください（例: Schemas:User。セクションは {sections}）",

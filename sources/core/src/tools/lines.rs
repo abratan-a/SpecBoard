@@ -632,7 +632,7 @@ pub(crate) fn misfits(project: &Project, card: &Card) -> Vec<crate::text::Keyed>
         *counts
             .entry((def.name.clone(), line.from.clone()))
             .or_default() += 1;
-        if def.name == "peer"
+        if def.name == "partner"
             && let Some(to) = line.to.as_deref()
             && !peers.insert((line.from.clone(), to.to_string()))
         {

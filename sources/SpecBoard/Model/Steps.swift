@@ -372,7 +372,7 @@ extension Validate {
             }
         }
         do { _ = try steps(rows, for: .action) } catch {
-            throw Invalid(place.replacingOccurrences(of: ".steps", with: ".") + error.localizedDescription)
+            throw Invalid(place.replacingOccurrences(of: ".steps", with: ".") + ErrorText.said(error))
         }
     }
 

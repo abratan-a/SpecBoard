@@ -129,7 +129,7 @@ fn a_project_file_of_before_has_its_goals_given_the_sections() {
             .unwrap(),
     )
     .unwrap();
-    assert_eq!(again["version"], 28);
+    assert_eq!(again["version"], 33);
     let kinds: Vec<&str> = again["board"]["sections"]
         .as_array()
         .unwrap()

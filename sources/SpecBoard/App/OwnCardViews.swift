@@ -323,6 +323,7 @@ struct OwnCardEditor: View {
         } else {
             DiagramFrame(model: model, definition: DiagramDefinition(
                 detail: map,
+                surroundings: Surroundings(groups: model.groups(on: card.id)),
                 key: "own:\(card.id)",
                 controller: controller,
                 dataGeneration: model.dataGeneration,
@@ -335,7 +336,8 @@ struct OwnCardEditor: View {
                 onClickEmpty: { model.selectSchema(card.id, follow: false) },
                 mermaid: { [path = detail.directory.full(card)] kinds in
                     model.diagramMermaid("card_read", target: path, kinds: kinds)
-                }),
+                },
+                groups: model.cardMapGroupHooks(card.id)),
                 hint: L10n[.Board.cardMapHint])
         }
     }

@@ -16,6 +16,7 @@
   "exportDocs.mermaid.noSchemas": "no schemas match the conditions",
   "exportDocs.mermaid.sectionBox": "{name} (cards: {count})",
   "exportDocs.mermaid.stateValue": "[{value}] ",
+  "exportDocs.mermaid.tooLarge": "over {count} lines to follow through folded value objects and enums",
   "exportDocs.note.diagram": "(diagram: {plain})",
   "exportDocs.pointsAt.byField": "artifact named by {here}",
   "exportDocs.pointsAt.byFieldMatched": "artifact named by {here} (matched against {there} of the target)",

@@ -1,0 +1,1896 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "document.lead" : {
+      "comment" : "The paragraph under the heading of the glossary document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app and MCP use the same words. A term is the very key or value you write for it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面と MCP で同じ語を使う。語はそれを書くときのキーや値そのもの。"
+          }
+        }
+      }
+    },
+    "document.meaning" : {
+      "comment" : "The head of the glossary tables' column of meanings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meaning"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味"
+          }
+        }
+      }
+    },
+    "document.title" : {
+      "comment" : "The heading of the glossary document.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glossary"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用語集"
+          }
+        }
+      }
+    },
+    "document.word" : {
+      "comment" : "The head of the glossary tables' column of words.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Term"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語"
+          }
+        }
+      }
+    },
+    "document.wordsJoined" : {
+      "comment" : "What joins two words in one row of the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "・"
+          }
+        }
+      }
+    },
+    "group.fields" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フィールド"
+          }
+        }
+      }
+    },
+    "group.kinds" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card kinds (kind)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの種類（kind）"
+          }
+        }
+      }
+    },
+    "group.lines" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lines (connections)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線（connections）"
+          }
+        }
+      }
+    },
+    "group.nodes" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nodes of a flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow のノード"
+          }
+        }
+      }
+    },
+    "group.notes" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes and documents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note と文書"
+          }
+        }
+      }
+    },
+    "group.project" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shape of a project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの形"
+          }
+        }
+      }
+    },
+    "group.steps" : {
+      "comment" : "The title of a group of words in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows of a process node (steps)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "処理ノードの行（steps）"
+          }
+        }
+      }
+    },
+    "legend.awaits" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awaited end: The end of another flow that a begin or a wait waits for"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待つ終わり: 開始や待つが待つ、ほかのフローの終わり"
+          }
+        }
+      }
+    },
+    "legend.condition" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condition: Where a decision goes when its condition matches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件: 判断の条件が当たるときの行き先"
+          }
+        }
+      }
+    },
+    "legend.else" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otherwise: Where a decision goes when no condition matches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "それ以外: 判断のどの条件にも当たらないときの行き先"
+          }
+        }
+      }
+    },
+    "legend.embed" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Embeds: The field's type becomes the partner's shape"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包: 欄の型が相手の形になる"
+          }
+        }
+      }
+    },
+    "legend.holds" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds: The record shape that a store holds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置く: store が置く記録の形"
+          }
+        }
+      }
+    },
+    "legend.implementedBy" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Implemented by: The file or function that implements a specification or design"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実装: 仕様・設計を実装しているファイルや関数"
+          }
+        }
+      }
+    },
+    "legend.key" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key: Used to make or to verify a signature"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鍵: 署名を作る・確かめるのに使う"
+          }
+        }
+      }
+    },
+    "legend.link" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linked: A plain connection, with no effect on types"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つながる: 型に関係しない、つながりだけの線"
+          }
+        }
+      }
+    },
+    "legend.mentions" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentions: What [[ ]] in a body points at"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言及: 本文の [[ ]] が指す所"
+          }
+        }
+      }
+    },
+    "legend.next" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: Where a node goes next"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次: ノードの次の行き先"
+          }
+        }
+      }
+    },
+    "legend.note" : {
+      "comment" : "The note under the title of the legend of lines in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The names of the line kinds, their names in the app (label in the definition) and what each means in one line (description in the definition), in the same words as the definitions."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の種類の名前と、画面の名前（定義の label）と 1 行の意味（定義の description）。定義と同じ文で書く。"
+          }
+        }
+      }
+    },
+    "legend.onError" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On failure: Where a run goes when it fails"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失敗したら: 実行が失敗したときの行き先"
+          }
+        }
+      }
+    },
+    "legend.onTimeout" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On timeout: Where a wait goes when it times out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期限切れ: 待つが期限を過ぎたときの行き先"
+          }
+        }
+      }
+    },
+    "legend.partner" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner: The flow sent to, received from or returned to"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相手: 送る・受ける・返す相手のフロー"
+          }
+        }
+      }
+    },
+    "legend.points" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points by ID: The field's value is the partner's ID"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID で指す: 欄の値が相手の ID を指す"
+          }
+        }
+      }
+    },
+    "legend.reads" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reads: What a process step reads"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読む: 処理の行が読む所"
+          }
+        }
+      }
+    },
+    "legend.rules" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rules: The document that states the rules a flow follows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "決まり: flow が従う決まりを書いた文書"
+          }
+        }
+      }
+    },
+    "legend.runs" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs: The flow a run calls and waits for"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実行する: 実行が呼んで終わりを待つフロー"
+          }
+        }
+      }
+    },
+    "legend.shapeOf" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape of: Which shape a piece of data or a table is of"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形: データや表がどの形のものか"
+          }
+        }
+      }
+    },
+    "legend.title" : {
+      "comment" : "The title of the legend of lines in the glossary.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kinds of line (legend)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の種類（凡例）"
+          }
+        }
+      }
+    },
+    "legend.writes" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes: What a process step writes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く: 処理の行が書く所"
+          }
+        }
+      }
+    },
+    "term.at" : {
+      "comment" : "What the word at means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where a line lands inside the partner (a field or a row; if outside the partner, its full path)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線が相手の中で着く所（欄か行。相手の外なら、そこのフルパス）"
+          }
+        }
+      }
+    },
+    "term.base" : {
+      "comment" : "What the word base means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The contents of main at the time a card of main was first written in a branch. What a branch changed is stated by comparing against base (branch_read)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で main のカードを初めて書いたときの main の中身。branch で変えたことは base と比べて言う（branch_read）"
+          }
+        }
+      }
+    },
+    "term.begin" : {
+      "comment" : "What the word begin means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start. It has trigger and the next line. When it begins by receiving (receive), it takes partner lines to the partner flows (any number) and program (leaving both out is a gap (partner not written); if any caller may call it, anyCaller: true), and carries"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始。trigger と next の線。受けて始まる（receive）ときは相手のフローへの partner の線（何本でも）と program（どちらも省くのは穴（相手が書かれていない）。呼び手を問わないなら anyCaller: true）・carries"
+          }
+        }
+      }
+    },
+    "term.board" : {
+      "comment" : "What the word board means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Project Board. A tree outside main and the branches that holds to-dos (goals and sub-goals, and working documents). It has no merge, lock or MR, and can be written at any time. In MCP it is branch: \"_project_board_\". A card on the board can draw a Linked line (link) to a card in main and can write main paths in its body (a line cannot be drawn from main to the board)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトボード。やること（目標と小目標・作業の文書）を置く、main・branch の外の木。merge・ロック・MR は無く、いつでも書ける。MCP は branch: \"_project_board_\"。ボードのカードからは main のカードへ「つながる」線（link）を引け、本文に main のパスを書ける（main からボードへは引けない）"
+          }
+        }
+      }
+    },
+    "term.body" : {
+      "comment" : "What the word body means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The body of a note and a freedoc (Markdown). [[path]] points at a field ([[section:]] at a section, [[path|text]] shows other words), {{path}} inserts a value (a field with const, an enumeration, or a value in data), and a line of ![[path]] puts in a diagram"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "note と freedoc の本文（Markdown）。[[パス]] で欄を指し（[[セクション:]] でセクション、[[パス|字]] で見せる字を変える）、{{パス}} で値（const のある欄・列挙・データの値）を差し込み、![[パス]] の 1 行で図を入れる"
+          }
+        }
+      }
+    },
+    "term.branch" : {
+      "comment" : "What the word branch means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A plan for changes. It is made from main, sees all of main as it was when the branch was made, and only what is written in the branch belongs to the branch. Changes made to main afterward do not show up until main is merged in. It cannot be seen from main, and branches cannot see each other"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更の計画。main から作り、作ったときの main の全部を見て、branch で書いたものだけが branch のものになる。作ったあとの main の変更は、main を取り込むまで映らない。main からは見えず、branch どうしも見えない"
+          }
+        }
+      }
+    },
+    "term.call" : {
+      "comment" : "What the word call means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls a tool outside the project (program) and waits for the reply (sends carries and receives returns). Calling and waiting for a flow of the project is done by a run node"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトに無い道具（program）を呼んで返りを待つ（carries を送り、returns を受ける）。プロジェクトの flow を呼んで待つのは実行ノード"
+          }
+        }
+      }
+    },
+    "term.compute" : {
+      "comment" : "What the word compute means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Computation. Processing that does not go outside, such as business validation or calculation (what it does is in the row's description; it has no other fields or lines)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計算。業務の検証や計算のような、外に出ない処理（何をするかは行の description。ほかの欄・線は持たない）"
+          }
+        }
+      }
+    },
+    "term.connections" : {
+      "comment" : "What the word connections means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The list of a card's lines. Each line has line (the kind of line), from (the field or row it leaves from; the head if left out), to (the partner), at (where it lands inside the partner), description, and fields (fields decided by the kind of line)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの線の並び。1 本ずつ line（線の種類）・from（出る欄や行。省けば頭）・to（相手）・at（相手の中の着く所）・description・fields（線の種類が決める欄）"
+          }
+        }
+      }
+    },
+    "term.const" : {
+      "comment" : "What the word const means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always takes this value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常にこの値を取る"
+          }
+        }
+      }
+    },
+    "term.data" : {
+      "comment" : "What the word data means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The values of data (instance). JSON nested in the same way as the shape (keys are field names; array fields are arrays). The values written are checked against the type, nullable, const, enumeration values and discriminator branches of the shape's fields, and string values against the pattern of the field's rules, and refused if they do not match. A missing required shows up in the inspection as still being written. The values of fields removed from the shape remain in strayFields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データ（instance）の値。形と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）。書いた値は形のフィールドの型・nullable・const・列挙の値・判別子の枝と、文字の値は欄の rules の pattern で確かめ、合わなければ断る。required の欠けは書き途中として点検に出る。形から消えたフィールドの値は strayFields に残る"
+          }
+        }
+      }
+    },
+    "term.diagram" : {
+      "comment" : "What the word diagram means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The default form of a flow's diagram: flowchart (the diagram on the contents map) / sequence (the sequence diagram). Exports, diagrams in documents and MCP diagrams are drawn in this form"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow の図の形の既定: flowchart（コンテンツマップの図）/ sequence（シーケンス図）。エクスポート・文書の図・MCP の図はこの形で描く"
+          }
+        }
+      }
+    },
+    "term.directory" : {
+      "comment" : "What the word directory means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A directory inside a working directory's section: a section the core makes from the folder it read, with the files cards of the kind file. Read only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリのセクションの中のディレクトリ。コアが読んだフォルダから作るセクションで、ファイルが種類 file のカード。読むだけ"
+          }
+        }
+      }
+    },
+    "term.embed" : {
+      "comment" : "What the word embed means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Embeds: the field holds the partner's shape as it is (the generated type changes; the type of the field reads as ref)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包: 欄が相手の形をそのまま持つ（生成される型が変わる。欄の type は ref と読む）"
+          }
+        }
+      }
+    },
+    "term.end" : {
+      "comment" : "What the word end means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An end. outcome (success / failure / cancelled) is the return value of the flow. What it returns is return"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了。outcome（success / failure / cancelled）がフローの戻り値。返すものは return"
+          }
+        }
+      }
+    },
+    "term.entity" : {
+      "comment" : "What the word entity means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A record that is saved and sent as a unit (it has an ID)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単位で保存・送信される記録（ID を持つ）"
+          }
+        }
+      }
+    },
+    "term.enum" : {
+      "comment" : "What the word enum means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A set of values (if open, it is not exhaustive). Each value may have a display name and a description. In the Section map it is shown folded into the card that holds it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値の集合（open なら網羅でない）。値ごとに表示名と説明を持てる。セクションマップでは持っているカードの中に畳んで出る"
+          }
+        }
+      }
+    },
+    "term.eval" : {
+      "comment" : "What the word eval means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A decision. value, the condition lines (with the field when) and the else line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "判断。value と、condition の線（欄 when）・else の線"
+          }
+        }
+      }
+    },
+    "term.file" : {
+      "comment" : "What the word file means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A file. A card that the core creates inside a working directory's section by reading the working directory (the folder bound on this machine). Its name and display name are the file's name (in a path, a name holding a separator character is wrapped in single quotes: repo/docs:'CardKinds.md'), and filePath is the path from the working directory, and language is the language its name and the working directory's parsers decide. It is read only, and cards in main and branches point at it with the implementedBy line. In a file of a language whose functions and types are read, those (symbol) can be pointed at too, and the map lists them as its rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイル。作業ディレクトリ（この機械で結び付けたフォルダ）を読んで、コアが作業ディレクトリのセクションの中に作るカード。名前と表示名はファイルの名前（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス、language は名前と作業ディレクトリの parsers で決まる言語。読むだけで、main と branch のカードから実装の線（implementedBy）で指す。関数と型を拾う言語のファイルは、中の関数と型（symbol）も指せ、図ではそれを行で並べる"
+          }
+        }
+      }
+    },
+    "term.flow" : {
+      "comment" : "What the word flow means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What a component does, and the flow of processing across components (receiving an MCP request, user registration, and so on; components are represented by sections). It is a container card; node cards of the kinds begin, process, run, eval, wait, join and end are placed inside it and connected by lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部品がすることと、部品をまたぐ処理の流れ（MCP のリクエストを受ける・ユーザー登録など。部品はセクションで表す）。入れ物のカードで、中に開始・処理・実行・判断・待つ・合流・終了のノードのカードを置き、線でつなぐ"
+          }
+        }
+      }
+    },
+    "term.formatdoc" : {
+      "comment" : "What the word formatdoc means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A formatted document. A design or specification document built from items and rows (rows), placed in a Document section. When exported, one document becomes one file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "整形文書。ドキュメントセクションに置く、項目と行（rows）で組んだ設計書・仕様書。エクスポートすると 1 枚が 1 ファイル"
+          }
+        }
+      }
+    },
+    "term.frame" : {
+      "comment" : "What the word frame means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A frame. Placed in a UI section, it puts the mock of the UI section in its field target into its own box at full size (what overflows is cut). target is written as a path, kept by id, and follows renames and moves. It cannot point at the section it is in, nor at one that leads back to it. The same section can be used by many frames. It can be resized; by default it is one card in size"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はめ込み。UI のセクションに置き、欄 target の UI のセクションのモックを自分の箱に 1:1 ではめ込む（はみ出す所は切る）。target はパスで書き、id で覚えて改名・移動に付いて行く。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない。同じセクションを何枚ものはめ込みで使える。大きさを変えられ、既定はカード 1 枚分"
+          }
+        }
+      }
+    },
+    "term.free" : {
+      "comment" : "What the word free means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A free section. A scratch place that takes cards of any kind. Tidy up by moving cards to a section that fits their kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フリーセクション。どの種類のカードも置ける下書きの場所。種類の合うセクションへ移して整理する"
+          }
+        }
+      }
+    },
+    "term.freedoc" : {
+      "comment" : "What the word freedoc means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A free document. A document of one Markdown page (body) placed in a Document section. When exported, one document becomes one file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由文書。ドキュメントセクションに置く Markdown 1 枚（body）の文書。エクスポートすると 1 枚が 1 ファイル"
+          }
+        }
+      }
+    },
+    "term.fromBoard" : {
+      "comment" : "What the word fromBoard means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Related to-dos. Those board cards that point at a card in main (and branches) by a line or a path in the body and are not finished (done tasks, goals whose status is 完了 or 打ち切り (done or cancelled), and the cards inside them are not shown). It appears in the Properties panel and in card_read"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関わるやること。main（と branch）のカードを線か本文のパスで指している、ボードのカードのうち済んでいないもの（済んだ task、完了・打ち切りの goal とその中のカードは出さない）。プロパティパネルと card_read に出る"
+          }
+        }
+      }
+    },
+    "term.ghost" : {
+      "comment" : "What the word ghost means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A card ghost. A shortcut placed in a section that points at a card in another section (or at a card ghost) (like an alias in macOS; not a copy). It has its own name; inside the section where it is placed it can be written by that name alone, and from elsewhere as section:name. What it points at (target) is remembered by id and follows renames and moves; if the real card is deleted, it remains as a card ghost pointing at nothing. The section's diagram shows the card it points at in full. Cards in other sections that have no card ghost are gathered into one section ghost per section, and only the parts that are pointed at appear. Something shown only temporarily in the app (a temporary card ghost) does not remain in the project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードゴースト。セクションに置く、ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアスのようなもの。コピーではない）。自分の名前を持ち、置いたセクションの中ではその名前だけで書け、ほかからは section:名前 で書ける。指す先（target）は id で覚えて改名・移動に付いて行き、本物が消えると指す先の無いカードゴーストとして残る。セクションの図には指す先のカードが丸ごと出る。カードゴーストの無いほかのセクションのカードは、セクションごとに 1 枚のセクションゴーストにまとまり、指されている所だけが出る。画面で一時的に出すだけのもの（一時カードゴースト）はプロジェクトに残らない"
+          }
+        }
+      }
+    },
+    "term.goal" : {
+      "comment" : "What the word goal means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A goal. A container card that has the fields status (the state), priority, due (the due date), workBranch (the branch to work in) and MR, and a body (body); goals and tasks are placed inside it. The inner order is the order of work for tasks. It is placed in a goals section or a free section of the Project Board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標。status（状態）・priority（優先度）・due（期限）・workBranch（作業する branch）・MR の欄と、本文（body）を持つ入れ物のカードで、中に goal と task を置く。中の並びが task の作業の順。プロジェクトボードの goals のセクションとフリーセクションに置く"
+          }
+        }
+      }
+    },
+    "term.html" : {
+      "comment" : "What the word html means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An HTML page. Its body (body) is HTML (CSS too); on a diagram the card draws it laid out at its box's width and cut at the box. Scripts, loading from outside and form submission do not work (sb-nav:<path> links open in the app, http and https in the browser). Placed in document, free and UI sections, and can be resized. When exported, one card is one file (.html, with the same protection at its head)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。頭に同じ守りを書く）"
+          }
+        }
+      }
+    },
+    "term.in" : {
+      "comment" : "What the word in means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The container that a card inside a container card (flow, goal; the holds of the kind definition lists the kinds that can be put inside) is in. The path of an inner card is the container's path followed by its name (Behavior:Checkout.review, Goals:Launch.Design). Move a card to another container with in of card_update"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ物のカード（flow・goal。種類の定義の holds に中に置ける種類がある）の中のカードが入っている入れ物。中のカードのパスは入れ物のパスに名前を続ける（Behavior:Checkout.review・Goals:Launch.Design）。card_update の in で入れ物を移す"
+          }
+        }
+      }
+    },
+    "term.initiator" : {
+      "comment" : "What the word initiator means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The side that makes the call: self / peer (separate from the direction of the data)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼びに行く側: self / peer（データの向きとは別）"
+          }
+        }
+      }
+    },
+    "term.instance" : {
+      "comment" : "What the word instance means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data. An example (instance) of an entity or value (an actual value with a shape). It is placed in a Definition section (definition; Definitions at a new project's root) or a free section. The shape is the of line (in MCP, the shape's path in the value key of), and the values are held in data. The diagram and the editor line up a type tag and a value for each field of the shape. The path of one value is Data:first.status (elements of an array are Data:first.lines[0] and Data:first.lines[sku=A-1]). It appears in examples of the shape's JSON Schema and in the table of a card row of a document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "データ。entity・value の実例（形を持つ実際の値）。定義のセクション（definition。新しいプロジェクトでは根の Definitions）とフリーセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に持つ。図とエディタは形のフィールドごとに型の札と値を並べる。値 1 つのパスは Data:first.status（並びの要素は Data:first.lines[0]・Data:first.lines[sku=A-1]）。形の JSON Schema の examples と、文書の card の行の表に出る"
+          }
+        }
+      }
+    },
+    "term.join" : {
+      "comment" : "What the word join means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A join. With two or more next lines, it waits until the destinations that split up have all arrived (join: all / any / first, partial: fail / continue)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合流。next の線を 2 本以上にして分かれた行き先がそろうのを待つ（join: all / any / first、partial: fail / continue）"
+          }
+        }
+      }
+    },
+    "term.line" : {
+      "comment" : "What the word line means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The kind of a line. Built-in ones (embed, points, link, holds, shapeOf, rules, implementedBy, mentions, and the lines of flow nodes: next, condition, else, onError, onTimeout, runs, awaits, reads, writes, partner, key) and ones the project defines. The meaning (base of the definition) is embed (the type becomes the partner), designate (the type does not change and the partner is pointed at), or link (unrelated to the type). Read them with kind_list and kind_read, and define them with kind_create and kind_update"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の種類。組み込み（embed・points・link・holds・shapeOf・rules・implementedBy・mentions と、flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）とプロジェクトが定義するもの。意味（定義の base）は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。kind_list・kind_read で読み、kind_create・kind_update で定義する"
+          }
+        }
+      }
+    },
+    "term.main" : {
+      "comment" : "What the word main means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tree that represents the current implementation. There is one per project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまの実装を表すツリー。プロジェクトに 1 つ"
+          }
+        }
+      }
+    },
+    "term.merge" : {
+      "comment" : "What the word merge means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Putting what was changed in a branch into main (not available while it is being rebuilt)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch で変えたことを main に入れること（作り直しているあいだは使えない）"
+          }
+        }
+      }
+    },
+    "term.mock" : {
+      "comment" : "What the word mock means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A mock. One HTML page built from a UI section's parts, each where it is placed and as big as it is placed (a frame holds the mock of the UI section it points at; note cards are not drawn; scripts do not run). In MCP, read it with section_read as: mock (html, width, height, parts, frames), with each part's own page (faces) added by faces: true, and as a picture with as: picture. The app's section map draws the parts from their own pages. When exported, each UI section is one .html"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モック。UI のセクションの部品を、置いた所に置いた大きさで組み上げた 1 枚の HTML のページ（はめ込みには指す先の UI のセクションのモックが入る。note のカードは描かない。スクリプトは動かない）。MCP は section_read の as: mock（html・width・height・parts・frames）で読み、faces: true で部品ごとのページ（faces）も添え、as: picture で絵。画面のセクションマップは部品ごとのページで部品を描く。エクスポートすると UI のセクションごとに 1 枚の .html"
+          }
+        }
+      }
+    },
+    "term.note" : {
+      "comment" : "What the word note means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sticky note placed beside cards (memos, change history). It can be placed in a section of any kind and has a body (body). The body is visible in the Section map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードのそばに置く付箋（メモ・変更履歴）。どの種類のセクションにも置け、本文（body）を持つ。セクションマップで本文が見える"
+          }
+        }
+      }
+    },
+    "term.nullable" : {
+      "comment" : "What the word nullable means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "null is a valid value (independent of required)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "null が正当な値（required とは独立）"
+          }
+        }
+      }
+    },
+    "term.of" : {
+      "comment" : "What the word of means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shape: the line from data (instance) and a table (table) to a shape (entity, value). Only one is allowed, and in MCP the shape's path is written in the value key of (not in connections). It is not drawn on the diagram at first; the shape's name appears at the head of the card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形: データ（instance）と表（table）から形（entity・value）への線。1 本だけで、MCP は value のキー of に形のパスを書く（connections には書かない）。図にははじめから描かず、カードの頭に形の名前が出る"
+          }
+        }
+      }
+    },
+    "term.parsers" : {
+      "comment" : "What the word parsers means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Which language each file is read in: from a working directory's file's extension (.h) or name (Makefile) to a language id (cpp; null for none). section_update of the working directory's section changes the defaults with parsers, and parsers: null puts them back. Like readType and exclude it is a project setting, and section_read says the map in force and the languages"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語の対応。作業ディレクトリのファイルの拡張子（.h）か名前（Makefile）から、読む言語の id（cpp。null で言語なし）への対応。作業ディレクトリのセクションの section_update の parsers で既定を書き換え、parsers: null で既定に戻す。読み方（readType・exclude）と同じくプロジェクトの設定で、section_read に効いている対応と言語（languages）が出る"
+          }
+        }
+      }
+    },
+    "term.path" : {
+      "comment" : "What the word path means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A way of pointing at a place in the form section:Card.field. It is looked up in the tree where it was written. A name holding a separator character (a space or / : . [ ] ' @ | { } # \" `) is wrapped in single quotes (Docs:'release notes.md'; a ' inside a name is written '')"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "section:Card.field の形で場所を指す書き方。書いた場所のツリーの中で探す。区切りの字（空白と / : . [ ] ' @ | { } # \" `）を含む名前は一重引用符で囲む（Docs:'release notes.md'。名前の中の ' は ''）"
+          }
+        }
+      }
+    },
+    "term.points" : {
+      "comment" : "What the word points means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points by ID: the value of the field is the partner's ID (the type does not change)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID で指す: 欄の値が相手の ID（型は変わらない）"
+          }
+        }
+      }
+    },
+    "term.process" : {
+      "comment" : "What the word process means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A process. Rows that follow one after another in steps (read, write, sign, verify, call, send, receive, compute) and the next line. Where a row reads or writes is given by the reads and writes lines (with the row in from)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "処理。steps にまっすぐ続く行（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算する）と next の線。行が読む・書く所は reads・writes の線（from に行）"
+          }
+        }
+      }
+    },
+    "term.project" : {
+      "comment" : "What the word project means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The whole design of the schemas and behavior"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキーマと振る舞いの設計図の全体"
+          }
+        }
+      }
+    },
+    "term.project_tree" : {
+      "comment" : "What the word project_tree means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project's tree. The kinds, names and order of the sections directly under the root of main and branches (main_sections) and directly under the root of the board (board_sections). When you rewrite it, a section taken out is removed if it is empty, and if it has contents they are set aside in _evacuation_"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの木。main・branch の根の直下（main_sections）とボードの根の直下（board_sections）のセクションの種類・名前・並び。書き換えると、外したセクションは空なら消え、中身があれば _evacuation_ へ退避する"
+          }
+        }
+      }
+    },
+    "term.read" : {
+      "comment" : "What the word read means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reads from a store (the reads line)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場所から読む（reads の線）"
+          }
+        }
+      }
+    },
+    "term.receive" : {
+      "comment" : "What the word receive means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive (any number of partner lines to partner flows can be drawn, and they can be written together with program. If both are left out, it is received from the one the start receives from; in a flow whose start receives nothing, it is a gap)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受ける（相手のフローへの partner の線は何本でも引け、program と一緒にも書ける。どちらも省くと、開始が受ける相手から。開始が受けない flow では穴）"
+          }
+        }
+      }
+    },
+    "term.required" : {
+      "comment" : "What the word required means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The key is always present"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーが必ずある"
+          }
+        }
+      }
+    },
+    "term.return" : {
+      "comment" : "What the word return means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What an end node returns (carries. The partners it returns to are given by partner lines (any number) and program; if both are left out, it returns to the one the start receives from)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了ノードが返すもの（carries。返す相手は partner の線（何本でも）と program で、どちらも省くと開始が受ける相手へ）"
+          }
+        }
+      }
+    },
+    "term.rows" : {
+      "comment" : "What the word rows means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The rows of a formatdoc. name (a name used in the path) and kind: item (an item: a heading and the rows inside it, up to 5 levels), text (a body), table (a table), diagram (a diagram), diagrams (the section's diagrams), card (a table of cards). The path has the same form as a field's (Docs:Spec.auth.login)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formatdoc の行。name（パスに使う名前）と kind: item（項目。heading と中の rows、5 段まで）・text（本文）・table（表）・diagram（図）・diagrams（セクションの図）・card（カードの表）。パスはフィールドと同じ形（Docs:Spec.auth.login）"
+          }
+        }
+      }
+    },
+    "term.run" : {
+      "comment" : "What the word run means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A run. It calls the flow on the runs line and waits for it to end (it passes carries and receives returns). The onError and next lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実行。runs の線のフローを呼んで終わりを待つ（carries を渡し、returns を受ける）。onError・next の線"
+          }
+        }
+      }
+    },
+    "term.section" : {
+      "comment" : "What the word section means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A group of cards. The sections directly under the root of main, branches and the board are decided by the project's project_tree (kind, name and order); other sections are created inside them and can be nested. In a path it is written like Store/Ordering:Order"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの組。main・branch とボードの根の直下はプロジェクトの project_tree で決まり（種類と名前と並び）、ほかのセクションはその中に作り、入れ子にできる。パスでは Store/Ordering:Order のように書く"
+          }
+        }
+      }
+    },
+    "term.send" : {
+      "comment" : "What the word send means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hands over (does not wait for a reply; this includes having another flow started). The partner is given by partner lines (any number; it is handed over to each partner) or program, and one of them is required"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "渡す（返りを待たない。ほかの flow を始めさせるのも）。相手は partner の線（何本でも。相手ごとに渡す）か program で、どちらかが要る"
+          }
+        }
+      }
+    },
+    "term.sign" : {
+      "comment" : "What the word sign means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signs (the key line, use: sign)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名する（key の線、use: sign）"
+          }
+        }
+      }
+    },
+    "term.stackdoc" : {
+      "comment" : "What the word stackdoc means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A stacked document. A document placed in a Document section in which versions (versions) are stacked from newest to oldest (such as a change history). The diagram and the editor show the version chosen with the selector. When exported, the whole card is one file; if you write a version's path in an item of the export, only that version is exported"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "積み重ね文書。ドキュメントセクションに置く、版（versions）を新しい順に重ねた文書（変更履歴など）。図とエディタはセレクタで選んだ版を見せる。エクスポートするとカード全体が 1 ファイルで、エクスポートの項目に版のパスを書くとその版だけ"
+          }
+        }
+      }
+    },
+    "term.standalone" : {
+      "comment" : "What the word standalone means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows a value or enum as a card of its own in the diagram of its section, without folding it into the card that holds it (appearance only; it makes no commit)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value・enum を自分のセクションの図に、持っているカードの中に畳まずに 1 枚のカードで出す（見かけ。コミットにならない）"
+          }
+        }
+      }
+    },
+    "term.store" : {
+      "comment" : "What the word store means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A place where records are kept (a table, collection, ledger, or file)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録を置く場所（テーブル・コレクション・台帳・ファイル）"
+          }
+        }
+      }
+    },
+    "term.svg" : {
+      "comment" : "What the word svg means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An SVG picture. Its body (body) is SVG; on a diagram the card draws it as an image fitted in its box (keeping its proportions), so scripts in it do not run and nothing outside is loaded. The body must read as XML with an svg root element. Placed in document, free and UI sections, and can be resized. When exported, one card is one file (.svg)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG の絵。本文（body）に SVG を書き、図の上ではカードの箱に収めて（縦横の比を保って）画像として描く（中のスクリプトは動かず、外のものは読み込まない）。本文は XML として読め、根が svg の要素であること。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.svg）"
+          }
+        }
+      }
+    },
+    "term.symbol" : {
+      "comment" : "What the word symbol means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Functions and types. A function, method, type, module, constant or macro inside a working directory's file of a language whose functions and types are read: a card the core makes from the file each time it reads it, with the bundled tree-sitter grammars (never kept). Its path goes on from the file's (repo/src:'a.rs'.Order.total; when one parent has the same name twice, the later ones get \" (2)\"). It has of (the same kinds in every language; the app marks them ƒ for a function or method, T a type, M a module, C a constant, # a macro), word (what its language calls it: fn, struct, protocol and so on) and language. Cards in main and branches point at it with the implementedBy line, and no line leaves it. card_read reads its declaration line (declaration), its body (body) and the names it calls (calls)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関数と型。関数と型を拾う言語の作業ディレクトリのファイルの中の関数・メソッド・型・モジュール・定数・マクロで、コアが同梱の tree-sitter の文法で読むたびにファイルから作るカード（保存しない）。パスはファイルのパスに続ける（repo/src:'a.rs'.Order.total。同じ親に同じ名前が並べば、あとのものに「 (2)」）。of（どの言語でも同じ分け方。画面の札は ƒ が関数とメソッド・T が型・M がモジュール・C が定数・# がマクロ）・word（その言語での呼び方: fn・struct・protocol など）・language を持つ。main と branch のカードから実装の線（implementedBy）で指せ、関数と型から線は出せない。card_read で宣言の 1 行（declaration）・中身（body）・呼んでいる名前（calls）を読む"
+          }
+        }
+      }
+    },
+    "term.table" : {
+      "comment" : "What the word table means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A table. A table card that gathers the data (instance) of a shape (entity or value) by rules (within, where, columns, sort, unnest). It is placed in Definition, Document and Free sections. The shape is the of line (in MCP, the shape's path in the value key of). The diagram is a picture of the assembled table; in a document it goes in as a table through an embed in the body or a card row, and in an export it is a Markdown table"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表。形（entity・value）のデータ（instance）を決まり（within・where・columns・sort・unnest）で集めた表のカード。定義・ドキュメント・フリーのセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）。図は組み上がった表の絵で、文書には本文の埋め込みか行 card で表として入り、エクスポートでは Markdown の表"
+          }
+        }
+      }
+    },
+    "term.task" : {
+      "comment" : "What the word task means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A task. It has a done check (done), a body (body: what was decided, how far it has gone, and the background), and Linked lines (line: link in connections). When put inside a goal, it appears as a row of the goal (number, check, name). On a diagram it is drawn as the face of the kind definition says, with the check and the Markdown of the body, and its size can be changed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タスク。済みのチェック（done）と、本文（body。決めたこと・どこまで進んだか・経緯）と、つながる線（connections の line: link）を持つ。goal の中に入れると、goal の行（番号・チェック・名前）として出る。図の上では種類の定義の face のとおり、チェックと本文の Markdown で描き、大きさを変えられる"
+          }
+        }
+      }
+    },
+    "term.topLeft" : {
+      "comment" : "What the word topLeft means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The top-left position of a card or node (in grid cells; {x, y})"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードやノードの左上の位置（マス。{x, y}）"
+          }
+        }
+      }
+    },
+    "term.trigger" : {
+      "comment" : "What the word trigger means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What starts a flow: manual (by hand), receive (on receiving), event (the end of another flow), schedule (periodic), startup (at every start-up)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始のきっかけ: manual（手動）・receive（受ける）・event（ほかのフローの終わり）・schedule（定期）・startup（起動のたび）"
+          }
+        }
+      }
+    },
+    "term.ui" : {
+      "comment" : "What the word ui means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A UI section. Lay out a screen with parts (html and svg cards) and frames (frame) that put other UI sections in. Notes can go here too. Sections made inside it are ui too. Added to a project with type: ui in its project_tree. In the app it opens on its section map, which draws the parts as the mock does, where they are placed and stacked in the section's order. A tag (headerPlace) and a sticky note (notePlace) are laid over each part's corners, shown or hidden with \"Headers\" and \"Notes\" on the diagram's top bar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UI のセクション。部品（html・svg のカード）と、ほかの UI のセクションをはめ込むはめ込み（frame）を置いて画面を組む。note も置ける。中に作るセクションも ui。プロジェクトの project_tree に type: ui で足す。画面ではセクションマップで開き、部品をモックと同じ見た目で、置いた所に並び順に重ねて描く。部品の角に見出しの札（headerPlace）と付箋（notePlace）を重ね、図の上のバーの「見出し」「ノート」で出し入れする"
+          }
+        }
+      }
+    },
+    "term.value" : {
+      "comment" : "What the word value means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A shape that goes inside something (it has no ID). In the Section map it is shown folded into the card that holds it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何かの中に入る形（ID を持たない）。セクションマップでは持っているカードの中に畳んで出る"
+          }
+        }
+      }
+    },
+    "term.verify" : {
+      "comment" : "What the word verify means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifies a signature (the key line, use: verify)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名を確かめる（key の線、use: verify）"
+          }
+        }
+      }
+    },
+    "term.version" : {
+      "comment" : "What the word version means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The version open in a stackdoc (the name of a version; appearance only, it makes no commit). If there is none, the top version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stackdoc で開いている版（版の name。見かけで、コミットにならない）。無ければ一番上の版"
+          }
+        }
+      }
+    },
+    "term.versions" : {
+      "comment" : "What the word versions means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The versions of a stackdoc. name (a name used in the path), key (the name shown in the selector), heading (the heading; key if left out), body (the Markdown body). The newest version comes first, and a version's path is Docs:Changelog.v1_2_0"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stackdoc の版。name（パスに使う名前）・key（セレクタに出す名前）・heading（見出し。省くと key）・body（本文の Markdown）。並びは新しい版が上で、版のパスは Docs:Changelog.v1_2_0"
+          }
+        }
+      }
+    },
+    "term.via" : {
+      "comment" : "What the word via means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The method of exchange: stdio / file / exec / http / grpc / websocket / queue, and values the project has added (vias of flow in kind_update; if left out, it is inside the component)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受け渡しの方法: stdio / file / exec / http / grpc / websocket / queue と、プロジェクトが足した値（kind_update の flow の vias。省くと部品の中）"
+          }
+        }
+      }
+    },
+    "term.wait" : {
+      "comment" : "What the word wait means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A wait. for (approval / timer / event), timeout, and the onTimeout and next lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待つ。for（approval / timer / event）・timeout と、onTimeout・next の線"
+          }
+        }
+      }
+    },
+    "term.workdir" : {
+      "comment" : "What the word workdir means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A working directory's section: directly under the root of main and every branch, listed in the project tree with the kind workdir. What is in it is read from this machine's folder and read only; only notes can be put in it. Its settings are section_update on it (readType, exclude, description, folder), and it is read again with its action Read (section_action's op: read)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリのセクション。main と各 branch の根の直下に、プロジェクトの木に種類 workdir で並べたもの。中はこの機械のフォルダから読んで作る読むだけのもので、置けるのはメモだけ。設定はそのセクションの section_update（readType・exclude・description・folder）、読み直すのはアクションの「読み込む」（section_action の op: read）"
+          }
+        }
+      }
+    },
+    "term.write" : {
+      "comment" : "What the word write means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes to a store (the writes line)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場所へ書く（writes の線）"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

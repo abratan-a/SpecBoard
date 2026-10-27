@@ -15,6 +15,12 @@
 # (OTHER_CODE_SIGN_FLAGS); otherwise it keeps the ad-hoc signature the linker gives it.
 # The build paths are left out (--remap-path-prefix) and the symbols stripped. It is built for macOS 11.0,
 # not for the app's deployment target, so that it runs on hosts with an older macOS than the app's.
+# The macOS agent is stripped with Apple's strip, not by cargo: cargo strips with the rust-objcopy of the
+# Rust version in rust-toolchain.toml, which can leave the LINKEDIT string table on a 4-byte boundary, and
+# the dyld of macOS 27 refuses such a file linked against SDK 27. The proc-macros and build scripts of both
+# builds run on this Mac (rustc loads them), so they are not stripped at all. The Linux agent (ELF) keeps
+# cargo's strip. tools/check-linkedit.sh stops the build if the table of the macOS agent is misaligned
+# anyway.
 # The app's build number (CURRENT_PROJECT_VERSION from Xcode; twelve digits, year to minute, in a release
 # build) goes in: an app with a newer build restarts the agent running on a host, and an app with an
 # older build does not connect and says so (sources/core/agent/src/attach.rs).
@@ -44,7 +50,8 @@ fi
 
 export CARGO_TARGET_DIR="${OBJROOT:-$root/build}/specboard-agent"
 export RUSTFLAGS="--remap-path-prefix=$root=. --remap-path-prefix=$HOME=~"
-export CARGO_PROFILE_RELEASE_STRIP=symbols
+export CARGO_PROFILE_RELEASE_STRIP=none
+export CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_STRIP=none
 export MACOSX_DEPLOYMENT_TARGET=11.0
 export SPECBOARD_BUILD="${CURRENT_PROJECT_VERSION:-}"
 
@@ -58,10 +65,14 @@ done
 
 mkdir -p "$(dirname "$dest")"
 cp -f "${built[0]}" "$dest.incoming"
+# /usr/bin/strip is Apple's (a strip from binutils or Homebrew may come first on PATH). Without options it
+# removes every symbol an executable does not need to run
+/usr/bin/strip "$dest.incoming"
 if [[ ${CODE_SIGNING_ALLOWED:-NO} == YES && -n ${EXPANDED_CODE_SIGN_IDENTITY:-} ]]; then
   # OTHER_CODE_SIGN_FLAGS is what the app itself is signed with (--timestamp for a notarized build)
   codesign --force --sign "$EXPANDED_CODE_SIGN_IDENTITY" --options runtime ${OTHER_CODE_SIGN_FLAGS:-} "$dest.incoming"
 fi
+bash "$root/tools/check-linkedit.sh" "$dest.incoming"
 mv -f "$dest.incoming" "$dest"
 
 # The Linux agent. zig and cargo are looked up on PATH, so their places go first. The macOS SDK and
@@ -71,7 +82,7 @@ if [[ -z $linux ]]; then
   rm -f "$linux_dest"
   exit 0
 fi
-env -u SDKROOT -u MACOSX_DEPLOYMENT_TARGET PATH="$(dirname "$ZIG"):$(dirname "$(readlink -f "$CARGO")"):$PATH" \
+env -u SDKROOT -u MACOSX_DEPLOYMENT_TARGET CARGO_PROFILE_RELEASE_STRIP=symbols PATH="$(dirname "$ZIG"):$(dirname "$(readlink -f "$CARGO")"):$PATH" \
   "$ZIGBUILD" build --quiet --release --locked -p specboard-agent --target "$linux_target"
 mkdir -p "$(dirname "$linux_dest")"
 cp -f "$CARGO_TARGET_DIR/$linux_target/release/specboard-agent" "$linux_dest.incoming"

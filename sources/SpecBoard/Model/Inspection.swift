@@ -137,7 +137,7 @@ nonisolated struct Inspection: Sendable, Equatable {
     static func read(_ reply: Result<String, Error>) -> Result<Inspection, InspectionRefusal> {
         switch reply {
         case .failure(let error):
-            return .failure(InspectionRefusal(said: error.localizedDescription))
+            return .failure(InspectionRefusal(said: ErrorText.said(error)))
         case .success(let text):
             guard let answer = try? JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any] else {
                 return .failure(InspectionRefusal(said: L10n.text(.Common.problemCoreUnreadable, in: Language.current)))

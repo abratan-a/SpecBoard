@@ -31,7 +31,13 @@ struct TabBar: View {
                 more(laid.hidden.map { items[$0] })
             }
         }
-        .frame(maxWidth: .infinity, minHeight: TabBarLayout.height, maxHeight: TabBarLayout.height, alignment: .leading)
+        // As wide as the room it is given, never as wide as its tabs: the width measured is what they are laid
+        // out in, so a bar that took its tabs' width — the tabs put back as a project opens, measured before
+        // the bar had a width — would be measured as wide as them, never shrink them, and push the window's
+        // content past the window.
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: TabBarLayout.height, maxHeight: TabBarLayout.height,
+               alignment: .leading)
+        .clipped()
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
 
@@ -192,13 +198,13 @@ struct TabItem: Identifiable {
     var natural: CGFloat {
         let scale = Typography.shared.scale
         let size = 12 * scale
-        let nameFont = mono ? NSFont.monospacedSystemFont(ofSize: size, weight: .semibold) : NSFont.systemFont(ofSize: size, weight: .semibold)
+        let nameFont = mono ? Typeface.mono(size, .semibold) : Typeface.system(size, .semibold)
         var name = Self.measure(self.name, nameFont)
         if index == nil { name = min(name, Self.mapNameMost * scale) }
         var lead: CGFloat = 0
         if symbol != nil { lead = Self.symbolWidth + Self.symbolGap }
         if let badge {
-            lead = Self.measure(badge, NSFont.monospacedSystemFont(ofSize: 10 * scale, weight: .regular)) + 10 + Self.badgeGap
+            lead = Self.measure(badge, Typeface.mono(10 * scale, .regular)) + 10 + Self.badgeGap
         }
         let close = closes ? Self.closeGap + Self.closeWidth : 0
         return ceil(2 * Self.padding + lead + name + close)
@@ -215,7 +221,7 @@ struct TabItem: Identifiable {
         let directory = detail.directory
         let key = model.mapSectionKey
         let section = directory.section(id: key)
-        let mark = (section?.kind?.rawValue ?? section?.kindName).flatMap { detail.sectionMarks[$0] } ?? SectionMark()
+        let mark = section.map(detail.mark(of:)) ?? SectionMark()
         let map = TabItem(index: nil, place: .section(key), symbol: mark.symbol,
                           tint: mark.color.flatMap(HexColor.color(hex:)), name: section?.name ?? "",
                           help: directory.full(section: key))

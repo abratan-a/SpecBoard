@@ -316,12 +316,17 @@ enum FormatRows {
         var parts: [String] = []
         walk(rows) { row, path, depth in
             if row.kind == .item {
-                parts.append(String(repeating: "#", count: min(depth + 2, 6)) + " " + row.title)
+                parts.append(heading(row, depth: depth))
             } else if let text = render(row, path, depth)?.trimmingCharacters(in: .newlines), !text.isEmpty {
                 parts.append(text)
             }
         }
         return parts.joined(separator: "\n\n")
+    }
+
+    /// An item's heading as Markdown: `##` at the top, one `#` more for each level down.
+    static func heading(_ row: FormatRow, depth: Int) -> String {
+        String(repeating: "#", count: min(depth + 2, 6)) + " " + row.title
     }
 
     /// A table as Markdown: the headings, the line under them, and each row of cells

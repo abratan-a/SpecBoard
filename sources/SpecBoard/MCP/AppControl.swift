@@ -164,7 +164,7 @@ nonisolated final class AppControl: CoreApp, @unchecked Sendable {
                 ("note", note),
             ])
         case .failure(let error):
-            out = OrderedObject([("error", .string((error as? LocalizedError)?.errorDescription ?? String(describing: error)))])
+            out = OrderedObject([("error", .string(ErrorText.said(error, in: answerLanguage)))])
         }
         return OJSON.object(out).compact()
     }

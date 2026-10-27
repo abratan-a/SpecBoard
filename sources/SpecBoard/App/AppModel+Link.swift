@@ -35,7 +35,7 @@ extension AppModel {
     @discardableResult
     func openLink(_ url: URL) -> Bool {
         guard let link = AppLink(url) else {
-            lastError = L10n[.Lines.linkCantOpen(url.absoluteString)]
+            tell(error: { L10n.text(.Lines.linkCantOpen(url.absoluteString), in: $0) })
             return false
         }
         guard case .ready = phase else {
@@ -46,7 +46,7 @@ extension AppModel {
         guard let project = projects.first(where: { $0.id == named }) ?? projects.first(where: { $0.name == named })
                 ?? projects.first(where: { $0.slug == named })
                 ?? projects.first(where: { $0.name.lowercased() == named.lowercased() }) else {
-            lastError = L10n[.Lines.linkNoProject(named)]
+            tell(error: { L10n.text(.Lines.linkNoProject(named), in: $0) })
             return false
         }
         if detail?.project.id != project.id { select(project.id) }
@@ -56,7 +56,7 @@ extension AppModel {
             case Board.word: openBoard()
             default:
                 guard let found = branches.first(where: { $0.name.lowercased() == branch.lowercased() }) else {
-                    lastError = L10n[.Lines.linkNoBranch(branch)]
+                    tell(error: { L10n.text(.Lines.linkNoBranch(branch), in: $0) })
                     return false
                 }
                 openBranch(found.id)
@@ -71,7 +71,7 @@ extension AppModel {
             return true
         }
         guard open(path: link.path) else {
-            lastError = L10n[.Lines.linkNoPlace(link.path)]
+            tell(error: { L10n.text(.Lines.linkNoPlace(link.path), in: $0) })
             return false
         }
         return true

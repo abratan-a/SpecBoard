@@ -15,7 +15,7 @@
   "lines.ghostNoTarget": "{ghost} は指す先の無いカードゴーストです",
   "lines.gone.holds": "holds は使いません。store が置くものは線で書きます: カードの value の connections に {\"line\": \"holds\", \"to\": \"<記録の形のパス>\"}",
   "lines.gone.links": "links は使いません。つながりは線で書きます: カードの value の connections に {\"line\": \"link\", \"to\": \"<カードのパス>\"}",
-  "lines.gone.notes": "notes は使いません。flow の決まりは線で書きます: カードの value の connections に {\"line\": \"notes\", \"to\": \"<note・freedoc・formatdoc のパス>\", \"at\": \"<formatdoc の項目（省けば文書）>\"}",
+  "lines.gone.notes": "notes は使いません。flow の決まりは線で書きます: カードの value の connections に {\"line\": \"rules\", \"to\": \"<note・freedoc・formatdoc のパス>\", \"at\": \"<formatdoc の項目（省けば文書）>\"}",
   "lines.gone.payloads": "payloads は使いません。署名やハッシュの鍵は線で書きます: プロジェクトの線の種類（kind_list）で、カードの value の connections に {\"line\": \"signedBy\", \"to\": \"<鍵のパス>\", \"fields\": {\"payload\": \"<覆いの名前>\", \"excludes\": [\"<覆わないパス>\"]}}",
   "lines.gone.pointsAt": "pointsAt は使いません。値が指す先は線で書きます: カードの value の connections に {\"line\": \"points\", \"from\": \"<欄のパス>\", \"to\": \"<相手のカードのパス>\", \"at\": \"<相手の中の着く所（省けばカード）>\", \"fields\": {\"cardinality\": \"N:1\", \"when\": {…}}}（ID で指す線。ほかの語で指すなら、その語の線の種類を kind_list で見る。判別子で選ぶなら to を書かず fields の discriminatedBy）",
   "lines.gone.ref": "ref は使いません。内包は線で書きます: カードの value の connections に {\"line\": \"embed\", \"from\": \"<欄のパス>\", \"to\": \"<相手のカードのパス>\"}（欄の型は相手になり、線を外すと string に戻る。読むときの欄の type は ref）",

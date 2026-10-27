@@ -101,6 +101,21 @@ pub(crate) fn matching(
             return Err(before);
         }
     }
+    // A goal's value of before (`進行中`), said with its value of now.
+    for (name, value) in wanted {
+        let values: Vec<&Value> = match value {
+            Value::Array(list) => list.iter().collect(),
+            other => vec![other],
+        };
+        for v in values.into_iter().filter_map(Value::as_str) {
+            if let Some((_, _, now)) = crate::kinds::GOAL_VALUES_BEFORE
+                .iter()
+                .find(|(key, before, _)| key == name && *before == v)
+            {
+                return Err(text!("board.fields.valueBefore", name, before = v, now));
+            }
+        }
+    }
     for value in wanted.values() {
         let scalar = |v: &Value| !v.is_array() && !v.is_object();
         let fine = match value {

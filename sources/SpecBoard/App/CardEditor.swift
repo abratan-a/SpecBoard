@@ -100,13 +100,13 @@ struct CardEditor: View {
         VStack(alignment: .leading, spacing: 8) {
             CardBar(kind: schema.kind, name: schema.name, label: schema.label) {
                 if schema.kind == .enum && schema.enumOpen {
-                    Text(L10n[.CardEditor.badgeOpenEnum])
+                    Text(BuiltinWords.field("enum", "open"))
                         .font(.app(10))
                         .padding(.horizontal, 6).padding(.vertical, 1)
                         .overlay(RoundedRectangle(cornerRadius: 3)
                             .stroke(Color(nsColor: theme.brassLine), lineWidth: 1))
                         .foregroundStyle(Color(nsColor: theme.brassInk))
-                        .help(L10n[.CardEditor.helpOpenEnum])
+                        .help(BuiltinWords.fieldMeaning("enum", "open"))
                 }
             } tools: {
                 CardTools(model: model, card: schema, editable: editable, onNavigate: onNavigate)
@@ -162,7 +162,7 @@ struct CardEditor: View {
         case .enum:
             return [(L10n[.Common.wordValue], "\(schema.values.count)"), (L10n[.CardEditor.factIncoming], "\(incoming)")]
         case .store:
-            return [(L10n[.CardEditor.wordHolds], "\(model.holds(of: schema).count)")]
+            return [(BuiltinWords.line(Line.holds), "\(model.holds(of: schema).count)")]
         default:
             var nested = 0
             walkFields(schema.fields) { field, _, _ in if field.type.isObject { nested += 1 } }

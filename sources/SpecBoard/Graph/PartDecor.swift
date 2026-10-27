@@ -51,21 +51,21 @@ enum PartDecor {
         let style = NSMutableParagraphStyle()
         style.lineBreakMode = .byTruncatingTail
         let bar = NSAttributedString(string: " | ", attributes: [
-            .font: NSFont.systemFont(ofSize: tagFont), .foregroundColor: theme.ink3, .paragraphStyle: style,
+            .font: Typeface.system(tagFont), .foregroundColor: theme.ink3, .paragraphStyle: style,
         ])
         let out = NSMutableAttributedString(string: part.name, attributes: [
-            .font: NSFont.monospacedSystemFont(ofSize: tagFont, weight: .bold), .foregroundColor: theme.ink,
+            .font: Typeface.mono(tagFont, .bold), .foregroundColor: theme.ink,
             .paragraphStyle: style,
         ])
         if !part.label.isEmpty {
             out.append(bar)
             out.append(NSAttributedString(string: part.label, attributes: [
-                .font: NSFont.systemFont(ofSize: tagFont), .foregroundColor: theme.ink2, .paragraphStyle: style,
+                .font: Typeface.system(tagFont), .foregroundColor: theme.ink2, .paragraphStyle: style,
             ]))
         }
         out.append(bar)
         out.append(NSAttributedString(string: CardRenderer.customKindWord(part) ?? part.kind.rawValue, attributes: [
-            .font: NSFont.systemFont(ofSize: tagFont, weight: .medium), .foregroundColor: theme.accent(for: part),
+            .font: Typeface.system(tagFont, .medium), .foregroundColor: theme.accent(for: part),
             .paragraphStyle: style,
         ]))
         return out
@@ -78,7 +78,7 @@ enum PartDecor {
         style.maximumLineHeight = noteLine
         style.lineBreakMode = .byWordWrapping
         return NSAttributedString(string: note, attributes: [
-            .font: NSFont.systemFont(ofSize: noteFont),
+            .font: Typeface.system(noteFont),
             .foregroundColor: NSColor(srgbRed: 0x3D / 255, green: 0x3A / 255, blue: 0x1E / 255, alpha: 1),
             .paragraphStyle: style,
         ])

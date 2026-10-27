@@ -8,6 +8,7 @@
   "kindConnections.problem.key": "「{key}」は線に書けないキーです",
   "kindConnections.problem.keyAllowed": "「{key}」は線に書けないキーです（書けるのは {allowed}）",
   "kindConnections.problem.lineMissing": "line（線の種類）がありません",
+  "kindConnections.problem.lineRenamed": "「{name}」は前の名前です。今は「{now}」で書きます",
   "kindConnections.problem.lineUnknown": "「{name}」という線の種類はありません（あるのは {names}）",
   "kindConnections.problem.list": "線の並びです",
   "kindConnections.problem.listShape": "線の並びです（[{line, from, to, at, description, fields}]）",

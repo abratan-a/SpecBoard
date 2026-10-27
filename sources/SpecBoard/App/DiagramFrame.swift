@@ -50,6 +50,8 @@ struct DiagramDefinition {
     var bandTools: AnyView? = nil
     /// What ends the band, after mermaid: a section map's filter.
     var bandEnd: AnyView? = nil
+    /// What is done with the groups on it (`MapGroupHooks`); nil on a diagram that holds none.
+    var groups: MapGroupHooks? = nil
 }
 
 /// What a working directory's section map says at its top: what it is drawn from, and, for a folder a note
@@ -140,7 +142,8 @@ struct DiagramFrame: View {
                 cardWidth: model.cardWidth,
                 marks: d.marks,
                 pickedLine: model.selectedLine?.id,
-                curvesOnly: d.curvesOnly)
+                curvesOnly: d.curvesOnly,
+                groups: d.groups)
                 // つなぐ, asked on the diagram, shown where it was asked (overview §13).
                 .modifier(ConnectAnchor(model: model))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -166,8 +166,10 @@ fn a_line_drawn_records_its_code_and_says_nothing_while_it_is_the_same() {
     );
     let kept = recorded(&core);
     assert_eq!(kept.len(), 3, "{kept:?}");
+    // A function's code by its words; a file of no language by its text.
     assert!(
-        kept.iter().all(|(_, _, d)| d.starts_with("w1:")),
+        kept.iter()
+            .all(|(_, s, d)| d.starts_with(if s.is_empty() { "w1:" } else { "t1:" })),
         "{kept:?}"
     );
     assert_eq!(kept[0].1, "", "the whole file: {kept:?}");
@@ -290,8 +292,11 @@ fn a_line_not_recorded_is_said_without_a_mark_and_reviewed_records_it() {
     assert_eq!(review_of(&core, ORDER), Value::Null);
     bind(&core, Some(&repo));
     let review = review_of(&core, ORDER);
-    assert_eq!(review.as_array().unwrap().len(), 1, "{review}");
+    assert_eq!(review.as_array().unwrap().len(), 2, "{review}");
     assert_eq!(review[0]["state"], "unrecorded");
+    // The one not in the file is said to point at what is not there.
+    assert_eq!(review[1]["state"], "broken", "{review}");
+    assert_eq!(review[1]["from"], "total");
     assert!(group(&core, "codeChanged").is_empty());
     let listed = ok(
         &core,
@@ -306,10 +311,13 @@ fn a_line_not_recorded_is_said_without_a_mark_and_reviewed_records_it() {
         json!({"target": ORDER, "op": "reviewed"}),
     );
     assert_eq!(recorded(&core).len(), 1);
-    // The one not in the file is not read: said, not recorded.
-    assert_eq!(done["notRead"][0]["from"], "total", "{done}");
-    assert!(done["notRead"][0]["why"].is_string(), "{done}");
-    assert_eq!(review_of(&core, ORDER), Value::Null);
+    // The one not in the file: said with why, not recorded, and not taken for code not read here.
+    assert_eq!(done["broken"][0]["from"], "total", "{done}");
+    assert!(done["broken"][0]["why"].is_string(), "{done}");
+    assert!(done.get("notRead").is_none(), "{done}");
+    let review = review_of(&core, ORDER);
+    assert_eq!(review.as_array().unwrap().len(), 1, "{review}");
+    assert_eq!(review[0]["state"], "broken");
 }
 
 #[test]
@@ -493,7 +501,7 @@ fn a_project_file_carries_the_records_of_the_lines_it_holds() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 28);
+    assert_eq!(file["version"], 33);
     let marks = file["codeMarks"].as_array().unwrap();
     assert_eq!(marks.len(), 1, "{marks:?}");
     assert_eq!(marks[0]["symbol"], "helper");
@@ -504,4 +512,218 @@ fn a_project_file_carries_the_records_of_the_lines_it_holds() {
     let read = op(&other, json!({"op": "project_file_read", "text": text}));
     assert!(read.get("error").is_none(), "{read}");
     assert_eq!(recorded(&other), kept);
+}
+
+/// A text's fingerprint as lines recorded it before fingerprints were made of the code's words:
+/// every run of spaces made one space and trimmed, SHA-256's first 8 bytes.
+fn plain_digest(text: &str) -> String {
+    use sha2::{Digest, Sha256};
+    let said = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let digest = Sha256::digest(said.as_bytes());
+    let hex: String = digest[..8].iter().map(|b| format!("{b:02x}")).collect();
+    format!("w1:{hex}")
+}
+
+/// The screen's reading of a card: its implementation lines to look at (`project_detail`).
+fn screen_review(core: &Core) -> Value {
+    let detail = op(
+        core,
+        json!({"op": "project_detail", "project": project_id(core)}),
+    )["result"]
+        .clone();
+    detail["schemas"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "Order")
+        .unwrap()["codeReview"]
+        .clone()
+}
+
+#[test]
+fn a_function_named_anew_or_a_file_taken_away_is_said_broken_and_reviewed_records_only_the_rest() {
+    let (core, repo) = core_with_repository();
+    draw(
+        &core,
+        ORDER,
+        json!([
+            {"line": "implementedBy", "to": "repo/src:'a.rs'.helper"},
+            {"line": "implementedBy", "from": "total", "to": "repo/src:'a.rs'.other"},
+            {"line": "implementedBy", "from": "status", "to": "repo:'notes.txt'"}
+        ]),
+    );
+    let before = recorded(&core);
+    // One function changed, another named anew, and the note taken away.
+    edit(&repo, "n + 1", "n + 5");
+    edit(&repo, "fn other(", "fn renamed(");
+    fs::remove_file(repo.join("notes.txt")).unwrap();
+    let review = review_of(&core, ORDER);
+    let items = review.as_array().unwrap();
+    assert_eq!(items.len(), 3, "{review}");
+    assert_eq!(items[0]["state"], "changed");
+    assert_eq!(items[1]["state"], "broken");
+    let why = items[1]["why"].as_str().unwrap();
+    assert!(
+        why.contains("other") && why.contains("repo/src:'a.rs'"),
+        "{why}"
+    );
+    assert_eq!(items[2]["state"], "broken");
+    assert!(
+        items[2]["why"].as_str().unwrap().contains("notes.txt"),
+        "{review}"
+    );
+    // The screen's reading says the same, with each line's id; only the changed one is the dot's.
+    let screen = screen_review(&core);
+    assert_eq!(screen.as_array().unwrap().len(), 3, "{screen}");
+    assert!(
+        screen[1]["id"].is_string() && screen[1]["why"].is_string(),
+        "{screen}"
+    );
+    // Reviewed: the changed one recorded again; the broken ones not, each said with why in words a
+    // person reads.
+    let done = ok(
+        &core,
+        "card_action",
+        json!({"target": ORDER, "op": "reviewed"}),
+    );
+    assert_eq!(
+        done["recorded"],
+        json!([{"to": "repo/src:'a.rs'.helper"}]),
+        "{done}"
+    );
+    assert_eq!(done["broken"].as_array().unwrap().len(), 2, "{done}");
+    assert!(done.get("notRead").is_none(), "{done}");
+    let warning = done["warnings"][0].as_str().unwrap();
+    assert!(
+        !warning.contains("notRead") && !warning.contains("broken"),
+        "{warning}"
+    );
+    assert!(warning.contains("other"), "{warning}");
+    let now = recorded(&core);
+    assert_eq!(now.len(), before.len());
+    assert_ne!(now, before);
+    assert_eq!(
+        now.iter().filter(|r| before.contains(r)).count(),
+        2,
+        "{now:?}"
+    );
+    // Only the broken ones left: reviewed is refused, and said why.
+    let said = refused(
+        &core,
+        "card_action",
+        json!({"target": ORDER, "op": "reviewed"}),
+    );
+    assert!(said.contains("2"), "{said}");
+    // The folder let go of on this machine: nothing is said, broken or not.
+    bind(&core, None);
+    assert_eq!(review_of(&core, ORDER), Value::Null);
+}
+
+#[test]
+fn a_comment_or_the_spaces_between_words_change_nothing_and_a_record_of_before_is_held_to_its_own_way()
+ {
+    let (core, repo) = core_with_repository();
+    draw(
+        &core,
+        ORDER,
+        json!([{"line": "implementedBy", "to": "repo/src:'a.rs'.helper"}]),
+    );
+    edit(
+        &repo,
+        "    n + 1\n",
+        "    // only a comment\n    n+1 /* and another */\n",
+    );
+    edit(
+        &repo,
+        "fn helper(n: u32) -> u32 {",
+        "/// What it does.\nfn helper(n: u32)->u32{",
+    );
+    assert_eq!(review_of(&core, ORDER), Value::Null);
+    // A word changed, in a string too, is a change.
+    edit(&repo, "n+1", "n+1+0");
+    assert_eq!(review_of(&core, ORDER)[0]["state"], "changed");
+    ok(
+        &core,
+        "card_action",
+        json!({"target": ORDER, "op": "reviewed"}),
+    );
+    // Recorded the way before (its text, comments and all): held to the code made that way, so a
+    // comment changed is a change until it is recorded again.
+    let conn = rusqlite::Connection::open(core.place()).unwrap();
+    let text = fs::read_to_string(repo.join("src/a.rs")).unwrap();
+    let start = text.find("/// What it does.").unwrap();
+    let end = start + text[start..].find("\n}\n").unwrap() + 2;
+    let plain = plain_digest(&text[start..end]);
+    conn.execute("UPDATE code_marks SET digest = ?", [&plain])
+        .unwrap();
+    assert_eq!(review_of(&core, ORDER), Value::Null);
+    edit(&repo, "// only a comment", "// a comment changed");
+    assert_eq!(review_of(&core, ORDER)[0]["state"], "changed");
+    ok(
+        &core,
+        "card_action",
+        json!({"target": ORDER, "op": "reviewed"}),
+    );
+    assert!(recorded(&core)[0].2.starts_with("t1:"));
+    edit(&repo, "// a comment changed", "// changed again");
+    assert_eq!(review_of(&core, ORDER), Value::Null);
+}
+
+#[test]
+fn a_card_whose_lines_of_two_kinds_reach_changed_code_has_an_item_for_each_kind_by_its_label() {
+    let (core, repo) = core_with_repository();
+    ok(
+        &core,
+        "kind_create",
+        json!({"target": "testFunction", "value": {"of": "line", "label": "テストの関数",
+            "base": "link", "from": [{"kinds": ["*"], "at": ["card", "row"]}],
+            "to": {"kinds": ["file"], "at": ["card", "symbol"]}, "max": 1}}),
+    );
+    draw(
+        &core,
+        ORDER,
+        json!([
+            {"line": "implementedBy", "to": "repo/src:'a.rs'.helper"},
+            {"line": "testFunction", "from": "total", "to": "repo/src:'a.rs'.Order.total"}
+        ]),
+    );
+    edit(&repo, "n + 1", "n + 2");
+    edit(&repo, "iter().sum", "iter().copied().sum");
+    let found = group(&core, "codeChanged");
+    let said: Vec<(String, String)> = found
+        .iter()
+        .map(|i| {
+            (
+                i["problem"].as_str().unwrap().to_string(),
+                i["at"].as_str().unwrap().to_string(),
+            )
+        })
+        .collect();
+    assert_eq!(
+        said,
+        [
+            (
+                "「実装」の線の先 repo/src:'a.rs'.helper のコードが、覚えたあとで変わりました"
+                    .to_string(),
+                ORDER.to_string()
+            ),
+            (
+                "「テストの関数」の線の先 repo/src:'a.rs'.Order.total のコードが、覚えたあとで変わりました"
+                    .to_string(),
+                ORDER.to_string()
+            ),
+        ],
+        "{found:?}"
+    );
+    assert_ne!(found[0]["id"], found[1]["id"]);
+    let listed = ok(
+        &core,
+        "inspection_list",
+        json!({"value": {"group": "codeChanged"}}),
+    );
+    let groups = listed["groups"].to_string();
+    assert!(
+        groups.contains("線の先のコードが変わったカード"),
+        "{listed}"
+    );
 }

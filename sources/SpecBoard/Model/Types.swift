@@ -231,9 +231,9 @@ nonisolated enum Line {
     /// What a store keeps.
     static let holds = "holds"
     /// A data card's shape: written as its key `of`, drawn as its header's word.
-    static let of = "of"
+    static let shapeOf = "shapeOf"
     /// A flow's rules: a note, a document or an item of one.
-    static let notes = "notes"
+    static let rules = "rules"
     /// What a note's or a document's text names (`[[ ]]`): read from the text, never written.
     static let mentions = "mentions"
     /// A card of main's or a branch's carried out in a working directory's file.
@@ -241,21 +241,21 @@ nonisolated enum Line {
     // A flow's nodes, between them: the way on, a branch's condition, the way when none
     // holds, when it fails, when it runs out of time.
     static let next = "next"
-    static let branch = "branch"
+    static let condition = "condition"
     static let otherwise = "else"
     static let onError = "onError"
     static let onTimeout = "onTimeout"
     // A flow's nodes, out of the flow: what a run runs, the end a begin or a wait waits
     // for, what a row reads and writes, whom it sends to or hears from, the key it uses.
     static let runs = "runs"
-    static let event = "event"
+    static let awaits = "awaits"
     static let reads = "reads"
     static let writes = "writes"
-    static let peer = "peer"
+    static let partner = "partner"
     static let key = "key"
 
     /// The ways a flow goes from node to node, in the order a node's card says them.
-    static let flowWays = [next, branch, otherwise, onError, onTimeout]
+    static let flowWays = [next, condition, otherwise, onError, onTimeout]
 }
 
 // MARK: - Rules
@@ -603,6 +603,13 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     /// same reason as `uses`.
     var data: JSONValue? = nil
     var shapeName: String? = nil
+    /// For a data card its shape draws as a list of records: the rows the core worked out (`listFace` of
+    /// `project_detail`'s card). Out of the coding keys for the same reason as `uses`.
+    var listFace: ListFace? = nil
+    /// For an entity or a value: its list face as written (`face`, `specboard://SpecBoard/Docs/Design:CardKinds`
+    /// 「データの一覧の顔」), shown in the property panel, written over MCP. Out of the coding keys for the same
+    /// reason as `uses`.
+    var shapeFace: JSONValue? = nil
     /// For a table (`table`): its rules as its document keeps them (`within`・`where`・`columns`・`sort`・
     /// `unnest`), and the table they build now as Markdown (the core's, `tableMarkdown`). Out of the coding
     /// keys for the same reason as `uses`.
@@ -754,6 +761,9 @@ nonisolated struct CodeReviewLine: Codable, Hashable, Sendable {
         case changed
         /// Nothing was recorded of it.
         case unrecorded
+        /// What it points at is not in the code read on this machine (the function named anew, the file taken
+        /// away): `why` says which.
+        case broken
     }
 
     var id: String
@@ -763,16 +773,20 @@ nonisolated struct CodeReviewLine: Codable, Hashable, Sendable {
     var state: State
     /// When what the code differs from was recorded: ISO 8601, UTC (`changed` only).
     var recordedAt: String?
+    /// What is not there, in the core's words (`broken` only).
+    var why: String?
 
-    private enum CodingKeys: String, CodingKey { case id, line, from, to, state, recordedAt }
+    private enum CodingKeys: String, CodingKey { case id, line, from, to, state, recordedAt, why }
 
-    init(id: String, line: String = "implementedBy", from: String = "", to: String, state: State, recordedAt: String? = nil) {
+    init(id: String, line: String = "implementedBy", from: String = "", to: String, state: State, recordedAt: String? = nil,
+         why: String? = nil) {
         self.id = id
         self.line = line
         self.from = from
         self.to = to
         self.state = state
         self.recordedAt = recordedAt
+        self.why = why
     }
 
     init(from decoder: Decoder) throws {
@@ -783,6 +797,7 @@ nonisolated struct CodeReviewLine: Codable, Hashable, Sendable {
         to = try c.decode(String.self, forKey: .to)
         state = try c.decode(State.self, forKey: .state)
         recordedAt = try c.decodeIfPresent(String.self, forKey: .recordedAt)
+        why = try c.decodeIfPresent(String.self, forKey: .why)
     }
 
     /// Whether it is the orange dot's: its code changed (one never recorded is said in the panel only).
@@ -940,6 +955,12 @@ struct ProjectDetail: Codable, Hashable, Sendable {
     /// The mark and colour the sections of a kind the project defines carry in the nav panel, by the
     /// kind's name (`kinds.sections`'s `icon`・`color`).
     var sectionMarks: [String: SectionMark] = [:] { didSet { stamp = ProjectStamp.next() } }
+    /// The kinds of section each kind's sections may have inside, by the kind's name (`kinds.sections`'s
+    /// `sections`): the first is what a section made inside without a kind asked for is.
+    var sectionInside: [String: [String]] = [:] { didSet { stamp = ProjectStamp.next() } }
+    /// What each kind of section is called, by its name (`kinds.sections`'s `label`): a project's own
+    /// kind's heading.
+    var sectionLabels: [String: String] = [:] { didSet { stamp = ProjectStamp.next() } }
     /// What a flow's `via` may be, one list for a begin, a process node's rows and a run
     /// (`kinds.vias`): the built-in values, then those the project adds. The core holds it and
     /// checks a node by it as it writes.
@@ -961,6 +982,7 @@ struct ProjectDetail: Codable, Hashable, Sendable {
             && a.sections == b.sections && a.context == b.context && a.ghosts == b.ghosts
             && a.inner == b.inner && a.lineKinds == b.lineKinds && a.cardKinds == b.cardKinds
             && a.sectionHolds == b.sectionHolds && a.sectionMarks == b.sectionMarks
+            && a.sectionInside == b.sectionInside && a.sectionLabels == b.sectionLabels
     }
 
     nonisolated func hash(into hasher: inout Hasher) {
@@ -1073,8 +1095,9 @@ struct ChangeEvent: Codable, Hashable, Identifiable, Sendable {
 /// follows the base.
 ///
 /// The app draws with `always` — every card unfolds them — and offers no switch.
-/// The base-and-exceptions form is what the layout takes (`LayeredLayout`), so a
-/// caller can still ask for another arrangement.
+/// The base-and-exceptions form is what the filters carry (`GraphFilters.nesting`)
+/// and a card's rows are measured by, so a caller can still ask for cards drawn
+/// another way.
 nonisolated struct Nesting: Hashable, Sendable {
     var base: Bool = false
     var flipped: Set<String> = []

@@ -10,8 +10,9 @@
 //!
 //! - `{"t":"who"}` → `{"t":"daemon","pid":…,"exe":…,"build":…}`: which one runs (`attach` asks
 //!   before it hands the app's lines on, and has one of an older build stopped)
-//! - `{"t":"hello","client":…}` → `{"t":"ready","pid":…,"exe":…,"build":…}`: the app, by the name of
-//!   its machine
+//! - `{"t":"hello","client":…,"lang":…}` → `{"t":"ready","pid":…,"exe":…,"build":…}`: the app, by
+//!   the name of its machine; what it is told without asking (where MCP listens) is said in `lang`
+//!   (the screen's language), else the machine's
 //! - `{"t":"core","id":n,"request":"…"}` → `{"t":"core","id":n,"answer":"…"}`: a request of the core's
 //!   (`Core::call`), as the app makes it of the core it holds itself, and the core's answer as the
 //!   core wrote it (its keys in their order). Both are the JSON's text (a request may be the object).
@@ -110,10 +111,14 @@ pub(crate) struct Client {
     pub(crate) seen: Mutex<Seen>,
 }
 
-/// What an app said of itself: its machine's name, and its windows (`{"t":"windows"}`).
+/// What an app said of itself: its machine's name, its screen's language, and its windows
+/// (`{"t":"windows"}`).
 #[derive(Default)]
 pub(crate) struct Seen {
     pub(crate) name: String,
+    /// What it is told without a request (where MCP listens, why it cannot) is said in it; none:
+    /// the machine's.
+    pub(crate) lang: Option<String>,
     /// Each `{window, project, branch, section, card, front}`, the project by its id.
     pub(crate) windows: Vec<Value>,
     /// When it said them last, against the other apps (the one said last is the nearer).
@@ -239,9 +244,20 @@ impl Clients {
     }
 }
 
+impl Client {
+    /// The language it said it reads (`hello`'s `lang`), if it said one.
+    fn lang(&self) -> Option<String> {
+        self.seen
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .lang
+            .clone()
+    }
+}
+
 impl Clients {
-    /// One line to every app it holds.
-    fn tell(&self, message: &Value) {
+    /// One line to every app it holds, made for each in its own language.
+    fn tell_each(&self, message: impl Fn(Option<&str>) -> Value) {
         let all: Vec<Arc<Client>> = self
             .all
             .lock()
@@ -250,7 +266,7 @@ impl Clients {
             .map(|(_, c)| c.clone())
             .collect();
         for client in all {
-            client.say(message);
+            client.say(&message(client.lang().as_deref()));
         }
     }
 }
@@ -309,7 +325,9 @@ pub fn serve() -> i32 {
     let mcp = Mcp::start(core.clone(), &home);
     {
         let clients = clients.clone();
-        mcp.tell_with(move |said| clients.tell(&json!({"t": "mcp", "mcp": said})));
+        mcp.tell_with(move |mcp| {
+            clients.tell_each(|lang| json!({"t": "mcp", "mcp": mcp.said_in(lang)}));
+        });
     }
     let path = socket(&home);
     let _ = std::fs::remove_file(&path);
@@ -359,7 +377,7 @@ fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream
             Some("who") => {
                 let mut said = me();
                 said["t"] = "daemon".into();
-                said["mcp"] = mcp.said();
+                said["mcp"] = mcp.said_in(message["lang"].as_str());
                 client.say(&said);
             }
             Some("hello") => {
@@ -369,8 +387,13 @@ fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream
                     id = Some(clients.add(client.clone()));
                 }
                 name = message["client"].as_str().unwrap_or("").to_string();
-                said["mcp"] = mcp.said();
-                client.seen.lock().unwrap_or_else(|e| e.into_inner()).name = name.clone();
+                let lang = message["lang"].as_str().map(str::to_string);
+                said["mcp"] = mcp.said_in(lang.as_deref());
+                {
+                    let mut seen = client.seen.lock().unwrap_or_else(|e| e.into_inner());
+                    seen.name = name.clone();
+                    seen.lang = lang;
+                }
                 eprintln!("{}", specboard_core::text!("agent.run.connected", name));
                 client.say(&said);
             }
@@ -409,10 +432,9 @@ fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream
                     .unwrap_or(0);
                 match mcp.move_to(port) {
                     Ok(()) => {
-                        let told = json!({"t": "mcp", "mcp": mcp.said()});
-                        clients.tell(&told);
+                        clients.tell_each(|lang| json!({"t": "mcp", "mcp": mcp.said_in(lang)}));
                         if id.is_none() {
-                            client.say(&told);
+                            client.say(&json!({"t": "mcp", "mcp": mcp.said()}));
                         }
                     }
                     Err(problem) => {

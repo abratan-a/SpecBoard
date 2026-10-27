@@ -15,12 +15,11 @@ use super::cards::Scope;
 use super::grid::{CARD_COLUMNS, Layout, Rect, clear_spot, intersects, next_spot, rows_for_count};
 use crate::export::Project;
 use crate::model::Card;
-use crate::write::{Spot, Tx, db};
-use rusqlite::OptionalExtension;
+use crate::write::{Spot, Tx};
 use serde_json::{Map, Value};
 
 /// How many rows a card draws on a goal's card map: a goal inside, as the relation panel
-/// draws a goal — its choices (status・priority) and the rest of its fields that are written, as a
+/// draws a goal — its fields that are written but its state, which its head says, as a
 /// section's diagram counts them from its kind (`grid::goal_row_count`), and a row a card it holds.
 /// (A task is drawn by its kind's face: `size`.)
 fn map_rows(card: &Card, project: &Project) -> usize {
@@ -147,6 +146,24 @@ pub(crate) fn rects(
         .collect()
 }
 
+/// The boxes placed on `goal`'s card map as a group takes them in (`groups::OnMap`).
+pub(crate) fn on_map(project: &Project, goal: &Card, layout: &Layout) -> Vec<super::groups::OnMap> {
+    boxes(project, goal, layout)
+        .into_iter()
+        .map(|b| super::groups::OnMap {
+            path: b.path,
+            at: b.at,
+            size: b.size,
+            drawn: true,
+            grows: false,
+            view: goal.id.clone(),
+            kind: "card",
+            item: b.id,
+            key: "card",
+        })
+        .collect()
+}
+
 /// The boxes on `goal`'s card map as `card_read` returns them (`include: ["places"]`), in the shape
 /// `places` writes them: by the card's path, each with `topLeft` and `bottomRight` — as `section_read`
 /// returns a section's — and `size` when it has one of its own.
@@ -168,26 +185,11 @@ pub(crate) fn read_places(seen: &Seen, layout: &Layout, goal: &Card) -> Value {
     Value::Object(out)
 }
 
-/// A card's row on a goal's card map, as the tree has it.
+/// A card's row on a goal's card map, as the tree has it (main's beneath a branch that has none).
 pub(crate) fn spot(tx: &Tx, scope: &Scope, goal: &str, id: &str) -> Result<Spot, String> {
-    let found = tx
-        .conn()
-        .query_row(
-            "SELECT x, y, w, h, pinned FROM places WHERE project_id = ? AND branch_id = ? AND view = ? AND item_kind = 'card' AND item = ?",
-            rusqlite::params![scope.project, scope.tree, goal, id],
-            |r| {
-                Ok(Spot {
-                    x: r.get(0)?,
-                    y: r.get(1)?,
-                    w: r.get(2)?,
-                    h: r.get(3)?,
-                    pinned: r.get::<_, i64>(4)? != 0,
-                })
-            },
-        )
-        .optional()
-        .map_err(db)?;
-    Ok(found.unwrap_or_default())
+    Ok(tx
+        .place_row(&scope.project, &scope.tree, goal, "card", id)?
+        .unwrap_or_default())
 }
 
 /// `card_update`'s `places` on a goal: each card it holds put where it says, then, with all
@@ -319,8 +321,13 @@ pub(crate) fn placed(seen: &Seen) -> bool {
 
 /// The cards goals hold with no place on their card maps, each given one in the order the
 /// goal holds them — under the shortest of four columns, as a section's cards are given
-/// theirs (`update::place_unplaced`): (the goal, the card, its cell).
-pub(crate) fn unplaced(seen: &Seen, layout: &Layout) -> Vec<(String, String, (i64, i64))> {
+/// theirs (`update::place_unplaced`), out of the groups' frames (`frames`, by the card map's
+/// goal): (the goal, the card, its cell).
+pub(crate) fn unplaced(
+    seen: &Seen,
+    layout: &Layout,
+    frames: &std::collections::BTreeMap<String, Vec<Rect>>,
+) -> Vec<(String, String, (i64, i64))> {
     let project = seen.project();
     let mut out = Vec::new();
     for goal in seen
@@ -350,12 +357,14 @@ pub(crate) fn unplaced(seen: &Seen, layout: &Layout) -> Vec<(String, String, (i6
                 Some((at.x, at.y, w, h))
             })
             .collect();
+        let framed = frames.get(&goal.id).cloned().unwrap_or_default();
         for (id, card) in held
             .iter()
             .filter(|(id, _)| !goal.item_places.contains_key(*id))
         {
             let (w, h) = size(card, &project, layout);
-            let at = next_spot(&taken, w, layout.margin);
+            let blocked: Vec<Rect> = taken.iter().chain(framed.iter()).copied().collect();
+            let at = next_spot(&blocked, w, layout.margin);
             taken.push((at.0, at.1, w, h));
             out.push((goal.id.clone(), (*id).clone(), at));
         }

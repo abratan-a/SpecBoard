@@ -19,78 +19,6 @@
         }
       }
     },
-    "alert.later" : {
-      "comment" : "Alert button that leaves the new version for later.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Later"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "後で"
-          }
-        }
-      }
-    },
-    "alert.readyMessage" : {
-      "comment" : "Alert text. The argument is the installed version.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Installing quits the app and relaunches it. The current version is %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "入れ替えるとアプリを終了して起動し直します。今の版は %@ です。"
-          }
-        }
-      }
-    },
-    "alert.readyTitle" : {
-      "comment" : "Alert title after a manual check found a new version. The argument is the version.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Version %@ is ready"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい版 %@ を用意しました"
-          }
-        }
-      }
-    },
-    "alert.relaunch" : {
-      "comment" : "Alert button that replaces the app now.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relaunch and update"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "再起動して入れ替える"
-          }
-        }
-      }
-    },
     "alert.upToDate" : {
       "comment" : "Alert text after a manual check found nothing new. The argument is the installed version.",
       "extractionState" : "manual",
@@ -285,6 +213,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "入れ替えを始められませんでした: %@"
+          }
+        }
+      }
+    },
+    "every.day" : {
+      "comment" : "How often the update source is checked, inside a sentence (lower case).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "every 24 hours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "24 時間ごと"
+          }
+        }
+      }
+    },
+    "every.hour" : {
+      "comment" : "How often the update source is checked, inside a sentence (lower case).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "every hour"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 時間ごと"
+          }
+        }
+      }
+    },
+    "every.six" : {
+      "comment" : "How often the update source is checked, inside a sentence (lower case).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "every 6 hours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 時間ごと"
           }
         }
       }
@@ -541,6 +523,60 @@
         }
       }
     },
+    "interval.day" : {
+      "comment" : "Choice of how often an added update source is checked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every 24 hours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "24 時間ごと"
+          }
+        }
+      }
+    },
+    "interval.hour" : {
+      "comment" : "Choice of how often an added update source is checked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every hour"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 時間ごと"
+          }
+        }
+      }
+    },
+    "interval.six" : {
+      "comment" : "Choice of how often an added update source is checked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every 6 hours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 時間ごと"
+          }
+        }
+      }
+    },
     "menu.checkForUpdates" : {
       "comment" : "App menu item.",
       "extractionState" : "manual",
@@ -559,6 +595,60 @@
         }
       }
     },
+    "notice.available" : {
+      "comment" : "Notification: a new version is available. Arguments: the version, the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %1$@ is available (%2$@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい版 %1$@ があります（%2$@）"
+          }
+        }
+      }
+    },
+    "notice.download" : {
+      "comment" : "Button on the new-version notification and its row in the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダウンロード"
+          }
+        }
+      }
+    },
+    "notice.downloadHelp" : {
+      "comment" : "Tooltip of the Download button on the new-version notification.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloads and verifies this version. The app keeps running."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この版をダウンロードして確かめます。アプリは終了しません"
+          }
+        }
+      }
+    },
     "notice.failed" : {
       "comment" : "Shown in the toolbar after a failed replacement. The argument is the reason.",
       "extractionState" : "manual",
@@ -573,6 +663,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新できませんでした: %@。前の版のまま起動しています"
+          }
+        }
+      }
+    },
+    "notice.ready" : {
+      "comment" : "Notification: a new version was downloaded and verified. Arguments: the version, the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ is ready (%2$@). Install it with “Update now”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ を用意しました（%2$@）。「今すぐアップデート」で入れ替えます"
           }
         }
       }
@@ -596,19 +704,73 @@
       }
     },
     "pill.checkHelp" : {
-      "comment" : "Tooltip of the Check for updates button. The argument is the update source's name.",
+      "comment" : "Tooltip of the Check for updates button. Arguments: the update source's name, how often it is checked (lower case, e.g. “every 6 hours”).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checks %@ for a new version now. It also checks every 6 hours."
+            "value" : "Checks %1$@ for a new version now. It also checks %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@に新しい版があるかを今すぐ確認します。6 時間ごとにも確認しています"
+            "value" : "%1$@に新しい版があるかを今すぐ確認します。%2$@にも確認しています"
+          }
+        }
+      }
+    },
+    "pill.checkHelpOff" : {
+      "comment" : "Tooltip of the Check for updates button when periodic checks are off. The argument is the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checks %@ for a new version now. Periodic checks are off."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に新しい版があるかを今すぐ確認します。定期の確認は切っています"
+          }
+        }
+      }
+    },
+    "pill.download" : {
+      "comment" : "Toolbar button while a new version is available and not downloaded yet. Arguments: the version, the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download %1$@ (%2$@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ をダウンロード（%2$@）"
+          }
+        }
+      }
+    },
+    "pill.downloadHelp" : {
+      "comment" : "Tooltip of the toolbar's Download button. Arguments: the current version, the new version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@. Downloads and verifies it; the app keeps running. Then “Update now” appears."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@。ダウンロードして確かめます。アプリは終了しません。済むと「今すぐアップデート」に変わります。"
           }
         }
       }
@@ -739,6 +901,42 @@
         }
       }
     },
+    "settings.autoDownload" : {
+      "comment" : "Settings > Updates: switch for the whole app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download new versions automatically"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい版を自動でダウンロード"
+          }
+        }
+      }
+    },
+    "settings.autoDownloadNote" : {
+      "comment" : "Settings > Updates: note under the automatic download switch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When off, a check that finds a new version only tells you, and it is downloaded when you press Download. When on, it is downloaded and verified in the background. Either way, the app is replaced only when you press Update now."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切のときは、新しい版が見つかっても知らせるだけで、ダウンロードを押すと取ってきます。入のときは、見つけ次第取ってきて確かめます。どちらでも、アプリを入れ替えるのは「今すぐアップデート」を押したときだけです。"
+          }
+        }
+      }
+    },
     "settings.checkNow" : {
       "comment" : "Settings > Updates: button that checks for a new version.",
       "extractionState" : "manual",
@@ -753,6 +951,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今すぐ確認"
+          }
+        }
+      }
+    },
+    "settings.download" : {
+      "comment" : "Settings > Updates: button that downloads the new version. The argument is the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ をダウンロード"
+          }
+        }
+      }
+    },
+    "settings.periodic" : {
+      "comment" : "Settings > Updates: switch under an added update source, beside the choice of interval.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check periodically"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定期的に確認"
+          }
+        }
+      }
+    },
+    "settings.periodicBuiltin" : {
+      "comment" : "Settings > Updates: switch under the built-in update source, whose interval is fixed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check periodically (every 6 hours)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定期的に確認（6 時間ごと）"
           }
         }
       }
@@ -1099,6 +1351,24 @@
         }
       }
     },
+    "status.available" : {
+      "comment" : "Update status in Settings when a new version is available and not downloaded. Arguments: the update source's name, the version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %2$@ is available from %1$@. It is downloaded when you press Download."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@に新しい版 %2$@ があります。ダウンロードを押すと取ってきて確かめます"
+          }
+        }
+      }
+    },
     "status.checkedAt" : {
       "comment" : "Appended directly after a sentence: when the last check was made. The English starts with a space.",
       "extractionState" : "manual",
@@ -1171,20 +1441,20 @@
         }
       }
     },
-    "status.idle" : {
-      "comment" : "Update status in Settings. The argument is the update source's name.",
+    "status.every" : {
+      "comment" : "Update status in Settings. Arguments: the update source's name, how often it is checked (lower case, e.g. “every 6 hours”).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checks the releases of %@ every 6 hours."
+            "value" : "Checks the releases of %1$@ %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@のリリースを 6 時間ごとに確認します。"
+            "value" : "%1$@のリリースを %2$@に確認します。"
           }
         }
       }
@@ -1207,6 +1477,60 @@
         }
       }
     },
+    "status.joined" : {
+      "comment" : "Joins two sentences of the update status: the first one has no closing period.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@. %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@。%2$@"
+          }
+        }
+      }
+    },
+    "status.lastProblem" : {
+      "comment" : "Under the update status, while a new version is available or ready: why the last check failed. The argument is the reason.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認できませんでした: %@"
+          }
+        }
+      }
+    },
+    "status.off" : {
+      "comment" : "Update status in Settings when the selected source's periodic check is off. The argument is the update source's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is checked only when you ask (periodic checks are off)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@は、確認を押したときだけ見ます（定期の確認は切っています）。"
+          }
+        }
+      }
+    },
     "status.ready" : {
       "comment" : "Update status in Settings when a new version is ready. The argument is the version.",
       "extractionState" : "manual",
@@ -1221,6 +1545,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ を用意しました。上のバーの「今すぐアップデート」か、ここのボタンで入れ替えます"
+          }
+        }
+      }
+    },
+    "status.rechecking" : {
+      "comment" : "Update status after Update now was pressed, while the update source is asked once more.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking for a newer version…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もっと新しい版が無いか確認しています…"
           }
         }
       }

@@ -25,7 +25,8 @@ import SwiftUI
 /// handed (`ViewThatFits`). The gaps go with the parts, so a part left out leaves none.
 struct CardBar<Leading: View, Tools: View>: View {
     var kind: SchemaKind
-    /// The kind as the badge says it while there is room; the kind's name when none.
+    /// The kind as the badge says it while there is room; the kind's name when none. Left out, a
+    /// built-in kind's as its definition says it (`BuiltinWords.badge`).
     var badge: String? = nil
     var name: String
     var label: String
@@ -39,9 +40,10 @@ struct CardBar<Leading: View, Tools: View>: View {
     var body: some View {
         HStack(spacing: 0) {
             if titled {
+                let said = badge ?? BuiltinWords.badge(kind.rawValue)
                 ViewThatFits(in: .horizontal) {
-                    KindBadge(kind: kind, text: badge)
-                    if badge != nil { KindBadge(kind: kind, text: nil) }
+                    KindBadge(kind: kind, text: said)
+                    if said != kind.rawValue { KindBadge(kind: kind, text: nil) }
                 }
                 .layoutPriority(2)
                 Text(name)
@@ -146,12 +148,12 @@ enum CardBarFit {
     /// it is no longer than that.
     static func nameMinWidth(_ name: String) -> CGFloat {
         let size = 14 * Typography.shared.scale
-        return width(least(name, letters: 4), NSFont.monospacedSystemFont(ofSize: size, weight: .semibold))
+        return width(least(name, letters: 4), Typeface.mono(size, .semibold))
     }
 
     /// The least a label is shown at: its first three letters and an ellipsis, or all of it.
     static func labelMinWidth(_ label: String) -> CGFloat {
-        width(least(label, letters: 3), NSFont.systemFont(ofSize: 12 * Typography.shared.scale))
+        width(least(label, letters: 3), Typeface.system(12 * Typography.shared.scale))
     }
 
     /// The first letters of a text and an ellipsis — the text itself when that is no shorter.

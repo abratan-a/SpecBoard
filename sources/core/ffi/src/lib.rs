@@ -61,6 +61,13 @@ impl specboard_core::App for AppRelay {
     }
 }
 
+/// 頼みが言語を言わないときにコアが話す言語（画面の言語）。開けなかったわけ（`open`・`create`）も、この言語で言う。
+/// 表の無い言語なら何も変えない。
+#[uniffi::export]
+pub fn set_language(lang: String) {
+    specboard_core::text::set_default(&lang);
+}
+
 /// 開いたコア。
 #[derive(uniffi::Object)]
 pub struct Core {

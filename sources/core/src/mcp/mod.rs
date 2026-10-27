@@ -510,12 +510,27 @@ fn complaints_with(
     if let Some(Value::Array(required)) = schema.get("required") {
         for name in required.iter().filter_map(Value::as_str) {
             if !arguments.contains_key(name) {
-                found.push(text!(
-                    "mcp.complaint.required",
-                    prefix,
-                    name,
-                    hint = guide_hint(path)
-                ));
+                // A key that takes one of a few words says them, so the next call can be right.
+                let words = properties
+                    .get(name)
+                    .and_then(|spec| spec.get("enum"))
+                    .map(strings)
+                    .filter(|w| !w.is_empty());
+                found.push(match words {
+                    Some(words) => text!(
+                        "mcp.complaint.requiredOneOf",
+                        prefix,
+                        name,
+                        names = words.join(" / "),
+                        hint = guide_hint(path)
+                    ),
+                    None => text!(
+                        "mcp.complaint.required",
+                        prefix,
+                        name,
+                        hint = guide_hint(path)
+                    ),
+                });
             }
         }
     }

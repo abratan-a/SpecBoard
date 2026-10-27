@@ -211,8 +211,12 @@ final class DocSnapshots: NSObject {
                     self.keep(picture, for: key)
                 }
                 let calls = self.waiting.removeValue(forKey: key) ?? []
-                calls.forEach { $0.call() }
                 self.next()
+                // Told on the main thread's next turn, not inside WebKit's reply: a card drawn again is drawn
+                // as any other drawing is, whatever WebKit is in the middle of, and a diagram gone by then
+                // finds nothing to draw (its callers hold it weakly).
+                guard !calls.isEmpty else { return }
+                DispatchQueue.main.async { calls.forEach { $0.call() } }
             }
         }
     }

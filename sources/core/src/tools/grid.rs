@@ -12,17 +12,17 @@ use serde_json::{Map, Value};
 pub(crate) const CARD_COLUMNS: i64 = 10;
 /// A card's row, in points.
 const UNIT_HEIGHT: f64 = 27.0;
-/// A card's frame around its rows at its tallest: border, header, padding, the strips.
-const FRAME: f64 = 2.0 + 40.0 + 12.0 + 2.0 * MORE_HEIGHT;
+/// The frame of the project's whole card (a document's height when it has none of its own) around
+/// the project's rows: border, header, padding and two rows more.
+const FRAME: f64 = 2.0 + 40.0 + 12.0 + 2.0 * UNIT_HEIGHT;
 const CARD_BORDER: f64 = 1.0;
 const HEADER_HEIGHT: f64 = 40.0;
 const LIST_PADDING: f64 = 12.0;
-/// The strip that says rows are out of sight: one row of the grid, so a
-/// card with one ends on a grid line as one without does.
+/// The half rows above and below the rows of a card whose rows do not fit, where the counts of
+/// those out of sight go: one row of the grid together, so a card with them ends on a grid line as
+/// one without does.
 const MORE_HEIGHT: f64 = 27.0;
 const ROW_HEIGHT: f64 = 27.0;
-/// A note shows this many lines at the most.
-const NOTE_LINES: usize = 200;
 
 /// The project's layout: how many rows a card shows, how wide it is, the margin around it,
 /// and how a formatdoc is drawn by default.
@@ -159,12 +159,14 @@ pub(crate) fn width_points(layout: &Layout, w: Option<i64>) -> f64 {
 }
 
 /// What the field a face draws as Markdown has to draw: none when nothing is written there.
-fn face_text<'a>(card: &'a Card, face: &Face) -> Option<&'a str> {
+pub(crate) fn face_text<'a>(card: &'a Card, face: &Face) -> Option<&'a str> {
     let name = face.markdown.as_ref()?;
     card.form
         .as_ref()
         .and_then(|f| f["fields"].get(name.as_str()))
         .and_then(Value::as_str)
+        // A note keeps its body as a card's own (`body`), not among its fields.
+        .or_else(|| (name == "body").then_some(card.body.as_str()))
         .filter(|t| !t.trim().is_empty())
 }
 
@@ -342,8 +344,10 @@ pub(crate) fn card_rows(card: &Card, project: &crate::export::Project, layout: &
     rows_sized(card, project, layout, own_size(card, project.defs.cards()))
 }
 
-/// How many grid rows a card takes when its own size is `own`: its height when one is written;
-/// otherwise as its contents say, a face's Markdown estimated at its own width.
+/// How many grid rows a card takes when its own size is `own`: its height when one is written —
+/// but a card whose rows scroll inside it never fewer than `LEAST_ROWS`, as the screen draws it, so
+/// where it is placed is where it is drawn; otherwise as its contents say, a face's Markdown
+/// estimated at its own width.
 pub(crate) fn rows_sized(
     card: &Card,
     project: &crate::export::Project,
@@ -352,7 +356,11 @@ pub(crate) fn rows_sized(
 ) -> i64 {
     let kinds = project.defs.cards();
     if let Some((_, Some(h))) = own {
-        return h;
+        return if scrolls(card, project, layout) {
+            h.max(LEAST_ROWS)
+        } else {
+            h
+        };
     }
     if let Some(face) = kinds.get(&card.kind).and_then(|k| k.face.as_ref()) {
         return face_rows(card, face, layout, width_points(layout, own.map(|s| s.0)));
@@ -360,26 +368,107 @@ pub(crate) fn rows_sized(
     if drawn_as_document(card, &layout.doc_view) {
         return rows_for_rows(layout.rows);
     }
+    rows_for_count(rows_drawn(card, project), layout)
+}
+
+/// Whether a card can grow on the diagram as rows of it are opened: it has no height of its own,
+/// is drawn as rows (not a document, a page, a frame, a face, a working directory's file) and holds
+/// a row folded as it first shows that opens — a field embedding a value object or an enum, a data
+/// card's elements listed by its shape's face, a container's 「済み」. Tidying leaves room under such
+/// a card down to the project's whole card (`rows_for_rows`), which is as tall as an opened card is
+/// drawn, so opening it does not cover the card below.
+pub(crate) fn grows(card: &Card, project: &crate::export::Project, layout: &Layout) -> bool {
+    let kinds = project.defs.cards();
+    if matches!(own_size(card, kinds), Some((_, Some(_))))
+        || card.kind == crate::kinds::FRAME
+        || kinds.get(&card.kind).is_some_and(|k| k.face.is_some())
+        || drawn_as_document(card, &layout.doc_view)
+        || project.file_card(&card.id).is_some()
+    {
+        return false;
+    }
+    if card.kind == crate::kinds::INSTANCE {
+        return super::faces::rows_count(project, card).is_some_and(|n| n > 0);
+    }
+    if project.is_container(&card.kind) {
+        return inside_parts(project, card, 0).1;
+    }
+    folds_a_type(card, project)
+}
+
+/// Whether a card holds a field that embeds a value object or an enum, which its row draws folded
+/// as it first shows.
+fn folds_a_type(card: &Card, project: &crate::export::Project) -> bool {
+    let is_type = |id: &str| {
+        project
+            .card(id)
+            .is_some_and(|t| t.kind == "value" || t.kind == "enum")
+    };
+    fn any_ref(fields: &[Field], is_type: &dyn Fn(&str) -> bool) -> bool {
+        fields.iter().any(|f| {
+            (f.is_ref() && f.ref_schema_id.as_deref().is_some_and(is_type))
+                || any_ref(&f.children, is_type)
+        })
+    }
+    if any_ref(&card.fields, &is_type) {
+        return true;
+    }
+    card.connections.iter().any(|line| {
+        !line.from.is_empty()
+            && project
+                .defs
+                .line(&line.line)
+                .is_some_and(|d| d.base == crate::kinds::Base::Embed)
+            && line.to.as_deref().is_some_and(is_type)
+    })
+}
+
+/// The fewest grid rows a card whose rows scroll inside a height of its own is drawn in
+/// (`CardGeometry.leastGridRows` on screen): its border, header and padding take two, one row and
+/// the half rows above and below it — kept whether rows are out of sight or not, where the counts
+/// of those rows and the lines to them land — the other two.
+pub(crate) const LEAST_ROWS: i64 = 4;
+
+/// Whether a card with a height of its own scrolls its rows inside it between the half rows that
+/// say what is out of sight (`CardForm.drawnHeight` on screen) — a note too, whose rows are the
+/// lines of its text; not one drawn at the height written whatever it holds: a frame, a document,
+/// a page (`svg`, `html`) and a face with Markdown under its fields.
+fn scrolls(card: &Card, project: &crate::export::Project, layout: &Layout) -> bool {
+    if card.kind == crate::kinds::FRAME {
+        return false;
+    }
+    if let Some(face) = project
+        .defs
+        .cards()
+        .get(&card.kind)
+        .and_then(|k| k.face.as_ref())
+    {
+        return face.page.is_none() && face.markdown.is_none();
+    }
+    !drawn_as_document(card, &layout.doc_view)
+}
+
+/// How many rows a card that draws rows has as it first shows: a kind the project defines its own
+/// and, for a container, those of the cards inside it; a goal the same; a data card its shape's.
+fn rows_drawn(card: &Card, project: &crate::export::Project) -> usize {
+    let kinds = project.defs.cards();
     if let Some(kind) = kinds.get(&card.kind).filter(|k| !k.builtin) {
         let inside = if kind.holds.is_empty() {
             0
         } else {
             inside_rows(project, card, 0)
         };
-        return rows_for_count(own_row_count(card, kind) + inside, layout);
+        return own_row_count(card, kind) + inside;
     }
     if card.kind == "goal"
         && let Some(kind) = kinds.get("goal")
     {
-        return rows_for_count(
-            goal_row_count(card, kind) + inside_rows(project, card, 0),
-            layout,
-        );
+        return goal_row_count(card, kind) + inside_rows(project, card, 0);
     }
     if card.kind == crate::kinds::INSTANCE {
-        return rows_for_count(instance_rows(card, project), layout);
+        return instance_rows(card, project);
     }
-    rows_for_count(row_count(card), layout)
+    row_count(card)
 }
 
 /// The rows a container draws for the cards inside it, as each one's kind's `as_row` says it
@@ -389,6 +478,13 @@ pub(crate) fn rows_sized(
 /// row 「済み」, folded as it first shows:
 /// the cards inside it, not what one of them unfolds.
 fn inside_rows(project: &crate::export::Project, container: &Card, depth: usize) -> usize {
+    let (open, finished) = inside_parts(project, container, depth);
+    open + usize::from(finished)
+}
+
+/// The rows a container draws open for the cards inside it, and whether it draws the folded row
+/// 「済み」 for the ones done (`inside_rows`).
+fn inside_parts(project: &crate::export::Project, container: &Card, depth: usize) -> (usize, bool) {
     use crate::kinds::FieldType;
     let kinds = project.defs.cards();
     let mut finished = false;
@@ -453,16 +549,14 @@ fn inside_rows(project: &crate::export::Project, container: &Card, depth: usize)
             1 + choices + under
         })
         .sum();
-    open + usize::from(finished)
+    (open, finished)
 }
 
-/// How many rows a goal shows, as the screen draws it (`cardRows`, `CustomKind.goal`): a row for
-/// each choice — its state and its priority, written or not, the state too though the header
-/// says it — one for each other field it holds something in (期限・作業する branch・MR), but what is
-/// written only in its editor (its body) — the cards inside it counted apart (`inside_rows`;
+/// How many rows a goal shows, as the screen draws it (`cardRows`, `CustomKind.goal`): one for
+/// each field it holds something in (優先度・期限・作業する branch・MR), but those its header says
+/// (its state) and what is written only in its editor (its body) — the cards inside it counted apart (`inside_rows`;
 /// counted short, the cards an AI placed sat closer than the project's margin on screen).
 pub(super) fn goal_row_count(card: &Card, kind: &crate::kinds::Kind) -> usize {
-    use crate::kinds::FieldType;
     let fields = card.form.as_ref().map(|f| &f["fields"]);
     let written = |name: &str| {
         fields.and_then(|f| f.get(name)).is_some_and(|v| match v {
@@ -476,8 +570,8 @@ pub(super) fn goal_row_count(card: &Card, kind: &crate::kinds::Kind) -> usize {
     kind.fields
         .iter()
         .filter(|f| f.show.as_deref() != Some("editor") && !f.look)
-        .filter(|f| !BASE_FIELDS.contains(&f.name.as_str()))
-        .filter(|f| f.fieldtype == FieldType::Radio || written(&f.name))
+        .filter(|f| !BASE_FIELDS.contains(&f.name.as_str()) && !kind.header.contains(&f.name))
+        .filter(|f| written(&f.name))
         .count()
 }
 
@@ -562,12 +656,6 @@ fn row_count(card: &Card) -> usize {
             }
             usize::from(top_points(card)) + items(&card.rows)
         }
-        "note" => card
-            .body
-            .split('\n')
-            .filter(|l| !l.trim().is_empty())
-            .count()
-            .min(NOTE_LINES + 1),
         "entity" | "value" => fields(&card.fields),
         _ => 0,
     }
@@ -597,8 +685,8 @@ fn element<'a>(
     }
 }
 
-/// How many rows a data card draws as it first shows (`InstanceRows.rows`, nothing folded): a row each of its shape's
-/// fields, nested as the shape is — what an object or an embedded shape holds under it, an
+/// How many rows a data card draws as it first shows (`InstanceRows.rows`, nothing folded; by its shape's list face,
+/// a row an element, folded): a row each of its shape's fields, nested as the shape is — what an object or an embedded shape holds under it, an
 /// array's elements each a row under it with their fields — a branch's fields only where written.
 /// None when its shape is gone.
 fn instance_rows(card: &Card, project: &crate::export::Project) -> usize {
@@ -606,6 +694,10 @@ fn instance_rows(card: &Card, project: &crate::export::Project) -> usize {
     let Some(shape) = super::instances::shape(project, card) else {
         return 0;
     };
+    // Drawn as a list by its shape's face: a row an element, every one folded.
+    if let Some(rows) = super::faces::rows_count(project, card) {
+        return rows;
+    }
     fn count(
         project: &crate::export::Project,
         fields: &[Field],
@@ -848,79 +940,6 @@ pub(crate) fn place_flow(
         let at = clear_spot(margin, wanted, CARD_COLUMNS, h, &taken);
         taken.push((at.0, at.1, CARD_COLUMNS, h));
         out.push((node.name.clone(), at));
-    }
-    out
-}
-
-/// Where the cards of `section` that overlap the ones before them go to be clear: its boxes drawn as cards, in their order —
-/// a value object or an enum folded into the cards holding it blocks nothing — each that lies
-/// over one kept before it moved to the nearest clear cell. By id: the box, where it sits, and
-/// where it goes.
-pub(crate) fn untangled(
-    project: &crate::export::Project,
-    layout: &Layout,
-    section: &str,
-) -> Vec<(OwnBox, (i64, i64))> {
-    let mut kept: Vec<Rect> = Vec::new();
-    let mut out = Vec::new();
-    for b in own_boxes(project, layout, section)
-        .into_iter()
-        .filter(|b| b.drawn)
-    {
-        let Some((x, y)) = b.at else { continue };
-        let (w, h) = b.size;
-        let rect = (x, y, w, h);
-        if kept.iter().any(|k| intersects(*k, rect)) {
-            let landed = clear_spot(layout.margin, (x, y), w, h, &kept);
-            kept.push((landed.0, landed.1, w, h));
-            out.push((b, landed));
-        } else {
-            kept.push(rect);
-        }
-    }
-    out
-}
-
-/// The cards that overlap on each section's diagram (the check's `overlaps`): for each, the card,
-/// its section, the cards it lies over where they all sit now, and where it would go to be clear
-/// (`untangled`), as `section_update`'s `tidy` puts it.
-pub(crate) fn overlaps(
-    project: &crate::export::Project,
-    layout: &Layout,
-) -> Vec<Map<String, Value>> {
-    let mut out = Vec::new();
-    for section in &project.detail.sections {
-        if keeps_places(project, &section.id) {
-            continue;
-        }
-        let boxes = own_boxes(project, layout, &section.id);
-        let moved = untangled(project, layout, &section.id);
-        for (b, to) in moved {
-            let Some((x, y)) = b.at else { continue };
-            let rect = (x, y, b.size.0, b.size.1);
-            let over: Vec<Value> = boxes
-                .iter()
-                .filter(|o| o.drawn && o.id != b.id)
-                .filter(|o| {
-                    o.at.is_some_and(|(ox, oy)| intersects((ox, oy, o.size.0, o.size.1), rect))
-                })
-                .map(|o| Value::from(o.path.clone()))
-                .collect();
-            // Untangling moves a card off where an earlier one lands, not only off one it lies over
-            // now: a card clear where it sits is not an overlap to say.
-            if over.is_empty() {
-                continue;
-            }
-            let mut row = Map::new();
-            row.insert("at".into(), b.path.clone().into());
-            row.insert(
-                "section".into(),
-                project.directory.full_section(&section.id).into(),
-            );
-            row.insert("over".into(), Value::Array(over));
-            row.insert("moveTo".into(), super::boxes::point(to.0, to.1));
-            out.push(row);
-        }
     }
     out
 }

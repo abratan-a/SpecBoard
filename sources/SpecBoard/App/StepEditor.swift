@@ -30,6 +30,9 @@ struct StepEditor: View {
         ]
     }
 
+    /// How MCP writes what a key holds: the flows a row talks to are its lines `partner`.
+    static func written(_ key: String) -> String { key == "peer" ? Line.partner : key }
+
     /// The keys a row may carry here: a call goes to a program only — one to a flow
     /// of the project is a run node.
     static func keys(_ op: String) -> Set<String> {
@@ -72,7 +75,7 @@ struct StepEditor: View {
         }
         let keys = Self.keys(step.op)
         ForEach(Self.keyOrder.filter { keys.contains($0.key) }, id: \.key) { entry in
-            block(entry.key, help: Self.help(entry.key, entry.title)) { editor(entry.key, step) }
+            block(Self.written(entry.key), help: Self.help(Self.written(entry.key), entry.title)) { editor(entry.key, step) }
         }
     }
 
@@ -82,8 +85,7 @@ struct StepEditor: View {
         case "peer":
             PathList(model: model, owner: flow, paths: step.peers, editable: editable, kinds: [.flow],
                      each: L10n[.Nodes.wordPartnerFlow],
-                     adding: step.op == "receive" ? L10n[.Nodes.placeholderAddPartnerReceive]
-                         : L10n[.Nodes.placeholderAddPartner]) { list in set { $0.peers = list } }
+                     adding: L10n[.Nodes.placeholderAddPartner]) { list in set { $0.peers = list } }
         case "program":
             text(step.program, L10n[.Nodes.placeholderProgramRow]) { value in set { $0.program = value } }
         case "carries":

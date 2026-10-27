@@ -40,7 +40,10 @@ nonisolated struct UpdateSource: Equatable {
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
         case .forgejo:
-            if let token { request.setValue("token \(token)", forHTTPHeaderField: "Authorization") }
+            // Never over http, wherever the place came from.
+            if let token, url.scheme?.lowercased() == "https" {
+                request.setValue("token \(token)", forHTTPHeaderField: "Authorization")
+            }
         }
         return request
     }

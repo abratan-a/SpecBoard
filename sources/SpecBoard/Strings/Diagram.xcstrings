@@ -1,6 +1,78 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "actor.map" : {
+      "comment" : "Segment of an actor section's Map | Sequence switch: the section map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップ"
+          }
+        }
+      }
+    },
+    "actor.sequence" : {
+      "comment" : "Segment of an actor section's Map | Sequence switch: the actor's sequence.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequence"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シーケンス"
+          }
+        }
+      }
+    },
+    "actor.sequenceHint" : {
+      "comment" : "Band text of an actor's sequence view.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A frame for each flow the actor provides: press its head to fold and open, double-click it or ↗ to open the flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクターが提供する flow ごとの枠。見出しを押して開け閉め、ダブルクリックか ↗ で flow を開く"
+          }
+        }
+      }
+    },
+    "actor.switchHelp" : {
+      "comment" : "Help of an actor section's Map | Sequence switch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the actor's section map, or what it provides in time order"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクターのセクションマップか、提供する flow を時間の順で見る"
+          }
+        }
+      }
+    },
     "canvas.enterSelecting" : {
       "comment" : "Diagram background context menu item that turns the selection mode on.",
       "extractionState" : "manual",
@@ -217,24 +289,6 @@
         }
       }
     },
-    "card.primaryKey" : {
-      "comment" : "Accessibility description of the key mark on a primary key row.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primary key"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "主キー"
-          }
-        }
-      }
-    },
     "card.tableOf" : {
       "comment" : "Header badge of a table card; the argument is the shape it gathers.",
       "extractionState" : "manual",
@@ -285,24 +339,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "セクションマップを 100% で表示"
-          }
-        }
-      }
-    },
-    "command.autoLayout" : {
-      "comment" : "Edit menu command that places the cards on the diagram automatically.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auto-arrange"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自動整列"
           }
         }
       }
@@ -487,6 +523,60 @@
         }
       }
     },
+    "group.add" : {
+      "comment" : "Diagram background context menu item that makes a group (a named frame) at the clicked cell; its name is typed in a field over the frame.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add group"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループを追加"
+          }
+        }
+      }
+    },
+    "group.namePlaceholder" : {
+      "comment" : "Placeholder of the field a new group's name is typed in, over its frame on the diagram; also the name field of a group in the Properties panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループの名前"
+          }
+        }
+      }
+    },
+    "group.picked" : {
+      "comment" : "Diagram background context menu item in the selection mode that makes a group framing the picked cards.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group selected cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだカードをグループにする"
+          }
+        }
+      }
+    },
     "help.fit" : {
       "comment" : "Tooltip of the button that fits the whole diagram in the view.",
       "extractionState" : "manual",
@@ -501,6 +591,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全体を表示"
+          }
+        }
+      }
+    },
+    "listFace.countsTipLine" : {
+      "comment" : "A line of that tooltip: the mark's symbol with the values that give it (as shown), and how many rows wear it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %lld"
+          }
+        }
+      }
+    },
+    "listFace.countsTipTitle" : {
+      "comment" : "First line of the tooltip over the marks counted on a list card's header; a line per mark follows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows by mark:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "印ごとの行の数:"
+          }
+        }
+      }
+    },
+    "listFace.noValue" : {
+      "comment" : "What a list face's mark gives when the row's field holds no value (its `none`).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値なし"
           }
         }
       }
@@ -1105,24 +1249,6 @@
         }
       }
     },
-    "row.rules" : {
-      "comment" : "Label of a flow card's row for a notes line.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rules"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "決まり"
-          }
-        }
-      }
-    },
     "row.summary" : {
       "comment" : "Label of a stackdoc card's row that shows the first line of its description.",
       "extractionState" : "manual",
@@ -1213,20 +1339,200 @@
         }
       }
     },
-    "sequence.callerPlace" : {
-      "comment" : "Under the caller participant in the sequence diagram.",
+    "sequence.actorItself" : {
+      "comment" : "Under an actor's own lifeline drawn first in its own bracket beside the actors inside it; the argument is its figure (System, Person, Outside).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Calling flow"
+            "value" : "%@ (itself)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "呼んだ flow"
+            "value" : "%@（自身）"
+          }
+        }
+      }
+    },
+    "sequence.anyonePlace" : {
+      "comment" : "Under the lane of anyone in the sequence diagram: the begin takes any caller.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anyone may call"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼び手は問わない"
+          }
+        }
+      }
+    },
+    "sequence.callCycle" : {
+      "comment" : "Tooltip of a call into a flow that is drawn above already, on a sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drawn above already: not opened here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上で描いている flow なので、ここでは開かない"
+          }
+        }
+      }
+    },
+    "sequence.callPlace" : {
+      "comment" : "After a flow called on its own lifeline in the sequence diagram: the flow's section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（%@）"
+          }
+        }
+      }
+    },
+    "sequence.foldCall" : {
+      "comment" : "Tooltip of a called flow's ⌃ chip on a sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fold the called flow to one line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼んだ flow を 1 行に畳む"
+          }
+        }
+      }
+    },
+    "sequence.foldFrame" : {
+      "comment" : "Tooltip of a provided flow frame's ⌃ chip on an actor's sequence.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fold to one line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 行に畳む"
+          }
+        }
+      }
+    },
+    "sequence.foldInto" : {
+      "comment" : "Tooltip of a sub-actor lifeline's ⌃ chip; the argument is the parent actor's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fold into %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ にまとめる"
+          }
+        }
+      }
+    },
+    "sequence.openCall" : {
+      "comment" : "Tooltip of a called flow's ⌄ chip on a sequence diagram.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the called flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼んだ flow の中を開く"
+          }
+        }
+      }
+    },
+    "sequence.openFlow" : {
+      "comment" : "Tooltip of a provided flow frame's ↗ chip on an actor's sequence.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "flow を開く"
+          }
+        }
+      }
+    },
+    "sequence.openFrame" : {
+      "comment" : "Tooltip of a folded provided flow frame's ⌄ chip on an actor's sequence.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the frame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "枠を開く"
+          }
+        }
+      }
+    },
+    "sequence.openInto" : {
+      "comment" : "Tooltip of an actor lifeline's ⌄ chip.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open into the actors inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中のアクターに開く"
           }
         }
       }
@@ -1267,24 +1573,6 @@
         }
       }
     },
-    "sequence.recordPlace" : {
-      "comment" : "Under a record participant in the sequence diagram.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Record"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "記録"
-          }
-        }
-      }
-    },
     "sequence.storePlace" : {
       "comment" : "Under a store participant in the sequence diagram.",
       "extractionState" : "manual",
@@ -1299,6 +1587,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "記録を置く所"
+          }
+        }
+      }
+    },
+    "sequence.thisFlow" : {
+      "comment" : "Under the sequence diagram's head of the actor whose flow is open.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This flow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この flow"
           }
         }
       }

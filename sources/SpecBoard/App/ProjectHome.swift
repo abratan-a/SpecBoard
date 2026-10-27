@@ -138,11 +138,11 @@ struct ProjectHome: View {
         panel.message = L10n[.ProjectHome.readPanelMessage]
         guard panel.runModal() == .OK, let url = panel.url else { return }
         guard let text = try? String(contentsOf: url, encoding: .utf8) else {
-            model.lastError = L10n[.ProjectHome.readCantRead(url.lastPathComponent)]
+            model.tell(error: { L10n.text(.ProjectHome.readCantRead(url.lastPathComponent), in: $0) })
             return
         }
         guard let found = model.peekProjectFile(text) else {
-            model.lastError = L10n[.ProjectHome.readNotProject(url.lastPathComponent)]
+            model.tell(error: { L10n.text(.ProjectHome.readNotProject(url.lastPathComponent), in: $0) })
             return
         }
         if model.projectExists(found.id) {
@@ -163,7 +163,7 @@ struct ProjectHome: View {
         do {
             try text.write(to: url, atomically: true, encoding: .utf8)
         } catch {
-            model.lastError = L10n[.ProjectHome.writeFailed(error.localizedDescription)]
+            model.tell(error: { L10n.text(.ProjectHome.writeFailed(ErrorText.said(error)), in: $0) })
         }
     }
 

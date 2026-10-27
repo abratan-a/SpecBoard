@@ -1,0 +1,18 @@
+{
+  "faces.said.foldShown": "{name} is shown as the row's text, note or mark, so it cannot also unfold",
+  "faces.said.foldTwice": "{name} is written twice",
+  "faces.said.headerNotOne": "{name} is not a field of one value, so it cannot be shown in the head",
+  "faces.said.keyNotAllowed": "{key} cannot be written (the keys are {keys})",
+  "faces.said.listNotShapes": "{name} is not an array of an entity's or a value's elements, so it cannot give the rows",
+  "faces.said.markFieldNeeded": "mark needs field (the enum or bool field that decides the mark)",
+  "faces.said.markNotEnum": "{name} is not a field of one enum value or bool, so it cannot decide a mark",
+  "faces.said.markShape": "mark is an object {field, values, none}",
+  "faces.said.noField": "This shape has no field \"{name}\" (its top-level fields: {names})",
+  "faces.said.notName": "Write a field's name (a text)",
+  "faces.said.notNames": "Write a list of field names",
+  "faces.said.notObject": "face is an object ({list, header} or {text, note, mark, fold}; null removes it)",
+  "faces.said.notRole": "{role} is not a role of a mark ({roles})",
+  "faces.said.notText": "{name} is not a field of one text (string, text) or enum value, so it cannot be a row's text",
+  "faces.said.notValue": "{value} is not a value of the field ({values})",
+  "faces.said.valuesShape": "mark's values is an object {value: role}"
+}

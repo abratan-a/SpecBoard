@@ -129,7 +129,7 @@ fn a_branch_no_goal_works_in_or_a_goal_done_works_in_says_it_to_fix() {
     ok(
         &core,
         "card_create",
-        json!({"branch": BOARD, "target": "Goals:Old", "value": {"kind": "goal", "status": "完了", "workBranch": "loose"}}),
+        json!({"branch": BOARD, "target": "Goals:Old", "value": {"kind": "goal", "status": "done", "workBranch": "loose"}}),
     );
     let items = broken(&core, "loose");
     assert!(items.iter().all(|i| i["kind"] == "fix"), "{items:?}");

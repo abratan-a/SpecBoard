@@ -561,3 +561,32 @@ fn a_tables_links_are_written_out_as_a_bodys_and_read_by_mcp_as_written() {
         "{embedded}"
     );
 }
+
+#[test]
+fn a_tables_section_follows_its_rename() {
+    let core = orders();
+    ok(&core, "section_create", json!({"target": "Data/Shop"}));
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Data/Shop:fourth", "value": {"kind": "instance", "label": "四つ目",
+            "of": "Schemas/Ordering:Order",
+            "data": {"id": "5f0c1a2b-0000-4000-8000-00000000abce", "status": "open",
+                "total": "1.00", "lines": [], "kind": "order"}}}),
+    );
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Data:inShop", "value": {"kind": "table", "of": "Schemas/Ordering:Order",
+            "within": "Data/Shop"}}),
+    );
+    assert_eq!(table(&core, "Data:inShop").1.len(), 1);
+    ok(
+        &core,
+        "section_update",
+        json!({"target": "Data/Shop", "value": {"name": "Store"}}),
+    );
+    let read = ok(&core, "card_read", json!({"target": "Data:inShop"}));
+    assert_eq!(read["within"], "Data/Store", "{read}");
+    assert_eq!(table(&core, "Data:inShop").1.len(), 1, "{read}");
+}

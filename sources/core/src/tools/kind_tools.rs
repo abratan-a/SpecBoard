@@ -19,7 +19,7 @@ use rusqlite::Connection;
 use serde_json::{Map, Value, json};
 
 /// The lists, each with what `of` calls a kind of it.
-const OF: [(&str, &str); 3] = [
+pub(crate) const OF: [(&str, &str); 3] = [
     ("card", "cards"),
     ("section", "sections"),
     ("line", "lines"),
@@ -43,7 +43,7 @@ fn own_text(conn: &Connection, project: &str) -> Result<Option<String>, String> 
 }
 
 /// Whether `name` is a built-in kind of the list (a kind of card others only take after is none).
-fn builtin_in(list: &str, name: &str) -> bool {
+pub(crate) fn builtin_in(list: &str, name: &str) -> bool {
     match list {
         "cards" => crate::kinds::builtin_definition(name).is_some_and(|d| d["abstract"] != true),
         _ => crate::kinds::builtin_written(list)
@@ -107,7 +107,7 @@ fn one(own: &Map<String, Value>, name: &str) -> Result<Found, String> {
 }
 
 /// A name no kind has yet, in any list; or whose it is.
-fn free(own: &Map<String, Value>, name: &str) -> Result<(), String> {
+pub(crate) fn free(own: &Map<String, Value>, name: &str) -> Result<(), String> {
     match found(own, name).first() {
         None => Ok(()),
         Some(f) if f.builtin => Err(text!("kindTools.takenBuiltin", name, kind = said(f.list))),
@@ -181,19 +181,20 @@ fn listed(list: &str, d: &Value, defs: &Defs) -> Value {
     if d.get("builtin") != Some(&Value::Bool(true)) {
         out.insert("own".into(), true.into());
     }
-    if list != "lines" {
-        if let Some(label) = d.get("label") {
-            out.insert("label".into(), label.clone());
-        }
-        let context = d.get("context").and_then(Value::as_object);
-        let purpose = context
-            .and_then(|c| c.get("purpose"))
-            .or_else(|| d.get("description"))
-            .and_then(Value::as_str)
-            .filter(|s| !s.is_empty());
-        if let Some(purpose) = purpose {
-            out.insert("purpose".into(), crate::mcp::brief(purpose).into());
-        }
+    if let Some(label) = d.get("label") {
+        out.insert("label".into(), label.clone());
+    }
+    let context = d.get("context").and_then(Value::as_object);
+    let purpose = context
+        .and_then(|c| c.get("purpose"))
+        .or_else(|| d.get("description"))
+        .and_then(Value::as_str)
+        .filter(|s| !s.is_empty());
+    if let Some(purpose) = purpose {
+        out.insert("purpose".into(), crate::mcp::brief(purpose).into());
+    }
+    if made_by_core(list, name) {
+        out.insert("systemOnly".into(), true.into());
     }
     for key in ["contextChanged", "iconChanged", "viasChanged", "noPlace"] {
         if d.get(key) == Some(&Value::Bool(true)) {
@@ -250,6 +251,18 @@ fn listed(list: &str, d: &Value, defs: &Defs) -> Value {
         }
     }
     Value::Object(out)
+}
+
+/// Whether a kind is one only the core makes, never through `card_create` or `section_create`:
+/// a card the app alone draws or reads off a working directory, a section the card actions or a
+/// working directory make.
+fn made_by_core(list: &str, name: &str) -> bool {
+    use crate::kinds::{CANCELLED, COMPLETE, DIRECTORY, WORKDIR};
+    match list {
+        "cards" => crate::kinds::system_only(name),
+        "sections" => [COMPLETE, CANCELLED, WORKDIR, DIRECTORY].contains(&name),
+        _ => false,
+    }
 }
 
 /// One kind's definition whole as `kind_read` gives it, with which list it is of (`of`): the

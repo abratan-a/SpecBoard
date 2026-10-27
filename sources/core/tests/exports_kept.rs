@@ -162,3 +162,35 @@ fn an_enums_described_values_are_written_out_as_kept() {
         &serde_json::to_string_pretty(&got).unwrap(),
     );
 }
+
+/// An enum whose values have labels and no descriptions: the code's comments still say each label.
+#[test]
+fn an_enums_labelled_values_are_written_out_too() {
+    let core = Core::open(common::store_with(&["sample"])).unwrap();
+    common::mcp(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Status", "value": {"values": [
+            {"name": "open", "label": "受付"}, {"name": "paid"}, {"name": "shipped", "label": "発送済み"}
+        ]}}),
+    )
+    .unwrap();
+    let got = result(
+        &core,
+        json!({"op": "export_files", "project": project_id("sample")}),
+    );
+    let files = got["files"].as_object().unwrap_or_else(|| panic!("{got}"));
+    let with_status: Vec<(&String, &str)> = files
+        .iter()
+        .filter_map(|(n, t)| Some((n, t.as_str()?)))
+        .filter(|(n, t)| n.ends_with(".ts") && t.contains(" Status = "))
+        .collect();
+    assert!(with_status.len() >= 2, "{got}");
+    for (name, text) in with_status {
+        assert!(
+            text.contains("- `open`（受付）\n") && text.contains("- `shipped`（発送済み）\n"),
+            "{name}: {text}"
+        );
+        assert!(!text.contains("- `paid`"), "{name}: {text}");
+    }
+}

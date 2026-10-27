@@ -444,18 +444,7 @@ pub(crate) fn in_part(given: &Value) -> bool {
 pub(crate) fn quiet(before: &str, after: &str) -> Value {
     let old: Vec<&str> = before.split('\n').collect();
     let new: Vec<&str> = after.split('\n').collect();
-    let mut places = changed_places(&old, &new);
-    // Places close together shown as one.
-    let mut joined: Vec<(usize, usize, usize)> = Vec::new();
-    for place in places.drain(..) {
-        match joined.last_mut() {
-            Some(last) if place.0 <= last.1 + 2 * CHANGE_CONTEXT => {
-                last.1 = last.1.max(place.1);
-                last.2 += place.2;
-            }
-            _ => joined.push(place),
-        }
-    }
+    let joined = joined_places(changed_places(&old, &new, MOST_COMPARED), CHANGE_CONTEXT);
     let shown: Vec<Value> = joined
         .iter()
         .take(MOST_CHANGES)
@@ -499,6 +488,25 @@ pub(crate) fn quiet(before: &str, after: &str) -> Value {
     Value::Object(out)
 }
 
+/// Places no more than twice `context` items apart, shown as one: their context would run
+/// together.
+pub(super) fn joined_places(
+    places: Vec<(usize, usize, usize)>,
+    context: usize,
+) -> Vec<(usize, usize, usize)> {
+    let mut joined: Vec<(usize, usize, usize)> = Vec::new();
+    for place in places {
+        match joined.last_mut() {
+            Some(last) if place.0 <= last.1 + 2 * context => {
+                last.1 = last.1.max(place.1);
+                last.2 += place.2;
+            }
+            _ => joined.push(place),
+        }
+    }
+    joined
+}
+
 /// An answer's `key` (a body changed in part from `before` to `after`) said short (`quiet`): in place of
 /// the text, or beside the rest when the answer leaves the text out (a card's).
 pub(crate) fn quieted(answer: &mut Value, key: &str, before: &str, after: &str) {
@@ -507,9 +515,14 @@ pub(crate) fn quieted(answer: &mut Value, key: &str, before: &str, after: &str) 
     }
 }
 
-/// Where `new` differs from `old`, by its lines: each place as the lines of `new` it is (`from..to`,
-/// none for lines only taken away) and how many lines of `old` it stands for.
-fn changed_places(old: &[&str], new: &[&str]) -> Vec<(usize, usize, usize)> {
+/// Where `new` differs from `old`, by its items (a body's lines, a table's rows): each place as the
+/// items of `new` it is (`from..to`, none for items only taken away) and how many items of `old`
+/// it stands for. Past `most` items either side of what differs, what differs is one place.
+pub(super) fn changed_places<T: PartialEq>(
+    old: &[T],
+    new: &[T],
+    most: usize,
+) -> Vec<(usize, usize, usize)> {
     let head = old.iter().zip(new).take_while(|(a, b)| a == b).count();
     let tail = old[head..]
         .iter()
@@ -521,7 +534,7 @@ fn changed_places(old: &[&str], new: &[&str]) -> Vec<(usize, usize, usize)> {
     if old_mid.is_empty() && new_mid.is_empty() {
         return Vec::new();
     }
-    if old_mid.len() > MOST_COMPARED || new_mid.len() > MOST_COMPARED {
+    if old_mid.len() > most || new_mid.len() > most {
         return vec![(head, head + new_mid.len(), old_mid.len())];
     }
     // The longest run in common, line by line, and what is not in it, place by place.

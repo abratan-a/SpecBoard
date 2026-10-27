@@ -284,7 +284,7 @@ nonisolated enum UpdateInstaller {
             return Output(status: ran.status, out: String(decoding: ran.out, as: UTF8.self),
                           err: String(decoding: ran.err, as: UTF8.self))
         } catch {
-            return Output(status: -1, out: "", err: error.localizedDescription)
+            return Output(status: -1, out: "", err: ErrorText.said(error))
         }
     }
 }

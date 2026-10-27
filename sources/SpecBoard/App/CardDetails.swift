@@ -46,7 +46,7 @@ struct CardDetails: View {
     @State private var newTag = ""
     /// Sections that start folded. Rules and metadata can run to a dozen entries
     /// each, and burying the rest under them hides the thing most often looked for.
-    @State private var folded: Set<String> = ["rules", "payloads", "absent", "metadata", "history"]
+    @State private var folded: Set<String> = ["rules", "listFace", "payloads", "absent", "metadata", "history"]
 
     /// In the property panel the parts are its table; in a card editor's small
     /// windows, a column of headed blocks.
@@ -152,6 +152,13 @@ struct CardDetails: View {
                     } else {
                         Text(FlowEditor.shapeWord(schema.diagramShape)).font(.app(11.5))
                     }
+                }
+            }
+            if schema.kind == .enum {
+                PropertyRow("open", help: BuiltinWords.fieldMeaning("enum", "open")) {
+                    Toggle(BuiltinWords.field("enum", "open"), isOn: Binding(get: { schema.enumOpen },
+                                                                            set: { model.setEnumOpen(schema.id, $0) }))
+                        .toggleStyle(.checkbox).font(.app(11.5)).disabled(!editable)
                 }
             }
             // How big a card is drawn on the diagram. How it looks, not what it says: no history,
@@ -268,7 +275,8 @@ struct CardDetails: View {
         }
 
         if let discriminator = schema.discriminator {
-            section(L10n[.CardEditor.sectionDiscriminator]) {
+            section(BuiltinWords.field(schema.kind.rawValue, "discriminator")) {
+                writtenByMcp
                 HStack(spacing: 6) {
                     Text(discriminator).font(.app(11.5, design: .monospaced))
                     Text(schema.variantValues.joined(separator: " / "))
@@ -279,8 +287,11 @@ struct CardDetails: View {
 
         if !schema.rules.isEmpty { rulesSection(schema.rules) }
 
+        if let face = schema.shapeFace { listFaceSection(face, of: schema) }
+
         if !schema.absentFields.isEmpty {
-            foldable("absent", L10n[.CardEditor.sectionAbsentFields], count: schema.absentFields.count) {
+            foldable("absent", BuiltinWords.field(schema.kind.rawValue, "absentFields"), count: schema.absentFields.count) {
+                writtenByMcp
                 ForEach(schema.absentFields, id: \.name) { absent in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(absent.name).font(.app(11.5, design: .monospaced))
@@ -385,7 +396,7 @@ struct CardDetails: View {
         let value = schema.values[index]
         let list = AppModel.entries(schema.values)
         PropertyCategory(title: L10n[.Common.wordValue]) {
-            PropertyRow("value", help: L10n[.CardEditor.helpEnumValue]) {
+            PropertyRow("name", help: L10n[.CardEditor.helpEnumValue]) {
                 if editable {
                     CommitField(L10n[.Common.wordValue], text: value.value, monospaced: true) { text in
                         var next = list
@@ -433,7 +444,7 @@ struct CardDetails: View {
         let holds = model.holds(of: schema)
         let path = holds[index]
         let held = model.schemaNamed(path, from: schema)
-        PropertyCategory(title: L10n[.CardEditor.wordHolds]) {
+        PropertyCategory(title: BuiltinWords.line(Line.holds)) {
             PropertyRow("path", help: L10n[.CardEditor.helpHoldPath]) {
                 HStack(spacing: 4) {
                     if editable {
@@ -567,7 +578,8 @@ struct CardDetails: View {
         }
 
         if !field.variants.isEmpty {
-            section(L10n[.CardEditor.sectionVariantOnly]) {
+            section(BuiltinWords.recordField("variants")) {
+                writtenByMcp
                 FlowRow(spacing: 5) {
                     ForEach(field.variants, id: \.self) { plain($0) }
                 }
@@ -606,7 +618,8 @@ struct CardDetails: View {
 
     @ViewBuilder
     private func rulesSection(_ rules: [Rule]) -> some View {
-        foldable("rules", L10n[.CardEditor.sectionRules], count: rules.count) {
+        foldable("rules", BuiltinWords.field("entity", "rules"), count: rules.count) {
+            writtenByMcp
             ForEach(Array(rules.enumerated()), id: \.offset) { _, rule in
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
@@ -632,6 +645,56 @@ struct CardDetails: View {
                     }
                 }
             }
+        }
+    }
+
+    /// A shape's list face, read only as its rules are (it is written over MCP, `card_update`'s `face`): a line for
+    /// each key it has, a mark's values each as it is shown, with the mark it gives in its symbol and colour.
+    @ViewBuilder
+    private func listFaceSection(_ face: JSONValue, of shape: SchemaNode) -> some View {
+        let lookup: SchemaLookup = { model.detail?.directory.schema(id: $0) }
+        let lines = ShapeFaceLines.lines(face, values: ShapeFaceLines.markEnum(shape, lookup: lookup))
+        foldable("listFace", BuiltinWords.field(shape.kind.rawValue, "face")) {
+            writtenByMcp
+            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    if line.key.isEmpty {
+                        // A value the mark is read from: the mark it gives, then the value as it is shown — and as
+                        // it is written, where the two differ.
+                        if let role = line.role {
+                            Text(role.symbol).font(.app(11.5, weight: .bold))
+                                .foregroundStyle(Color(nsColor: role.color(theme)))
+                                .frame(width: 14).padding(.leading, 60)
+                        }
+                        Text(line.text).font(.app(11.5))
+                        if let value = line.value, value != line.text {
+                            Text(value).font(.app(10.5, design: .monospaced)).foregroundStyle(.tertiary)
+                        }
+                    } else {
+                        Text(line.key).font(.app(11, design: .monospaced)).foregroundStyle(.secondary)
+                            .frame(width: 52, alignment: .leading)
+                            .help(Self.listFaceHelp(line.key))
+                        Text(line.text).font(.app(11.5, design: .monospaced)).textSelection(.enabled)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            Text(L10n[.CardEditor.listFaceWrittenByMCP])
+                .font(.app(10.5)).foregroundStyle(.tertiary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    /// What a key of a list face does, on the pointer over its name.
+    static func listFaceHelp(_ key: String) -> String {
+        switch key {
+        case "list": L10n[.CardEditor.listFaceHelpList]
+        case "header": L10n[.CardEditor.listFaceHelpHeader]
+        case "text": L10n[.CardEditor.listFaceHelpText]
+        case "note": L10n[.CardEditor.listFaceHelpNote]
+        case "mark": L10n[.CardEditor.listFaceHelpMark]
+        case "fold": L10n[.CardEditor.listFaceHelpFold]
+        default: ""
         }
     }
 
@@ -867,6 +930,11 @@ struct CardDetails: View {
                 }
             }
         }
+    }
+
+    /// Said at the head of what the panel shows but cannot write: MCP writes it.
+    private var writtenByMcp: some View {
+        Text(L10n[.CardEditor.writtenByMcp]).font(.app(10.5)).foregroundStyle(.tertiary)
     }
 
     @ViewBuilder

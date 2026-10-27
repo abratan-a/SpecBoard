@@ -6,16 +6,16 @@ flowchart LR
     n_meet[["合流（all）"]]
     n_again["実行: Charts/Shop:Checkout"]
     n_check{"判断: Schemas/Ordering:Order.status"}
-    n_done(["終了: success（呼んだ側 に返す: Schemas/Ordering:Order.id）"])
+    n_done(["終了: success（開始の相手 に返す: Schemas/Ordering:Order.id）"])
     n_failed(["終了: failure"])
     n_start --> n_ask
     n_ask --> n_a
     n_ask --> n_b
     n_a --> n_meet
     n_b --> n_meet
-    n_b -.->|"時間切れ"| n_failed
+    n_b -.->|"期限切れ"| n_failed
     n_meet --> n_again
     n_again --> n_check
-    n_again -.->|"失敗時"| n_failed
+    n_again -.->|"失敗したら"| n_failed
     n_check -->|"Schemas:Status が paid"| n_done
-    n_check -->|"else"| n_ask
+    n_check -->|"それ以外"| n_ask

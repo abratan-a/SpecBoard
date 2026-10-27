@@ -71,6 +71,7 @@ fn cost_of(read: &Read) -> usize {
                 + s.parts.len() * 32
                 + s.calls.iter().map(|c| c.len() + 24).sum::<usize>()
                 + s.digest.len()
+                + s.plain_digest.len()
         })
         .sum();
     256 + symbols + read.line_starts.len() * 8
@@ -113,6 +114,7 @@ pub fn load(
         let read = Arc::new(Read {
             found: Default::default(),
             line_starts: Vec::new(),
+            digest: None,
             problem: Some(keyed!(
                 "code.tooLarge",
                 size = size,

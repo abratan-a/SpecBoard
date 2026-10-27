@@ -16,6 +16,7 @@
   "agent.cli.stopped": "Stopped",
   "agent.cli.usage": "Usage: specboard-agent <role>\n  serve     main process: keeps the project database and the core and stays resident (attach or start launches it)\n  attach    path for each connection: hands the app's lines to the main process (the SpecBoard app launches it over SSH)\n  start     start the main process (from the host's shell; left as it is when running)\n  stop      stop the main process\n  status    whether the main process is running (and whether MCP is listening)\n  port <n>  change the port the main process listens on for MCP (kept in the user's settings)",
   "agent.cli.wontStop": "It does not stop",
+  "agent.mcp.allInUse": "Every MCP connection is in a request now. Send it again shortly",
   "agent.mcp.cannotBind": "Cannot listen at 127.0.0.1:{port}: {error}",
   "agent.mcp.cannotSetUp": "Cannot set up listening: {error}",
   "agent.mcp.coreUnreadable": "Cannot read the core's answer",

@@ -381,6 +381,11 @@ void uniffi_specboard_ffi_fn_init_callback_vtable_corelistener(const UniffiVTabl
 void uniffi_specboard_ffi_fn_method_corelistener_changed(uint64_t ptr, RustBuffer notice, RustCallStatus *_Nonnull out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SPECBOARD_FFI_FN_FUNC_SET_LANGUAGE
+#define UNIFFI_FFIDEF_UNIFFI_SPECBOARD_FFI_FN_FUNC_SET_LANGUAGE
+void uniffi_specboard_ffi_fn_func_set_language(RustBuffer lang, RustCallStatus *_Nonnull out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_FFI_SPECBOARD_FFI_RUSTBUFFER_ALLOC
 #define UNIFFI_FFIDEF_FFI_SPECBOARD_FFI_RUSTBUFFER_ALLOC
 RustBuffer ffi_specboard_ffi_rustbuffer_alloc(uint64_t size, RustCallStatus *_Nonnull out_status
@@ -639,6 +644,12 @@ void ffi_specboard_ffi_rust_future_free_void(uint64_t handle
 #ifndef UNIFFI_FFIDEF_FFI_SPECBOARD_FFI_RUST_FUTURE_COMPLETE_VOID
 #define UNIFFI_FFIDEF_FFI_SPECBOARD_FFI_RUST_FUTURE_COMPLETE_VOID
 void ffi_specboard_ffi_rust_future_complete_void(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SPECBOARD_FFI_CHECKSUM_FUNC_SET_LANGUAGE
+#define UNIFFI_FFIDEF_UNIFFI_SPECBOARD_FFI_CHECKSUM_FUNC_SET_LANGUAGE
+uint16_t uniffi_specboard_ffi_checksum_func_set_language(void
+    
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_SPECBOARD_FFI_CHECKSUM_METHOD_CORE_CALL

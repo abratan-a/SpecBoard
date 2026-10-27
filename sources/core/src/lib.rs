@@ -31,7 +31,7 @@
 //!   `merge_request_approve`・`merge_request_reject`
 //! - 画面が読み書きする口（`tools::screen`。id で読み書きする）: 読む `projects`・`branches`・`branch_marks`・
 //!   `layout`・`workdir_detail`（作業ディレクトリの中身と設定）・`file_text`（ファイルの中身。`highlight` で色付け、`symbol` で関数と型の範囲）・`file_outline`（ファイルの関数と型）・`writing_rules`・`commit_changes`・`cut_cost`・`project_size`・
-//!   `section_positions`・`embed_diagram`（文書の `![[…]]` の図）・`inserted_values`（文書の `{{…}}` の値）・`document_parts`（いくつもの文書の `[[…]]`・`{{…}}`・`![[…]]` を 1 回の読みで）、書く `tool`（MCP のツールを画面の立場で）・`project_rename`・
+//!   `section_positions`・`embed_diagram`（文書の `![[…]]` の図）・`inserted_values`（文書の `{{…}}` の値）・`document_parts`（いくつもの文書の `[[…]]`・`{{…}}`・`![[…]]` を 1 回の読みで）・`kind_preview`（書いている種類の定義を、書いたとしたときの形で。何も書かない）、書く `tool`（MCP のツールを画面の立場で）・`project_rename`・
 //!   `writing_rules_set`・`places`・`place_unplaced`・`prune`・
 //!   `release_screen_holds`
 //!
@@ -65,6 +65,7 @@ pub mod kinds;
 mod line_move;
 pub mod mcp;
 mod model;
+mod name_move;
 mod nodes;
 mod notetext;
 mod ojson;
@@ -221,6 +222,18 @@ pub fn project_bring_ups_on_this_thread() -> u64 {
 #[doc(hidden)]
 pub fn projects_held_on_this_thread() -> i64 {
     tools::held_on_this_thread()
+}
+
+/// Where arranging along lines puts boxes of `sizes` (cells), each pair in `pointers` a line from a
+/// card to the card one of its fields points at, `margin` cells round each: the computation alone,
+/// for the tests that hold what arranging costs. Nothing else needs it.
+#[doc(hidden)]
+pub fn arranged_by_pointers(
+    sizes: &[(i64, i64)],
+    pointers: &[(usize, usize)],
+    margin: i64,
+) -> Vec<(i64, i64)> {
+    tools::arrange::pointed(sizes, pointers, margin)
 }
 
 impl Core {
@@ -406,7 +419,7 @@ impl Core {
                 // Who is asking, by the access key the request carries; turned away, before
                 // anything is read, without one of this store's.
                 let Some(caller) = self.caller(&headers)? else {
-                    return Ok(json!({ "status": 401, "body": access::key_needed() }));
+                    return Ok(json!({ "status": 401, "body": access::key_refused(&headers) }));
                 };
                 let who = write::Who::mcp(Some(&caller.name));
                 let run = |name: &str,
@@ -740,7 +753,7 @@ mod tests {
             [
                 "main のロックを外した",
                 "main をロックした",
-                "プロジェクトのファイル（版 28）から読み込んだ"
+                "プロジェクトのファイル（版 33）から読み込んだ"
             ]
         );
         let heard = heard.0.lock().unwrap();

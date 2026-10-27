@@ -10,7 +10,9 @@ struct SpecBoardApp: App {
 
     var body: some Scene {
         WindowGroup {
+            // SwiftUI's own controls (a date picker's month and day) in the screen's language, not the Mac's.
             ContentView()
+                .environment(\.locale, Language.shared.locale)
         }
         // A `specboard://` link goes to the window there is (`ContentView`'s `onOpenURL`); a new
         // one is made only when there is none.

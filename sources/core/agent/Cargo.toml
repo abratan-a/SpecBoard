@@ -14,3 +14,7 @@ license.workspace = true
 serde_json.workspace = true
 specboard-core = { path = "..", features = ["dynamic-grammars"] }
 libc = "0.2"
+
+[dev-dependencies]
+# A database a newer core moved on is made in the tests by writing its mark.
+rusqlite = { version = "0.40", features = ["bundled"] }

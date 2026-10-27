@@ -397,6 +397,3030 @@
         }
       }
     },
+    "form.addField" : {
+      "comment" : "Button under the fields table that adds a field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄を追加"
+          }
+        }
+      }
+    },
+    "form.addOption" : {
+      "comment" : "Button that adds an option to a choice field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add option"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択肢を追加"
+          }
+        }
+      }
+    },
+    "form.addRow" : {
+      "comment" : "Button that adds a kind of row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add kind of row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行の種類を追加"
+          }
+        }
+      }
+    },
+    "form.addStart" : {
+      "comment" : "Button that adds a place a line can leave from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出る所を追加"
+          }
+        }
+      }
+    },
+    "form.addressIndex" : {
+      "comment" : "A row is named by its position.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its position"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置"
+          }
+        }
+      }
+    },
+    "form.addressName" : {
+      "comment" : "A row is named by its field name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its field name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄 name"
+          }
+        }
+      }
+    },
+    "form.addressValue" : {
+      "comment" : "A row is named by its field value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its field value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄 value"
+          }
+        }
+      }
+    },
+    "form.any" : {
+      "comment" : "Placeholder of a number left empty: no limit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "any"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いくつでも"
+          }
+        }
+      }
+    },
+    "form.anyCard" : {
+      "comment" : "Any kind of card (*) as a line's end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "any card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのカード"
+          }
+        }
+      }
+    },
+    "form.anyKind" : {
+      "comment" : "A section kind holds any kind of card (*).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの種類でも"
+          }
+        }
+      }
+    },
+    "form.anyKindHelp" : {
+      "comment" : "Hint beside any kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(*, as Free)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（*、フリーと同じ）"
+          }
+        }
+      }
+    },
+    "form.anyRow" : {
+      "comment" : "Hint: any kind of row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "any kind of row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの行の種類でも"
+          }
+        }
+      }
+    },
+    "form.at" : {
+      "comment" : "Label of where on a card a line leaves or arrives (at).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どこ"
+          }
+        }
+      }
+    },
+    "form.atCard" : {
+      "comment" : "A line at the card's header.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card (header)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード（頭）"
+          }
+        }
+      }
+    },
+    "form.atMost" : {
+      "comment" : "Label of the most rows on a card, or the most lines from one place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At most"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いちばん多くて"
+          }
+        }
+      }
+    },
+    "form.atMostRows" : {
+      "comment" : "Hint beside the most rows of a kind on a card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rows on a card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード 1 枚の行の数"
+          }
+        }
+      }
+    },
+    "form.atRows" : {
+      "comment" : "A line at the card's rows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行"
+          }
+        }
+      }
+    },
+    "form.backToJSON" : {
+      "comment" : "Button shown in place of the form while the JSON can't be read: goes back to the JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to JSON"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON に戻す"
+          }
+        }
+      }
+    },
+    "form.badgeConditional" : {
+      "comment" : "Badge in the fields table: required only when a condition holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conditional"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件つき"
+          }
+        }
+      }
+    },
+    "form.badgeInside" : {
+      "comment" : "Badge in the fields table for a group; the argument is how many fields it holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄 %lld"
+          }
+        }
+      }
+    },
+    "form.badgeOptions" : {
+      "comment" : "Badge in the fields table; the argument is how many options.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択肢 %lld"
+          }
+        }
+      }
+    },
+    "form.badgeWhen" : {
+      "comment" : "Badge in the fields table: writable only when a condition holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only when"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書ける条件"
+          }
+        }
+      }
+    },
+    "form.base" : {
+      "comment" : "Label of what a kind of line means (base).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もと"
+          }
+        }
+      }
+    },
+    "form.baseHelp" : {
+      "comment" : "Hint under a line's base.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Embed: the field's type becomes the partner. Designate: the value points at the partner. Link: not tied to types."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内包: 欄の型が相手になる。ID で指す: 値が相手を指す。つながる: 型に関係しない"
+          }
+        }
+      }
+    },
+    "form.capArrow" : {
+      "comment" : "An arrow at a line's end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矢印"
+          }
+        }
+      }
+    },
+    "form.capFilledDiamond" : {
+      "comment" : "A filled diamond at a line's end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filled diamond"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "塗りのひし形"
+          }
+        }
+      }
+    },
+    "form.capOpenDiamond" : {
+      "comment" : "An open diamond at a line's end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open diamond"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白抜きのひし形"
+          }
+        }
+      }
+    },
+    "form.capTriangle" : {
+      "comment" : "A triangle at a line's end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triangle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "三角"
+          }
+        }
+      }
+    },
+    "form.cardKinds" : {
+      "comment" : "Label of the kinds of card a card field holds (kinds).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card kinds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの種類"
+          }
+        }
+      }
+    },
+    "form.cards" : {
+      "comment" : "Label of the kinds of card a section kind holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        }
+      }
+    },
+    "form.colFields" : {
+      "comment" : "Column of how many fields a kind of row has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄"
+          }
+        }
+      }
+    },
+    "form.colSettings" : {
+      "comment" : "Column of a field's settings in the fields table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
+          }
+        }
+      }
+    },
+    "form.colType" : {
+      "comment" : "Column and label of a field's type in the form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "型"
+          }
+        }
+      }
+    },
+    "form.condition" : {
+      "comment" : "Label of a field's condition (when).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condition"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件"
+          }
+        }
+      }
+    },
+    "form.connectable" : {
+      "comment" : "Label of whether a kind of card receives link lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lines arrive"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線を受ける"
+          }
+        }
+      }
+    },
+    "form.connectableHelp" : {
+      "comment" : "Checkbox text of whether a kind of card receives link lines.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other cards can draw “link” lines to it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのカードから「つながる」線を引ける"
+          }
+        }
+      }
+    },
+    "form.controls" : {
+      "comment" : "Label of the fields drawn as controls on the map (face.top).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コントロール"
+          }
+        }
+      }
+    },
+    "form.controlsHelp" : {
+      "comment" : "Hint under the controls.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkbox, buttons, menu, date, text and section fields only. Drag to reorder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックボックス・ボタン・メニュー・日付・テキスト・セクションの欄だけ。引いて並べ替えます"
+          }
+        }
+      }
+    },
+    "form.countRange" : {
+      "comment" : "How many values a list field holds (min_count, max_count).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Count"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数の幅"
+          }
+        }
+      }
+    },
+    "form.dash" : {
+      "comment" : "Label of a line's dash.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dash"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の形"
+          }
+        }
+      }
+    },
+    "form.dashDashed" : {
+      "comment" : "A dashed line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dashed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "破線"
+          }
+        }
+      }
+    },
+    "form.dashDotted" : {
+      "comment" : "A dotted line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dotted"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点線"
+          }
+        }
+      }
+    },
+    "form.dashSolid" : {
+      "comment" : "A solid line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solid"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実線"
+          }
+        }
+      }
+    },
+    "form.defaultOn" : {
+      "comment" : "Checkbox: a checkbox field is on by default.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On by default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定で入"
+          }
+        }
+      }
+    },
+    "form.deleteField" : {
+      "comment" : "Button in a field's settings that takes the field out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この欄を削除"
+          }
+        }
+      }
+    },
+    "form.deleteRow" : {
+      "comment" : "Button that takes a kind of row out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this kind of row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行の種類を削除"
+          }
+        }
+      }
+    },
+    "form.directlyUnder" : {
+      "comment" : "Label of the roots a kind of section sits directly under (trees).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directly under"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直下"
+          }
+        }
+      }
+    },
+    "form.doneChecked" : {
+      "comment" : "Checkbox: a checked checkbox counts as done.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked counts as done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入で済みと数える"
+          }
+        }
+      }
+    },
+    "form.doneValues" : {
+      "comment" : "Values that count as done (done).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counts as done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "済みと数える値"
+          }
+        }
+      }
+    },
+    "form.doubleClick" : {
+      "comment" : "Label of what a double-click on the card does.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-click"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダブルクリック"
+          }
+        }
+      }
+    },
+    "form.drawAtFirst" : {
+      "comment" : "Label of whether a kind of line is drawn from the start (visible).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw at first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はじめから描く"
+          }
+        }
+      }
+    },
+    "form.drawAtFirstOff" : {
+      "comment" : "Hint when a kind of line isn't drawn from the start.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "off: shown when turned on in the map's line switches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切: マップの線の切り替えで出す"
+          }
+        }
+      }
+    },
+    "form.editInJSON" : {
+      "comment" : "Link beside something the form has no control for: switches to the JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit in JSON…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON で書く…"
+          }
+        }
+      }
+    },
+    "form.editInPlace" : {
+      "comment" : "Double-click writes the body in place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write the body in place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その場で本文を書く"
+          }
+        }
+      }
+    },
+    "form.editorOnly" : {
+      "comment" : "The field is shown only in the card editor (show: editor).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editor only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編集画面だけ"
+          }
+        }
+      }
+    },
+    "form.endEnd" : {
+      "comment" : "The mark where a line arrives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終わり"
+          }
+        }
+      }
+    },
+    "form.endStart" : {
+      "comment" : "The mark where a line leaves.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始め"
+          }
+        }
+      }
+    },
+    "form.ends" : {
+      "comment" : "Label of the marks at a line's ends.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ends"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端"
+          }
+        }
+      }
+    },
+    "form.exportAs" : {
+      "comment" : "Label of how a kind of line is exported (export.as).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出し方"
+          }
+        }
+      }
+    },
+    "form.exportKey" : {
+      "comment" : "Label of the annotation key a kind of line is exported with (export.key).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キー"
+          }
+        }
+      }
+    },
+    "form.exportWord" : {
+      "comment" : "Label of the word a kind of line is exported with (export.word).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Word"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語"
+          }
+        }
+      }
+    },
+    "form.extends" : {
+      "comment" : "Label of the kind a kind of card takes after (extends).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takes after"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受け継ぐ"
+          }
+        }
+      }
+    },
+    "form.extendsHelp" : {
+      "comment" : "Hint beside the kind a kind of card takes after.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "its fields come first (display name, description, tags)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "親の欄が先に並びます（表示名・説明・タグ）"
+          }
+        }
+      }
+    },
+    "form.fieldChip" : {
+      "comment" : "Button that adds a field to a list of fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄"
+          }
+        }
+      }
+    },
+    "form.fieldsHelp" : {
+      "comment" : "Hint above the fields table of a kind of card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A card's values, in the order the card shows them. Drag ⋮⋮ to reorder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの値。カードに出る順で並びます。⋮⋮ で引いて並べ替えます"
+          }
+        }
+      }
+    },
+    "form.fieldsInside" : {
+      "comment" : "Label of a group field's own fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中の欄"
+          }
+        }
+      }
+    },
+    "form.forbid" : {
+      "comment" : "Label of the characters a text field can't hold (forbid).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forbidden characters"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書けない字"
+          }
+        }
+      }
+    },
+    "form.from" : {
+      "comment" : "Label of where a line leaves from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出る所"
+          }
+        }
+      }
+    },
+    "form.group.basics" : {
+      "comment" : "Title of the form group with a kind's name and display name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basics"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基本"
+          }
+        }
+      }
+    },
+    "form.group.diagrams" : {
+      "comment" : "Title of the form group with how diagrams draw a kind of line.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On diagrams"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "図の上"
+          }
+        }
+      }
+    },
+    "form.group.ends" : {
+      "comment" : "Title of the form group with where a kind of line leaves from and arrives at.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From → To"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出る所 → 着く所"
+          }
+        }
+      }
+    },
+    "form.group.export" : {
+      "comment" : "Title of the form group with how a kind of line is exported.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
+          }
+        }
+      }
+    },
+    "form.group.fields" : {
+      "comment" : "Title of the form group with a kind's fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄"
+          }
+        }
+      }
+    },
+    "form.group.holds" : {
+      "comment" : "Title of the form group with what a kind of section holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの"
+          }
+        }
+      }
+    },
+    "form.group.look" : {
+      "comment" : "Title of the form group with how a kind is drawn.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見た目"
+          }
+        }
+      }
+    },
+    "form.group.meaning" : {
+      "comment" : "Title of the form group with what a kind of line means (its base).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meaning"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "意味"
+          }
+        }
+      }
+    },
+    "form.group.placement" : {
+      "comment" : "Title of the form group saying where a kind of card can be put.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Placement"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場"
+          }
+        }
+      }
+    },
+    "form.group.preview" : {
+      "comment" : "Title of the preview column, and of the form group the preview becomes when the window is narrow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビュー"
+          }
+        }
+      }
+    },
+    "form.group.rows" : {
+      "comment" : "Title of the form group with a kind of card's kinds of row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行"
+          }
+        }
+      }
+    },
+    "form.group.sits" : {
+      "comment" : "Title of the form group with where a kind of section can be put.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where it sits"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置ける所"
+          }
+        }
+      }
+    },
+    "form.group.usage" : {
+      "comment" : "Title of the form group with what a kind is for and when to use it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usage"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う場面"
+          }
+        }
+      }
+    },
+    "form.header" : {
+      "comment" : "Label of the fields shown after a card's name (header).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Header"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヘッダー"
+          }
+        }
+      }
+    },
+    "form.headerHelp" : {
+      "comment" : "Hint beside the header fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "after the name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前の後ろに出す"
+          }
+        }
+      }
+    },
+    "form.holdIt" : {
+      "comment" : "Menu that opens a section kind's definition with this kind added to what it holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let a section kind hold it…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションの種類に置かせる…"
+          }
+        }
+      }
+    },
+    "form.holdItBuiltin" : {
+      "comment" : "Note in the menu: built-in section kinds can't be written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built-in section kinds can't hold it (only Free takes any)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "組み込みのセクションの種類は書けません（フリーはどの種類でも置きます）"
+          }
+        }
+      }
+    },
+    "form.holdItNew" : {
+      "comment" : "Menu item that starts a new section kind holding this kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New section kind that holds it…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカードを置く新しいセクションの種類…"
+          }
+        }
+      }
+    },
+    "form.holdItOwn" : {
+      "comment" : "Header of the project's section kinds in the menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section kinds of this project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプロジェクトのセクションの種類"
+          }
+        }
+      }
+    },
+    "form.holdItSaveFirst" : {
+      "comment" : "Why the menu to let a section kind hold it can't be used yet.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save it first to pick one"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存すると選べます"
+          }
+        }
+      }
+    },
+    "form.holds" : {
+      "comment" : "Label of what a kind of card holds (holds).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holds"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの"
+          }
+        }
+      }
+    },
+    "form.holdsAnyKind" : {
+      "comment" : "A section kind in Placement that holds any kind of card (*), and so this one; the argument is the section kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (any kind)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（どの種類でも）"
+          }
+        }
+      }
+    },
+    "form.holdsHelp" : {
+      "comment" : "Hint under what a kind of card holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Holding any makes it a container opened as a contents map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くものがあると入れ物になり、コンテンツマップで開きます"
+          }
+        }
+      }
+    },
+    "form.holdsSaid" : {
+      "comment" : "What a section kind holds, in the menu; the argument is the kinds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "holds %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもの %@"
+          }
+        }
+      }
+    },
+    "form.inContainer" : {
+      "comment" : "Label of how a card is a row of a container (as_row).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In a container"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ物の中"
+          }
+        }
+      }
+    },
+    "form.inContainerFields" : {
+      "comment" : "In a container: the fields named.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄"
+          }
+        }
+      }
+    },
+    "form.inContainerName" : {
+      "comment" : "In a container: its name only.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name only"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前だけ"
+          }
+        }
+      }
+    },
+    "form.inContainerUnfold" : {
+      "comment" : "In a container: what it holds unfolded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfold"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "展開"
+          }
+        }
+      }
+    },
+    "form.kindChip" : {
+      "comment" : "Button that adds a kind to a list of kinds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類"
+          }
+        }
+      }
+    },
+    "form.lineFieldsHelp" : {
+      "comment" : "Hint above a kind of line's fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A value on each line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線 1 本ずつの欄"
+          }
+        }
+      }
+    },
+    "form.lookOnly" : {
+      "comment" : "The field is an appearance kept outside the document (look).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見かけ"
+          }
+        }
+      }
+    },
+    "form.markdownBelow" : {
+      "comment" : "Label of the field drawn as Markdown below the controls (face.markdown).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markdown below"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下にマークダウン"
+          }
+        }
+      }
+    },
+    "form.markdownBelowHelp" : {
+      "comment" : "Hint beside the Markdown below.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a long text or Markdown field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "長いテキストかマークダウンの欄"
+          }
+        }
+      }
+    },
+    "form.maxLines" : {
+      "comment" : "Hint beside the most lines from one place.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lines from one place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 つの出元から出せる本数"
+          }
+        }
+      }
+    },
+    "form.minMax" : {
+      "comment" : "A field's length or value range (min, max).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Min / max"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字数か値の幅"
+          }
+        }
+      }
+    },
+    "form.modeForm" : {
+      "comment" : "Segment of the Kinds tab's Form | JSON switch that shows the definition as a form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォーム"
+          }
+        }
+      }
+    },
+    "form.more" : {
+      "comment" : "Folded part of a field's settings with the less used settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        }
+      }
+    },
+    "form.nameHelpNew" : {
+      "comment" : "Hint beside a new definition's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "letters, digits and _ · the name MCP uses"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英字・数字・_。MCP が使う名前"
+          }
+        }
+      }
+    },
+    "form.nameHelpSaved" : {
+      "comment" : "Hint beside a saved kind of card's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change it with Rename…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「名前を変える…」で変えます"
+          }
+        }
+      }
+    },
+    "form.nameKept" : {
+      "comment" : "Hint beside a saved section or line kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This kind keeps its name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この種類の名前は変えられません"
+          }
+        }
+      }
+    },
+    "form.namedBy" : {
+      "comment" : "Label of how a row is named in a path (address).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Named by"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前の付け方"
+          }
+        }
+      }
+    },
+    "form.neitherHelp" : {
+      "comment" : "Hint: with neither root, the section is only made inside other sections.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neither: only inside other sections."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どちらも外すと、ほかのセクションの中に作るだけ"
+          }
+        }
+      }
+    },
+    "form.noPlaceSaid" : {
+      "comment" : "Shown in Placement when no section kind holds the kind; the argument is the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No section kind in the project tree holds it, so no %@ card can be made yet."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの木のどのセクションの種類も置かないので、%@ のカードはまだ作れません"
+          }
+        }
+      }
+    },
+    "form.onMap" : {
+      "comment" : "Label of how a card is drawn on the map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On the map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップ上"
+          }
+        }
+      }
+    },
+    "form.onMapControls" : {
+      "comment" : "On the map: with controls (face.top).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コントロール"
+          }
+        }
+      }
+    },
+    "form.onMapHelp" : {
+      "comment" : "Hint beside how a card is drawn on the map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fields you press on the map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップの上で押す欄"
+          }
+        }
+      }
+    },
+    "form.onMapPage" : {
+      "comment" : "Shown when a face draws a page (svg or html), written in JSON.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page (written in JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ページ（JSON で書く）"
+          }
+        }
+      }
+    },
+    "form.onMapRows" : {
+      "comment" : "On the map: as rows (no face).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行"
+          }
+        }
+      }
+    },
+    "form.openCard" : {
+      "comment" : "Double-click opens the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードを開く"
+          }
+        }
+      }
+    },
+    "form.opens" : {
+      "comment" : "Label of how a card or section opens.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens as"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開き方"
+          }
+        }
+      }
+    },
+    "form.opensBody" : {
+      "comment" : "A card opens as its body in Markdown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body (Markdown)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文（Markdown）"
+          }
+        }
+      }
+    },
+    "form.opensBodyNeeds" : {
+      "comment" : "Why a card can't open as its body.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body (Markdown) needs a long text or Markdown field body"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本文（Markdown）は長いテキストかマークダウンの欄 body が要ります"
+          }
+        }
+      }
+    },
+    "form.opensHoldsOnlyMap" : {
+      "comment" : "Why a container opens only as a contents map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A kind that holds others opens only as a contents map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置くもののある種類はコンテンツマップだけ"
+          }
+        }
+      }
+    },
+    "form.opensMapNeeds" : {
+      "comment" : "Why a card can't open as a contents map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents map is only for a kind that holds others"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンテンツマップは置くもの（holds）のある種類だけ"
+          }
+        }
+      }
+    },
+    "form.opensSectionMap" : {
+      "comment" : "How a kind of section opens: the section map, the only way now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section map (the only one)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップ（今はこれだけ）"
+          }
+        }
+      }
+    },
+    "form.optionChip" : {
+      "comment" : "Button that adds an option to a list of options.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択肢"
+          }
+        }
+      }
+    },
+    "form.optionDefault" : {
+      "comment" : "Column of the default option, and label of a field's default value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "既定"
+          }
+        }
+      }
+    },
+    "form.optionNew" : {
+      "comment" : "Value of an option just added; the argument is its number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択肢 %lld"
+          }
+        }
+      }
+    },
+    "form.optionShownAs" : {
+      "comment" : "Column of how an option is shown (optionLabels).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown as"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
+          }
+        }
+      }
+    },
+    "form.optionShownPlaceholder" : {
+      "comment" : "Placeholder of how an option is shown when it is shown as written.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "as written"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書いたまま"
+          }
+        }
+      }
+    },
+    "form.optionValue" : {
+      "comment" : "Column of an option's value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値"
+          }
+        }
+      }
+    },
+    "form.options" : {
+      "comment" : "Label of a choice field's options.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択肢"
+          }
+        }
+      }
+    },
+    "form.otherKeys" : {
+      "comment" : "Label in a form group for keys no definition has.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other keys"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのキー"
+          }
+        }
+      }
+    },
+    "form.otherKeysHelp" : {
+      "comment" : "Tooltip of the other keys line in the form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keys the form has no control for. Write them in JSON; the form keeps them as they are."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォームに部品の無いキーです。JSON で書き、フォームは消さずに残します"
+          }
+        }
+      }
+    },
+    "form.pathExample" : {
+      "comment" : "Example of a path to a row; the argument is the path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "path: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パス: %@"
+          }
+        }
+      }
+    },
+    "form.paths" : {
+      "comment" : "Checkbox: [[path]] in the text reads as a path (paths).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read as paths"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスとして読む"
+          }
+        }
+      }
+    },
+    "form.pattern" : {
+      "comment" : "Label of how a text field is written (pattern).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pattern"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き方"
+          }
+        }
+      }
+    },
+    "form.patternIdentifier" : {
+      "comment" : "Pattern: a name used in paths (identifier).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (identifier)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前（identifier）"
+          }
+        }
+      }
+    },
+    "form.placeContainers" : {
+      "comment" : "Label of the container kinds that hold the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Containers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ物"
+          }
+        }
+      }
+    },
+    "form.placeSections" : {
+      "comment" : "Label of the section kinds that hold the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション"
+          }
+        }
+      }
+    },
+    "form.projectTreeLink" : {
+      "comment" : "Link to the project tree row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project tree ›"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの木 ›"
+          }
+        }
+      }
+    },
+    "form.removeStart" : {
+      "comment" : "Tooltip of the button that takes a place a line leaves from out.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this start"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この出る所を外す"
+          }
+        }
+      }
+    },
+    "form.requiredAlways" : {
+      "comment" : "Checkbox: the field is always required.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "常に"
+          }
+        }
+      }
+    },
+    "form.requiredOnlyWhen" : {
+      "comment" : "Link to write a condition in JSON (required only when, writable only when).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only when…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条件つき…"
+          }
+        }
+      }
+    },
+    "form.rowsHelp" : {
+      "comment" : "Hint above the kinds of row table.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lists inside a card. Each kind of row has its own fields."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードの中の並び。行の種類ごとに欄を持ちます"
+          }
+        }
+      }
+    },
+    "form.rowsInside" : {
+      "comment" : "Label of the rows under a row (written in JSON).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中の行"
+          }
+        }
+      }
+    },
+    "form.sectionsInside" : {
+      "comment" : "Label of the section kinds made inside a section (sections).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections inside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中のセクション"
+          }
+        }
+      }
+    },
+    "form.sectionsInsideNone" : {
+      "comment" : "Hint: left out, sections inside are of the same kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "none: its own kind"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なし: 自分の種類"
+          }
+        }
+      }
+    },
+    "form.storeId" : {
+      "comment" : "Checkbox: a path field keeps the card's id (store: id).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep as id"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "id で持つ"
+          }
+        }
+      }
+    },
+    "form.summaryConnectable" : {
+      "comment" : "Part of the folded Basics summary: link lines can arrive.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lines can arrive"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線を受ける"
+          }
+        }
+      }
+    },
+    "form.summaryExportAs" : {
+      "comment" : "Folded Export summary of a kind of line; the argument is the export.as value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出し方: %@"
+          }
+        }
+      }
+    },
+    "form.summaryExtends" : {
+      "comment" : "Part of the folded Basics summary: the kind taken after.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "extends %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を受け継ぐ"
+          }
+        }
+      }
+    },
+    "form.summaryHeader" : {
+      "comment" : "Part of the folded Look summary; the argument is the header fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "header: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヘッダー: %@"
+          }
+        }
+      }
+    },
+    "form.summaryNoPlace" : {
+      "comment" : "Folded Placement summary when no section kind holds the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no section kind holds it yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのセクションの種類もまだ置きません"
+          }
+        }
+      }
+    },
+    "form.summaryOnMap" : {
+      "comment" : "Part of the folded Look summary; the argument is rows or controls.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "on the map: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップ上: %@"
+          }
+        }
+      }
+    },
+    "form.summaryPurpose" : {
+      "comment" : "Folded Usage summary; the argument is what the kind is for.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purpose: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何のためか: %@"
+          }
+        }
+      }
+    },
+    "form.summarySections" : {
+      "comment" : "Folded Placement summary; the argument is the section kinds that hold the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション: %@"
+          }
+        }
+      }
+    },
+    "form.to" : {
+      "comment" : "Label of where a line arrives.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "着く所"
+          }
+        }
+      }
+    },
+    "form.underBoard" : {
+      "comment" : "Directly under the board.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the board"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボード"
+          }
+        }
+      }
+    },
+    "form.underMain" : {
+      "comment" : "Directly under main and every branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main and branches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "main と branch"
+          }
+        }
+      }
+    },
+    "form.unique" : {
+      "comment" : "A field's values don't repeat (unique).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unique"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重ならない"
+          }
+        }
+      }
+    },
+    "form.unreadable" : {
+      "comment" : "Shown in place of the form while the JSON can't be read as a definition; the argument is why.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The form can't read it: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォームで読めません: %@"
+          }
+        }
+      }
+    },
+    "form.usageHelp" : {
+      "comment" : "Hint under the Usage group's fields.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An AI reads these with kind_list and kind_read."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI が kind_list と kind_read で読みます"
+          }
+        }
+      }
+    },
+    "form.values" : {
+      "comment" : "Label of how many values a field holds (many).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値の数"
+          }
+        }
+      }
+    },
+    "form.valuesList" : {
+      "comment" : "A field holds a list of values.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "並び"
+          }
+        }
+      }
+    },
+    "form.valuesListOfLists" : {
+      "comment" : "A field holds a list of lists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of lists"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "並びの並び"
+          }
+        }
+      }
+    },
+    "form.valuesOne" : {
+      "comment" : "A field holds one value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 つ"
+          }
+        }
+      }
+    },
+    "icon.actorOutside" : {
+      "comment" : "Name of the mark of an actor outside the system, in mark menus.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor · outside"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター・外部"
+          }
+        }
+      }
+    },
+    "icon.actorPerson" : {
+      "comment" : "Name of the mark of an actor that is a person, in mark menus.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor · person"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター・人"
+          }
+        }
+      }
+    },
+    "icon.actorSystem" : {
+      "comment" : "Name of the mark of an actor that is a part of the system, in mark menus.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actor · system"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクター・システム"
+          }
+        }
+      }
+    },
     "icon.book" : {
       "comment" : "Name of an icon in the section mark menu (book).",
       "extractionState" : "manual",
@@ -465,6 +3489,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "注意"
+          }
+        }
+      }
+    },
+    "icon.chart" : {
+      "comment" : "Name of the chart section's mark, in mark menus.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャート"
           }
         }
       }
@@ -1063,6 +4105,42 @@
         }
       }
     },
+    "mark.kinds" : {
+      "comment" : "First item of a section's mark menu: no mark of its own, its kind's shown; the argument names the kind (and an actor's figure).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kind's mark (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類の印（%@）"
+          }
+        }
+      }
+    },
+    "mark.kindsShort" : {
+      "comment" : "What a section's mark menu shows while the section has no mark of its own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kind's mark"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "種類の印"
+          }
+        }
+      }
+    },
     "mark.label" : {
       "comment" : "Label of the mark pickers of a kind of section.",
       "extractionState" : "manual",
@@ -1171,6 +4249,258 @@
         }
       }
     },
+    "preview.captionMade" : {
+      "comment" : "Caption under the preview of made-up values; both arguments are the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As the section map draws a card of the kind %@. Made-up values until there are cards of the kind %@; then one of them can be the sample."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクションマップが描くとおりに %@ のカードを描きます。%@ のカードが無いあいだは作り物の値で、あればそのどれかを見本にできます"
+          }
+        }
+      }
+    },
+    "preview.captionReal" : {
+      "comment" : "Caption under the preview of a real card; the argument is the kind's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A real card of the kind %@ as the sample. The field or kind of row picked in the form is outlined."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本物の %@ のカードを見本にしています。フォームで選んでいる欄・行の種類を囲みます"
+          }
+        }
+      }
+    },
+    "preview.container" : {
+      "comment" : "Caption under the preview of a card as a container's row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inside a container (a goal): one row, as In a container says."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れ物（goal）の中では 1 行（入れ物の中のとおり）"
+          }
+        }
+      }
+    },
+    "preview.containerName" : {
+      "comment" : "Name of the made-up container in the preview.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見本の入れ物"
+          }
+        }
+      }
+    },
+    "preview.inNavigator" : {
+      "comment" : "Preview of a kind of section: how the navigator shows it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the navigator (main)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ナビパネル（main）"
+          }
+        }
+      }
+    },
+    "preview.lineCaption" : {
+      "comment" : "Caption under the preview of a kind of line; the arguments are the kinds at its ends.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A made-up %@ and %@, joined as the map draws this line."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見本の %@ と %@ を、マップが描くとおりにこの線でつないだもの"
+          }
+        }
+      }
+    },
+    "preview.lineSwitches" : {
+      "comment" : "Label of the map's line switches in the preview.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line switches:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "線の切り替え:"
+          }
+        }
+      }
+    },
+    "preview.newCardOffers" : {
+      "comment" : "Preview of a kind of section: what New card in it offers.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“New card” in one of them offers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その中の「カードを追加」"
+          }
+        }
+      }
+    },
+    "preview.newSectionMakes" : {
+      "comment" : "Preview of a kind of section: what New section inside makes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“New section” inside makes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中の「セクションを追加」"
+          }
+        }
+      }
+    },
+    "preview.nothing" : {
+      "comment" : "Shown when there is nothing to draw.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to draw yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ描けません"
+          }
+        }
+      }
+    },
+    "preview.off" : {
+      "comment" : "Beside a kind of line not drawn at first.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(off)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（切）"
+          }
+        }
+      }
+    },
+    "preview.offCaption" : {
+      "comment" : "Caption when a kind of line isn't drawn at first.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kept off the map until turned on (Draw at first: off)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切り替えで入れるまでマップに描きません（はじめから描く: 切）"
+          }
+        }
+      }
+    },
+    "preview.sampleValues" : {
+      "comment" : "Sample menu of the preview: values made up for the kind.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sample values"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見本の値"
+          }
+        }
+      }
+    },
+    "preview.stale" : {
+      "comment" : "Shown while the draft can't be read: the last drawing stays faint.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The draft can't be read now; this is the last drawing."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下書きが今は読めません。最後に描けたものです"
+          }
+        }
+      }
+    },
     "problem.fixJSONFirst" : {
       "comment" : "Problem in the rename sheet when the definition's JSON can't be read.",
       "extractionState" : "manual",
@@ -1189,6 +4519,24 @@
         }
       }
     },
+    "problem.itemUnnamed" : {
+      "comment" : "Problem when the form can't read a definition: an item of the list named (fields or rows) is not an object with a name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each of %@ is an object with a name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ の 1 つずつは name を持つオブジェクトです"
+          }
+        }
+      }
+    },
     "problem.nameMissing" : {
       "comment" : "Problem when a definition has no name; the argument is the key that names it (kind, section or line).",
       "extractionState" : "manual",
@@ -1203,6 +4551,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@（名前）がありません"
+          }
+        }
+      }
+    },
+    "problem.nameTaken" : {
+      "comment" : "Problem when a field or a kind of row is renamed to a name another one beside it has; the argument is the name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is already a name here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ はもうある名前です"
           }
         }
       }
@@ -1239,6 +4605,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "JSON として読めません: %@"
+          }
+        }
+      }
+    },
+    "problem.notList" : {
+      "comment" : "Problem when the form can't read a definition: the key named (fields or rows) is not a list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is a list ([ … ])"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は並び（[ … ]）です"
           }
         }
       }
@@ -1863,6 +5247,654 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未着手"
+          }
+        }
+      }
+    },
+    "type.branch" : {
+      "comment" : "Field type branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ブランチ"
+          }
+        }
+      }
+    },
+    "type.branch.what" : {
+      "comment" : "What a branch field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A project branch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトのブランチ"
+          }
+        }
+      }
+    },
+    "type.card" : {
+      "comment" : "Field type card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カード"
+          }
+        }
+      }
+    },
+    "type.card.what" : {
+      "comment" : "What a card field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A card put inside this one"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この中に入れたカード"
+          }
+        }
+      }
+    },
+    "type.checkbox" : {
+      "comment" : "Field type checkbox.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkbox"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックボックス"
+          }
+        }
+      }
+    },
+    "type.checkbox.what" : {
+      "comment" : "What a checkbox field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On or off; a switch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入か切。スイッチ"
+          }
+        }
+      }
+    },
+    "type.date" : {
+      "comment" : "Field type date.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付"
+          }
+        }
+      }
+    },
+    "type.dropdownlist" : {
+      "comment" : "Field type dropdownlist.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニュー"
+          }
+        }
+      }
+    },
+    "type.dropdownlist.what" : {
+      "comment" : "What a dropdownlist field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One of many, from a menu"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多くの中から 1 つ、メニューで"
+          }
+        }
+      }
+    },
+    "type.group" : {
+      "comment" : "Field type group.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループ"
+          }
+        }
+      }
+    },
+    "type.group.what" : {
+      "comment" : "What a group field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fields inside a field"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欄の中の欄"
+          }
+        }
+      }
+    },
+    "type.groupChoice" : {
+      "comment" : "Group of field types in the type menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選ぶもの"
+          }
+        }
+      }
+    },
+    "type.groupJSON" : {
+      "comment" : "Group of field types in the type menu: written as JSON on the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Written as JSON on the card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カードでは JSON で書くもの"
+          }
+        }
+      }
+    },
+    "type.groupNumber" : {
+      "comment" : "Group of field types in the type menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number and date"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数値と日付"
+          }
+        }
+      }
+    },
+    "type.groupPoints" : {
+      "comment" : "Group of field types in the type menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points at"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指すもの"
+          }
+        }
+      }
+    },
+    "type.groupText" : {
+      "comment" : "Group of field types in the type menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト"
+          }
+        }
+      }
+    },
+    "type.groupWork" : {
+      "comment" : "Group of field types in the type menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Work"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業"
+          }
+        }
+      }
+    },
+    "type.json.what" : {
+      "comment" : "What a json field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any value"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どんな値でも"
+          }
+        }
+      }
+    },
+    "type.longtext" : {
+      "comment" : "Field type longtext.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "長いテキスト"
+          }
+        }
+      }
+    },
+    "type.longtext.what" : {
+      "comment" : "What a longtext field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Several lines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何行も"
+          }
+        }
+      }
+    },
+    "type.map" : {
+      "comment" : "Field type map.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マップ"
+          }
+        }
+      }
+    },
+    "type.map.what" : {
+      "comment" : "What a map field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Names to text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前から文への組"
+          }
+        }
+      }
+    },
+    "type.markdown" : {
+      "comment" : "Field type markdown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markdown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マークダウン"
+          }
+        }
+      }
+    },
+    "type.markdown.what" : {
+      "comment" : "What a markdown field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formatted; can be drawn on the card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書式つき。カードの上に描ける"
+          }
+        }
+      }
+    },
+    "type.mr.what" : {
+      "comment" : "What an mr field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A merge request's number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マージリクエストの番号"
+          }
+        }
+      }
+    },
+    "type.number" : {
+      "comment" : "Field type number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数値"
+          }
+        }
+      }
+    },
+    "type.path" : {
+      "comment" : "Field type path.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パス"
+          }
+        }
+      }
+    },
+    "type.path.what" : {
+      "comment" : "What a path field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A place in the project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトの中の場所"
+          }
+        }
+      }
+    },
+    "type.person" : {
+      "comment" : "Field type person.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Person"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "人"
+          }
+        }
+      }
+    },
+    "type.radio" : {
+      "comment" : "Field type radio.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buttons"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボタン"
+          }
+        }
+      }
+    },
+    "type.radio.what" : {
+      "comment" : "What a radio field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One of a few, side by side"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少しの中から 1 つ、横に並ぶ"
+          }
+        }
+      }
+    },
+    "type.section" : {
+      "comment" : "Field type section.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セクション"
+          }
+        }
+      }
+    },
+    "type.section.what" : {
+      "comment" : "What a section field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follows renames and moves"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変えても移しても付いて行く"
+          }
+        }
+      }
+    },
+    "type.text" : {
+      "comment" : "Field type text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト"
+          }
+        }
+      }
+    },
+    "type.text.what" : {
+      "comment" : "What a text field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One line"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 行"
+          }
+        }
+      }
+    },
+    "type.url.what" : {
+      "comment" : "What a url field holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A web address"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウェブのアドレス"
           }
         }
       }

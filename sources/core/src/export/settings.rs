@@ -304,7 +304,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
             {
                 out.problems.push(super::Problem::of(
                     at,
-                    text!(
+                    keyed!(
                         "export.settings.formatFolder",
                         export = export.name,
                         row = n + 1,
@@ -320,7 +320,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
             if !parent.contains_key(entry.from.as_str()) {
                 out.problems.push(super::Problem::of(
                     at,
-                    text!(
+                    keyed!(
                         "export.settings.fromGone",
                         export = export.name,
                         row = n + 1,
@@ -370,7 +370,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
                 if let Some(problem) = setting.problem_for(&card.kind) {
                     out.problems.push(super::Problem::of(
                         at,
-                        text!(
+                        keyed!(
                             "export.settings.problem",
                             export = export.name,
                             card = project.full(card),
@@ -384,7 +384,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
                 {
                     out.problems.push(super::Problem::of(
                         at,
-                        text!(
+                        keyed!(
                             "export.settings.versionGone",
                             export = export.name,
                             row = n + 1,

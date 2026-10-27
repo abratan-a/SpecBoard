@@ -12,8 +12,12 @@ use serde_json::{Value, json};
 use specboard_core::Core;
 use std::collections::BTreeMap;
 
-/// What a request with no key of the store's is turned away with (`MCPAccess.keyNeeded`).
+/// What a request with no key is turned away with (`MCPAccess.keyNeeded`).
 const KEY_NEEDED: &str = "MCP の接続にはアクセスキーが要ります（Authorization: Bearer <アクセスキー>）。プロジェクト一覧の場所の設定の「アクセスキー」で作ります";
+
+/// What a request with a key the store does not have is turned away with: not to go looking for
+/// a header it sent.
+const KEY_UNUSABLE: &str = "このアクセスキーは使えません（取り消したキーか、この場所のキーではありません）。プロジェクト一覧の場所の設定の「アクセスキー」にあるキーを使うか、そこで新しく作ってください";
 
 /// Three projects beside the script's: one the key writes, one public, one it was given
 /// nothing for; and the key, made through the window.
@@ -146,19 +150,16 @@ fn listed(said: &Value) -> BTreeMap<String, String> {
 fn a_request_without_a_key_of_the_stores_is_turned_away() {
     let w = world();
     let initialize = json!({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18"}});
-    let turned_away = |headers: Value| {
+    let turned_away_as = |headers: Value, said: &str| {
         let reply = mcp(&w.core, initialize.clone(), headers.clone());
-        assert_eq!(
-            reply,
-            json!({"status": 401, "body": KEY_NEEDED}),
-            "{headers}"
-        );
+        assert_eq!(reply, json!({"status": 401, "body": said}), "{headers}");
     };
+    let turned_away = |headers: Value| turned_away_as(headers, KEY_NEEDED);
     turned_away(json!({}));
     turned_away(json!({"authorization": "Bearer "}));
     turned_away(json!({"authorization": "Basic abc"}));
     turned_away(json!({"authorization": w.key.1}));
-    turned_away(bearer("spk_00000000000000000000000000000000"));
+    turned_away_as(bearer("spk_00000000000000000000000000000000"), KEY_UNUSABLE);
     // The handshake goes through with the key, in any case of the word before it.
     let reply = mcp(
         &w.core,
@@ -171,7 +172,7 @@ fn a_request_without_a_key_of_the_stores_is_turned_away() {
         op(&w.core, json!({"op": "access_key_revoke", "key": w.key.0})),
         json!({"result": {}})
     );
-    turned_away(bearer(&w.key.1));
+    turned_away_as(bearer(&w.key.1), KEY_UNUSABLE);
     // So is a request with no body to speak of: the key comes first.
     let reply = mcp(&w.core, Value::Null, json!({}));
     assert_eq!(reply["status"], 401);
@@ -212,7 +213,7 @@ fn a_key_made_again_keeps_what_it_was_given_and_turns_the_old_value_away() {
     let initialize = json!({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18"}});
     assert_eq!(
         mcp(&w.core, initialize, bearer(&w.key.1)),
-        json!({"status": 401, "body": KEY_NEEDED})
+        json!({"status": 401, "body": KEY_UNUSABLE})
     );
     assert_eq!(
         listed(&ok(&w.core, &value, "project_list", json!({}))),
@@ -320,6 +321,81 @@ fn a_project_the_key_may_not_see_is_missing_as_one_that_is_not_there() {
     assert_eq!(
         ok(&w.core, nothing, "project_list", json!({})),
         json!({"projects": []})
+    );
+}
+
+#[test]
+fn a_name_or_slug_a_project_the_key_may_not_see_has_is_refused_without_naming_that_project() {
+    let w = world();
+    let slug_of = |id: &str| -> String {
+        rusqlite::Connection::open(w.core.place())
+            .unwrap()
+            .query_row("SELECT slug FROM projects WHERE id = ?", [id], |r| r.get(0))
+            .unwrap()
+    };
+    let (unseen_slug, shared_slug) = (slug_of(&w.other), slug_of(&w.shared));
+    op(
+        &w.core,
+        json!({"op": "mcp_writes_set", "project": w.own, "item": "project_update.slug", "state": "allow"}),
+    );
+    // Names are one to a store: the name is refused, and nothing more is said of who has it.
+    let made = refused(
+        &w.core,
+        &w.key.1,
+        "project_create",
+        json!({"project": "よその"}),
+    );
+    assert_eq!(made, "名前「よその」は使えません。別の名前にしてください");
+    let renamed = refused(
+        &w.core,
+        &w.key.1,
+        "project_update",
+        json!({"project": "自分の", "value": {"name": "よその"}}),
+    );
+    assert_eq!(renamed, made);
+    let slug = refused(
+        &w.core,
+        &w.key.1,
+        "project_update",
+        json!({"project": "自分の", "value": {"slug": unseen_slug}}),
+    );
+    assert_eq!(
+        slug,
+        format!("slug「{unseen_slug}」は使えません。別の slug にしてください")
+    );
+    for said in [&made, &renamed, &slug] {
+        assert!(
+            !said.contains(&w.other) && !said.contains("もうあります"),
+            "{said}"
+        );
+    }
+    // A project the key sees is named, as the window is told.
+    let seen = refused(
+        &w.core,
+        &w.key.1,
+        "project_create",
+        json!({"project": "公開の"}),
+    );
+    assert!(
+        seen.starts_with("プロジェクト「公開の」はもうあります"),
+        "{seen}"
+    );
+    let seen_slug = refused(
+        &w.core,
+        &w.key.1,
+        "project_update",
+        json!({"project": "自分の", "value": {"slug": shared_slug}}),
+    );
+    assert!(seen_slug.contains("公開の"), "{seen_slug}");
+    // The key that made it sees it, and is told which.
+    let (refused_here, said) = call(
+        &w.core,
+        "project_update",
+        json!({"project": "自分の", "value": {"name": "よその"}}),
+    );
+    assert!(
+        refused_here && said.contains("プロジェクト「よその」はもうあります"),
+        "{said}"
     );
 }
 

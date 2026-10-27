@@ -416,7 +416,7 @@ struct HostConnectionView: View {
                     Spacer()
                     if let last = state.lastProbe {
                         // A frozen value has to look frozen, or it reads as current.
-                        Text(last.formatted(date: .omitted, time: .standard))
+                        Text(last.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Language.shared.locale)))
                             .font(.app(10)).foregroundStyle(.tertiary)
                     }
                     Button(L10n[.Places.connectionProbeNow]) { hosts.probeNow(host) }.font(.app(11))

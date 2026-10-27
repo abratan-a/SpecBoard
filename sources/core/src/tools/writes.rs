@@ -298,6 +298,8 @@ enum Makes {
     Version,
     EnumValue,
     Step,
+    /// An element of a data card's array.
+    Element,
 }
 
 fn makes(
@@ -387,6 +389,11 @@ fn makes(
                     return Ok(Makes::EnumValue);
                 }
                 crate::kinds::INSTANCE => {
+                    let last = crate::pathtext::last_dot(path).map_or(path, |(_, n)| n);
+                    if matches!(super::picks::step(last), Ok((_, Some(_)))) {
+                        super::check(value, "card_create", "value")?;
+                        return Ok(Makes::Element);
+                    }
                     return Err(text!(
                         "writes.create.instanceValue",
                         name = holder.name,
@@ -525,6 +532,7 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut versions: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut values: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut steps: Vec<(String, Map<String, Value>)> = Vec::new();
+    let mut elements: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut entries: Vec<Entry> = Vec::new();
     let mut targets: Vec<(String, Map<String, Value>)> = Vec::new();
     // The bodies read from files, by the path written and the card's full path: said in the answer.
@@ -601,6 +609,7 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             Ok(Makes::Version) => versions.push((path.clone(), value.clone())),
             Ok(Makes::EnumValue) => values.push((path.clone(), value.clone())),
             Ok(Makes::Step) => steps.push((path.clone(), value.clone())),
+            Ok(Makes::Element) => elements.push((path.clone(), value.clone())),
             Ok(Makes::Field) => fields.push((path.clone(), value.clone())),
             Ok(Makes::Card(inside)) => {
                 let Some(section) = section.map(str::to_string) else {
@@ -630,10 +639,17 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                 {
                     made_containers.insert(full);
                 }
-                // Where it goes is said once it is there, the way card_update places one.
+                // Where it goes is said once it is there, the way card_update places one. A card
+                // ghost draws its card whole, so it has no size of its own: one written is left for
+                // the making to refuse as a key a ghost does not take.
                 let mut made = value.clone();
                 let mut look = Map::new();
-                for key in ["topLeft", "size"] {
+                let placed: &[&str] = if kind == crate::detail::GHOST {
+                    &["topLeft"]
+                } else {
+                    &["topLeft", "size"]
+                };
+                for &key in placed {
                     if let Some(given) = made.shift_remove(key) {
                         look.insert(key.into(), given);
                     }
@@ -684,18 +700,23 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             }
         }
     }
+    // What placing said (a card put beside where it was asked to go, clear of the others), each
+    // under the card it is of, as several are made at once.
+    let mut placed_said: Vec<String> = Vec::new();
     for (path, look) in &placements {
         if refused_cards.contains(&card_of(path)) {
             continue;
         }
-        let tried = tx.alone(|tx| -> Result<(), String> {
-            let Named::Card(id) = named(tx, scope, path)? else {
-                return Err(text!("writes.create.notCard", path = path));
-            };
-            update::update_card(tx, scope, &id, look).map(|_| ())
+        let tried = tx.alone(|tx| -> Result<Vec<String>, String> {
+            match named(tx, scope, path)? {
+                Named::Card(id) => update::update_card(tx, scope, &id, look),
+                Named::Ghost(id) => super::ghosts::update(tx, scope, &id, look),
+                _ => Err(text!("writes.create.notCard", path = path)),
+            }
         })?;
-        if let Err(e) = tried {
-            refusals.note(Some(path), &e);
+        match tried {
+            Ok(said) => placed_said.extend(said.into_iter().map(|w| format!("{path}: {w}"))),
+            Err(e) => refusals.note(Some(path), &e),
         }
     }
     for (path, value) in &fields {
@@ -749,6 +770,19 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             Err(e) => refusals.note(Some(path), &e),
         }
     }
+    for (path, value) in &elements {
+        if refused_cards.contains(&card_of(path)) {
+            continue;
+        }
+        let via = through(tx, scope, path);
+        match tx.alone(|tx| super::instances::create_element(tx, scope, path, value))? {
+            Ok(answer) => {
+                out.push((shown(answer, &via), Some(path.clone())));
+                written.push(path.clone());
+            }
+            Err(e) => refusals.note(Some(path), &e),
+        }
+    }
     for (path, value) in &steps {
         if refused_cards.contains(&card_of(path)) {
             continue;
@@ -785,6 +819,7 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             .collect()
     };
     let mut left = unresolved_on(tx, scope, &ids, &HashSet::new())?;
+    left.extend(placed_said);
     // The flows the call made or put nodes in: what they lack yet, said once each (a flow
     // is written a node at a time).
     {
@@ -913,6 +948,8 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut done: Vec<(String, Done)> = Vec::new();
     // What a goal's `places` put: how many, and where the moved ones went.
     let mut placed: HashMap<String, (usize, Vec<Value>)> = HashMap::new();
+    // What each card's `groups` wrote on its card map, said in its answer.
+    let mut grouped: HashMap<String, Map<String, Value>> = HashMap::new();
     // Moved last and together, a destination at a time: cards that name each other
     // without a section still find each other where they land.
     let mut moves: Vec<(String, Vec<String>, Vec<String>)> = Vec::new();
@@ -1083,6 +1120,8 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                     let section = rest.shift_remove("section");
                     // The boxes on a goal's card map, put in one go.
                     let places = rest.shift_remove("places");
+                    // The groups on a container's card map.
+                    let groups = rest.shift_remove("groups");
                     // Where it goes among its section's cards.
                     let position = rest.shift_remove("position");
                     if checked {
@@ -1109,10 +1148,14 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                     if values.is_none()
                         && section.is_none()
                         && places.is_none()
+                        && groups.is_none()
                         && position.is_none()
                         && rest.is_empty()
                     {
                         return Err(text!("writes.update.nothing"));
+                    }
+                    if groups.is_some() && !card_mapped {
+                        return Err(super::groups::not_here(path));
                     }
                     if places.is_some() && !card_mapped {
                         return Err(text!(
@@ -1132,6 +1175,15 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                     if let Some(raw) = &places {
                         let put = super::card_map::put_places(tx, scope, &id, raw)?;
                         placed.insert(id.clone(), put);
+                    }
+                    if let Some(raw) = &groups {
+                        let put = super::groups::put_groups(
+                            tx,
+                            scope,
+                            super::groups::MapOf::Card(&id),
+                            raw,
+                        )?;
+                        grouped.insert(id.clone(), put);
                     }
                     if let Some(to) = section {
                         let to = to.as_str().map(str::to_string).unwrap_or_default();
@@ -1235,6 +1287,9 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                     if !jumped.is_empty() {
                         body.insert("jumped".into(), Value::Array(jumped.clone()));
                     }
+                }
+                if let (Some(said), Value::Object(body)) = (grouped.get(id), &mut written) {
+                    body.extend(said.clone());
                 }
                 written
             }

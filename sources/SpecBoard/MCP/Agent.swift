@@ -110,7 +110,7 @@ nonisolated enum AgentDeploy {
     }
 
     /// Puts the agent (the one for the host: `agent(for:)`) on the host unless the same one is already
-    /// there, and lets older ones go. Throws what kept it from being put there.
+    /// there, and lets older builds' go (`pruneCommand`). Throws what kept it from being put there.
     static func place(_ ssh: SSH, agent: Data, version: String, under root: String = home) throws {
         let path = remotePath(version, under: root)
         let wanted = digest(agent)
@@ -128,15 +128,24 @@ nonisolated enum AgentDeploy {
             let named = ssh.exec("chmod 700 \"\(directory)/.incoming\" && mv -f \"\(directory)/.incoming\" \"\(path)\"")
             guard named.ok else { throw Failure(L10n.text(.Places.errorCantPlace(named.error), in: Language.current)) }
         }
-        // The versions an earlier app put there: only folders that hold an agent.
-        _ = ssh.exec("cd \"\(root)\" && for x in */; do x=${x%/}; [ \"$x\" = \"\(version)\" ]"
-                     + " || [ ! -f \"$x/specboard-agent\" ] || rm -rf -- \"$x\"; done")
+        _ = ssh.exec(pruneCommand(version, under: root))
+    }
+
+    /// What lets the agents of builds before this one go: only folders that hold an agent, named
+    /// `<version>-<build>` with a build number below this one's. A newer build's is left: the app
+    /// that put it may be running, and its daemon on it (an older app is turned away from it, not
+    /// let take its place). Nothing goes when this build has no number.
+    static func pruneCommand(_ version: String, under root: String = home) -> String {
+        guard let build = version.split(separator: "-").last.flatMap({ UInt64($0) }) else { return "true" }
+        return "cd \"\(root)\" && for x in */; do x=${x%/}; b=${x##*-};"
+            + " case \"$b\" in ''|*[!0-9]*) continue;; esac;"
+            + " [ -f \"$x/specboard-agent\" ] && [ \"$b\" -lt \(build) ] && rm -rf -- \"$x\"; done; true"
     }
 
     /// The way to the agent's own core over the connection (`AgentCore`): `attach`, which starts
-    /// the daemon when none runs.
-    static func attach(_ ssh: SSH, version: String, under root: String = home) -> Launch {
+    /// the daemon when none runs — and says why it cannot in the screen's language, whatever the host's.
+    static func attach(_ ssh: SSH, version: String, under root: String = home, language: String = Language.current) -> Launch {
         Launch(executable: "/usr/bin/ssh",
-               arguments: ssh.arguments(running: "exec \"\(remotePath(version, under: root))\" attach"))
+               arguments: ssh.arguments(running: "exec \"\(remotePath(version, under: root))\" attach --lang \(language)"))
     }
 }

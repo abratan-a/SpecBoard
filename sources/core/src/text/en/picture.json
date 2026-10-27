@@ -1,5 +1,5 @@
 {
-  "picture.area": "area is {topLeft: {x, y}, bottomRight: {x, y}} in grid units, the top left above and left of the bottom right",
+  "picture.area": "area is {topLeft: {x, y}, bottomRight: {x, y}} in grid units, each within ±1,000,000, the top left above and left of the bottom right",
   "picture.cardsAndArea": "Give cards or area, not both",
   "picture.depth": "depth is 1, 2, or 0 for every line ({given})",
   "picture.ghost": "{path} is a card ghost: a picture is drawn of the card it leads to, {card} (use)",
@@ -18,6 +18,7 @@
   "picture.map.flowDiagram": "flow's node diagram",
   "picture.map.mock": "mock",
   "picture.map.sectionMap": "section map",
+  "picture.map.sequence": "actor's chart",
   "picture.margin": "margin is from 0 to 100 grid units ({given})",
   "picture.maxSize": "maxSize is from 400 to 3000 pixels ({given})",
   "picture.noApp": "no SpecBoard app is connected to draw it",

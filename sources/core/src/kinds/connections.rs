@@ -118,6 +118,14 @@ pub fn check_connections(defs: &Defs, doc: &Value) -> Vec<Problem> {
             continue;
         };
         let Some(def) = defs.line(name) else {
+            // A built-in kind by its name of before: said with its name of now.
+            if let Some((_, now)) = super::LINE_NAMES_BEFORE.iter().find(|(b, _)| *b == name) {
+                problems.push(Problem::new(
+                    &at,
+                    keyed!("kindConnections.problem.lineRenamed", name, now),
+                ));
+                continue;
+            }
             problems.push(Problem::new(
                 &at,
                 keyed!(

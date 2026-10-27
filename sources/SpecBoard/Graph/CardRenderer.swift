@@ -42,11 +42,14 @@ enum CardRenderer {
     /// outline (`GhostLook`). `gone`: one the open branch removed, or a merge looked at takes away —
     /// faded under the veil, its name struck through, outlined with a red dash; its `mark` D. `missing`:
     /// the box of a working directory's folder that reading the folder no longer finds, kept for the notes
-    /// in it — its name struck through, outlined with a dash in the warning colour.
+    /// in it — its name struck through, outlined with a dash in the warning colour. `section`: a section
+    /// ghost's head (`SectionGhosts.Look`) — its section's mark before the name; an actor's tinted blue,
+    /// badged `actor`, its edge blue and dashed for one outside.
     static func image(
         for schema: SchemaNode, content: CardContent, theme: GraphTheme,
         scale: CGFloat, selected: Bool, drawn: Set<String> = [], outside: Bool = false,
-        temporary: Bool = false, ghost: GhostLook? = nil, gone: Bool = false, missing: Bool = false,
+        temporary: Bool = false, ghost: GhostLook? = nil, section: SectionGhosts.Look? = nil,
+        gone: Bool = false, missing: Bool = false,
         mark: ChangeMark? = nil,
         width: CGFloat = CardGeometry.cardWidth,
         height given: CGFloat? = nil, document: DocumentBody? = nil, grip: Bool = false
@@ -75,13 +78,14 @@ enum CardRenderer {
 
         draw(schema: schema, content: content, theme: theme,
              size: CGSize(width: width, height: height), selected: selected,
-             drawn: drawn, temporary: temporary, ghost: ghost, mark: mark, document: document, grip: grip, in: ctx)
+             drawn: drawn, temporary: temporary, ghost: ghost, section: section, mark: mark, document: document,
+             grip: grip, in: ctx)
         if missing {
             // Gone from the folder: its name struck through, a dash in the warning colour round it.
             let body = CGRect(x: 0, y: 0, width: width, height: height).insetBy(dx: 1, dy: 1)
             let outline = CGPath(roundedRect: body, cornerWidth: 8, cornerHeight: 8, transform: nil)
             let ink = NSColor.systemOrange
-            let nameFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .semibold)
+            let nameFont = Typeface.mono(13, .semibold)
             let nameWidth = (schema.name as NSString).size(withAttributes: [.font: nameFont]).width
             let midY = CardGeometry.headerHeight / 2
             let start = 12 + compactMarkWidth
@@ -103,7 +107,7 @@ enum CardRenderer {
             ctx.setFillColor(theme.background.withAlphaComponent(0.55).cgColor)
             ctx.fillPath()
             let ink = GraphTheme.nodeInk("end").color(dark: theme.isDark)
-            let nameFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .semibold)
+            let nameFont = Typeface.mono(13, .semibold)
             let nameWidth = (schema.name as NSString).size(withAttributes: [.font: nameFont]).width
             let midY = CardGeometry.headerHeight / 2
             ctx.setStrokeColor(ink.cgColor)
@@ -141,9 +145,16 @@ enum CardRenderer {
             ctx.setFillColor(theme.background.withAlphaComponent(0.5).cgColor)
             ctx.fillPath()
             ctx.addPath(outline)
-            ctx.setStrokeColor((selected ? theme.brass : theme.ink3).cgColor)
-            ctx.setLineWidth(selected ? 2 : 1.2)
-            ctx.setLineDash(phase: 0, lengths: [5, 4])
+            if let figure = section?.figure {
+                // An actor's: its edge in the actors' blue, dashed only for one outside.
+                ctx.setStrokeColor((selected ? theme.brass : Self.actorBlue.withAlphaComponent(0.75)).cgColor)
+                ctx.setLineWidth(selected ? 2 : 1.2)
+                if figure == .outside { ctx.setLineDash(phase: 0, lengths: [5, 4]) }
+            } else {
+                ctx.setStrokeColor((selected ? theme.brass : theme.ink3).cgColor)
+                ctx.setLineWidth(selected ? 2 : 1.2)
+                ctx.setLineDash(phase: 0, lengths: [5, 4])
+            }
             ctx.strokePath()
         }
 
@@ -191,10 +202,13 @@ enum CardRenderer {
     /// The corner a writing card is dragged by to size it.
     static let gripSize: CGFloat = 14
 
+    /// The type of the counts of rows out of sight: small enough that a line of it sits in half a row.
+    static let countSize: CGFloat = 9
+
     private static func draw(
         schema: SchemaNode, content: CardContent, theme: GraphTheme,
         size: CGSize, selected: Bool, drawn: Set<String>, temporary: Bool = false, ghost: GhostLook? = nil,
-        mark: ChangeMark? = nil, document: DocumentBody? = nil, grip: Bool = false,
+        section: SectionGhosts.Look? = nil, mark: ChangeMark? = nil, document: DocumentBody? = nil, grip: Bool = false,
         in ctx: CGContext
     ) {
         let body = CGRect(origin: .zero, size: size).insetBy(dx: 0.5, dy: 0.5)
@@ -211,7 +225,8 @@ enum CardRenderer {
         ctx.saveGState()
         ctx.addPath(outline)
         ctx.clip()
-        let headerFill = SectionGhosts.isGhost(schema.id) || ghost?.broken == true ? theme.panel3
+        let headerFill = section?.figure != nil ? theme.panel3.blended(withFraction: 0.18, of: Self.actorBlue) ?? theme.panel3
+            : SectionGhosts.isGhost(schema.id) || ghost?.broken == true ? theme.panel3
             : FlowCardMap.isCard(schema.id) ? theme.headerFill(forNode: schema.nodes.first?.kind ?? "")
             : theme.headerFill(for: schema)
         ctx.setFillColor(headerFill.cgColor)
@@ -224,18 +239,16 @@ enum CardRenderer {
         ctx.addLine(to: CGPoint(x: body.maxX, y: header.maxY))
         ctx.strokePath()
 
-        drawHeaderText(schema, in: header, theme: theme, temporary: temporary, ghost: ghost, mark: mark)
+        drawHeaderText(schema, in: header, theme: theme, temporary: temporary, ghost: ghost, section: section, mark: mark)
 
-        // What is out of sight above, at the top where it went. The strip is
-        // reserved whether or not it has anything to say, so the card keeps its
-        // height as it scrolls.
+        // What is out of sight above, at the top where it went: in the half row kept there whether or not it has
+        // anything to say, so the card keeps its height and its rows as it scrolls — small, to fit half a row.
         if content.hasAboveStrip {
-            let rect = CGRect(x: body.minX, y: aboveStripOffset(content)
-                                - CardGeometry.moreHeight / 2,
-                              width: body.width, height: CardGeometry.moreHeight)
-            text("↑\(content.above)", in: rect.insetBy(dx: 12, dy: 2),
-                 font: .monospacedSystemFont(ofSize: 10.5, weight: .regular),
-                 color: theme.ink3)
+            let rect = CGRect(x: body.minX, y: aboveStripOffset(content) - CardGeometry.bandHeight / 2,
+                              width: body.width, height: CardGeometry.bandHeight)
+            text("↑\(content.above)", in: rect.insetBy(dx: 12, dy: 0),
+                 font: Typeface.mono(Self.countSize, .regular),
+                 color: theme.ink3, centeredVertically: true)
         }
 
         var y = listTop(content)
@@ -253,14 +266,14 @@ enum CardRenderer {
 
         if content.hasBelowStrip {
             let rect = CGRect(x: body.minX, y: y,
-                              width: body.width, height: CardGeometry.moreHeight)
+                              width: body.width, height: CardGeometry.bandHeight)
             // "+N" while the card is at its top, because that is what it has always
             // said and nothing has moved yet. Once scrolled it is one of two counts,
             // and an arrow is what tells them apart.
             text(content.above == 0 ? "+\(content.below)" : "↓\(content.below)",
-                 in: rect.insetBy(dx: 12, dy: 2),
-                 font: .monospacedSystemFont(ofSize: 10.5, weight: .regular),
-                 color: theme.ink3)
+                 in: rect.insetBy(dx: 12, dy: 0),
+                 font: Typeface.mono(Self.countSize, .regular),
+                 color: theme.ink3, centeredVertically: true)
         }
 
         if content.document, let document {
@@ -350,7 +363,7 @@ enum CardRenderer {
     private static func drawDocument(_ document: DocumentBody, in area: CGRect, theme: GraphTheme, ctx: CGContext) {
         guard let image = document.image else {
             text(L10n[.Diagram.cardDrawing], in: CGRect(x: area.minX, y: area.minY, width: area.width, height: 20),
-                 font: .systemFont(ofSize: 11), color: theme.ink3)
+                 font: Typeface.system(11), color: theme.ink3)
             return
         }
         let shown = CGSize(width: document.size.width * document.zoom, height: document.size.height * document.zoom)
@@ -362,7 +375,7 @@ enum CardRenderer {
                      from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true,
                      hints: [.interpolation: NSNumber(value: NSImageInterpolation.high.rawValue)])
         ctx.restoreGState()
-        let font = NSFont.monospacedSystemFont(ofSize: 10.5, weight: .regular)
+        let font = Typeface.mono(10.5, .regular)
         func strip(_ word: String, at y: CGFloat) {
             let band = CGRect(x: area.minX - 11, y: y, width: area.width + 22, height: CardGeometry.moreHeight)
             ctx.setFillColor(theme.panel.withAlphaComponent(0.92).cgColor)
@@ -394,30 +407,39 @@ enum CardRenderer {
     /// label and kind — and each of its rows, measured in the fonts they are drawn in.
     static func naturalWidth(_ schema: SchemaNode, content: CardContent) -> CGFloat {
         func width(_ text: String, _ font: NSFont) -> CGFloat { (text as NSString).size(withAttributes: [.font: font]).width }
-        let name = NSFont.monospacedSystemFont(ofSize: 13, weight: .semibold)
+        let name = Typeface.mono(13, .semibold)
         var widest = 24 + width(schema.name, name) + 10
             + (schema.mapNumber.map { width("\($0)", numberFont) + 14 } ?? 0)
-            + (schema.label.isEmpty ? 0 : width(schema.label, .systemFont(ofSize: 11.5)) + 8)
+            + (schema.label.isEmpty ? 0 : width(schema.label, Typeface.system(11.5)) + 8)
             + width(schema.kind == .custom ? ownKindWord(schema) : schema.kind == .instance || schema.kind == .table ? instanceWord(schema)
-                    : schema.kind.rawValue, .systemFont(ofSize: 10)) + 8
-        let field = NSFont.monospacedSystemFont(ofSize: 11.5, weight: .regular)
-        let type = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+                    : schema.kind.rawValue, Typeface.system(10)) + 8
+        if let face = schema.listFace { widest += listHeadWidth(face) }
+        let field = Typeface.mono(11.5, .regular)
+        let type = Typeface.mono(10, .regular)
         for row in content.all {
             let indent = CGFloat(row.depth) * 14 + 22
-            if let datum = row.datum {
+            if let listed = row.listed {
+                switch listed {
+                case .entry(let entry):
+                    widest = max(widest, listTextLeft(schema) + width(entry.text, entry.fallback ? field : listTextFont)
+                                 + (entry.note.map { width($0, listNoteFont) + 8 } ?? 0) + 12)
+                case .fold(let line):
+                    widest = max(widest, foldTextLeft(line) + width(line.text, foldFont(line)) + 12)
+                }
+            } else if let datum = row.datum {
                 widest = max(widest, indent + width(datum.name, field) + width(datum.badge, badgeFont) + 16
                              + width(datum.text ?? "", field) + 36)
             } else if let symbol = row.symbol {
                 widest = max(widest, indent + 20 + width(symbol.name, field) + width("\(symbol.line)", type) + 36)
             } else if let step = row.step {
-                widest = max(widest, indent + max(46, width(step.label, .monospacedSystemFont(ofSize: 10.5, weight: .semibold)))
-                             + width(step.text, .monospacedSystemFont(ofSize: 11, weight: .regular))
-                             + (step.detail.map { width($0, .systemFont(ofSize: 10)) + 8 } ?? 0) + 30)
+                widest = max(widest, indent + max(46, width(step.label, Typeface.mono(10.5, .semibold)))
+                             + width(step.text, Typeface.mono(11, .regular))
+                             + (step.detail.map { width($0, Typeface.system(10)) + 8 } ?? 0) + 30)
             } else if let item = row.field {
                 let trailing = item.type.isRef ? "→ " + (item.embeds ?? "") : item.type.rawValue
                 widest = max(widest, indent + width(item.name + (item.isArray ? "[]" : ""), field) + width(trailing, type) + 36)
             } else if let value = row.value {
-                widest = max(widest, indent + width(value.value, field) + width(value.label, .systemFont(ofSize: 11)) + 32)
+                widest = max(widest, indent + width(value.value, field) + width(value.label, Typeface.system(11)) + 32)
             }
         }
         return min(640, max(220, widest.rounded(.up)))
@@ -456,14 +478,14 @@ enum CardRenderer {
     }
 
     /// A data card's badge: a type, as the nav panel's branch badge says a tree.
-    static let badgeFont = NSFont.monospacedSystemFont(ofSize: 9.5, weight: .regular)
+    static let badgeFont = Typeface.mono(9.5, .regular)
 
     /// A data card's row (`InstanceDatum`): its name, its type's badge after it and its value after
     /// that, cut at its end where it does not fit — the badge always shown; a required field with no
     /// value marked before its name.
     private static func drawDatum(_ datum: InstanceDatum, rect: CGRect, indent: CGFloat, theme: GraphTheme,
                                   ctx: CGContext) {
-        let nameFont = NSFont.monospacedSystemFont(ofSize: 11.5, weight: .regular)
+        let nameFont = Typeface.mono(11.5, .regular)
         var x = rect.minX + indent
         if datum.missing {
             ctx.setFillColor(theme.brass.cgColor)
@@ -503,19 +525,19 @@ enum CardRenderer {
         text(badge, in: CGRect(x: box.midX - size.width / 2, y: box.minY, width: size.width + 1, height: box.height),
              font: symbolBadgeFont, color: ink, centeredVertically: true)
         let number = "\(symbol.line)"
-        let numberFont = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .regular)
+        let numberFont = Typeface.digits(10, .regular)
         let numberWidth = (number as NSString).size(withAttributes: [.font: numberFont]).width
         text(number, in: CGRect(x: rect.maxX - numberWidth - 12, y: rect.minY, width: numberWidth + 1, height: rect.height),
              font: numberFont, color: theme.ink3, centeredVertically: true)
         let nameX = box.maxX + 6
         text(symbol.name, in: CGRect(x: nameX, y: rect.minY, width: max(10, rect.maxX - numberWidth - 20 - nameX), height: rect.height),
-             font: .monospacedSystemFont(ofSize: 11.5, weight: .regular), color: theme.ink, centeredVertically: true)
+             font: Typeface.mono(11.5, .regular), color: theme.ink, centeredVertically: true)
     }
 
-    static let symbolBadgeFont = NSFont.monospacedSystemFont(ofSize: 9.5, weight: .bold)
+    static let symbolBadgeFont = Typeface.mono(9.5, .bold)
 
     /// The number a row or a card on a card map is said by, its order.
-    static let numberFont = NSFont.monospacedDigitSystemFont(ofSize: 10.5, weight: .semibold)
+    static let numberFont = Typeface.digits(10.5, .semibold)
 
     /// A number in a small capsule at `x`, centred on `midY`: how far it reaches.
     @discardableResult
@@ -532,6 +554,9 @@ enum CardRenderer {
              font: numberFont, color: accent, centeredVertically: true)
         return capsule.maxX
     }
+
+    /// The actors' blue: their kind's built-in mark colour, which a section ghost of an actor is tinted with.
+    static let actorBlue = NSColor(srgbRed: 10 / 255, green: 132 / 255, blue: 1, alpha: 1)
 
     /// How far a compact box's name is set in for its mark (`CompactBox`).
     static let compactMarkWidth: CGFloat = 20
@@ -554,7 +579,7 @@ enum CardRenderer {
         let markWidth = marked.map { ceil($0.size().width) + 5 } ?? 0
         let nameX = inset.minX + compactMarkWidth
         text(schema.name, in: CGRect(x: nameX, y: inset.minY, width: max(0, inset.maxX - nameX - markWidth), height: inset.height),
-             font: .monospacedSystemFont(ofSize: 12, weight: .semibold), color: theme.ink, centeredVertically: true)
+             font: Typeface.mono(12, .semibold), color: theme.ink, centeredVertically: true)
         if let marked {
             let size = marked.size()
             marked.draw(in: CGRect(x: inset.maxX - ceil(size.width), y: inset.midY - size.height / 2,
@@ -564,29 +589,44 @@ enum CardRenderer {
 
     private static func drawHeaderText(
         _ schema: SchemaNode, in header: CGRect, theme: GraphTheme, temporary: Bool = false,
-        ghost: GhostLook? = nil, mark: ChangeMark? = nil
+        ghost: GhostLook? = nil, section: SectionGhosts.Look? = nil, mark: ChangeMark? = nil
     ) {
         if CompactBox.isCompact(schema) {
             drawCompactHeader(schema, in: header, theme: theme, mark: mark)
             return
         }
         var inset = header.insetBy(dx: 12, dy: 0)
+        // A section ghost's head starts with its section's mark.
+        if let section {
+            let tint = section.mark.color.flatMap(HexColor.nsColor(hex:)) ?? theme.ink3
+            let config = NSImage.SymbolConfiguration(pointSize: 11, weight: .regular)
+                .applying(NSImage.SymbolConfiguration(paletteColors: [tint]))
+            if let image = NSImage(systemSymbolName: section.mark.symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(config) {
+                let size = image.size
+                let rect = CGRect(x: inset.minX, y: inset.midY - size.height / 2, width: size.width, height: size.height)
+                image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true, hints: nil)
+            }
+            inset = CGRect(x: inset.minX + compactMarkWidth, y: inset.minY,
+                           width: max(0, inset.width - compactMarkWidth), height: inset.height)
+        }
         // Its order among the cards of the container whose map draws it (a task in its goal).
         if let number = schema.mapNumber, let ctx = NSGraphicsContext.current?.cgContext {
             let reach = drawNumber(number, x: inset.minX, midY: inset.midY, theme: theme,
                                    accent: theme.accent(for: schema), ctx: ctx)
             inset = CGRect(x: reach + 6, y: inset.minY, width: max(0, inset.maxX - reach - 6), height: inset.height)
         }
-        let nameFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .semibold)
+        let nameFont = Typeface.mono(13, .semibold)
         // A card ghost's header is the ghost's: the mark, its name and what it points at.
         let name = ghost?.title ?? schema.name
         let nameWidth = (name as NSString).size(withAttributes: [.font: nameFont]).width
 
         // The kind badge is drawn from the right, so the Japanese label gets whatever
         // is left rather than pushing the badge off the card.
-        let kindFont = NSFont.systemFont(ofSize: 10)
+        let kindFont = Typeface.system(10)
         let temporaryWord = temporary ? " · " + L10n[.Diagram.cardTemporary] : ""
         let kindWord = (ghost?.broken == true ? brokenGhostWord
+            : section?.figure != nil ? SectionGhosts.actorWord
             : SectionGhosts.isGhost(schema.id) ? SectionGhosts.kindWord
             : FlowCardMap.isCard(schema.id) ? FlowNode.Vocabulary.label(schema.nodes.first?.kind ?? "")
             : schema.kind == .custom ? ownKindWord(schema)
@@ -612,24 +652,158 @@ enum CardRenderer {
              in: CGRect(x: inset.maxX - kindWidth, y: inset.minY,
                         width: kindWidth - markWidth, height: inset.height),
              font: kindFont,
-             color: SectionGhosts.isGhost(schema.id) ? theme.ink3
+             color: section?.figure != nil ? Self.actorBlue
+                : SectionGhosts.isGhost(schema.id) ? theme.ink3
                 : FlowCardMap.isCard(schema.id) ? theme.accent(forNode: schema.nodes.first?.kind ?? "")
                 : theme.accent(for: schema),
              centeredVertically: true)
 
+        // A data card drawn as a list: its head's chips and its marks counted, left of the kind's name.
+        var right = inset.maxX - kindWidth - 8
+        var label = schema.label
+        if ghost == nil, let face = schema.listFace {
+            right = drawListHead(face, right: right, in: inset, theme: theme)
+            // Its head's other fields after its name, as its label is.
+            label = ([schema.label] + face.header.filter { !$0.chip }.map(\.text)).filter { !$0.isEmpty }
+                .joined(separator: " · ")
+        }
         let labelX = inset.minX + nameWidth + 10
-        let labelWidth = inset.maxX - kindWidth - 8 - labelX
-        if ghost == nil, !schema.label.isEmpty, labelWidth > 20 {
-            text(schema.label,
+        let labelWidth = right - labelX
+        if ghost == nil, !label.isEmpty, labelWidth > 20 {
+            text(label,
                  in: CGRect(x: labelX, y: inset.minY, width: labelWidth, height: inset.height),
-                 font: .systemFont(ofSize: 11.5), color: theme.ink3, centeredVertically: true)
+                 font: Typeface.system(11.5), color: theme.ink3, centeredVertically: true)
+        }
+    }
+
+    // MARK: - A list face
+
+    static let listTextFont = Typeface.system(11.5)
+    static let listNoteFont = Typeface.mono(9.5, .regular)
+    static let listMarkFont = Typeface.system(11, .bold)
+    static let listCountFont = Typeface.mono(10.5, .semibold)
+    static let foldLabelFont = Typeface.mono(10.5, .semibold)
+
+    /// Where a list row's mark is, from the row's left: right of its disclosure mark.
+    static let listMarkLeft: CGFloat = CardGeometry.listDiscloseLeft + CardGeometry.discloseWidth + 3
+    /// How wide a list row's mark is.
+    static let listMarkWidth: CGFloat = 13
+
+    /// Where a list row's text starts, from the row's left: after the mark's column when any row wears a mark, so
+    /// the texts start in one line.
+    static func listTextLeft(_ schema: SchemaNode) -> CGFloat {
+        listMarkLeft + (schema.listFace?.marks == true ? listMarkWidth + 5 : 0)
+    }
+
+    /// Where a fold line's heading starts, from the row's left: set in a step for each level it is down.
+    static func foldLabelLeft(_ line: ListFace.FoldLine) -> CGFloat { 28 + CGFloat(line.depth) * 14 }
+
+    /// Where a fold line's text starts: after the column its headings are drawn in.
+    static func foldTextLeft(_ line: ListFace.FoldLine) -> CGFloat { foldLabelLeft(line) + 50 }
+
+    /// The font of a fold line's text: a step down, smaller and fainter, as a detail of the line above it.
+    static func foldFont(_ line: ListFace.FoldLine) -> NSFont { Typeface.system(line.depth == 0 ? 11 : 10.5) }
+
+    /// The marks counted as the head says them: each role's symbol and how many, in the role's colour.
+    static func countsText(_ face: ListFace, theme: GraphTheme) -> NSAttributedString {
+        let out = NSMutableAttributedString()
+        for (index, count) in face.counts.enumerated() {
+            out.append(NSAttributedString(string: (index == 0 ? "" : "  ") + "\(count.role.symbol) \(count.count)", attributes: [
+                .font: listCountFont, .foregroundColor: count.role.color(theme),
+            ]))
+        }
+        return out
+    }
+
+    /// How wide a chip of the head is for `text`.
+    static func chipWidth(_ text: String) -> CGFloat {
+        (text as NSString).size(withAttributes: [.font: badgeFont]).width + 8
+    }
+
+    /// How much wider a list's head is than a data card's: its chips and its counts.
+    static func listHeadWidth(_ face: ListFace) -> CGFloat {
+        let chips = face.header.filter(\.chip).map { chipWidth($0.text) + 8 }.reduce(0, +)
+        let counts = face.counts.isEmpty ? 0 : ceil(countsText(face, theme: .dark).size().width) + 8
+        return chips + counts
+    }
+
+    /// Where a list's head draws its counts, in a header whose text area is `inset` and whose kind's word takes
+    /// `kindWidth` at its right: left of its chips. None for a head with no marks counted.
+    static func countsRect(_ face: ListFace, in inset: CGRect, kindWidth: CGFloat) -> CGRect? {
+        guard !face.counts.isEmpty else { return nil }
+        let right = inset.maxX - kindWidth - 8 - face.header.filter(\.chip).map { chipWidth($0.text) + 8 }.reduce(0, +)
+        let width = ceil(countsText(face, theme: .dark).size().width)
+        return CGRect(x: right - width, y: inset.minY, width: width, height: inset.height)
+    }
+
+    /// A list's head, from `right` leftward: an enum's value as a chip, as a data row's type is, then the marks
+    /// counted. How far left it reaches, less a gap.
+    private static func drawListHead(_ face: ListFace, right start: CGFloat, in inset: CGRect, theme: GraphTheme) -> CGFloat {
+        var right = start
+        for head in face.header.reversed() where head.chip {
+            let width = chipWidth(head.text)
+            let chip = CGRect(x: right - width, y: inset.midY - 7.5, width: width, height: 15)
+            if let ctx = NSGraphicsContext.current?.cgContext {
+                ctx.addPath(CGPath(roundedRect: chip.insetBy(dx: 0.5, dy: 0.5), cornerWidth: 3, cornerHeight: 3, transform: nil))
+                ctx.setStrokeColor(theme.ink3.withAlphaComponent(0.7).cgColor)
+                ctx.setLineWidth(1)
+                ctx.strokePath()
+            }
+            text(head.text, in: chip.insetBy(dx: 4, dy: 0), font: badgeFont, color: theme.ink2, centeredVertically: true)
+            right = chip.minX - 8
+        }
+        if !face.counts.isEmpty {
+            let counts = countsText(face, theme: theme)
+            let size = counts.size()
+            let width = ceil(size.width)
+            counts.draw(in: CGRect(x: right - width, y: inset.midY - size.height / 2, width: width + 1, height: size.height))
+            right -= width + 8
+        }
+        return right
+    }
+
+    /// A list face's row: an element's — its disclosure mark drawn as any row's — its mark, its text and its note
+    /// small and faint after it, the text cut short first so the note keeps to its room; or a line under it opened,
+    /// its heading on the first line of each field.
+    private static func drawListed(_ listed: ListedRow, schema: SchemaNode, rect: CGRect, theme: GraphTheme,
+                                   ctx: CGContext) {
+        func width(_ text: String, _ font: NSFont) -> CGFloat { (text as NSString).size(withAttributes: [.font: font]).width }
+        switch listed {
+        case .entry(let entry):
+            if let mark = entry.mark {
+                let box = CGRect(x: rect.minX + listMarkLeft, y: rect.minY, width: listMarkWidth, height: rect.height)
+                let size = width(mark.symbol, listMarkFont)
+                text(mark.symbol, in: CGRect(x: box.midX - size / 2, y: box.minY, width: size + 1, height: box.height),
+                     font: listMarkFont, color: mark.color(theme), centeredVertically: true)
+            }
+            let x = rect.minX + listTextLeft(schema)
+            let room = max(10, rect.maxX - 12 - x)
+            let font = entry.fallback ? Typeface.mono(11.5, .regular) : listTextFont
+            let note = entry.note.flatMap { $0.isEmpty ? nil : $0 }
+            let noteWidth = note.map { min(width($0, listNoteFont), room * 0.38) } ?? 0
+            let textWidth = min(width(entry.text, font) + 1, max(10, room - (note == nil ? 0 : noteWidth + 8)))
+            text(entry.text, in: CGRect(x: x, y: rect.minY, width: textWidth, height: rect.height),
+                 font: font, color: theme.ink, centeredVertically: true)
+            if let note {
+                text(note, in: CGRect(x: x + textWidth + 8, y: rect.minY, width: noteWidth, height: rect.height),
+                     font: listNoteFont, color: theme.ink3, centeredVertically: true)
+            }
+        case .fold(let line):
+            if let label = line.label {
+                text(label, in: CGRect(x: rect.minX + foldLabelLeft(line), y: rect.minY, width: 46, height: rect.height),
+                     font: foldLabelFont, color: theme.accent(for: .instance), centeredVertically: true)
+            }
+            let x = rect.minX + foldTextLeft(line)
+            text(line.depth == 0 ? line.text : "· " + line.text,
+                 in: CGRect(x: x, y: rect.minY, width: max(10, rect.maxX - 12 - x), height: rect.height),
+                 font: foldFont(line), color: line.depth == 0 ? theme.ink : theme.ink2, centeredVertically: true)
         }
     }
 
     /// What the open branch did to a card, as its header says it after the kind's name: its letters,
     /// each in its colour on a light or a dark diagram.
     static func markText(_ mark: ChangeMark, dark: Bool) -> NSAttributedString {
-        let font = NSFont.monospacedSystemFont(ofSize: 10.5, weight: .bold)
+        let font = Typeface.mono(10.5, .bold)
         let out = NSMutableAttributedString()
         for letter in mark.letters {
             out.append(NSAttributedString(string: letter.text, attributes: [
@@ -669,6 +843,11 @@ enum CardRenderer {
             ctx.strokePath()
         }
 
+        if let listed = row.listed {
+            drawListed(listed, schema: schema, rect: rect, theme: theme, ctx: ctx)
+            return
+        }
+
         if let datum = row.datum {
             drawDatum(datum, rect: rect, indent: indent, theme: theme, ctx: ctx)
             return
@@ -683,13 +862,13 @@ enum CardRenderer {
             text(value.value,
                  in: CGRect(x: rect.minX + indent, y: rect.minY,
                             width: rect.width * 0.5, height: rect.height),
-                 font: .monospacedSystemFont(ofSize: 11.5, weight: .regular),
+                 font: Typeface.mono(11.5, .regular),
                  color: theme.ink, centeredVertically: true)
             if !value.label.isEmpty {
                 text(value.label,
                      in: CGRect(x: rect.minX + rect.width * 0.5 + 8, y: rect.minY,
                                 width: rect.width * 0.5 - 20, height: rect.height),
-                     font: .systemFont(ofSize: 11), color: theme.ink3, centeredVertically: true)
+                     font: Typeface.system(11), color: theme.ink3, centeredVertically: true)
             }
             return
         }
@@ -708,11 +887,11 @@ enum CardRenderer {
         if let step = row.step {
             // The word first, in the card's colour, then what it is done to; how it
             // travels on the right. The word is the part to scan down the card for.
-            let wordFont = NSFont.monospacedSystemFont(ofSize: 10.5, weight: .semibold)
+            let wordFont = Typeface.mono(10.5, .semibold)
             let word = step.label
             let wordWidth = max(46, (word as NSString).size(withAttributes: [.font: wordFont]).width)
             let detail = step.detail ?? ""
-            let detailFont = NSFont.systemFont(ofSize: 10)
+            let detailFont = Typeface.system(10)
             // At most half the row, so what the row does is never written over.
             let detailWidth = detail.isEmpty ? 0
                 : min((detail as NSString).size(withAttributes: [.font: detailFont]).width, rect.width * 0.45)
@@ -723,7 +902,7 @@ enum CardRenderer {
                  in: CGRect(x: rect.minX + indent + wordWidth + 8, y: rect.minY,
                             width: max(10, rect.width - indent - wordWidth - detailWidth - 36),
                             height: rect.height),
-                 font: .monospacedSystemFont(ofSize: 11, weight: .regular),
+                 font: Typeface.mono(11, .regular),
                  color: theme.ink, centeredVertically: true)
             if !detail.isEmpty {
                 text(detail,
@@ -743,13 +922,13 @@ enum CardRenderer {
         let nameColor: NSColor = row.fromType != nil ? theme.ink3
             : isRef ? theme.brassInk : isNested ? theme.teal : theme.ink
 
-        let nameFont = NSFont.monospacedSystemFont(ofSize: 11.5, weight: isRef ? .medium : .regular)
+        let nameFont = Typeface.mono(11.5, isRef ? .medium : .regular)
         let name = field.name + (field.isArray ? "[]" : "")
         // The trailing text first, because it is what is left over that the name gets.
         // A reference names its target, so with a fixed width reserved for it a long
         // schema name and a long field name would overlap.
         let trailing = trailingText(row, schema: schema, drawn: drawn)
-        let typeFont = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+        let typeFont = Typeface.mono(10, .regular)
         let typeWidth = (trailing as NSString).size(withAttributes: [.font: typeFont]).width
 
         // A primary key says so before its name, with a key: an ID pointing
@@ -832,14 +1011,14 @@ enum CardRenderer {
         CGRect(x: row.maxX - 12 - 30, y: row.midY - 8.5, width: 30, height: 17)
     }
 
-    private static let formLabelFont = NSFont.systemFont(ofSize: 10.5, weight: .semibold)
+    private static let formLabelFont = Typeface.system(10.5, .semibold)
 
     /// Whether a radio field's options fit side by side in the row, each its word and a little
     /// room (7 points each side of the word, so a word never touches its segment's edge): else it
     /// is drawn, and pressed, as a menu — as `FittingChoice` does in the panel.
     static func segmentsFit(in row: CGRect, label: String, options: [String]) -> Bool {
         let boxes = segmentRects(in: row, label: label, count: options.count)
-        let font = NSFont.systemFont(ofSize: 10, weight: .semibold)
+        let font = Typeface.system(10, .semibold)
         return zip(options, boxes).allSatisfy { option, box in
             (option as NSString).size(withAttributes: [.font: font]).width + 14 <= box.width
         }
@@ -869,14 +1048,14 @@ enum CardRenderer {
         switch form {
         case .toggle(let on):
             let toggle = toggleRect(in: rect)
-            let detailFont = NSFont.systemFont(ofSize: 10)
+            let detailFont = Typeface.system(10)
             let detail = step.detail ?? ""
             let detailWidth = detail.isEmpty ? 0 : (detail as NSString).size(withAttributes: [.font: detailFont]).width
             text(step.text,
                  in: CGRect(x: rect.minX + indent, y: rect.minY,
                             width: max(0, toggle.minX - 8 - detailWidth - (detail.isEmpty ? 0 : 6) - (rect.minX + indent)),
                             height: rect.height),
-                 font: .systemFont(ofSize: 11.5), color: on ? theme.ink3 : theme.ink, centeredVertically: true)
+                 font: Typeface.system(11.5), color: on ? theme.ink3 : theme.ink, centeredVertically: true)
             if !detail.isEmpty {
                 text(detail, in: CGRect(x: toggle.minX - 8 - detailWidth, y: rect.minY, width: detailWidth, height: rect.height),
                      font: detailFont, color: theme.ink3, centeredVertically: true)
@@ -916,7 +1095,7 @@ enum CardRenderer {
                     ctx.setFillColor(accent.cgColor)
                     ctx.fillPath()
                 }
-                let font = NSFont.systemFont(ofSize: 10, weight: picked ? .semibold : .regular)
+                let font = Typeface.system(10, picked ? .semibold : .regular)
                 let shown = CardForm.Control.shown(option, labels)
                 let width = (shown as NSString).size(withAttributes: [.font: font]).width
                 text(shown, in: CGRect(x: box.midX - min(width, box.width - 4) / 2, y: box.minY,
@@ -949,7 +1128,7 @@ enum CardRenderer {
         ctx.strokePath()
         let word = chosen.isEmpty ? FittingChoice.Option.none.text : chosen
         text(word, in: CGRect(x: button.minX + 8, y: button.minY, width: max(0, button.width - 26), height: button.height),
-             font: .systemFont(ofSize: 10.5), color: chosen.isEmpty ? theme.ink3 : theme.ink, centeredVertically: true)
+             font: Typeface.system(10.5), color: chosen.isEmpty ? theme.ink3 : theme.ink, centeredVertically: true)
         // The mark that it opens: a small chevron down, at its end.
         let arm: CGFloat = 3
         let centre = CGPoint(x: button.maxX - 10, y: button.midY)
@@ -972,7 +1151,7 @@ enum CardRenderer {
     static func keyMark(in rect: CGRect, color: NSColor) {
         let config = NSImage.SymbolConfiguration(pointSize: rect.height, weight: .semibold)
             .applying(NSImage.SymbolConfiguration(paletteColors: [color]))
-        guard let image = NSImage(systemSymbolName: "key.fill", accessibilityDescription: L10n[.Diagram.cardPrimaryKey])?
+        guard let image = NSImage(systemSymbolName: "key.fill", accessibilityDescription: BuiltinWords.recordField("primaryKey"))?
             .withSymbolConfiguration(config) else { return }
         image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true, hints: nil)
     }

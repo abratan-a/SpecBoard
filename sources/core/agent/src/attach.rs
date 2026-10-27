@@ -56,6 +56,8 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
         .append(true)
         .open(daemon::log(home))
         .map_err(|e| specboard_core::text!("agent.cli.logFailed", error = e))?;
+    // Where this start's lines begin in the log: what it says when it stops at once is after it.
+    let begun_at = log.metadata().map(|m| m.len()).unwrap_or(0);
     let exe = std::env::current_exe()
         .map_err(|e| specboard_core::text!("agent.cli.exeUnknown", error = e))?;
     let mut command = Command::new(exe);
@@ -72,7 +74,7 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
             Ok(())
         });
     }
-    command
+    let mut child = command
         .spawn()
         .map_err(|e| specboard_core::text!("agent.cli.startFailed", error = e))?;
     let begun = Instant::now();
@@ -80,12 +82,32 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
         if let Some(said) = who(socket) {
             return Ok(said);
         }
+        // One that stopped as it started (its database refused, say) is said why, as it wrote it:
+        // the app shows it where it shows that the agent cannot be reached.
+        if let Ok(Some(status)) = child.try_wait()
+            && !status.success()
+            && let Some(why) = last_line(&daemon::log(home), begun_at)
+        {
+            return Err(specboard_core::text!("agent.cli.startFailed", error = why));
+        }
         std::thread::sleep(Duration::from_millis(50));
     }
     Err(specboard_core::text!(
         "agent.cli.noStart",
         log = daemon::log(home).display()
     ))
+}
+
+/// The last line written to the log at `path` from `from` on, if any.
+fn last_line(path: &Path, from: u64) -> Option<String> {
+    let text = std::fs::read(path).ok()?;
+    let after = text.get(usize::try_from(from).ok()?..)?;
+    String::from_utf8_lossy(after)
+        .lines()
+        .rev()
+        .map(str::trim)
+        .find(|line| !line.is_empty())
+        .map(str::to_string)
 }
 
 /// The app's build, as a number to tell newer from older: none for a build of the agent's own.

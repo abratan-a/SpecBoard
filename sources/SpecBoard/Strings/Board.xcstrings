@@ -487,24 +487,6 @@
         }
       }
     },
-    "goal.badge" : {
-      "comment" : "The kind badge at the left of a goal's card editor bar.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "goal"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "goal（目標）"
-          }
-        }
-      }
-    },
     "goal.canFinish" : {
       "comment" : "Button in a goal's card editor bar, shown when everything inside is done; it finishes the goal (the same as the Finish action).",
       "extractionState" : "manual",

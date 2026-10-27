@@ -5,7 +5,8 @@ import Foundation
 /// and by nothing guessed from the actions' rows.
 ///
 ///     begin   trigger (manual / receive / event / schedule / startup), next; on receive
-///             peers and program (none: whoever calls), carries, via, initiator, verifyWith
+///             peers and program (none: not written, a gap — or anyCaller, anyone), carries,
+///             via, initiator, verifyWith
 ///     process steps — rows read, written, signed, checked, called, sent and
 ///             received, in order; next
 ///     run     target — a flow (an action, until they are moved); carries, returns,
@@ -72,6 +73,8 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
     var returns: [String] = []
     var via: String?
     var initiator: String?
+    /// A begin on receive that takes anyone: no partner named, and none missing.
+    var anyCaller = false
     var verifyWith: String?
     var signWith: String?
     // all but end and eval: one, or more to part the way.
@@ -82,6 +85,26 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
     var lineExtras: [LineKey: LineExtra] = [:]
     /// Its cell before the flow was on the grid, read only to be moved (`modernized`).
     var at: FlowCell?
+
+    /// A receiving begin that names no one and takes no caller: a gap, drawn and checked as one.
+    var namesNoPartner: Bool { kind == "begin" && trigger == "receive" && peers.isEmpty && program == nil && !anyCaller }
+
+    /// A begin's trigger set: what only another trigger keeps goes with it.
+    mutating func setTrigger(_ value: String?) {
+        trigger = value
+        if value != "event" { event = nil }
+        if value != "schedule" { every = nil }
+        if value != "receive" {
+            peers = []; program = nil; carries = []
+            via = nil; initiator = nil; verifyWith = nil; anyCaller = false
+        }
+    }
+
+    /// Anyone may call it, or not: anyone takes the place of the partners named, which go.
+    mutating func setAnyone(_ on: Bool) {
+        anyCaller = on
+        if on { peers = []; program = nil }
+    }
 
     /// Where it goes, when that is one way — or the first of several.
     var next: String? {
@@ -104,7 +127,7 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
     enum CodingKeys: String, CodingKey {
         case name, kind, label, description, trigger, event, every, target, targets, join, partial, onError,
              value, branches, otherwise = "else", waitFor = "for", timeout, onTimeout, outcome, next, topLeft, at,
-             reply = "return", steps, peers, program, carries, returns, via, initiator, verifyWith, signWith
+             reply = "return", steps, peers, program, carries, returns, via, initiator, anyCaller, verifyWith, signWith
         /// The name it had before, read only (old projects, history).
         case note
     }
@@ -139,6 +162,7 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
         returns = try c.decodeIfPresent([String].self, forKey: .returns) ?? []
         via = try c.decodeIfPresent(String.self, forKey: .via)
         initiator = try c.decodeIfPresent(String.self, forKey: .initiator)
+        anyCaller = try c.decodeIfPresent(Bool.self, forKey: .anyCaller) ?? false
         verifyWith = try c.decodeIfPresent(String.self, forKey: .verifyWith)
         signWith = try c.decodeIfPresent(String.self, forKey: .signWith)
         if let one = try? c.decodeIfPresent(String.self, forKey: .next) {
@@ -179,6 +203,7 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
         if !returns.isEmpty { try c.encode(returns, forKey: .returns) }
         try c.encodeIfPresent(via, forKey: .via)
         try c.encodeIfPresent(initiator, forKey: .initiator)
+        if anyCaller { try c.encode(true, forKey: .anyCaller) }
         try c.encodeIfPresent(verifyWith, forKey: .verifyWith)
         try c.encodeIfPresent(signWith, forKey: .signWith)
         if nexts.count == 1 { try c.encode(nexts[0], forKey: .next) } else if !nexts.isEmpty { try c.encode(nexts, forKey: .next) }
@@ -194,7 +219,7 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
         /// What a process node's rows may do: no group, no return.
         static let processOps = ["read", "write", "sign", "verify", "call", "send", "receive", "compute"]
         /// The keys only a begin on receive has.
-        static let receiving = ["peer", "program", "carries", "via", "initiator", "verifyWith"]
+        static let receiving = ["peer", "program", "carries", "via", "initiator", "anyCaller", "verifyWith"]
         static let joins = ["all", "any", "first"]
         static let partials = ["fail", "continue"]
         static let waits = ["approval", "timer", "event"]
@@ -211,34 +236,11 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
             "end": ["outcome", "return"],
         ]
 
-        /// The heading a person sees, in the screen's language unless `language` says another.
-        static func label(_ kind: String, in language: String = Language.current) -> String {
-            switch kind {
-            case "begin": L10n.text(.Flow.kindBegin, in: language)
-            case "process": L10n.text(.Flow.kindProcess, in: language)
-            case "run": L10n.text(.Flow.kindRun, in: language)
-            case "eval": L10n.text(.Flow.kindEval, in: language)
-            case "wait": L10n.text(.Flow.kindWait, in: language)
-            case "join": L10n.text(.Flow.kindJoin, in: language)
-            case "end": L10n.text(.Flow.kindEnd, in: language)
-            default: kind
-            }
-        }
+        /// The heading a person sees: the kind's definition's label (`BuiltinWords`).
+        static func label(_ kind: String) -> String { BuiltinWords.label(kind) }
 
-        /// What it is, in a line.
-        static func holding(_ kind: String) -> String {
-            let language = Language.current
-            switch kind {
-            case "begin": return L10n.text(.Flow.holdingBegin, in: language)
-            case "process": return L10n.text(.Flow.holdingProcess, in: language)
-            case "run": return L10n.text(.Flow.holdingRun, in: language)
-            case "eval": return L10n.text(.Flow.holdingEval, in: language)
-            case "wait": return L10n.text(.Flow.holdingWait, in: language)
-            case "join": return L10n.text(.Flow.holdingJoin, in: language)
-            case "end": return L10n.text(.Flow.holdingEnd, in: language)
-            default: return ""
-            }
-        }
+        /// What it is, in a line: the first sentence of the kind's purpose.
+        static func holding(_ kind: String) -> String { BuiltinWords.purpose(kind) }
     }
 
     /// The keys it was written with, as the wire names them.
@@ -267,24 +269,22 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
         if !returns.isEmpty { out.append("returns") }
         if via != nil { out.append("via") }
         if initiator != nil { out.append("initiator") }
+        if anyCaller { out.append("anyCaller") }
         if verifyWith != nil { out.append("verifyWith") }
         if signWith != nil { out.append("signWith") }
         if !nexts.isEmpty { out.append("next") }
         return out
     }
 
-    /// Where it goes, with what each way is called on the canvas: `next`, `else`, a
-    /// branch's condition, `失敗時`, `時間切れ`.
-    var exits: [(to: String, label: String?, kind: Exit)] { exits(in: Language.current) }
-
-    /// `exits`, with the words for a failure's and a time-out's way in `language`.
-    func exits(in language: String) -> [(to: String, label: String?, kind: Exit)] {
+    /// Where it goes, with what each way is called on the canvas: none for `next`, a branch's
+    /// condition, and the others by their kinds of line (`else`, `onError`, `onTimeout`; `BuiltinWords`).
+    var exits: [(to: String, label: String?, kind: Exit)] {
         var out: [(String, String?, Exit)] = []
         for next in nexts { out.append((next, nil, .next)) }
         for branch in branches { out.append((branch.next, branch.when, .branch)) }
-        if let otherwise { out.append((otherwise, "else", .otherwise)) }
-        if let onError { out.append((onError, L10n.text(.Flow.exitError, in: language), .error)) }
-        if let onTimeout { out.append((onTimeout, L10n.text(.Flow.exitTimeout, in: language), .timeout)) }
+        if let otherwise { out.append((otherwise, BuiltinWords.line(Line.otherwise), .otherwise)) }
+        if let onError { out.append((onError, BuiltinWords.line(Line.onError), .error)) }
+        if let onTimeout { out.append((onTimeout, BuiltinWords.line(Line.onTimeout), .timeout)) }
         return out
     }
 
@@ -304,7 +304,9 @@ nonisolated struct FlowNode: Codable, Hashable, Sendable {
         put("target", target)
         if !carries.isEmpty { out["carries"] = .string(carries) }
         if !returns.isEmpty { out["returns"] = .string(returns) }
-        put("via", via); put("initiator", initiator); put("verifyWith", verifyWith); put("signWith", signWith)
+        put("via", via); put("initiator", initiator)
+        if anyCaller { out["anyCaller"] = .bool(true) }
+        put("verifyWith", verifyWith); put("signWith", signWith)
         if !targets.isEmpty { out["targets"] = .array(targets.map(OJSON.string)) }
         put("join", join); put("partial", partial); put("onError", onError); put("value", value)
         if !branches.isEmpty {
@@ -473,7 +475,7 @@ extension FlowNode {
         var folded: Set<String> = []
         for node in nodes {
             do { _ = try Validate.name(node.name, field: say(.Flow.fieldNodeNameOf(node.name))) } catch {
-                return (error.localizedDescription, [])
+                return (ErrorText.said(error), [])
             }
             names.insert(node.name)
             guard folded.insert(PathText.fold(node.name)).inserted else {
@@ -491,7 +493,7 @@ extension FlowNode {
         }
         func needs(_ present: Bool, _ key: String, _ node: FlowNode, _ why: @autoclosure () -> String? = nil) {
             if present { return }
-            let head = Vocabulary.label(node.kind, in: language)
+            let head = Vocabulary.label(node.kind)
             let text = why().map { say(.Flow.problemMissingWith(node.name, head, key, $0)) }
                 ?? say(.Flow.problemMissing(node.name, head, key))
             unfinished.append((node.name, text))
@@ -524,7 +526,7 @@ extension FlowNode {
             if let bad = one(node.initiator, of: Step.Vocabulary.initiators, "initiator", node) { return (bad, []) }
             if node.kind == "process" {
                 do { try Validate.processRows(node.steps, at: "nodes.\(node.name).steps") } catch {
-                    return (error.localizedDescription, [])
+                    return (ErrorText.said(error), [])
                 }
             }
             switch node.kind {

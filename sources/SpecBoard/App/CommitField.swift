@@ -11,7 +11,9 @@ struct CommitField: View {
     var placeholder: String
     var text: String
     var monospaced: Bool = false
-    var onCommit: (String) -> Void
+    /// Hands on what was written; false when it was refused then and there, and the field shows the value
+    /// it has again.
+    var onCommit: (String) -> Bool
 
     @State private var draft: String
     @FocusState private var focused: Bool
@@ -23,8 +25,18 @@ struct CommitField: View {
         self.placeholder = placeholder
         self.text = text
         self.monospaced = monospaced
-        self.onCommit = onCommit
+        self.onCommit = { onCommit($0); return true }
         _draft = State(initialValue: text)
+    }
+
+    /// One whose writing may be refused at once (a name another already has): refused, `accept` gives false
+    /// and the field goes back to `text` — which then does not change, so would not bring it back — rather than
+    /// keep showing what was not written.
+    static func refusable(_ placeholder: String, text: String, monospaced: Bool = false,
+                          accept: @escaping (String) -> Bool) -> CommitField {
+        var field = CommitField(placeholder, text: text, monospaced: monospaced) { _ in }
+        field.onCommit = accept
+        return field
     }
 
     var body: some View {
@@ -50,7 +62,10 @@ struct CommitField: View {
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed != text, trimmed != said else { return }
         said = trimmed
-        onCommit(trimmed)
+        if !onCommit(trimmed) {
+            said = nil
+            draft = text
+        }
     }
 }
 

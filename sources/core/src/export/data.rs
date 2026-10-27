@@ -14,6 +14,7 @@ use super::Project;
 use crate::kinds::ExportAs;
 use crate::model::{Card, Field};
 use crate::ojson;
+use crate::text::Keyed;
 use serde_json::{Map, Value};
 
 /// The order the types of a field are written in.
@@ -52,13 +53,13 @@ fn json_type(kind: &str) -> Option<&'static str> {
 /// The data cards of these cards (the instances; others are left), in their order, as the text of the
 /// file — a list of their data, each form a line of `export: {as: schema}` reaches put in as JSON
 /// Schema (`inline_schema`); or every problem found.
-pub fn build(project: &Project, cards: &[&Card]) -> Result<String, Vec<String>> {
+pub fn build(project: &Project, cards: &[&Card]) -> Result<String, Vec<Keyed>> {
     let mut list = Vec::new();
     let mut problems = Vec::new();
     for card in cards.iter().filter(|c| c.kind == "instance") {
         let here = project.full(card);
         let Some(data) = card.instance_data().cloned() else {
-            problems.push(text!("export.data.empty", here));
+            problems.push(keyed!("export.data.empty", here));
             continue;
         };
         let mut data = data;
@@ -77,12 +78,12 @@ pub fn build(project: &Project, cards: &[&Card]) -> Result<String, Vec<String>> 
                 .and_then(|id| project.card(id))
                 .filter(|c| matches!(c.kind.as_str(), "entity" | "value"));
             let Some(form) = form else {
-                problems.push(text!("export.data.noForm", here, line = line.line));
+                problems.push(keyed!("export.data.noForm", here, line = line.line));
                 continue;
             };
             let key = export.key.as_deref().unwrap_or(SCHEMA_KEY);
             if let Err(why) = put(&mut data, &line.from, key, inline_schema(project, form)) {
-                problems.push(text!(
+                problems.push(keyed!(
                     "export.data.lineFrom",
                     here,
                     line = line.line,
@@ -104,38 +105,38 @@ const SCHEMA_KEY: &str = "schema";
 
 /// A form's JSON Schema put into a data card's data at the place a line leaves: a field's value is
 /// replaced by it, an element of an array gets it under `key`.
-fn put(data: &mut Value, from: &str, key: &str, schema: Value) -> Result<(), String> {
-    use crate::tools::picks::{Found, split, step};
+fn put(data: &mut Value, from: &str, key: &str, schema: Value) -> Result<(), Keyed> {
+    use crate::tools::picks::{Found, split, step_kept};
     if from.is_empty() {
-        return Err(text!("export.data.pathNeeded"));
+        return Err(keyed!("export.data.pathNeeded"));
     }
     let names = split(from);
     let mut at: &mut Value = data;
     let last = names.len() - 1;
     for (i, name) in names.iter().enumerate() {
-        let (field, pick) = step(name)?;
+        let (field, pick) = step_kept(name)?;
         if !at.is_object() {
-            return Err(text!("export.data.notContainer", field));
+            return Err(keyed!("export.data.notContainer", field));
         }
         let object = at.as_object_mut().expect("an object");
         if !object.contains_key(&*field) {
             if pick.is_some() {
-                return Err(text!("export.data.noField", field));
+                return Err(keyed!("export.data.noField", field));
             }
             object.insert(field.to_string(), Value::Object(Map::new()));
         }
         at = object.get_mut(&*field).expect("just put");
         if let Some(pick) = pick {
             let Value::Array(items) = at else {
-                return Err(text!("export.data.notList", field));
+                return Err(keyed!("export.data.notList", field));
             };
             match pick.find(items) {
                 Found::One(n) => at = &mut items[n],
-                _ => return Err(text!("export.data.notOne", name)),
+                _ => return Err(keyed!("export.data.notOne", name)),
             }
             if i == last {
                 let Some(element) = at.as_object_mut() else {
-                    return Err(text!("export.data.notObject", name));
+                    return Err(keyed!("export.data.notObject", name));
                 };
                 element.insert(key.to_string(), schema);
                 return Ok(());

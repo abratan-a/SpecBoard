@@ -193,6 +193,7 @@ pub fn flow_node(v: &Value) -> Read<Value> {
     let returns = opt_strings(o, "returns")?;
     let via = opt_string(o, "via")?;
     let initiator = opt_string(o, "initiator")?;
+    let any_caller = opt_bool(o, "anyCaller")?.unwrap_or(false);
     let verify_with = opt_string(o, "verifyWith")?;
     let sign_with = opt_string(o, "signWith")?;
     // One next, or several to part the way.
@@ -242,6 +243,10 @@ pub fn flow_node(v: &Value) -> Read<Value> {
     out.strings("returns", &returns);
     out.some("via", &via);
     out.some("initiator", &initiator);
+    // Only said when it is so: a begin that does not take anyone is written without it.
+    if any_caller {
+        out.put("anyCaller", true);
+    }
     out.some("verifyWith", &verify_with);
     out.some("signWith", &sign_with);
     match nexts.len() {

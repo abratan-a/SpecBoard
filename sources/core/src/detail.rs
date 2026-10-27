@@ -868,6 +868,10 @@ struct Section {
     sort_order: i64,
     parent_id: Option<String>,
     kind: Option<String>,
+    figure: Option<String>,
+    icon: Option<Map<String, Value>>,
+    /// The mark it is shown with, where it is not just its kind's (an actor's, one of its own).
+    shown: Option<(Option<String>, Option<String>)>,
     created_at: String,
     missing: bool,
 }
@@ -878,6 +882,23 @@ fn sections(made: &Composition, project_id: &str, defs: &crate::kinds::Defs) -> 
         .iter()
         .map(|item| {
             let doc = &item.doc;
+            let kind = text(doc, "kind").filter(|k| defs.knows_section(k));
+            let figure = text(doc, "figure")
+                .filter(|f| kind.as_deref() == Some(crate::kinds::ACTOR) && f != "system");
+            let icon = doc.get("icon").and_then(Value::as_object).cloned();
+            let part = |key: &str| {
+                icon.as_ref()
+                    .and_then(|i| i.get(key))
+                    .and_then(Value::as_str)
+            };
+            let shown =
+                (icon.is_some() || kind.as_deref() == Some(crate::kinds::ACTOR)).then(|| {
+                    defs.shown_mark(
+                        kind.as_deref(),
+                        figure.as_deref(),
+                        (part("name"), part("color")),
+                    )
+                });
             Section {
                 id: item.id.clone(),
                 project_id: project_id.to_string(),
@@ -885,7 +906,10 @@ fn sections(made: &Composition, project_id: &str, defs: &crate::kinds::Defs) -> 
                 description: text(doc, "description").unwrap_or_default(),
                 sort_order: int(doc, "sort_order"),
                 parent_id: text(doc, "parent_id"),
-                kind: text(doc, "kind").filter(|k| defs.knows_section(k)),
+                kind,
+                figure,
+                icon,
+                shown,
                 created_at: text(doc, "created_at").unwrap_or_default(),
                 missing: doc.get("missing").and_then(Value::as_bool) == Some(true),
             }
@@ -982,6 +1006,22 @@ fn section_json(s: &Section) -> Value {
     if let Some(k) = &s.kind {
         out.insert("kind".into(), k.clone().into());
     }
+    if let Some(figure) = &s.figure {
+        out.insert("figure".into(), figure.clone().into());
+    }
+    if let Some(icon) = &s.icon {
+        out.insert("icon".into(), Value::Object(icon.clone()));
+    }
+    if let Some((name, color)) = &s.shown {
+        let mut mark = Map::new();
+        if let Some(name) = name {
+            mark.insert("name".into(), name.clone().into());
+        }
+        if let Some(color) = color {
+            mark.insert("color".into(), color.clone().into());
+        }
+        out.insert("shownMark".into(), Value::Object(mark));
+    }
     if s.missing {
         out.insert("missing".into(), true.into());
     }
@@ -1004,6 +1044,8 @@ struct Card {
     rules: Vec<Value>,
     absent_fields: Vec<Value>,
     discriminator: Option<String>,
+    /// An entity's or a value's list face: how data of its shape is drawn as a list.
+    face: Option<Value>,
     enum_open: bool,
     place: Option<Place>,
     sort_order: i64,
@@ -1214,6 +1256,7 @@ fn card_of(
         rules: wire::rules(f.get("rules")),
         absent_fields: wire::list_or_empty(f.get("absentFields"), wire::absent_field),
         discriminator: text(&f, "discriminator"),
+        face: f.get("face").filter(|v| v.is_object()).cloned(),
         enum_open: f.get("open").and_then(Value::as_bool).unwrap_or(false),
         place,
         sort_order: int(doc, "order"),
@@ -1452,6 +1495,7 @@ fn node_before(
         "returns",
         "via",
         "initiator",
+        "anyCaller",
         "value",
         "for",
         "timeout",
@@ -1494,7 +1538,7 @@ fn node_before(
                     nexts.push(to.into());
                 }
             }
-            "branch" => {
+            "condition" => {
                 if let Some(to) = way(line) {
                     let mut b = Map::new();
                     b.insert(
@@ -1515,7 +1559,7 @@ fn node_before(
                     out.insert("target".into(), path.into());
                 }
             }
-            "event" => {
+            "awaits" => {
                 if let Some(path) = landing_path(line, named) {
                     let mut e = Map::new();
                     e.insert("flow".into(), path.into());
@@ -1526,7 +1570,7 @@ fn node_before(
                     out.insert("event".into(), Value::Object(e));
                 }
             }
-            "peer" => {
+            "partner" => {
                 if let Some(path) = landing_path(line, named) {
                     let held = if node.kind == "end" {
                         reply.get_or_insert_with(Map::new)
@@ -1596,7 +1640,7 @@ fn node_before(
                             };
                             match line.get("line").and_then(Value::as_str).unwrap_or_default() {
                                 "reads" | "writes" => paths.push(path.into()),
-                                "peer" => push_to(&mut step, "peers", path),
+                                "partner" => push_to(&mut step, "peers", path),
                                 "key" if op == "sign" || op == "verify" => {
                                     step.insert("key".into(), path.into());
                                 }
@@ -1706,7 +1750,7 @@ fn values(rows: &[Value]) -> Vec<Value> {
             let id = row.get("id").and_then(Value::as_str).unwrap_or_default();
             json!({
                 "id": id,
-                "value": text(&f, "value").unwrap_or_default(),
+                "value": text(&f, "name").unwrap_or_default(),
                 "label": text(&f, "label").unwrap_or_default(),
                 "description": text(&f, "description").unwrap_or_default(),
                 "sortOrder": order,
@@ -1733,6 +1777,9 @@ fn card_json(c: &Card) -> Value {
     put("absentFields", Value::Array(c.absent_fields.clone()));
     if let Some(d) = &c.discriminator {
         put("discriminator", d.clone().into());
+    }
+    if let Some(face) = &c.face {
+        put("face", face.clone());
     }
     put("enumOpen", c.enum_open.into());
     if let Some(x) = c.place.as_ref().and_then(|p| p.x) {
@@ -1982,7 +2029,7 @@ fn legacy_lines(card: &mut Card, defs: &crate::kinds::Defs, named: &HashMap<Stri
         };
         match name {
             "holds" if card.kind == "store" => card.holds.push(path),
-            "notes" if card.kind == "flow" => card.notes.push(path),
+            "rules" if card.kind == "flow" => card.notes.push(path),
             "link" if card.kind == "task" => links.push(path),
             _ if def.annotation() == Some("x-payloads") => {
                 let payload = fields

@@ -178,20 +178,20 @@ fn a_cards_lines_read_as_written_and_in_the_keys_the_screen_read_before() {
             "points",
             "link",
             "holds",
-            "of",
-            "notes",
+            "shapeOf",
+            "rules",
             "implementedBy",
             "mentions",
             "next",
-            "branch",
+            "condition",
             "else",
             "onError",
             "onTimeout",
             "runs",
-            "event",
+            "awaits",
             "reads",
             "writes",
-            "peer",
+            "partner",
             "key",
             "signedBy"
         ]
@@ -204,7 +204,7 @@ fn a_cards_lines_read_as_written_and_in_the_keys_the_screen_read_before() {
         .find(|l| l["line"] == "signedBy")
         .unwrap();
     assert!(own.get("builtin").is_none());
-    assert_eq!(whole["kinds"]["sections"].as_array().unwrap().len(), 11);
+    assert_eq!(whole["kinds"]["sections"].as_array().unwrap().len(), 12);
     assert_eq!(whole["project"]["kinds"]["lines"][0]["line"], "signedBy");
 }
 
@@ -512,6 +512,78 @@ fn a_field_gone_takes_its_lines_and_a_card_gone_leaves_them_broken() {
 // MARK: - The kinds' definitions
 
 #[test]
+fn mentions_are_left_out_of_a_diagram_unless_asked() {
+    // The lines a text's [[ ]] names are the most of any kind: drawn only when asked for.
+    let core = Core::open(script_store()).unwrap();
+    let read = ok(&core, "kind_read", json!({}));
+    let mentions = read["lines"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|l| l["line"] == "mentions")
+        .unwrap();
+    assert_eq!(mentions["visible"], false, "{mentions}");
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Free:Memo", "value": {"body": "決めること: [[Schemas/Ordering:Order]] の返金"}}),
+    );
+    let diagram = |value: Value| {
+        ok(
+            &core,
+            "section_read",
+            json!({"target": "Free", "value": value}),
+        )["mermaid"]
+            .as_str()
+            .unwrap()
+            .to_string()
+    };
+    let plain = diagram(json!({"as": "diagram"}));
+    assert!(!plain.contains("mentions"), "{plain}");
+    let asked = diagram(json!({"as": "diagram", "kinds": ["mentions"]}));
+    assert!(asked.contains(": mentions"), "{asked}");
+}
+
+#[test]
+fn a_contents_map_leaves_out_hidden_kinds_unless_asked() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "kind_create",
+        json!({"target": "aside", "value": {"of": "line", "label": "余談", "base": "link", "visible": false,
+            "from": [{"kinds": ["task"], "at": "card"}], "to": {"kinds": ["task"], "at": ["card"]}}}),
+    );
+    let board = |tool: &str, args: Value| {
+        let mut args = args;
+        args["branch"] = json!("_project_board_");
+        ok(&core, tool, args)
+    };
+    board(
+        "card_create",
+        json!({"target": "Goals:Plan", "value": {"kind": "goal"}}),
+    );
+    board(
+        "card_create",
+        json!({"target": "Goals:Plan.A", "value": {"kind": "task"}}),
+    );
+    board(
+        "card_create",
+        json!({"target": "Goals:Plan.B", "value": {"kind": "task",
+            "connections": [{"line": "aside", "to": "Goals:Plan.A"}]}}),
+    );
+    let diagram = |value: Value| {
+        board("card_read", json!({"target": "Goals:Plan", "value": value}))["mermaid"]
+            .as_str()
+            .unwrap()
+            .to_string()
+    };
+    let plain = diagram(json!({"as": "diagram"}));
+    assert!(!plain.contains("余談"), "{plain}");
+    let asked = diagram(json!({"as": "diagram", "kinds": ["aside"]}));
+    assert!(asked.contains("余談"), "{asked}");
+}
+
+#[test]
 fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
     let core = Core::open(script_store()).unwrap();
     let read = ok(&core, "kind_read", json!({}));
@@ -528,20 +600,20 @@ fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
             ("points", true),
             ("link", true),
             ("holds", true),
-            ("of", true),
-            ("notes", true),
+            ("shapeOf", true),
+            ("rules", true),
             ("implementedBy", true),
             ("mentions", true),
             ("next", true),
-            ("branch", true),
+            ("condition", true),
             ("else", true),
             ("onError", true),
             ("onTimeout", true),
             ("runs", true),
-            ("event", true),
+            ("awaits", true),
             ("reads", true),
             ("writes", true),
-            ("peer", true),
+            ("partner", true),
             ("key", true),
             ("signedBy", false)
         ]
@@ -936,7 +1008,7 @@ fn a_project_file_before_12_has_its_lines_moved() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 28);
+    assert_eq!(file["version"], 33);
     // As 11 wrote it: the lines in the cards' fields, no kinds of the project's own.
     file["version"] = 11.into();
     file["project"].as_object_mut().unwrap().remove("kinds");
@@ -1477,9 +1549,9 @@ fn the_lines_a_place_may_draw_follow_the_kinds_from_to_and_max() {
     // too.
     let checkout = "Charts/Shop:Checkout";
     let (_, now, _) = drawable(&core, checkout, json!({"to": "Free:Memo"}));
-    assert_eq!(now, ["link", "notes"]);
+    assert_eq!(now, ["link", "rules"]);
     let (read, now, _) = drawable(&core, checkout, json!({"to": "Docs:Spec.intro"}));
-    assert_eq!(now, ["link", "notes"]);
+    assert_eq!(now, ["link", "rules"]);
     assert_eq!(
         (&read["to"], &read["at"]),
         (&json!("Docs:Spec"), &json!("intro"))
@@ -1497,7 +1569,7 @@ fn the_lines_a_place_may_draw_follow_the_kinds_from_to_and_max() {
     assert_eq!(
         (now, full),
         (
-            vec!["link".to_string(), "branch".to_string()],
+            vec!["link".to_string(), "condition".to_string()],
             vec!["else".to_string()]
         )
     );
@@ -1856,4 +1928,45 @@ fn lines_differing_only_in_their_fields_are_added_and_taken_away_one_by_one() {
     assert_eq!(again.len(), 2);
     assert_eq!(again[0], both[1]);
     assert_ne!(again[1].1, both[1].1);
+}
+
+#[test]
+fn a_flows_rules_are_drawn_from_its_head_in_a_section_diagram() {
+    let core = Core::open(script_store()).unwrap();
+    let checkout = "Charts/Shop:Checkout";
+    ok(
+        &core,
+        "card_update",
+        with(
+            checkout,
+            &[
+                json!({"line": "rules", "to": "Docs:Spec", "at": "intro"}),
+                json!({"line": "rules", "to": "Free:Memo"}),
+            ],
+        ),
+    );
+    let drawn = ok(
+        &core,
+        "section_read",
+        json!({"target": "Charts/Shop", "value": {"as": "diagram"}}),
+    );
+    let mermaid = drawn["mermaid"].as_str().unwrap();
+    // One line each from the flow, saying `notes` and where it lands — no row of the flow.
+    let said = |to: &str| -> Vec<String> {
+        mermaid
+            .lines()
+            .map(|line| line.trim().to_string())
+            .filter(|line| line.starts_with(&format!("Charts_Shop__Checkout ..> {to} ")))
+            .collect()
+    };
+    let to_spec = said("Docs__Spec");
+    assert_eq!(to_spec.len(), 1, "{mermaid}");
+    assert!(to_spec[0].ends_with(": rules ← intro"), "{mermaid}");
+    let to_memo = said("Free__Memo");
+    assert_eq!(to_memo.len(), 1, "{mermaid}");
+    assert!(to_memo[0].ends_with(": rules"), "{mermaid}");
+    assert!(
+        !mermaid.contains("＃d") && !mermaid.contains("#d"),
+        "{mermaid}"
+    );
 }

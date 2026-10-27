@@ -700,6 +700,32 @@ impl Defs {
         }
     }
 
+    /// The mark a section is shown with: each part it writes of its own (`icon`), the other from its
+    /// kind's — an actor's by its figure (`figure_mark`) while the project keeps the built-in mark of
+    /// the kind. None of either: the app draws a folder in grey.
+    pub fn shown_mark(
+        &self,
+        kind: Option<&str>,
+        figure: Option<&str>,
+        own: (Option<&str>, Option<&str>),
+    ) -> (Option<String>, Option<String>) {
+        let def = kind.and_then(|k| self.section(k));
+        let mut name = def.and_then(|d| d.icon.clone());
+        let color = def.and_then(|d| d.color.clone());
+        if kind == Some(super::ACTOR) {
+            let built_in = builtin_defs()
+                .section(super::ACTOR)
+                .and_then(|d| d.icon.clone());
+            if name == built_in {
+                name = Some(super::figure_mark(figure).to_string());
+            }
+        }
+        (
+            own.0.map(str::to_string).or(name),
+            own.1.map(str::to_string).or(color),
+        )
+    }
+
     /// Whether a section's document may name this kind.
     pub fn knows_section(&self, kind: &str) -> bool {
         self.section(kind).is_some() || LEGACY_SECTIONS.contains(&kind)
@@ -1208,7 +1234,7 @@ fn read_sections(
 /// letters, digits and `.`, up to 80) and a colour (`#RRGGBB`), either left out. What is wrong is
 /// said in `problems`, and the mark of it left as none: so a definition written the way before
 /// (`icon` a string) reads as having no mark, and is refused only when it is written.
-fn read_icon(
+pub fn read_icon(
     value: Option<&Value>,
     at: &str,
     problems: &mut Vec<String>,

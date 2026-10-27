@@ -19,9 +19,9 @@ const LANGUAGE: &str = "ja_JP.UTF-8";
 
 const AGENT: &str = env!("CARGO_BIN_EXE_specboard-agent");
 
-/// The most connections the daemon serves at once (`agent/src/http.rs`'s `MAX_CONNECTIONS`: a
+/// The most connections a key came on the daemon holds at once (`agent/src/http.rs`'s `KEYED`: a
 /// binary's, not to be named from here).
-const MAX_CONNECTIONS: usize = 32;
+const KEYED: usize = 32;
 
 /// The longest a line from the daemon is waited for: more than `attach` waits for a daemon it
 /// starts (10 s) and MCP's port is tried again for (5 s).
@@ -111,6 +111,11 @@ struct App {
 
 impl App {
     fn attach(home: &Path) -> (App, Value) {
+        Self::attach_in(home, None)
+    }
+
+    /// An app whose screen is in `lang` (none: one that says none, as an app of before).
+    fn attach_in(home: &Path, lang: Option<&str>) -> (App, Value) {
         let mut child = Command::new(AGENT)
             .arg("attach")
             .env("SPECBOARD_AGENT_HOME", home)
@@ -137,7 +142,11 @@ impl App {
             lines,
             next: 1,
         };
-        app.send(&json!({"t": "hello", "client": "MacBook"}));
+        let mut hello = json!({"t": "hello", "client": "MacBook"});
+        if let Some(lang) = lang {
+            hello["lang"] = lang.into();
+        }
+        app.send(&hello);
         let ready = app.line();
         (app, ready)
     }
@@ -323,7 +332,12 @@ fn the_daemon_answers_mcp_with_its_own_keys() {
     let (status, _, said) = post(port, None, ping, &[]);
     assert_eq!(status, 401);
     assert_eq!(said, english(specboard_core::access::key_needed));
-    assert_eq!(post(port, Some("spk_wrong"), ping, &[]).0, 401);
+    let (status, _, said) = post(port, Some("spk_wrong"), ping, &[]);
+    assert_eq!(status, 401);
+    assert_eq!(
+        said,
+        english(|| specboard_core::text!("access.keyUnusable"))
+    );
     assert_eq!(post(port, Some(&value), ping, &[]).0, 200);
     assert_eq!(
         post(
@@ -436,6 +450,15 @@ fn a_port_taken_is_said_and_the_apps_are_served_all_the_same() {
     assert!(app.core(json!({"op": "projects"})).get("error").is_none());
     let (_, said, _) = run(&home, &["status"]);
     assert!(said.contains("待ち受けていません"), "{said}");
+    // An app whose screen is in English is told why in English, the machine being in Japanese.
+    let (_english, told) = App::attach_in(&home, Some("en"));
+    let problem = told["mcp"]["problem"].as_str().unwrap();
+    assert!(problem.contains(&port.to_string()), "{told}");
+    assert!(problem.is_ascii(), "{told}");
+    assert!(
+        !ready["mcp"]["problem"].as_str().unwrap().is_ascii(),
+        "{ready}"
+    );
     // A port taken asked for: refused, nothing changes.
     app.send(&json!({"t": "mcp_port", "port": port}));
     let refused = app.said();
@@ -881,6 +904,10 @@ fn what_is_not_a_request_it_serves_is_turned_away_before_the_body() {
         .as_str()
         .unwrap()
         .to_string();
+    let revoked = app.core(json!({"op": "access_key_create", "name": "前の AI"}));
+    let revoked_value = revoked["result"]["value"].as_str().unwrap().to_string();
+    let gone = app.core(json!({"op": "access_key_revoke", "key": revoked["result"]["key"]["id"]}));
+    assert!(gone.get("error").is_none(), "{gone}");
     let bearer = format!("Authorization: Bearer {key}\r\n");
     let cases: Vec<(String, &str)> = vec![
         (
@@ -902,6 +929,16 @@ fn what_is_not_a_request_it_serves_is_turned_away_before_the_body() {
         // No key: turned away before the 8 MB it says are coming, which never come.
         (
             "POST /mcp HTTP/1.1\r\nContent-Length: 8388608\r\n\r\n".into(),
+            "401",
+        ),
+        // A key the store does not have, or no longer has: turned away as soon as its head is
+        // read, before the 8 MB it says are coming are waited for, read or parsed.
+        (
+            "POST /mcp HTTP/1.1\r\nAuthorization: Bearer spk_0123456789abcdef0123456789abcdef\r\nContent-Length: 8388608\r\n\r\n".into(),
+            "401",
+        ),
+        (
+            format!("POST /mcp HTTP/1.1\r\nAuthorization: Bearer {revoked_value}\r\nContent-Length: 8388608\r\n\r\n"),
             "401",
         ),
         (
@@ -928,10 +965,45 @@ fn what_is_not_a_request_it_serves_is_turned_away_before_the_body() {
             &all[..all.len().min(200)]
         );
         if status == "401" {
-            assert!(
-                all.ends_with(&english(specboard_core::access::key_needed)),
-                "{all}"
+            // A key sent and not the store's is told so; none sent, that one is needed.
+            let keyed = sent.contains("Bearer spk_");
+            let said = if keyed {
+                english(|| specboard_core::text!("access.keyUnusable"))
+            } else {
+                english(specboard_core::access::key_needed)
+            };
+            assert!(all.ends_with(&said), "{all}");
+        }
+    }
+
+    // Whatever the method and whichever path under /mcp: a wrong key is told it cannot be used,
+    // and a right one is answered as before.
+    let wrong = "Bearer spk_0123456789abcdef0123456789abcdef";
+    let auth = format!("Bearer {key}");
+    for (method, path, right) in [
+        ("DELETE", "/mcp", 200),
+        ("GET", "/mcp", 405),
+        ("PUT", "/mcp", 405),
+        ("POST", "/mcp/read", 200),
+    ] {
+        for (authorization, status) in [(wrong, 401), (auth.as_str(), right)] {
+            let (got, _, said) = http(
+                port,
+                method,
+                path,
+                &[
+                    ("content-type", "application/json"),
+                    ("authorization", authorization),
+                ],
+                r#"{"jsonrpc":"2.0","id":1,"method":"ping"}"#,
             );
+            assert_eq!(got, status, "{method} {path}: {said}");
+            if status == 401 {
+                assert_eq!(
+                    said,
+                    english(|| specboard_core::text!("access.keyUnusable"))
+                );
+            }
         }
     }
 
@@ -941,7 +1013,6 @@ fn what_is_not_a_request_it_serves_is_turned_away_before_the_body() {
         all.extend_from_slice(headers);
         http(port, "POST", "/mcp", &all, ping).0
     };
-    let auth = format!("Bearer {key}");
     // The scheme's name is any case.
     assert_eq!(with(&[("authorization", &format!("bearer {key}"))]), 200);
     // The names of the loopback, at any port: an SSH tunnel's far end is one.
@@ -1013,38 +1084,106 @@ fn what_is_not_a_request_it_serves_is_turned_away_before_the_body() {
     assert!(body.contains(r#""result":{}"#), "{body}");
     drop(stream);
 
-    // As many connections at once as the app's listener took, and no more: the rest are closed.
-    // Each held one answered and kept (keep-alive), taken once those before are let go.
+    // Connections that show no key never take the places of those that do: however many are held
+    // open without a word, a request with a key is answered at once.
+    let strangers: Vec<TcpStream> = (0..127)
+        .map(|_| TcpStream::connect(("127.0.0.1", port)).unwrap())
+        .collect();
+    let begun = Instant::now();
+    let (status, _, body) = http(
+        port,
+        "POST",
+        "/mcp",
+        &[
+            ("content-type", "application/json"),
+            ("authorization", &auth),
+        ],
+        ping,
+    );
+    assert_eq!(status, 200, "{body}");
+    assert!(
+        begun.elapsed() < Duration::from_secs(2),
+        "{:?}",
+        begun.elapsed()
+    );
+    drop(strangers);
+
+    // As many connections a key came on as are held, each waiting for its next request: one more
+    // takes the place of the one that waited longest.
     let slot = || -> Option<TcpStream> {
         let mut held = TcpStream::connect(("127.0.0.1", port)).ok()?;
         held.set_read_timeout(Some(Duration::from_secs(5))).ok()?;
-        held.write_all(b"GET /healthz HTTP/1.1\r\nhost: 127.0.0.1\r\n\r\n")
-            .ok()?;
+        held.write_all(
+            format!("GET /healthz HTTP/1.1\r\nhost: 127.0.0.1\r\nauthorization: {auth}\r\n\r\n")
+                .as_bytes(),
+        )
+        .ok()?;
         (read_answer(&mut held).0 == 200).then_some(held)
     };
     let mut held = Vec::new();
-    until("どの接続も枠を取れる", || {
-        while held.len() < MAX_CONNECTIONS {
-            match slot() {
-                Some(connection) => held.push(connection),
-                None => return false,
-            }
-        }
-        true
-    });
-    for n in MAX_CONNECTIONS..MAX_CONNECTIONS + 8 {
-        let mut more = TcpStream::connect(("127.0.0.1", port)).unwrap();
-        more.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
-        let read = more.read(&mut [0u8; 1]);
-        assert!(
-            matches!(read, Ok(0)),
-            "{} 本目は閉じられる: {read:?}",
-            n + 1
-        );
+    while held.len() < KEYED {
+        held.push(slot().expect("鍵の来た接続が枠を取れない"));
     }
+    assert!(
+        slot().is_some(),
+        "{} 本目の鍵の来た接続が断られた",
+        KEYED + 1
+    );
+    assert!(
+        matches!(held[0].read(&mut [0u8; 1]), Ok(0)),
+        "一番長く待っていた接続が閉じられていない"
+    );
     drop(held);
+
+    // Every one in a request (its body still to come): none is let go of, and one more is told
+    // they are all in use.
+    let in_request = || -> Option<TcpStream> {
+        let mut held = TcpStream::connect(("127.0.0.1", port)).ok()?;
+        held.write_all(
+            format!(
+                "POST /mcp HTTP/1.1\r\nhost: 127.0.0.1\r\ncontent-type: application/json\r\n\
+                 authorization: {auth}\r\ncontent-length: 100\r\n\r\n"
+            )
+            .as_bytes(),
+        )
+        .ok()?;
+        Some(held)
+    };
+    // One let go of while it was still a stranger (connections coming all at once) is opened again.
+    let mut busy: Vec<TcpStream> = Vec::new();
+    until("どの接続も要求の途中になる", || {
+        busy.retain_mut(|b| {
+            b.set_read_timeout(Some(Duration::from_millis(5))).unwrap();
+            b.read(&mut [0u8; 1]).is_err()
+        });
+        while busy.len() < KEYED {
+            busy.push(in_request().unwrap());
+        }
+        let (status, _, _) = http(
+            port,
+            "POST",
+            "/mcp",
+            &[
+                ("content-type", "application/json"),
+                ("authorization", &auth),
+            ],
+            ping,
+        );
+        status == 503
+    });
+    drop(busy);
     until("枠が戻る", || {
-        http(port, "GET", "/healthz", &[], "").0 == 200
+        http(
+            port,
+            "POST",
+            "/mcp",
+            &[
+                ("content-type", "application/json"),
+                ("authorization", &auth),
+            ],
+            ping,
+        )
+        .0 == 200
     });
 
     drop(app);
