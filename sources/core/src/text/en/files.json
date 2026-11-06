@@ -1,6 +1,7 @@
 {
   "files.execute.dryRunBool": "dryRun must be true or false",
   "files.execute.noDefault": "The default folder of export {name} is not set on this machine (set it with path of export_update, or with \"Set destination…\" in the \"Export\" tab; to pass a path, write it in targetdir)",
+  "files.execute.noDefault.screen": "The default folder of export {name} is not set on this Mac (set it with \"Set destination…\" in the \"Export\" tab)",
   "files.execute.noExports": "There are no exports (make one with export_create)",
   "files.execute.notWritable": "{name} cannot be exported (only main or a branch is exported)",
   "files.execute.strayKey": "{stray} cannot be written in the value of export_execute (dryRun)",
@@ -8,6 +9,7 @@
   "files.line.wrote": "Wrote export {name} to {folder} ({count} files)",
   "files.line.wroteRemoved": "Wrote export {name} to {folder} ({count} files, {removed} files removed)",
   "files.note.noDefault": "The default folder of export {name} is not set on this machine, so the record of what was written and the folder were not looked at (set it with path of export_update or in the \"Export\" tab; to pass a path, write it in targetdir)",
+  "files.note.noDefault.screen": "The default folder of export {name} is not set on this Mac, so the record of what was written and the folder were not looked at (set it with \"Set destination…\")",
   "files.problem.clash": "{other} and {said} are the same file {full}",
   "files.problem.overlap": "The destinations overlap, so the same file would be written twice. Change the to of the exports or where they are written\n{clashes}",
   "files.read.filesList": "files must be a list of file paths",

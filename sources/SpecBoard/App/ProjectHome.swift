@@ -10,7 +10,41 @@ import UniformTypeIdentifiers
 /// place. It opens from the project's name above, the nav panel's 「プロジェクト一覧」, or when
 /// no project is open: a click opens a project and leaves it (`onOpen`), and everything
 /// else about a project hangs off its row.
+/// One place's projects in 「すべてのプロジェクト」: under its heading, its archive apart.
+struct HomeGroup: Equatable {
+    /// This Mac (nil) or an agent.
+    var place: UUID?
+    /// Whether its projects are here to list: this Mac always, an agent while it is connected.
+    var reached: Bool
+    var working: [ProjectSummary]
+    var archived: [ProjectSummary]
+}
+
 struct ProjectHome: View {
+    /// Every place's projects, a group to a place in the places' column's order, narrowed by `query` (name and
+    /// description) as one place's are.
+    static func groups(projects: [ProjectSummary], hosts: [RemoteHosts.Host], reached: (UUID) -> Bool,
+                       query: String) -> [HomeGroup] {
+        let needle = query.trimmingCharacters(in: .whitespaces).lowercased()
+        let places: [UUID?] = [nil] + hosts.map(\.id)
+        return places.map { place in
+            let isReached = place.map(reached) ?? true
+            let here = !isReached ? [] : projects.filter {
+                $0.place == place && (needle.isEmpty || $0.name.lowercased().contains(needle)
+                                      || $0.description.lowercased().contains(needle))
+            }
+            return HomeGroup(place: place, reached: isReached,
+                             working: here.filter { !$0.isArchived }, archived: here.filter(\.isArchived))
+        }
+    }
+
+    /// Where a project made from 「すべてのプロジェクト」 may go — this Mac first, then the agents connected; none
+    /// asked for when a place was chosen (the project goes there).
+    static func newProjectPlaces(all: Bool, hosts: [RemoteHosts.Host], reached: (UUID) -> Bool) -> [UUID?] {
+        guard all else { return [] }
+        return [nil] + hosts.filter { reached($0.id) }.map(\.id)
+    }
+
     var model: AppModel
     /// The agents, beside this Mac: the places projects are kept in.
     var hosts: RemoteHosts
@@ -67,7 +101,8 @@ struct ProjectHome: View {
     /// archive closed until wanted, or its settings.
     var body: some View {
         HStack(spacing: 0) {
-            PlaceColumn(model: model, hosts: hosts, selected: place,
+            PlaceColumn(model: model, hosts: hosts, selected: place, allChosen: model.homeAll,
+                        onChooseAll: chooseAll,
                         onChoose: { choose($0, settings: nil) },
                         onSettings: { choose($0, settings: PlaceSettingsTab.opening($0)) })
                 .frame(width: 244)
@@ -175,8 +210,24 @@ struct ProjectHome: View {
         inspecting = nil
     }
 
+    private func chooseAll() {
+        model.homeAll = true
+        model.homeSettings = nil
+        inspecting = nil
+    }
+
+    private func reached(_ host: UUID) -> Bool {
+        hosts.hosts.first { $0.id == host }.map { $0.enabled && (hosts.coreState[$0.id]?.connected ?? false) } ?? false
+    }
+
+    /// Every place's projects, as 「すべてのプロジェクト」 shows them.
+    private var allGroups: [HomeGroup] {
+        Self.groups(projects: model.projects, hosts: hosts.hosts, reached: reached, query: query)
+    }
+
     /// What the place is called at the head of the right: this Mac, or the agent's name.
     private var headerName: String {
+        if model.homeAll { return L10n[.Places.rowAll] }
         guard let place else { return L10n[.Common.wordThisMac] }
         return hosts.hosts.first { $0.id == place }?.displayName ?? model.agentNames[place] ?? L10n[.Common.wordAgent]
     }
@@ -188,15 +239,17 @@ struct ProjectHome: View {
             Text(headerName).font(.app(15, weight: .semibold)).lineLimit(1).truncationMode(.middle)
             // As wide as its segments need, the name giving way (cut with …) rather than it: held to 170
             // points, narrower than the control needs (190 here, more on a later macOS), it was drawn past
-            // its place over the end of the name.
-            Picker("", selection: Binding(
-                get: { model.homeSettings != nil },
-                set: { model.homeSettings = $0 ? PlaceSettingsTab.opening(place) : nil })) {
-                Text(L10n[.ProjectHome.headerProjects]).tag(false)
-                Text(L10n[.Common.wordSettings]).tag(true)
+            // its place over the end of the name. Every place's projects have no settings of their own.
+            if !model.homeAll {
+                Picker("", selection: Binding(
+                    get: { model.homeSettings != nil },
+                    set: { model.homeSettings = $0 ? PlaceSettingsTab.opening(place) : nil })) {
+                    Text(L10n[.ProjectHome.headerProjects]).tag(false)
+                    Text(L10n[.Common.wordSettings]).tag(true)
+                }
+                .pickerStyle(.segmented).labelsHidden().fixedSize()
             }
-            .pickerStyle(.segmented).labelsHidden().fixedSize()
-            if model.homeSettings == nil, isReached {
+            if model.homeAll || (model.homeSettings == nil && isReached) {
                 Image(systemName: "magnifyingglass")
                     .font(.app(10)).foregroundStyle(.secondary).padding(.leading, 6)
                 TextField(L10n[.ProjectHome.headerFilter], text: $query)
@@ -205,16 +258,16 @@ struct ProjectHome: View {
                     Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }
                         .buttonStyle(.plain).foregroundStyle(.secondary).font(.app(10))
                 }
-                Text("\(working.count)")
+                Text("\(model.homeAll ? allGroups.reduce(0) { $0 + $1.working.count } : working.count)")
                     .font(.app(10.5, design: .monospaced)).foregroundStyle(.secondary)
-                if place == nil {
+                if model.homeAll || place == nil {
                     Button { readFile() } label: { Image(systemName: "square.and.arrow.down") }
                         .buttonStyle(.borderless)
                         .help(L10n[.ProjectHome.headerImportHelp])
                 }
-                Button { newProject(in: place) } label: { Image(systemName: "plus") }
+                Button { newProject(in: model.homeAll ? nil : place) } label: { Image(systemName: "plus") }
                     .buttonStyle(.borderless)
-                    .help(L10n[.ProjectHome.newTitleIn(headerName)])
+                    .help(model.homeAll ? L10n[.ProjectHome.newTitle] : L10n[.ProjectHome.newTitleIn(headerName)])
                     .popover(isPresented: $creating, arrowEdge: .trailing) { newProjectForm }
             } else {
                 Spacer()
@@ -233,7 +286,9 @@ struct ProjectHome: View {
 
     @ViewBuilder
     private var placeBody: some View {
-        if model.homeSettings != nil {
+        if model.homeAll {
+            allList
+        } else if model.homeSettings != nil {
             PlaceSettingsPane(model: model, hosts: hosts, place: place,
                               tab: Binding(get: { settingsTab }, set: { model.homeSettings = $0 }))
         } else if !isReached, let host = hosts.hosts.first(where: { $0.id == place }) {
@@ -285,23 +340,86 @@ struct ProjectHome: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 2) {
                 ForEach(working, id: \.id) { project in rowCell(project) }
-                if !archived.isEmpty {
-                    let key = place?.uuidString ?? ""
-                    DisclosureGroup(isExpanded: Binding(
-                        get: { archiveOpen.contains(key) },
-                        set: { if $0 { archiveOpen.insert(key) } else { archiveOpen.remove(key) } })) {
-                        ForEach(archived, id: \.id) { project in rowCell(project) }
-                    } label: {
-                        Label(L10n[.ProjectHome.listArchive(archived.count)], systemImage: "archivebox")
-                            .font(.app(11)).foregroundStyle(.secondary)
-                            .help(L10n[.ProjectHome.listArchiveHelp])
-                    }
-                    .padding(.horizontal, 10).padding(.top, 14)
-                }
+                archive(archived, key: place?.uuidString ?? "", top: 14)
             }
             .padding(.horizontal, 6).padding(.vertical, 10)
         }
         .preference(key: ProjectHomeShown.self, value: ProjectHomeShown.Value(projects: working.map(\.name)))
+    }
+
+    /// 「すべてのプロジェクト」: each place's projects under its heading, in the places' column's order; an agent
+    /// not connected says so under its heading, with the way to connect it.
+    private var allList: some View {
+        let groups = allGroups
+        return ScrollView {
+            LazyVStack(alignment: .leading, spacing: 2) {
+                ForEach(groups, id: \.place) { group in
+                    groupHeading(group)
+                    if group.reached {
+                        ForEach(group.working, id: \.id) { project in rowCell(project) }
+                        archive(group.archived, key: group.place?.uuidString ?? "")
+                    } else if let host = hosts.hosts.first(where: { $0.id == group.place }) {
+                        HStack(spacing: 10) {
+                            Text(L10n[.ProjectHome.notReachedText]).font(.app(12)).foregroundStyle(.secondary)
+                            if !host.enabled {
+                                Button(L10n[.ProjectHome.notReachedConnect]) { hosts.setEnabled(host, true) }
+                                    .controlSize(.small)
+                            }
+                            Button(L10n[.ProjectHome.notReachedSettings]) { choose(host.id, settings: .connection) }
+                                .controlSize(.small)
+                        }
+                        .padding(.horizontal, 20).padding(.top, 4)
+                    }
+                }
+            }
+            .padding(.horizontal, 6).padding(.bottom, 10)
+        }
+        .preference(key: ProjectHomeShown.self,
+                    value: ProjectHomeShown.Value(projects: groups.flatMap(\.working).map(\.name)))
+    }
+
+    /// A place's heading in 「すべてのプロジェクト」: its mark or how it is reached, its name and its projects' count.
+    private func groupHeading(_ group: HomeGroup) -> some View {
+        let host = group.place.flatMap { place in hosts.hosts.first { $0.id == place } }
+        return VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                if let host {
+                    Circle().fill(group.reached ? Color.green : Color.secondary.opacity(0.4))
+                        .frame(width: 7, height: 7).padding(.horizontal, 5.5)
+                    Text(host.displayName)
+                        .font(host.name.isEmpty ? .app(11.5, design: .monospaced) : .app(12, weight: .semibold))
+                        .lineLimit(1).truncationMode(.middle)
+                    Text(PlaceColumn.status(host, hosts.coreState[host.id] ?? RemoteHosts.CoreState()))
+                        .font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
+                } else {
+                    Image(systemName: "desktopcomputer").font(.app(12)).foregroundStyle(.secondary).frame(width: 18)
+                    Text(L10n[.Common.wordThisMac]).font(.app(12, weight: .semibold))
+                }
+                Spacer(minLength: 4)
+                if group.reached {
+                    Text("\(group.working.count)").font(.app(10.5, design: .monospaced)).foregroundStyle(.secondary)
+                }
+            }
+            Divider()
+        }
+        .padding(.horizontal, 10).padding(.top, 14)
+    }
+
+    /// A place's archive: one closed line, opened to its projects.
+    @ViewBuilder
+    private func archive(_ archived: [ProjectSummary], key: String, top: CGFloat = 8) -> some View {
+        if !archived.isEmpty {
+            DisclosureGroup(isExpanded: Binding(
+                get: { archiveOpen.contains(key) },
+                set: { if $0 { archiveOpen.insert(key) } else { archiveOpen.remove(key) } })) {
+                ForEach(archived, id: \.id) { project in rowCell(project) }
+            } label: {
+                Label(L10n[.ProjectHome.listArchive(archived.count)], systemImage: "archivebox")
+                    .font(.app(11)).foregroundStyle(.secondary)
+                    .help(L10n[.ProjectHome.listArchiveHelp])
+            }
+            .padding(.horizontal, 10).padding(.top, top)
+        }
     }
 
     private func newProject(in place: UUID?) {
@@ -439,9 +557,21 @@ struct ProjectHome: View {
     }
 
     private var newProjectForm: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(L10n[.ProjectHome.newTitleIn(creatingName)])
-                .font(.app(12, weight: .semibold))
+        let places = Self.newProjectPlaces(all: model.homeAll, hosts: hosts.hosts, reached: reached)
+        return VStack(alignment: .leading, spacing: 10) {
+            if places.isEmpty {
+                Text(L10n[.ProjectHome.newTitleIn(creatingName)])
+                    .font(.app(12, weight: .semibold))
+            } else {
+                Text(L10n[.ProjectHome.newTitle]).font(.app(12, weight: .semibold))
+                Picker(L10n[.ProjectHome.newPlace], selection: $creatingIn) {
+                    ForEach(places, id: \.self) { place in
+                        Text(place.flatMap { id in hosts.hosts.first { $0.id == id } }?.displayName
+                             ?? L10n[.Common.wordThisMac]).tag(place)
+                    }
+                }
+                .fixedSize()
+            }
             TextField(L10n[.ProjectHome.newName], text: $draftName)
                 .textFieldStyle(.roundedBorder).frame(width: 280)
             TextField(L10n[.ProjectHome.newDescription], text: $draftDescription)

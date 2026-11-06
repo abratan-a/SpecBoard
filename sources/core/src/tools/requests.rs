@@ -376,10 +376,16 @@ pub(crate) fn result_view(result: &Value, taken: bool) -> Map<String, Value> {
                         let mut row = Map::new();
                         row.insert("path".into(), c["path"].clone());
                         row.insert("unit".into(), unit_said(&c["unit"]));
-                        row.insert("took".into(), c["took"].clone());
-                        for key in ["base", "source", "target"] {
+                        // Said as MCP says the sides (`merges::mcp_preview`): where it goes is `into`.
+                        let took = c["took"]
+                            .as_str()
+                            .map(|t| if t == "target" { "into" } else { t });
+                        row.insert("took".into(), took.map_or(Value::Null, Value::from));
+                        for (key, said) in
+                            [("base", "base"), ("source", "source"), ("target", "into")]
+                        {
                             row.insert(
-                                key.into(),
+                                said.into(),
                                 c[key]
                                     .as_str()
                                     .and_then(|t| serde_json::from_str(t).ok())
@@ -459,7 +465,7 @@ fn reason_said(request: &Request) -> Option<String> {
 
 /// The conflicts left and the overlaps of a preview, as a refusal shows them.
 fn shown(preview: &MergePreview, seen: &super::Seen) -> String {
-    let view = merges::preview_view(preview, seen);
+    let view = merges::mcp_preview(merges::preview_view(preview, seen));
     let mut out = Map::new();
     for key in ["conflicts", "overlaps"] {
         if let Some(v) = view.get(key) {
@@ -1048,8 +1054,18 @@ impl crate::Core {
                     .and_then(Value::as_bool)
                     .unwrap_or(false);
                 self.plain_writing(who, |tx| {
-                    tx.merge(&project, &source, &target, &take, places, keep)
-                        .map(|p| preview_json(&p))
+                    let done = tx.merge(&project, &source, &target, &take, places, keep)?;
+                    let mut out = preview_json(&done);
+                    // Set aside: the goals still naming it, for the window to offer finishing them
+                    // — the merge does not write the board itself.
+                    if target.is_empty() && !keep && !done.source.starts_with('~') {
+                        let board = super::cross::board(&tx.reader(), &project)?;
+                        let naming = super::cross::naming_branch(&board, &done.source);
+                        if !naming.is_empty() {
+                            out["stillNamed"] = naming.into();
+                        }
+                    }
+                    Ok(out)
                 })
             }
             // What a merge into main would leave, as a branch to open and look at

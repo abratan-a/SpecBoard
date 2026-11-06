@@ -123,9 +123,6 @@ struct KindChips: View {
                     Label(addTitle, systemImage: "plus").font(.app(11))
                 }
                 .menuStyle(.borderlessButton).fixedSize()
-                .padding(.horizontal, 6).padding(.vertical, 2)
-                .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
-                    .foregroundStyle(.tertiary))
                 .disabled(left.isEmpty)
             }
         }

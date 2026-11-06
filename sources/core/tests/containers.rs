@@ -160,6 +160,11 @@ fn a_flow_and_its_nodes_are_made_in_one_call_and_read_as_cards() {
             .any(|c| c.as_str().unwrap().contains("Pay.")),
         "{shop}"
     );
+    assert_eq!(
+        shop["cardCount"].as_u64(),
+        Some(shop["cards"].as_array().unwrap().len() as u64),
+        "{shop}"
+    );
 
     // The window reads them as the cards inside the flow (`inner`): their fields and rows as
     // kept, their lines. The flow keeps no `nodes`.
@@ -972,13 +977,19 @@ fn the_guide_tells_of_the_nodes_their_kinds_and_their_lines() {
     ] {
         assert!(said.contains(line), "{line}: {said}");
     }
-    // No topic of their own any more: a key of that name is said as a key.
-    for gone in ["nodes", "lines", "kinds"] {
-        if let Ok(specboard_core::mcp::Output::Json(said)) = specboard_core::mcp::guide(Some(gone))
-        {
-            assert!(said.get("about").is_none(), "{gone}: {said}");
-        }
-    }
+    // The nodes are no topic of their own; a value key of that name (`lines`) is said as the
+    // key; `kinds` is the topic of the kinds' definitions.
+    assert!(specboard_core::mcp::guide(Some("nodes")).is_err());
+    let Ok(specboard_core::mcp::Output::Json(said)) = specboard_core::mcp::guide(Some("lines"))
+    else {
+        panic!("lines がキーとして言われません");
+    };
+    assert_eq!(said["key"], "lines", "{said}");
+    assert!(said.get("about").is_none(), "{said}");
+    let Ok(kinds) = specboard_core::mcp::guide(Some("kinds")) else {
+        panic!("kinds の guide がありません");
+    };
+    assert!(kinds.text().contains("face"), "{}", kinds.text());
     let Ok(specboard_core::mcp::Output::Json(one)) = specboard_core::mcp::guide(Some("eval"))
     else {
         panic!("eval の guide がありません");
@@ -1291,7 +1302,7 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Note over P1: send 配る",
             "activate P1",
             "deactivate P1",
-            "Note over P1: wait approval（30秒 まで）",
+            "Note over P1: wait approval（期限 30秒）",
             "alt 間に合ったとき",
             "Note over P1: 配った",
             "else 期限切れ",
@@ -1321,7 +1332,7 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
     assert_eq!(
         lines_from(&chart, "Note over P1: wait approval", 2),
         [
-            "Note over P1: wait approval（30秒 まで）",
+            "Note over P1: wait approval（期限 30秒）",
             "Note right of P1: ✕ 期限切れ → cancelled",
         ],
         "{chart}"
@@ -1358,7 +1369,7 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Note over P1: send 配る",
             "activate P1",
             "deactivate P1",
-            "Note over P1: wait approval（30秒 まで）",
+            "Note over P1: wait approval（期限 30秒）",
             "alt 期限切れ",
             "Note over P1: expire リースを切る",
             "activate P1",
@@ -1708,8 +1719,8 @@ fn two_peer_lines_from_one_place_to_one_flow_are_refused() {
         }}),
     );
     for part in [
-        "Charts/Shop:Twice.start から Charts/Shop:Client への相手（peer）の線が 2 本あります",
-        "Charts/Shop:Twice.tell の steps[0] から Charts/Shop:Agent への相手（peer）の線が 2 本あります",
+        "Charts/Shop:Twice.start から Charts/Shop:Client への相手（partner）の線が 2 本あります",
+        "Charts/Shop:Twice.tell の steps[0] から Charts/Shop:Agent への相手（partner）の線が 2 本あります",
     ] {
         assert!(said.contains(part), "{part}\n---\n{said}");
     }
@@ -1878,4 +1889,80 @@ fn a_flows_page_and_its_flowchart_name_every_partner_joined_with_a_dot() {
     ] {
         assert!(flowchart.contains(part), "{part}\n---\n{flowchart}");
     }
+}
+
+#[test]
+fn a_compute_row_says_no_one_it_deals_with() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/Shop:Total": {"kind": "flow", "label": "合計"},
+            "Charts/Shop:Total.start": {"kind": "begin", "trigger": "manual",
+                "connections": [{"line": "next", "to": "sum"}]},
+            "Charts/Shop:Total.sum": {"kind": "process", "label": "足す",
+                "steps": [{"do": "compute", "description": "合計を確かめる"}],
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/Shop:Total.done": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    let (_, text) = markdown(&core, "Charts/Shop:Total");
+    let row = text
+        .lines()
+        .find(|l| l.contains("| compute |"))
+        .unwrap_or_else(|| panic!("{text}"));
+    assert_eq!(
+        row, "| `steps[0]` | compute |  |  | 合計を確かめる |",
+        "{text}"
+    );
+}
+
+#[test]
+fn a_broken_path_in_a_conditions_words_is_placed_on_the_condition_line() {
+    let core = Core::open(script_store()).unwrap();
+    let said = ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/Shop:Gate": {"kind": "flow"},
+            "Charts/Shop:Gate.start": {"kind": "begin", "trigger": "manual",
+                "connections": [{"line": "next", "to": "check"}]},
+            "Charts/Shop:Gate.check": {"kind": "eval", "value": "Schemas:Status",
+                "connections": [
+                    {"line": "condition", "to": "done", "fields": {"when": "[[Schemas:Statuz]] が paid"}},
+                    {"line": "else", "to": "done"}]},
+            "Charts/Shop:Gate.done": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    let warned = said.to_string();
+    assert!(
+        warned.contains("connections.condition.fields.when"),
+        "{warned}"
+    );
+}
+
+#[test]
+fn a_key_no_kind_has_is_refused_with_the_keys_the_node_has() {
+    let core = Core::open(script_store()).unwrap();
+    for (target, value) in [
+        ("Charts/Shop:Refund.start", json!({"programm": "x"})),
+        ("Charts/Shop:Refund.ask", json!({"uses": []})),
+    ] {
+        let (failed, said) = call(
+            &core,
+            "card_update",
+            json!({"project": "見本", "target": target, "value": value}),
+        );
+        assert!(failed, "{target}: {said}");
+        let key = value.as_object().unwrap().keys().next().unwrap().clone();
+        assert!(said.contains(&key), "{said}");
+        assert!(!said.contains("にだけ書けます"), "{said}");
+    }
+    let (_, said) = call(
+        &core,
+        "card_update",
+        json!({"project": "見本", "target": "Charts/Shop:Refund.start", "value": {"programm": "x"}}),
+    );
+    assert!(said.contains("program"), "{said}");
 }

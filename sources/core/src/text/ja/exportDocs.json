@@ -37,5 +37,6 @@
   "exportDocs.rule.requiredIf": "when が成り立つとき then が存在すること",
   "exportDocs.rule.sortedBy": "配列がこの順で並んでいること。field 省略時は要素そのもので比較",
   "exportDocs.rule.uniqueBy": "配列内で重複しないこと。field 省略時は要素そのもの",
-  "exportDocs.rule.unknown": "（未知の rule。記録のみ）"
+  "exportDocs.rule.unknown": "（未知の rule。記録のみ）",
+  "exportDocs.spec.story": "ねらい"
 }

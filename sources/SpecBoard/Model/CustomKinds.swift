@@ -214,12 +214,12 @@ nonisolated struct CustomKind: Sendable {
         }
     }
 
-    /// The same, read from the kinds' definitions the project has (`kinds.cards`): a goal's, a task's and
-    /// a UI part's fields but those every kind has, those written in the card editor alone (its
+    /// The same, read from the kinds' definitions the project has (`kinds.cards`): a goal's, a task's,
+    /// a UI part's, a sketch's and an image's fields but those every kind has, those written in the card editor alone (its
     /// body) and those only an action writes (a part's `reviewedAt`) — as written here (`fields(of:)`) while
     /// none is read.
     static func fields(of kind: SchemaKind, in kinds: CardKinds?) -> [Field] {
-        guard kind == .goal || kind == .task || kind.isUiPart, let def = kinds?[kind.rawValue] else { return fields(of: kind) }
+        guard kind == .goal || kind == .task || kind.isUiPart || kind == .sketch || kind == .image, let def = kinds?[kind.rawValue] else { return fields(of: kind) }
         return def.ownFields.filter { $0.show != "editor" && $0.show != "action" }.map { field in
             Field(fieldtype: field.fieldtype, name: field.name, description: field.description, options: field.options,
                   optionLabels: field.optionLabels, defaultValue: field.defaultValue?.asText, required: field.required,

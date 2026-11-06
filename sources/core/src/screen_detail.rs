@@ -10,7 +10,7 @@ use crate::export::paths::{WrittenPath, landing};
 use crate::model::{Card, Connection, Field};
 use crate::store::Reader;
 use crate::tools::facts::{self, LinkKind, TOP_ROW};
-use serde_json::{Map, Value};
+use serde_json::{Map, Value, json};
 
 /// The project `project_id` as `branch` sees it, as the screen reads it.
 pub fn read(store: &Reader, project_id: &str, branch: Option<&str>) -> Result<Value, String> {
@@ -265,6 +265,34 @@ fn dress(
             c.insert("faceRows".into(), (*rows).into());
         }
     }
+    // A sketch or an image with no height of its own is as big as its text or its picture says
+    // (`grid::sketch_size`, `grid::image_size`): drawn at that size, which `autoSize` says it was
+    // given by nobody (with a width of its own, its own).
+    for card in whole["schemas"].as_array_mut().into_iter().flatten() {
+        let Some(sketch) = card["id"]
+            .as_str()
+            .and_then(|id| project.card(id))
+            .filter(|c| c.kind == crate::kinds::SKETCH || c.kind == crate::kinds::IMAGE)
+        else {
+            continue;
+        };
+        let kinds = project.defs.cards();
+        let own = crate::tools::grid::own_size(sketch, kinds);
+        if own.is_some_and(|s| s.1.is_some()) {
+            continue;
+        }
+        let (w, h) = if sketch.kind == crate::kinds::IMAGE {
+            crate::tools::grid::image_size(sketch)
+        } else {
+            crate::tools::grid::sketch_size(sketch)
+        };
+        if let Some(c) = card.as_object_mut() {
+            c.insert("size".into(), json!({"w": w, "h": h}));
+            if own.is_none() {
+                c.insert("autoSize".into(), true.into());
+            }
+        }
+    }
     for card in whole["schemas"].as_array_mut().into_iter().flatten() {
         if let Some(marks) = card["id"].as_str().and_then(|id| review.get(id))
             && let Some(c) = card.as_object_mut()
@@ -472,7 +500,20 @@ fn walk_fields<'a>(fields: &'a [Field], above: &str, visit: &mut dyn FnMut(&'a F
 }
 
 fn lines_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
-    let lines: Vec<&Connection> = card.connections.iter().collect();
+    // A process node's row's line of a kind the row does not take is not drawn (the check says it).
+    let lines: Vec<&Connection> = card
+        .connections
+        .iter()
+        .filter(|line| {
+            card.kind != "process"
+                || !crate::tools::check::STEP_LINES.contains(&line.line.as_str())
+                || crate::detail::step_index(line.from.trim())
+                    .and_then(|i| crate::tools::walk::step_op(card, i))
+                    .is_none_or(|op| {
+                        crate::tools::check::step_lines(&op).contains(&line.line.as_str())
+                    })
+        })
+        .collect();
     // The fields in their order, then what leaves elsewhere.
     let mut ordered: Vec<(&Connection, Option<&Field>)> = Vec::new();
     let mut placed = vec![false; lines.len()];
@@ -556,15 +597,23 @@ fn lines_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
             if let Some(c) = line.fields.get("cardinality").filter(|c| !c.is_null()) {
                 r.insert("cardinality".into(), c.clone());
             }
+            // An arrow is drawn by its own fields: its label, dash, ends and colour.
+            if line.line == "arrow" && !line.fields.is_empty() {
+                r.insert(
+                    "fields".into(),
+                    Value::Object(line.fields.clone().into_iter().collect()),
+                );
+            }
             r.insert("connection".into(), line.id.clone().into());
             out.push(Value::Object(r));
         }
     }
 }
 
-/// What a note's, a freedoc's, a formatdoc's or a stackdoc's text names (`mentions`, read from
-/// the text and not written in `connections`): from the card — a formatdoc's from the item whose
-/// rows name it (none for the rows at the top), a stackdoc's from the version — to where the path lands, the path as it is
+/// What a note's, a freedoc's, a formatdoc's, a stackdoc's or a spec's text names (`mentions`, read
+/// from the text and not written in `connections`): from the card — a formatdoc's from the item
+/// whose rows name it (none for the rows at the top), a stackdoc's from the version, a spec's from
+/// the scenario (none for its story) — to where the path lands, the path as it is
 /// written in the text beside it (`written`), so the screen can put the line on the text's
 /// own row. Not to the card itself.
 fn mentions_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
@@ -592,7 +641,10 @@ fn mentions_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
                 crate::export::Named::Ghost(g) => Some(g.id.clone()),
                 crate::export::Named::Card(_) => None,
             });
-        let from = if (card.kind == "formatdoc" && link.row != TOP_ROW) || card.kind == "stackdoc" {
+        let from = if (card.kind == "formatdoc" && link.row != TOP_ROW)
+            || card.kind == "stackdoc"
+            || card.kind == "spec"
+        {
             link.row.clone()
         } else {
             String::new()

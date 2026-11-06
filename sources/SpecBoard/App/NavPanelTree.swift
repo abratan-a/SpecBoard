@@ -109,20 +109,33 @@ enum NavPanelTree {
     /// named with `kind:` (its kind's name, built in or the project's own; a flow's node by its kind
     /// too), with any tag named with `tag:` (a tag group, any tag in it), and every other word in
     /// its name, label or tags. Kinds and tags each one of those named; all of those asked together.
+    /// `diff:` keeps what the open branch made, changed or removed (`diff:made`, `diff:changed`,
+    /// `diff:removed`, and `diff:main` for what main changed since the branch was made).
     struct Filter {
         var query = ""
+        /// The open branch's marks, what `diff:` reads; none on main, where there is nothing to compare.
+        var marks: BranchMarks?
 
-        /// The search box read: the kinds and the tags named, and the words, lowercased.
+        /// What of a branch's difference `diff:` asks for.
+        enum DiffPart: String, CaseIterable {
+            case made, changed, removed, main
+        }
+
+        /// The search box read: the kinds and the tags named, the parts of the difference asked for, and
+        /// the words, lowercased.
         struct Asked: Equatable {
             var kinds: [String] = []
             var tags: [String] = []
             var words: [String] = []
+            /// Nil when `diff:` is not written; empty when only what it does not know is.
+            var diff: Set<DiffPart>?
 
-            var isEmpty: Bool { kinds.isEmpty && tags.isEmpty && words.isEmpty }
+            var isEmpty: Bool { kinds.isEmpty && tags.isEmpty && words.isEmpty && diff == nil }
         }
 
         static let kindWord = "kind:"
         static let tagWord = "tag:"
+        static let diffWord = "diff:"
 
         static func asked(_ query: String) -> Asked {
             var out = Asked()
@@ -132,6 +145,15 @@ enum NavPanelTree {
                     if lower.count > kindWord.count { out.kinds.append(String(lower.dropFirst(kindWord.count))) }
                 } else if lower.hasPrefix(tagWord) {
                     if lower.count > tagWord.count { out.tags.append(String(lower.dropFirst(tagWord.count))) }
+                } else if lower.hasPrefix(diffWord) {
+                    let part = String(lower.dropFirst(diffWord.count))
+                    var asked = out.diff ?? []
+                    if part.isEmpty {
+                        asked.formUnion([.made, .changed, .removed])
+                    } else if let one = DiffPart(rawValue: part) {
+                        asked.insert(one)
+                    }
+                    out.diff = asked
                 } else {
                     out.words.append(lower)
                 }
@@ -150,17 +172,44 @@ enum NavPanelTree {
             return Set(named + expandTags(groups: groups, selected: groupsNamed).map { $0.lowercased() })
         }
 
-        /// A card it finds: of a kind named, with a tag named, every word in its name, label or tags.
+        /// A card it finds: of a kind named, with a tag named, in the part of the difference asked for,
+        /// every word in its name, label or tags.
         func matches(_ schema: SchemaNode, tags: Set<String>) -> Bool {
+            inDiff(schema.id) && matchesRemoved(schema, tags: tags)
+        }
+
+        /// A card the open branch removed it finds: as any card, its part of the difference aside.
+        func matchesRemoved(_ schema: SchemaNode, tags: Set<String>) -> Bool {
             let asked = self.asked
             return Self.kindAndTag(schema, asked, tags)
                 && asked.words.allSatisfy { Self.says(schema, $0) }
+        }
+
+        /// Whether `id` is in the part of the open branch's difference asked for; anything when `diff:` is not
+        /// asked, nothing on main.
+        func inDiff(_ id: String) -> Bool {
+            guard let parts = asked.diff else { return true }
+            guard let marks else { return false }
+            return parts.contains(.made) && marks.made.contains(id)
+                || parts.contains(.changed) && marks.changed.contains(id)
+                || parts.contains(.main) && marks.mainChanged.contains(id)
+        }
+
+        /// Whether what the open branch removed is shown: `diff:` asks for it.
+        var showsRemoved: Bool { asked.diff?.contains(.removed) == true && marks != nil }
+
+        /// A section the open branch made or changed itself, when `diff:` asks for that part.
+        func sectionInDiff(_ id: String) -> Bool {
+            guard let parts = asked.diff, let marks else { return false }
+            return parts.contains(.made) && marks.sectionsMade.contains(id)
+                || parts.contains(.changed) && marks.sectionsChanged.contains(id)
         }
 
         /// A card ghost, by its own name or by the card it leads to — of a kind and with a tag
         /// asked, as the card is; one that leads nowhere, by its name alone.
         func matches(_ ghost: CardGhost, leadingTo card: SchemaNode?, tags: Set<String>) -> Bool {
             let asked = self.asked
+            guard inDiff(ghost.id) else { return false }
             if let card {
                 guard Self.kindAndTag(card, asked, tags) else { return false }
             } else if !asked.kinds.isEmpty || !asked.tags.isEmpty {
@@ -199,10 +248,10 @@ enum NavPanelTree {
         /// a tag, and not every node of a flow found by its kind alone.
         func matches(_ node: InnerCard) -> Bool {
             let asked = self.asked
-            guard asked.tags.isEmpty else { return false }
+            guard asked.tags.isEmpty, inDiff(node.id) else { return false }
             let ownKind = asked.kinds.contains(node.kind.lowercased())
             if !asked.kinds.isEmpty, !ownKind, !asked.kinds.contains(SchemaKind.flow.rawValue) { return false }
-            guard ownKind || !asked.words.isEmpty else { return false }
+            guard ownKind || !asked.words.isEmpty || asked.diff != nil else { return false }
             return asked.words.allSatisfy { node.name.lowercased().contains($0) || node.label.lowercased().contains($0) }
         }
 
@@ -269,6 +318,29 @@ enum NavPanelTree {
         return (kinds, tags)
     }
 
+    /// What the search box offers of the open branch's difference: `diff:` and each part of it, with how
+    /// many cards each finds — those the word being written starts (`diff:m`) when it starts with `diff:`.
+    /// None on main, and none while a kind or a tag is being written.
+    static func diffSuggestions(_ marks: BranchMarks?, query: String) -> [Suggestion] {
+        guard let marks else { return [] }
+        let last = query.hasSuffix(" ") ? "" : (query.split(whereSeparator: \.isWhitespace).last.map(String.init) ?? "")
+        let lower = last.lowercased()
+        if lower.hasPrefix(Filter.kindWord) || lower.hasPrefix(Filter.tagWord) { return [] }
+        let typing = lower.hasPrefix(Filter.diffWord)
+        let removed = marks.gone.cards.count + marks.gone.ghosts.count + marks.gone.nodes.count
+        let offered: [(String, Int, String)] = [
+            (Filter.diffWord, marks.made.count + marks.changed.count + removed, L10n[.Nav.suggestDiffAll]),
+            (Filter.diffWord + Filter.DiffPart.made.rawValue, marks.made.count, L10n[.Nav.suggestDiffMade]),
+            (Filter.diffWord + Filter.DiffPart.changed.rawValue, marks.changed.count, L10n[.Nav.suggestDiffChanged]),
+            (Filter.diffWord + Filter.DiffPart.removed.rawValue, removed, L10n[.Nav.suggestDiffRemoved]),
+            (Filter.diffWord + Filter.DiffPart.main.rawValue, marks.mainChanged.count, L10n[.Nav.suggestDiffMain]),
+        ]
+        return offered.compactMap { token, count, help in
+            guard count > 0, !typing || token.hasPrefix(lower) else { return nil }
+            return Suggestion(token: token, count: count, help: help)
+        }
+    }
+
     /// The rows on screen: what is open, opened; under a filter, only the cards it
     /// finds and the sections above them, all open — the groups holding them too. What the open
     /// branch removed (`gone`) where it was, each in its order among the rest; not under a filter.
@@ -277,19 +349,35 @@ enum NavPanelTree {
         let directory = detail.directory
         var out: [Row] = []
         let filtering = filter.isOn
-        let gone = filtering ? BranchMarks.Gone() : gone
+        let tags = Filter.tags(filter.asked, groups: detail.project.tagGroups)
+        // What the open branch removed: not under a filter, but for `diff:` that asks for it, what it finds.
+        let gone: BranchMarks.Gone = {
+            guard filtering else { return gone }
+            guard filter.showsRemoved else { return BranchMarks.Gone() }
+            var found = gone
+            found.cards = gone.cards.filter { filter.matchesRemoved($0, tags: tags) }
+            found.ghosts = filter.asked.kinds.isEmpty && filter.asked.tags.isEmpty
+                ? gone.ghosts.filter { g in filter.asked.words.allSatisfy { g.name.lowercased().contains($0) } } : []
+            found.nodes = filter.asked.tags.isEmpty
+                ? gone.nodes.filter { n in filter.asked.words.allSatisfy { n.name.lowercased().contains($0) } } : []
+            found.sections = filter.asked.kinds.isEmpty && filter.asked.tags.isEmpty && filter.asked.words.isEmpty
+                ? gone.sections : []
+            return found
+        }()
         let goneSections = Dictionary(grouping: gone.sections, by: { $0.parentId ?? "" })
         let goneCards = Dictionary(grouping: gone.cards.filter { $0.container == nil }, by: { $0.sectionId ?? directory.home })
         let goneInside = Dictionary(grouping: gone.cards.filter { $0.container != nil }, by: { $0.container ?? "" })
         let goneGhosts = Dictionary(grouping: gone.ghosts, by: { $0.sectionId ?? directory.home })
         let goneNodes = Dictionary(grouping: gone.nodes, by: \.container)
         func byPlace(_ card: SchemaNode) -> (Int, String) { (card.sortOrder, card.name) }
-        let tags = Filter.tags(filter.asked, groups: detail.project.tagGroups)
         // The nodes a filter finds by their names, and the cards it finds, with the containers
         // they are in: a card inside one is listed under it.
         let foundNodes = Set(detail.inner.filter(filter.matches).map(\.id))
         var foundCards = Set(detail.schemas.filter { filter.matches($0, tags: tags) }.map(\.id))
             .union(detail.inner.filter { foundNodes.contains($0.id) }.map(\.container))
+            // A container holding what the branch removed, where that is shown.
+            .union(gone.nodes.map(\.container))
+            .union(gone.cards.compactMap(\.container))
         for id in foundCards {
             var at = directory.schema(id: id)?.container
             while let up = at, foundCards.insert(up).inserted { at = directory.schema(id: up)?.container }
@@ -302,8 +390,15 @@ enum NavPanelTree {
             .union(detail.ghosts.filter { filter.matches($0, leadingTo: directory.reached($0), tags: tags) }.map(\.id))
         var keep: Set<String> = []
         if filtering {
-            let sections = detail.schemas.filter { found.contains($0.id) }.map(directory.sectionId(of:))
-                + detail.ghosts.filter { found.contains($0.id) }.map(directory.sectionId(of:))
+            // The sections what was found is in; under `diff:`, the sections the branch made or changed and
+            // where what it removed was too.
+            var sections: [String] = detail.schemas.filter { found.contains($0.id) }.map(directory.sectionId(of:))
+            sections += detail.ghosts.filter { found.contains($0.id) }.map(directory.sectionId(of:))
+            sections += detail.sections.map(\.id).filter(filter.sectionInDiff)
+            sections += gone.cards.map { $0.sectionId ?? directory.home }
+            sections += gone.ghosts.map { $0.sectionId ?? directory.home }
+            sections += gone.nodes.compactMap { node in directory.schema(id: node.container).map { directory.sectionId(of: $0) } }
+            sections += gone.sections.flatMap { [$0.id, $0.parentId].compactMap { $0 } }
             for section in sections {
                 var at: String? = section
                 while let id = at {
@@ -667,7 +762,7 @@ enum NavPanelTree {
         switch here {
         case .settings: .settings
         case .inspection: .inspection
-        case .section, .card, .root, .connections: boardOpen ? .board : nil
+        case .section, .map, .card, .root, .connections: boardOpen ? .board : nil
         }
     }
 
@@ -784,6 +879,10 @@ enum NavPanelTree {
         /// A card ghost at `position` among its section's card ghosts (`card_update`'s
         /// `position`).
         case ghostAt(String, position: Int)
+        /// A goal or a task into the goal `container` — or out of its goal into `section` (no
+        /// container) — at `position` among what is there, nil for the end (`card_update`'s `in`,
+        /// `section` and `position`).
+        case cardIn(String, container: String?, section: String?, position: Int?)
     }
 
     /// What may be changed from here.
@@ -803,7 +902,8 @@ enum NavPanelTree {
         switch node {
         case .section(let id): allowed.move && movable(id, in: detail)
         // A card inside a container is moved with the container (`in` is written elsewhere).
-        case .card(let id): detail.directory.schema(id: id).map { $0.container == nil } == true && (allowed.move || allowed.order)
+        case .card(let id): detail.directory.schema(id: id).map { $0.container == nil || fitsInGoal(id, detail) } == true
+            && (allowed.move || allowed.order)
         case .ghost(let id): detail.directory.ghost(id: id) != nil && (allowed.move || allowed.order)
         default: false
         }
@@ -817,9 +917,14 @@ enum NavPanelTree {
     /// section: its top and bottom quarters are between it and its neighbours, the rest is
     /// into it. A card over a section: into it, all of it. Over a card: its halves, before
     /// and after it.
-    static func spot(_ y: CGFloat, height: CGFloat, dragging: Node, over target: Node) -> Spot {
+    static func spot(_ y: CGFloat, height: CGFloat, dragging: Node, over target: Node,
+                     in detail: ProjectDetail? = nil) -> Spot {
         switch (dragging, target) {
         case (.section, .section):
+            return y < height * 0.25 ? .before : y > height * 0.75 ? .after : .into
+        // A goal or a task over a goal: as a section over a section, its middle is into it.
+        case (.card(let id), .card(let other))
+            where detail.map { fitsInGoal(id, $0) && $0.directory.schema(id: other)?.kind == .goal } == true:
             return y < height * 0.25 ? .before : y > height * 0.75 ? .after : .into
         case (_, .section):
             return .into
@@ -848,13 +953,18 @@ enum NavPanelTree {
             guard allowed.move else { return nil }
             return sectionDrop(id, on: other, at: spot, in: detail, board: board)
         case (.card(let id), .section(let section)):
+            guard allowed.move, let card = detail.directory.schema(id: id) else { return nil }
+            // Out of its goal: into a section that holds its kind, its own too.
+            if card.container != nil {
+                let holds = detail.directory.sectionId(of: card) == section
+                    || detail.homes(for: card).contains(where: { $0.id == section })
+                return holds ? .cardIn(id, container: nil, section: section, position: nil) : nil
+            }
             // 「セクションへ移す」: the sections of a kind that holds it.
-            guard allowed.move, let card = detail.directory.schema(id: id),
-                  detail.homes(for: card).contains(where: { $0.id == section }) else { return nil }
+            guard detail.homes(for: card).contains(where: { $0.id == section }) else { return nil }
             return .cardInto(id, section: section)
         case (.card(let id), .card(let other)):
-            guard allowed.order, spot != .into else { return nil }
-            return cardDrop(id, beside: other, after: spot == .after, in: detail)
+            return cardOnCard(id, on: other, at: spot, in: detail, allowed: allowed)
         case (.ghost(let id), .section(let section)):
             // Moved, as a card is: where it may stand and what it points at is not.
             let directory = detail.directory
@@ -952,6 +1062,12 @@ enum NavPanelTree {
     /// Whether a section's menu offers to delete it: not a root, nor what is directly under a root —
     /// the project's, renamed here and taken away with `project_tree` (the tab for kinds) — but
     /// `_evacuation_`; nor one the core keeps in its place (the board's Complete and Cancelled).
+    /// Whether a card may be added to a section from its menu: not a root, which holds no card
+    /// (`specboard://SpecBoard/Docs/Design:DesignSections` §2) — what is directly under it is the project's.
+    static func offersAddCard(_ section: String, in detail: ProjectDetail) -> Bool {
+        detail.sections.first { $0.id == section }.map { $0.parentId != nil } ?? false
+    }
+
     static func deletable(_ section: ProjectSection, in detail: ProjectDetail) -> Bool {
         guard section.parentId != nil, section.kind?.isFixed != true else { return false }
         let root = detail.sections.first { $0.parentId == nil }?.id
@@ -1022,6 +1138,56 @@ enum NavPanelTree {
         return detail.schemas.allSatisfy { !inside.contains(directory.sectionId(of: $0)) || kind.holds.contains($0.kind) }
     }
 
+    /// Whether a card goes into a goal: a goal or a task.
+    static func fitsInGoal(_ id: String, _ detail: ProjectDetail) -> Bool {
+        guard let kind = detail.directory.schema(id: id)?.kind else { return false }
+        return kind == .goal || kind == .task
+    }
+
+    /// Whether `id` is inside `holder` — in it, or in what is in it.
+    private static func isInside(_ id: String, within holder: String, _ detail: ProjectDetail) -> Bool {
+        var at = detail.directory.schema(id: id)?.container
+        var seen: Set<String> = []
+        while let container = at, seen.insert(container).inserted {
+            if container == holder { return true }
+            at = detail.directory.schema(id: container)?.container
+        }
+        return false
+    }
+
+    /// The goals a goal or a task may be put into from its menu (「goal へ入れる ▸」): the board's, not
+    /// itself, nor one inside it, nor the one it is in now.
+    static func goalsToPutIn(_ id: String, in detail: ProjectDetail) -> [SchemaNode] {
+        guard fitsInGoal(id, detail), let card = detail.directory.schema(id: id) else { return [] }
+        return detail.schemas.filter {
+            $0.kind == .goal && $0.id != id && $0.id != card.container && !isInside($0.id, within: id, detail)
+        }
+    }
+
+    /// A card dropped on another's row: a goal or a task into a goal (its middle), or beside a card in a
+    /// goal (in that goal, there); else put among its section's cards.
+    private static func cardOnCard(_ id: String, on other: String, at spot: Spot, in detail: ProjectDetail,
+                                   allowed: Allowed) -> Drop? {
+        let directory = detail.directory
+        guard id != other, let card = directory.schema(id: id), let target = directory.schema(id: other) else { return nil }
+        if spot == .into {
+            guard allowed.move, fitsInGoal(id, detail), target.kind == .goal, card.container != other,
+                  !isInside(other, within: id, detail) else { return nil }
+            return .cardIn(id, container: other, section: nil, position: nil)
+        }
+        if let holder = target.container {
+            guard allowed.move, fitsInGoal(id, detail), holder != id, !isInside(holder, within: id, detail) else { return nil }
+            let members = detail.schemas.filter { $0.container == holder }.map(\.id)
+            let others = members.filter { $0 != id }
+            guard let at = others.firstIndex(of: other) else { return nil }
+            let position = at + (spot == .after ? 1 : 0)
+            if card.container == holder, members.firstIndex(of: id) == position { return nil }
+            return .cardIn(id, container: holder, section: nil, position: position)
+        }
+        guard card.container == nil, allowed.order else { return nil }
+        return cardDrop(id, beside: other, after: spot == .after, in: detail)
+    }
+
     /// A card put before or after another of its section's, in the same group — the value
     /// objects and enums are listed apart from the rest: its place among all the section's.
     private static func cardDrop(_ id: String, beside other: String, after: Bool, in detail: ProjectDetail) -> Drop? {
@@ -1051,6 +1217,8 @@ struct NavPanelTreeView: View {
     /// The row a drag over it would be taken by, and where on it: drawn there. None where
     /// it would not be (overview §8).
     @State private var dropMark: DropMark?
+    /// The closed row a drag stays over, to be opened in a moment (`springOpen`).
+    @State private var spring: (key: String, work: DispatchWorkItem)?
     /// The row just pressed, lit as the row on screen until what the press does has run
     /// (`NavRow.pressing`).
     @State private var pressed: String?
@@ -1286,6 +1454,10 @@ struct NavPanelTreeView: View {
             }
             // While the box is written in — or the pointer is on what it offers, so a press on
             // one is not lost as the box lets go of the keyboard — what may be put in it.
+            // `diff:` on main: nothing to compare, said rather than an empty tree.
+            if filter.asked.diff != nil, model.openBranch == nil || model.isBoardOpen {
+                Text(L10n[.Nav.searchDiffOnBranch]).font(.app(10)).foregroundStyle(.secondary)
+            }
             if searching || overSuggestions {
                 suggestions(detail)
                     .onHover { overSuggestions = $0 }
@@ -1299,7 +1471,15 @@ struct NavPanelTreeView: View {
     @ViewBuilder
     private func suggestions(_ detail: ProjectDetail) -> some View {
         let offered = NavPanelTree.suggestions(detail, query: filter.query)
+        let branchOpen = model.openBranch != nil && !model.isBoardOpen
+        let diffs = NavPanelTree.diffSuggestions(branchOpen ? model.branchMarks : nil, query: filter.query)
         VStack(alignment: .leading, spacing: 5) {
+            if !diffs.isEmpty {
+                Text(L10n[.Nav.searchDiff]).font(.app(9.5, weight: .semibold)).foregroundStyle(.secondary)
+                FlowRow(spacing: 5, lineSpacing: 4) {
+                    ForEach(diffs) { chip($0) }
+                }
+            }
             if !offered.kinds.isEmpty {
                 Text(L10n[.Common.wordKind]).font(.app(9.5, weight: .semibold)).foregroundStyle(.secondary)
                 FlowRow(spacing: 5, lineSpacing: 4) {
@@ -1312,7 +1492,7 @@ struct NavPanelTreeView: View {
                     ForEach(offered.tags.prefix(40)) { chip($0) }
                 }
             }
-            if offered.kinds.isEmpty && offered.tags.isEmpty {
+            if offered.kinds.isEmpty && offered.tags.isEmpty && diffs.isEmpty {
                 Text(L10n[.Nav.searchNoKindsOrTags]).font(.app(10)).foregroundStyle(.tertiary)
             }
         }
@@ -1393,7 +1573,7 @@ struct NavPanelTreeView: View {
             switch node {
             case .section(let id):
                 switch here {
-                case .section(let open), .root(let open, _): id == open && selected == nil
+                case .section(let open), .map(_, let open), .root(let open, _): id == open && selected == nil
                 case .card, .settings, .connections, .inspection: false
                 }
             case .card(let id), .ghost(let id): id == selected
@@ -1471,10 +1651,30 @@ struct NavPanelTreeView: View {
         if let spot { dropMark = DropMark(key: key, spot: spot) } else if dropMark?.key == key { dropMark = nil }
     }
 
+    /// A drag staying over a closed row that opens (a section, a goal, a flow) opens it, as a folder in
+    /// Finder does, so it can be let go of among what is inside.
+    func springOpen(_ key: String, over: Bool, opens: Bool) {
+        if !over {
+            if spring?.key == key { spring?.work.cancel(); spring = nil }
+            return
+        }
+        spring?.work.cancel()
+        spring = nil
+        guard opens, !expanded.contains(key) else { return }
+        let work = DispatchWorkItem { [key] in
+            expanded.insert(key)
+            spring = nil
+        }
+        spring = (key, work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: work)
+    }
+
     /// A drag let go on a row that takes it.
     func dropped(_ dragged: NavPanelTree.Node, _ drop: NavPanelTree.Drop, _ providers: [NSItemProvider]) {
         dragging = nil
         dropMark = nil
+        // Put into a goal: the goal is opened, so where it went is seen.
+        if case .cardIn(_, let container?, _, _) = drop { expanded.insert(NavPanelTree.Node.card(container).key) }
         // Only the drag that started here: a stale one — let go outside the panel —
         // must not move a row when text from elsewhere is dropped on it.
         guard let provider = providers.first else { return }
@@ -1587,6 +1787,18 @@ struct NavPanelTreeView: View {
                     }
                 }
                 .disabled(readOnly)
+                // A goal or a task into a goal, at its end (as a drop on the goal's row).
+                if NavPanelTree.fitsInGoal(id, detail) {
+                    let goals = NavPanelTree.goalsToPutIn(id, in: detail)
+                    Menu(L10n[.Nav.menuPutInGoal]) {
+                        ForEach(goals) { goal in
+                            Button(goal.label.isEmpty ? goal.name : "\(goal.name)  \(goal.label)") {
+                                model.perform(.cardIn(id, container: goal.id, section: nil, position: nil))
+                            }
+                        }
+                    }
+                    .disabled(readOnly || goals.isEmpty)
+                }
                 Divider()
                 Button(L10n[.Nav.menuDeleteCard], role: .destructive) { deletingCard = id }
                     .disabled(readOnly)
@@ -1697,6 +1909,11 @@ struct NavPanelTreeView: View {
 
     @ViewBuilder
     private func sectionMenu(_ section: ProjectSection, _ detail: ProjectDetail) -> some View {
+        // Its map in a tab of its own, right of the tab in front: not a root's, which opens its dashboard.
+        if section.parentId != nil {
+            Button(L10n[.Nav.menuOpenInNewTab]) { model.openNewMapTab(section.id, rightOf: model.activeTab) }
+            Divider()
+        }
         cardSectionMenu(section, detail)
     }
 
@@ -1709,11 +1926,13 @@ struct NavPanelTreeView: View {
         if inWorkDir {
             WorkDirActionsMenu(model: model, section: section.id)
         }
-        Button(L10n[.Nav.menuAddCard]) {
-            model.selectSection(section.id)
-            model.newSchemaRequest = AppModel.NewSchemaRequest()
+        if let detail = model.detail, NavPanelTree.offersAddCard(section.id, in: detail) {
+            Button(L10n[.Nav.menuAddCard]) {
+                model.selectSection(section.id)
+                model.newSchemaRequest = AppModel.NewSchemaRequest()
+            }
+            .disabled(model.isReadOnly)
         }
-        .disabled(model.isReadOnly)
         // The root's name too is main's: a locked main keeps it (`specboard://SpecBoard/Docs/Design:DesignBranches` §8).
         Button(L10n[.Common.actionRenameMenu]) { ask(.rename(section.id), section.name) }
             .disabled(model.isReadOnly || model.isReadFromFolder(section.id))

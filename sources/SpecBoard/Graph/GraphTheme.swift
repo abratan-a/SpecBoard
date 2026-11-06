@@ -65,10 +65,10 @@ struct GraphTheme {
         // the one written in rows deeper again, so the two read apart.
         // A picture or a page: drawn as a document is, in a freedoc's colour. A frame, the box such pages
         // are put into, the same.
-        case .freedoc, .svg, .html, .frame: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.26 : 0.14)
+        case .freedoc, .svg, .html, .frame, .sketch, .image: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.26 : 0.14)
         case .formatdoc: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.40 : 0.24)
         // The versions stacked: between the two.
-        case .stackdoc: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.33 : 0.19)
+        case .stackdoc, .spec: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.33 : 0.19)
         // A flow is the way through a chart: the chart section's red, so it is not
         // taken for an action. A store is where records rest: green, apart from
         // the shapes it keeps.
@@ -115,7 +115,7 @@ struct GraphTheme {
         case .value: return teal
         case .enum: return brass
         case .action: return EdgeInk.violet.color(dark: isDark)
-        case .note, .freedoc, .formatdoc, .stackdoc, .svg, .html, .frame: return EdgeInk.blue.color(dark: isDark)
+        case .note, .freedoc, .formatdoc, .stackdoc, .spec, .svg, .html, .frame, .sketch, .image: return EdgeInk.blue.color(dark: isDark)
         case .flow: return EdgeInk.red.color(dark: isDark)
         case .store: return EdgeInk.green.color(dark: isDark)
         case .instance, .table: return Self.instanceInk(dark: isDark)

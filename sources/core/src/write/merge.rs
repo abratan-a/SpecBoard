@@ -1,5 +1,5 @@
-//! A merge from one tree into another, main among them (`specboard://SpecBoard/Docs/Design:DesignBranches` §6;
-//! `Repository.mergePreview`・`merge` and `Merge3` in the Swift app): what the source
+//! A merge from one tree into another, main among them (`specboard://SpecBoard/Docs/Design:DesignBranches` §6):
+//! what the source
 //! changed, compared unit by unit with what the target holds, from what both last had in
 //! common, and written into the target the way the target keeps it.
 //!
@@ -156,7 +156,7 @@ enum Kind {
 }
 
 /// The tables of a card that may be kept apart row by row.
-const BY_ROW: [&str; 4] = ["fields", "values", "versions", "rows"];
+const BY_ROW: [&str; 5] = ["fields", "values", "versions", "rows", "scenarios"];
 const PARENT: &str = "~parent";
 
 /// A data card's top-level arrays whose elements' shape has a key: by the array's field, its key
@@ -349,12 +349,14 @@ fn data_assembled(
 }
 
 /// Whether a card's rows of `name` are kept apart row by row — a record's fields, an enum's
-/// values, a stackdoc's versions, a formatdoc's rows (each its own: one added on one side and
-/// another changed on the other both go in). A formatdoc's rows are by row only in a
-/// formatdoc: a table a project's own kind names `rows` is its own, and one unit.
+/// values, a stackdoc's versions, a formatdoc's rows, a spec's scenarios (each its own: one added
+/// on one side and another changed on the other both go in). A formatdoc's rows and a spec's
+/// scenarios are by row only in that kind: a table a project's own kind names so is its own, and one
+/// unit.
 fn by_row(card: Option<&str>, name: &str) -> bool {
     match name {
         "rows" => card == Some("formatdoc"),
+        "scenarios" => card == Some("spec"),
         _ => BY_ROW.contains(&name),
     }
 }
@@ -537,15 +539,23 @@ fn units(
                     let Some(id) = object.get("id").and_then(Value::as_str) else {
                         continue;
                     };
+                    // Its children of the same name are units of their own; what else it holds
+                    // (a scenario's steps) stays in it.
                     let mut unit = object.clone();
-                    let inner = unit.remove("rows");
+                    let inner = unit
+                        .get_mut("rows")
+                        .and_then(Value::as_object_mut)
+                        .and_then(|r| r.remove(name));
+                    if unit
+                        .get("rows")
+                        .and_then(Value::as_object)
+                        .is_some_and(Map::is_empty)
+                    {
+                        unit.remove("rows");
+                    }
                     unit.insert(PARENT.into(), parent.map_or(Value::Null, Value::from));
                     out.insert(format!("r:{name}:{id}"), Value::Object(unit));
-                    if let Some(children) = inner
-                        .as_ref()
-                        .and_then(|r| r.get(name))
-                        .and_then(Value::as_array)
-                    {
+                    if let Some(children) = inner.as_ref().and_then(Value::as_array) {
                         walk(name, children, Some(id), out);
                     }
                 }
@@ -823,10 +833,13 @@ fn assemble(
                                     .unwrap_or_default()
                                     .to_string();
                                 let inner = tree(name, Some(&id), children, versions);
-                                if !inner.is_empty() {
-                                    let mut rows = Map::new();
+                                if !inner.is_empty()
+                                    && let Some(rows) = row
+                                        .entry("rows")
+                                        .or_insert_with(|| Value::Object(Map::new()))
+                                        .as_object_mut()
+                                {
                                     rows.insert(name.to_string(), Value::Array(inner));
-                                    row.insert("rows".into(), Value::Object(rows));
                                 }
                                 Value::Object(row)
                             })
@@ -930,7 +943,12 @@ impl Labels {
                 if let Some(from) = line.get("from").and_then(Value::as_str) {
                     said = format!("{said}.{from}");
                 }
-                let taken = out.lines.values().filter(|l| l.starts_with(&said)).count();
+                let numbered = format!("{said}#");
+                let taken = out
+                    .lines
+                    .values()
+                    .filter(|l| **l == said || l.starts_with(&numbered))
+                    .count();
                 if taken > 0 {
                     said = format!("{said}#{}", taken + 1);
                 }
@@ -1498,6 +1516,35 @@ struct DocRow {
     based_at: Option<String>,
 }
 
+/// When a branch's frozen copies of main's rows of `table` were frozen, by id (`branch_frozen.at`);
+/// the branch's making for one frozen before the time was kept.
+fn frozen_times(
+    conn: &Connection,
+    table: Table,
+    project: &str,
+    tree: &str,
+    made: &str,
+) -> Result<HashMap<String, String>, String> {
+    if tree.is_empty() {
+        return Ok(HashMap::new());
+    }
+    let mut stmt = conn
+        .prepare(
+            "SELECT id, at FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = ?",
+        )
+        .map_err(db)?;
+    stmt.query_map(params![project, tree, table.name()], |r| {
+        Ok((
+            r.get::<_, String>(0)?,
+            r.get::<_, Option<String>>(1)?
+                .unwrap_or_else(|| made.to_string()),
+        ))
+    })
+    .map_err(db)?
+    .collect::<Result<_, _>>()
+    .map_err(db)
+}
+
 /// What a branch keeps of main's rows of `table` as main held them when it was made
 /// (`branch_frozen`): by id, none for one main made since.
 fn frozen_rows(
@@ -1727,6 +1774,7 @@ impl Tx<'_> {
                 frozen_rows(conn, table, project, source)?,
                 frozen_rows(conn, table, project, target)?,
             );
+            let frozen_at = frozen_times(conn, table, project, target, &into_made)?;
             let version = |rows: &HashMap<String, DocRow>,
                            kept: &HashMap<String, Option<String>>,
                            id: &str|
@@ -1764,13 +1812,33 @@ impl Tx<'_> {
                 } else {
                     based(mine.get(id), &from_made)
                 };
+                // Where the target wrote nothing and sees main as it froze it, that version is its base.
                 let their_base = if target.is_empty() {
                     None
+                } else if !theirs.contains_key(id)
+                    && let Some(Some(doc)) = kept_theirs.get(id)
+                {
+                    Some((
+                        doc.clone(),
+                        frozen_at
+                            .get(id)
+                            .cloned()
+                            .unwrap_or_else(|| into_made.clone()),
+                    ))
                 } else {
                     based(theirs.get(id), &into_made)
                 };
+                // On the same moment the frozen copy is the older: it was frozen as main wrote the
+                // next version, which a copy may have taken that same moment.
+                let their_frozen = !target.is_empty()
+                    && !theirs.contains_key(id)
+                    && matches!(kept_theirs.get(id), Some(Some(_)));
                 let mut ancestor = match (&mine_base, &their_base) {
-                    (Some(m), Some(t)) => Some(if m.1 <= t.1 { m.clone() } else { t.clone() }),
+                    (Some(m), Some(t)) => Some(if m.1 < t.1 || (m.1 == t.1 && !their_frozen) {
+                        m.clone()
+                    } else {
+                        t.clone()
+                    }),
                     (Some(m), None) => Some(m.clone()),
                     (None, Some(t)) => Some(t.clone()),
                     (None, None) => None,
@@ -1781,17 +1849,24 @@ impl Tx<'_> {
                 }
                 let path = name(id);
                 let main_now = parse(main.get(id).and_then(|r| r.doc.as_ref()));
+                // The target has not written it and main made it after the target was: the target
+                // does not see it, which is not removing it — it takes the source's as it is.
+                let unseen = !target.is_empty()
+                    && !theirs.contains_key(id)
+                    && matches!(kept_theirs.get(id), Some(None));
                 let source_doc = if source.is_empty() {
                     main_now.clone()
                 } else {
                     version(&mine, &kept_mine, id)
                 };
+                let ancestor_doc = ancestor.as_ref().and_then(|a| parse(Some(&a.0)));
                 let target_doc = if target.is_empty() {
                     main_now.clone()
+                } else if unseen {
+                    ancestor_doc.clone()
                 } else {
                     version(&theirs, &kept_theirs, id)
                 };
-                let ancestor_doc = ancestor.as_ref().and_then(|a| parse(Some(&a.0)));
                 // A data card's keyed arrays, by its shape as the target has it (else the source).
                 let keys = (!section)
                     .then(|| {
@@ -1829,7 +1904,11 @@ impl Tx<'_> {
                 if !target.is_empty()
                     && let Some(main_text) = main.get(id).and_then(|r| r.doc.clone())
                 {
-                    base = Some(if source.is_empty() || !theirs.contains_key(id) {
+                    // Where the target sees main as it froze it, that version is its side's base
+                    // (`their_base`), and the newer of the two is what was mixed onto.
+                    base = Some(if unseen {
+                        mine_base.clone().unwrap_or((main_text, now.clone()))
+                    } else if source.is_empty() || (!theirs.contains_key(id) && !their_frozen) {
                         (main_text, now.clone())
                     } else {
                         match (&mine_base, &their_base) {
@@ -2031,6 +2110,17 @@ impl Tx<'_> {
                             .is_some_and(Option::is_some)
                     })
             };
+            // A box the window put by itself as it drew the diagram (not pinned), where the target has
+            // none a hand put: not a move — the target's diagram puts it the same way. Sized or dressed
+            // otherwise, it is one.
+            let by_itself = !spot.pinned
+                && match seen {
+                    Some(s) => !s.pinned && s.w == spot.w && s.h == spot.h && s.look == spot.look,
+                    None => spot.w.is_none() && spot.h.is_none() && spot.look.is_none(),
+                };
+            if by_itself && !anyway {
+                continue;
+            }
             out.push(Moved {
                 view: view.clone(),
                 item_kind: item_kind.clone(),
@@ -2136,6 +2226,17 @@ impl Tx<'_> {
                 }
             }
             if !target.is_empty() {
+                // What the target sees of main where main changed since it was made: main as it froze it.
+                for (id, kept) in frozen_rows(self.conn(), table, project, target)? {
+                    match parse(kept.as_ref()) {
+                        Some(doc) => {
+                            held.insert(id, doc);
+                        }
+                        None => {
+                            held.remove(&id);
+                        }
+                    }
+                }
                 for (id, row) in doc_rows(self.conn(), table, project, target)? {
                     match (row.removed, parse(row.doc.as_ref())) {
                         (false, Some(doc)) => {
@@ -2326,6 +2427,10 @@ impl Tx<'_> {
         }
         for (item, write) in writes {
             match write {
+                // The target comes out as main now: it sees main now there, not main as it froze it.
+                Write::Clear if !target.is_empty() => {
+                    self.let_go_of_frozen(project, target, Some((item.table, &item.id)))?;
+                }
                 Write::Clear => {}
                 Write::Mark => {
                     self.merge_row(item, project, target, None, true, item.base.clone())?

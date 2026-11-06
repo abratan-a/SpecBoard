@@ -177,7 +177,8 @@ enum DocumentSource {
         }
         let text = card.face?.markdown != nil ? card.faceMarkdown
             : card.kind == .formatdoc ? FormatDocEditor.document(card, in: detail)
-            : card.kind == .stackdoc ? card.openVersion?.page ?? "" : card.body
+            : card.kind == .stackdoc ? card.openVersion?.page ?? ""
+            : card.kind == .spec ? SpecDocument.markdown(card) : card.body
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return DocumentParts.Source(card: card.id, text: L10n[.Root.documentEmpty], plain: true)
         }

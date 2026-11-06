@@ -263,7 +263,7 @@ fn a_card_made_again_where_main_changed_the_old_one_is_the_choice_of_the_whole()
     assert!(preview.get("overlaps").is_none(), "{preview}");
 
     // Kept: main's card and the one made again would share the path.
-    let keep = json!({"Schemas:Alpha": {"(whole)": "target"}});
+    let keep = json!({"Schemas:Alpha": {"(whole)": "into"}});
     let said = refused(
         &core,
         "branch_merge",

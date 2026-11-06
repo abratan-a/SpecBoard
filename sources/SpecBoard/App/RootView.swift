@@ -5,8 +5,7 @@ import SwiftUI
 /// main, and what its tags gather. The board's opens on its goals. What is wrong with a tree
 /// is the inspection page's (`InspectionView`), for any tree.
 ///
-/// Everything here is already known to the project — the change log, the branch's diff
-/// (`Repository.branchDiff`), the tags. It is put where it can be read and followed: each
+/// Everything here is already known to the project — the change log, the branch's diff, the tags. It is put where it can be read and followed: each
 /// entry goes to the card it is about.
 struct RootView: View {
     var model: AppModel
@@ -45,13 +44,10 @@ struct RootView: View {
         if let detail = model.detail, let section = detail.directory.section(id: root) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 10) {
-                    // The branch open, plainly; the root's own name small, as in the nav panel.
+                    // The tree open, plainly: what the dashboard is of (the root's own name said it for
+                    // every tree alike, main's on a branch too).
                     Text(model.isBoardOpen ? L10n[.Common.wordProjectBoard] : model.openTree.name)
                         .font(.app(14, weight: .semibold))
-                    Text(section.name)
-                        .font(.app(10)).foregroundStyle(.secondary)
-                        .padding(.horizontal, 5).padding(.vertical, 1)
-                        .overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary))
                     Spacer()
                     Picker("", selection: Binding(get: { shown }, set: { model.showRoot($0) })) {
                         ForEach(model.rootTabs, id: \.self) { tab in
@@ -62,8 +58,9 @@ struct RootView: View {
                     .pickerStyle(.segmented)
                     .fixedSize()
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                // As high as a card editor's bar, so the line under it stays put between a root and a card.
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
                 Divider()
                 ScrollView {
                     switch shown {

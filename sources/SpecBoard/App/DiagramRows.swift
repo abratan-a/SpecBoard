@@ -248,6 +248,11 @@ enum DiagramRows {
         guard let card = directory.schema(id: hit.card) else { return nil }
         guard let row = hit.row else { return head(card) }
         if let id = row.field?.id { return field(id) ?? head(card) }
+        // A spec's scenario row: from the scenario; its story's, from its head.
+        if card.kind == .spec {
+            guard card.scenarios.contains(where: { $0.name == row.path }) else { return head(card) }
+            return LineSource(card: card.id, path: directory.full(card), from: row.path)
+        }
         switch pick(hit, in: detail) {
         case .row(_, .node(let name)):
             return nodeSource(card, name, step: nil, in: detail)
@@ -521,6 +526,12 @@ struct DiagramPresses {
                 guard !model.isReadOnly, let detail = model.detail,
                       let source = DiagramRows.lineSource(from, in: detail),
                       let target = DiagramRows.lineTarget(to, in: detail) else { return }
+                // Between a whiteboard's parts: an arrow, the one line drawn there, with nothing to ask.
+                if model.joinsWhiteboardParts(from.card, to.card) {
+                    model.connect(source, line: Line.arrow, to: target, at: nil)
+                    if model.sketchTool == AppModel.arrowTool { model.sketchTool = nil }
+                    return
+                }
                 model.connecting = Connecting(source: source, target: target, anchor: point)
             })
     }
@@ -690,7 +701,8 @@ enum DiagramMenus {
             menu.addItem(.separator())
         }
         // As the nav panel's: not where the cards are read only (a locked main too).
-        if adding && !model.isReadOnly {
+        if adding && !model.isReadOnly,
+           let detail = model.detail, NavPanelTree.offersAddCard(model.shownSectionKey, in: detail) {
             menu.addItem(ActionMenuItem(L10n[.Diagram.menuAddCard]) { model.newSchemaRequest = AppModel.NewSchemaRequest() })
         }
         // A working directory's section map: its folder read again.
@@ -763,6 +775,19 @@ enum DiagramMenus {
             move.submenu = submenu
             move.isEnabled = !submenu.items.isEmpty
             menu.addItem(move)
+            // A goal or a task into a goal, at its end, as the nav panel's row offers it.
+            if NavPanelTree.fitsInGoal(schema.id, detail) {
+                let into = NSMenuItem(title: L10n[.Nav.menuPutInGoal], action: nil, keyEquivalent: "")
+                let goals = NSMenu()
+                for goal in NavPanelTree.goalsToPutIn(schema.id, in: detail) {
+                    goals.addItem(ActionMenuItem(goal.label.isEmpty ? goal.name : "\(goal.name)  \(goal.label)") {
+                        model.perform(.cardIn(schema.id, container: goal.id, section: nil, position: nil))
+                    })
+                }
+                into.submenu = goals
+                into.isEnabled = !goals.items.isEmpty
+                menu.addItem(into)
+            }
             menu.addItem(.separator())
             menu.addItem(ActionMenuItem(L10n[.Diagram.menuDeleteCard]) {
                 if CardDeletion.confirm(schema.name) { model.deleteSchema(schema.id) }
@@ -874,7 +899,7 @@ enum DiagramMenus {
         if model.fitsWidth(schema) {
             out.append(ActionMenuItem(L10n[.Diagram.menuFitWidth]) { model.fitWidth(schema.id) })
         }
-        if schema.size != nil {
+        if schema.size != nil, !schema.sizedByText {
             out.append(ActionMenuItem(L10n[.Diagram.menuResetSize]) { model.setCardSize(schema.id, nil) })
         }
         return out

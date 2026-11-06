@@ -182,6 +182,12 @@ extension AppModel {
         return out
     }
 
+    /// Every line a card writes — from its head, its fields and rows, to itself or to a card gone as well:
+    /// what its card editor's head counts, as the properties panel's つながり lists them.
+    func outgoingLineCount(of card: String) -> Int {
+        lineHolder(card)?.connections.count ?? 0
+    }
+
     /// The lines that reach a card from elsewhere: written by the cards they
     /// leave, so each is read from the project's lines (`relations`), one a line. With `field`, those
     /// landing on that field of it — said so (`at`), or an ID pointing at the card with no row
@@ -274,8 +280,7 @@ extension AppModel {
         if !fields.isEmpty { made["fields"] = fields.mapValues { OJSON($0).foundation } }
         let before = Set(holder.connections.map(\.id))
         write {
-            try tool("card_update", target: holder.path,
-                     value: ["connections": holder.connections.map(wire) + [made]])
+            try tool("card_update", target: holder.path, value: ["connections": ["add": [made]]])
         } then: { [weak self] in
             guard let self, let now = self.lineHolder(source.card),
                   let new = now.connections.first(where: { !before.contains($0.id) && $0.line == line && $0.from == from })
@@ -289,12 +294,9 @@ extension AppModel {
     /// A line taken off its card. An embedding's field goes back to `string` (the core's; the
     /// window says so before, `LineRemoval`).
     func removeLine(_ ref: LineRef) {
-        guard !isReadOnly, let (holder, _) = line(ref) else { return }
+        guard !isReadOnly, let (holder, line) = line(ref) else { return }
         if selectedLine == ref { deselect() }
-        write {
-            try tool("card_update", target: holder.path,
-                     value: ["connections": holder.connections.filter { $0.id != ref.id }.map(wire)])
-        }
+        write { try tool("card_update", target: holder.path, value: ["connections": ["remove": [wire(line)]]]) }
     }
 
     /// One line's own description: what the written-out notes say of it.
@@ -310,16 +312,22 @@ extension AppModel {
         }
     }
 
-    /// A line of a card changed, the others as they are: the line keeps its id (its kind, its
-    /// place, its card and where it lands are the same).
+    /// A line of a card changed where it is (`change`), the others as they are: the line keeps its
+    /// id (its kind, its place, its card and where it lands are the same). Only its description
+    /// and fields are written, not the card's lines again, so a line written meanwhile stays.
     private func changeLine(_ ref: LineRef, _ change: (inout Connection) -> Void) {
-        guard !isReadOnly, let (holder, _) = line(ref) else { return }
-        let lines = holder.connections.map { line -> [String: Any] in
-            var next = line
-            if next.id == ref.id { change(&next) }
-            return wire(next)
-        }
-        write { try tool("card_update", target: holder.path, value: ["connections": lines]) }
+        guard !isReadOnly, let (holder, line) = line(ref) else { return }
+        var next = line
+        change(&next)
+        var set: [String: Any] = ["description": next.description ?? NSNull()]
+        let names = Set(line.fields.keys).union(next.fields.keys)
+        let fields = Dictionary(uniqueKeysWithValues: names.map { name in
+            (name, next.fields[name].map { OJSON($0).foundation } ?? NSNull())
+        })
+        if !fields.isEmpty { set["fields"] = fields }
+        var picked = wire(line)
+        picked["set"] = set
+        write { try tool("card_update", target: holder.path, value: ["connections": ["change": [picked]]]) }
     }
 
     /// Where a line leaves, picked: its card's head, the field, the formatdoc's item, the
@@ -411,6 +419,9 @@ extension AppModel {
         return true
     }
 
+    /// What the keys of `boardReach`'s reads begin with.
+    static let reachKey = "reach|"
+
     /// The board's cards still to do that reach what `source` is — a card of main's or a branch's,
     /// or a field or row in it — as the core reads them (`card_read`'s `fromBoard`, the property
     /// panel's 関わるやること). None on the board, and none where the core cannot say. Read once for what
@@ -419,7 +430,7 @@ extension AppModel {
         guard !isBoardOpen, let projectId = detail?.project.id else { return [] }
         let picks = PathText.dots(source.from).contains { !PathText.step($0).rest.isEmpty }
         let path = source.from.isEmpty || picks ? source.path : "\(source.path).\(source.from)"
-        let key = "reach|\(projectId)|\(openTrees[projectId] ?? "")|\(path)"
+        let key = "\(Self.reachKey)\(projectId)|\(openTrees[projectId] ?? "")|\(path)"
         return aside(key, "card_read", target: path, value: ["include": ["from_board"]]) { json in
             (json?["fromBoard"] as? [[String: Any]] ?? []).compactMap(BoardReach.init)
         }
@@ -449,15 +460,19 @@ extension AppModel {
             asideKept[key] = found
             return found
         }
-        if asideAsked.insert(key).inserted {
+        if asideAsked[key] == nil {
             asideSent += 1
+            let asked = asideSent
+            asideAsked[key] = asked
             let sent = Handed(value: request)
             let back = Handed(value: (model: WeakModel(self), read: read))
             DispatchQueue.global(qos: .utility).async {
                 let json = Handed(value: Self.ask(core, sent.value, paged: paged))
                 DispatchQueue.main.async {
                     MainActor.assumeIsolated {
-                        guard let self = back.value.model.model, self.asideAsked.remove(key) != nil else { return }
+                        // Only the read asked last for it: one asked before a write answers for before.
+                        guard let self = back.value.model.model, self.asideAsked[key] == asked else { return }
+                        self.asideAsked[key] = nil
                         self.asideKept[key] = back.value.read(json.value)
                         self.asideReads += 1
                     }

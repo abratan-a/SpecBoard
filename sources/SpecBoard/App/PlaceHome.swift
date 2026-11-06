@@ -34,14 +34,21 @@ enum PlaceSettingsTab: String, CaseIterable, Identifiable, Sendable {
 
 // MARK: - The places
 
+/// A row of the places' column: every place's projects, this Mac, or an agent.
+enum HomeChoice: Equatable {
+    case all, thisMac, agent(UUID)
+}
+
 /// The home's left column: this Mac, then each agent — one row each, its ⚙ at the right — and
 /// 「エージェントを足す」 under them. A row is chosen to show that place's projects; its ⚙ to show its
 /// settings.
 struct PlaceColumn: View {
     var model: AppModel
     var hosts: RemoteHosts
-    /// The place chosen: this Mac (nil) or an agent.
+    /// The place chosen: this Mac (nil) or an agent — unless every place's projects are (`allChosen`).
     var selected: UUID?
+    var allChosen = false
+    var onChooseAll: () -> Void = {}
     var onChoose: (UUID?) -> Void
     var onSettings: (UUID?) -> Void
 
@@ -55,10 +62,16 @@ struct PlaceColumn: View {
     @State private var nameDraft = ""
     @State private var hovered: String?
 
+    /// The rows, top down: every place's projects, this Mac, then the agents as they were added.
+    static func rows(hosts: [RemoteHosts.Host]) -> [HomeChoice] {
+        [.all, .thisMac] + hosts.map { .agent($0.id) }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 2) {
+                    allRow
                     thisMac
                     ForEach(hosts.hosts) { host in hostRow(host) }
                 }
@@ -85,8 +98,20 @@ struct PlaceColumn: View {
         model.projects.filter { $0.place == place && !$0.isArchived }.count
     }
 
+    /// Every place's projects: no settings of its own, so no ⚙.
+    private var allRow: some View {
+        row(key: "all", chosen: allChosen, choose: onChooseAll, settings: nil) {
+            Image(systemName: "rectangle.stack").font(.app(12)).foregroundStyle(.secondary).frame(width: 18)
+            Text(L10n[.Places.rowAll]).font(.app(12.5, weight: .semibold)).lineLimit(1)
+            Spacer(minLength: 4)
+            Text("\(model.projects.filter { !$0.isArchived }.count)")
+                .font(.app(10.5, design: .monospaced)).foregroundStyle(.secondary)
+        }
+        .help(L10n[.Places.rowAllHelp])
+    }
+
     private var thisMac: some View {
-        row(key: "", chosen: selected == nil, choose: { onChoose(nil) }, settings: { onSettings(nil) }) {
+        row(key: "", chosen: !allChosen && selected == nil, choose: { onChoose(nil) }, settings: { onSettings(nil) }) {
             Image(systemName: "desktopcomputer").font(.app(12)).foregroundStyle(.secondary).frame(width: 18)
             Text(L10n[.Common.wordThisMac]).font(.app(12.5, weight: .semibold)).lineLimit(1)
             Spacer(minLength: 4)
@@ -99,7 +124,7 @@ struct PlaceColumn: View {
         let core = hosts.coreState[host.id] ?? RemoteHosts.CoreState()
         let connected = host.enabled && core.connected
         let said = Self.status(host, core)
-        return row(key: host.id.uuidString, chosen: selected == host.id,
+        return row(key: host.id.uuidString, chosen: !allChosen && selected == host.id,
                    choose: { onChoose(host.id) }, settings: { onSettings(host.id) }) {
             Circle()
                 .fill(connected ? Color.green : host.enabled && core.misses > 0 ? Color.orange : Color.secondary.opacity(0.4))
@@ -142,14 +167,19 @@ struct PlaceColumn: View {
 
     /// One place's row: chosen by a press, its ⚙ at the right.
     private func row<Content: View>(key: String, chosen: Bool, choose: @escaping () -> Void,
-                                    settings: @escaping () -> Void,
+                                    settings: (() -> Void)?,
                                     @ViewBuilder content: () -> Content) -> some View {
         HStack(spacing: 8) {
             content()
-            Button(action: settings) { Image(systemName: "gearshape").font(.app(11)) }
-                .buttonStyle(.borderless)
-                .foregroundStyle(chosen ? Color.primary : Color.secondary)
-                .help(L10n[.Places.rowSettingsHelp])
+            if let settings {
+                Button(action: settings) { Image(systemName: "gearshape").font(.app(11)) }
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(chosen ? Color.primary : Color.secondary)
+                    .help(L10n[.Places.rowSettingsHelp])
+            } else {
+                // As wide as the ⚙ of the rows below, so the counts stand in one column.
+                Color.clear.frame(width: 14, height: 14)
+            }
         }
         .padding(.vertical, 6).padding(.horizontal, 10)
         .frame(maxWidth: .infinity, alignment: .leading)

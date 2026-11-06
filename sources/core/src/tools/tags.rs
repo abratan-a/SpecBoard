@@ -1,7 +1,5 @@
 //! The tool that puts tags on cards and takes them off, and makes, changes and lets go
-//! of the project's tag groups (`tag_update`; the Swift app's `MCPSurface.tags`,
-//! `MCPTools`' `set_tags` / `edit_tag_groups` and `Repository.applyTags`,
-//! `editTagGroup`, `setTagGroups`). A card's tags are its document's; the groups are the
+//! of the project's tag groups (`tag_update`). A card's tags are its document's; the groups are the
 //! project's, the same in every tree.
 
 use super::Seen;
@@ -115,6 +113,25 @@ pub(crate) fn tag_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Valu
             let changed = apply_tags(tx, scope, &add, &[name.to_string()], &[])?;
             out.insert("added".into(), changed.into());
         }
+        let mut answer = Value::Object(out);
+        if !add.is_empty() {
+            let seen = Seen::in_tx(tx, scope)?;
+            let project = seen.project();
+            let ids: Vec<String> = add
+                .iter()
+                .filter_map(|p| super::walk::locate(&project, p, None).ok())
+                .filter_map(|t| match t {
+                    super::walk::Target::Card(c) => Some(c.id.clone()),
+                    _ => None,
+                })
+                .collect();
+            drop(project);
+            drop(seen);
+            warn_exclusive(tx, scope, &ids, &mut answer)?;
+        }
+        let Value::Object(mut out) = answer else {
+            unreachable!()
+        };
         if !remove.is_empty() {
             let changed = apply_tags(tx, scope, &remove, &[], &[name.to_string()])?;
             out.insert("removed".into(), changed.into());
@@ -124,8 +141,42 @@ pub(crate) fn tag_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Valu
     })
 }
 
+/// What is said, as `warnings` of `answer`, of the cards `ids` holding two tags or more of an exclusive tag
+/// group: what the check (`tagGroupViolations`) would say of them later.
+pub(crate) fn warn_exclusive(
+    tx: &Tx,
+    scope: &Scope,
+    ids: &[String],
+    answer: &mut Value,
+) -> Result<(), String> {
+    let seen = Seen::in_tx(tx, scope)?;
+    let project = seen.project();
+    let paths: Vec<String> = ids
+        .iter()
+        .filter_map(|id| project.card(id))
+        .map(|c| project.full(c))
+        .collect();
+    let said: Vec<Value> = super::check::tag_group_violations(&project)
+        .into_iter()
+        .filter(|(_, at, count)| *count > 1 && paths.contains(at))
+        .map(|(group, at, count)| text!("tags.exclusive.twice", group, at, count).into())
+        .collect();
+    if said.is_empty() {
+        return Ok(());
+    }
+    if let Value::Object(body) = answer {
+        match body.get_mut("warnings").and_then(Value::as_array_mut) {
+            Some(list) => list.extend(said),
+            None => {
+                body.insert("warnings".into(), Value::Array(said));
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Tags put on and taken off the cards named, the others each carries kept, in one
-/// line of the history (`set_tags`, `Repository.applyTags`). Returns the cards whose
+/// line of the history (`set_tags`). Returns the cards whose
 /// tags changed, in full.
 fn apply_tags(
     tx: &mut Tx,
@@ -294,8 +345,7 @@ fn groups(tx: &Tx, project: &str) -> Result<Vec<Group>, String> {
 }
 
 /// One group: tags added and removed, its rule set, or the group itself gone; a name
-/// that is not there yet makes a new group (`edit_tag_groups`,
-/// `Repository.editTagGroup`).
+/// that is not there yet makes a new group (`edit_tag_groups`).
 fn edit_tag_group(
     tx: &mut Tx,
     scope: &Scope,
@@ -406,7 +456,7 @@ fn acyclic(groups: &[Group]) -> Result<(), String> {
     Ok(())
 }
 
-/// The project's groups, replacing what it had (`Repository.setTagGroups`). Group names and
+/// The project's groups, replacing what it had. Group names and
 /// tag names share one namespace: a group may name another as a member.
 fn set_tag_groups(tx: &mut Tx, scope: &Scope, all: &[Group]) -> Result<(), String> {
     if all.len() > TAG_GROUP_MAX_COUNT {
@@ -596,6 +646,11 @@ mod tests {
         assert_eq!(
             acyclic(&[group("a", &["b"]), group("b", &["a"])]).unwrap_err(),
             "グループが循環しています: a → b → a。グループは自分自身を含められません"
+        );
+        // One naming itself outright.
+        assert_eq!(
+            acyclic(&[group("a", &["a"])]).unwrap_err(),
+            "グループが循環しています: a → a。グループは自分自身を含められません"
         );
     }
 }

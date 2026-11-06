@@ -142,3 +142,110 @@ fn a_ghost_is_read_with_its_own_name() {
     assert_eq!(read["name"], "Buyer");
     assert_eq!(read["target"], "Schemas:Customer");
 }
+
+#[test]
+fn an_enums_value_is_found_by_its_description() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Status.paid", "value": {"description": "代金を受け取った"}}),
+    );
+    let found = hits(&core, "代金を受け");
+    assert!(
+        found
+            .iter()
+            .any(|h| h["card"] == "Schemas:Status" && h["where"] == "values.paid"),
+        "{found:?}"
+    );
+}
+
+#[test]
+fn a_flow_says_the_writings_that_mention_it() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Free:Links", "value": {"kind": "note", "body": "払うのは [[Charts/Shop:Checkout]]"}}),
+    );
+    let read = ok(
+        &core,
+        "card_read",
+        json!({"target": ["Charts/Shop:Checkout"], "value": {"include": ["used_by"]}}),
+    );
+    let mentioned = read["mentionedBy"].as_array().cloned().unwrap_or_default();
+    assert!(
+        mentioned.iter().any(|m| m["note"] == "Free:Links"),
+        "{read}"
+    );
+}
+
+#[test]
+fn the_rules_for_a_body_say_how_to_name_a_card_in_words_of_ones_own() {
+    let core = Core::open(script_store()).unwrap();
+    for place in ["note.body", "document.body", "card.entity.description"] {
+        let read = ok(
+            &core,
+            "project_read",
+            json!({"value": {"as": "rules", "place": place}}),
+        );
+        assert!(read.to_string().contains("[[パス|字]]"), "{place}: {read}");
+    }
+}
+
+#[test]
+fn a_field_and_a_value_say_what_uses_them_and_what_lands_on_them_when_asked() {
+    let core = Core::open(script_store()).unwrap();
+    let read = ok(
+        &core,
+        "card_read",
+        json!({"target": ["Schemas/Ordering:Order.total"], "value": {"include": ["used_by", "ref_by"]}}),
+    );
+    let used = read["usedBy"].as_array().cloned().unwrap_or_default();
+    assert!(
+        used.iter().any(|u| u["flow"] == "Charts/Shop:Checkout"),
+        "{read}"
+    );
+    let landed = read["referencedBy"].as_array().cloned().unwrap_or_default();
+    assert!(!landed.is_empty(), "{read}");
+    // An enum's value is not followed through the flows: asked by name, refused with where to look.
+    let (failed, said) = common::call(
+        &core,
+        "card_read",
+        json!({"project": "見本", "target": ["Schemas:Status.paid"], "value": {"include": ["used_by"]}}),
+    );
+    assert!(
+        failed && said.contains("card_list") && said.contains("paid"),
+        "{said}"
+    );
+}
+
+#[test]
+fn a_path_written_into_a_fields_a_sections_or_the_projects_description_that_does_not_resolve_is_warned()
+ {
+    let core = Core::open(script_store()).unwrap();
+    let written = [
+        ok(
+            &core,
+            "card_update",
+            json!({"target": "Schemas:Customer.name", "value": {"description": "[[Nope:Field]] を見る"}}),
+        ),
+        ok(
+            &core,
+            "section_update",
+            json!({"target": "Schemas", "value": {"description": "[[Nope:Section]] を見る"}}),
+        ),
+        ok(
+            &core,
+            "project_update",
+            json!({"value": {"description": "[[Nope:Project]] を見る"}}),
+        ),
+    ];
+    for (said, path) in written
+        .iter()
+        .zip(["Nope:Field", "Nope:Section", "Nope:Project"])
+    {
+        let warnings = said["warnings"].to_string();
+        assert!(warnings.contains(path), "{path}: {said}");
+    }
+}

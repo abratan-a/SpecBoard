@@ -84,6 +84,19 @@ nonisolated enum Subprocess {
         process.standardInput = FileHandle.nullDevice
         process.standardOutput = FileHandle.nullDevice
         process.standardError = err
+        // Drained as it is written, not after it ends: a child that says more than the pipe holds (64 KB)
+        // would otherwise wait on the pipe until the limit stops it.
+        let drained = Drained()
+        err.fileHandleForReading.readabilityHandler = { handle in
+            // Read under the lock that closing takes, and with `read` rather than `availableData`: a call already
+            // running when the pipe is let go would otherwise read a pipe made non-blocking or closed, which
+            // `availableData` raises on (and the app ends).
+            drained.reading {
+                var chunk = [UInt8](repeating: 0, count: 4096)
+                let count = read(handle.fileDescriptor, &chunk, chunk.count)
+                if count > 0 { drained.append(Data(chunk[..<count])) } else { handle.readabilityHandler = nil }
+            }
+        }
         try process.run()
         try? err.fileHandleForWriting.close()
 
@@ -96,12 +109,53 @@ nonisolated enum Subprocess {
                 _ = ended(process, within: grace)
             }
         }
-        let said = buffered(err.fileHandleForReading)
-        try? err.fileHandleForReading.close()
+        err.fileHandleForReading.readabilityHandler = nil
+        drained.close {
+            drained.append(buffered(err.fileHandleForReading))
+            try? err.fileHandleForReading.close()
+        }
+        let said = drained.data
         guard !process.isRunning else {
             return Outcome(status: -1, out: Data(), err: said, timedOut: true)
         }
         return Outcome(status: process.terminationStatus, out: Data(), err: said, timedOut: timedOut)
+    }
+
+    /// What a pipe has said so far, up to 64 KB — what comes past that is read and let go of, so the writer
+    /// is never held — appended from the pipe's own queue.
+    private final class Drained: @unchecked Sendable {
+        private let lock = NSLock()
+        private var held = Data()
+        /// Taken while the pipe is read and while it is let go, so neither happens in the middle of the other.
+        private let pipe = NSLock()
+        private var closed = false
+
+        /// `body` run while the pipe is still open; nothing once it was let go.
+        func reading(_ body: () -> Void) {
+            pipe.lock()
+            defer { pipe.unlock() }
+            if !closed { body() }
+        }
+
+        /// `body`, the pipe let go, run once no read is in the middle of it; no read runs after.
+        func close(_ body: () -> Void) {
+            pipe.lock()
+            defer { pipe.unlock() }
+            closed = true
+            body()
+        }
+
+        func append(_ chunk: Data) {
+            lock.lock()
+            defer { lock.unlock() }
+            held.append(chunk.prefix(max(0, 65_536 - held.count)))
+        }
+
+        var data: Data {
+            lock.lock()
+            defer { lock.unlock() }
+            return held
+        }
     }
 
     /// Whether `process` has ended, waited for up to `seconds`.

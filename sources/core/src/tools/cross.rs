@@ -80,6 +80,12 @@ fn done_of(project: &Project, card: &Card) -> Option<(String, Value, bool)> {
     Some((field.name.clone(), now, done))
 }
 
+/// Whether `card` itself is done by its kind's done field (a task's `done`, a goal's finished status), whatever
+/// holds it.
+pub(crate) fn done_itself(project: &Project, card: &Card) -> bool {
+    done_of(project, card).is_some_and(|(_, _, done)| done)
+}
+
 /// Whether a card is done, or inside a container that is (a task in a goal finished).
 pub(crate) fn finished(project: &Project, card: &Card) -> bool {
     let mut at = Some(card);

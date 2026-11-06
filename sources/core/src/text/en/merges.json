@@ -5,5 +5,6 @@
   "merges.take.noConflictNone": "none",
   "merges.take.shape": "take \"{path}\" must be {\"<unit>\": \"source\" | \"target\"}",
   "merges.take.side": "take \"{path}\" \"{unit}\" must be source or target",
+  "merges.take.targetIsInto": "take for {unit} of {path}: into takes the merge's target and source its source (target cannot be used: the call's own target is the source)",
   "merges.take.unitOf": "{unit} of {path}"
 }

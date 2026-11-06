@@ -70,7 +70,7 @@ struct StatusBand: View {
     /// How many agents are connected, after a dot red while an agent's own cannot answer MCP, green while
     /// one does, grey while none does; what each says on the pointer. Only said: nothing to press.
     private var agents: some View {
-        Self.widest(["No Agents Connected", "99 Agents Connected"]) {
+        Self.widest([L10n[.MCP.agentsNone], L10n[.MCP.agentsCount(99)]]) {
             Text(light.agents)
         }
         .padding(.leading, 12)

@@ -36,6 +36,10 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
     /// on its map, which draws the parts as the page the core builds of them (`CardCanvasView.drawsParts`).
     /// Only where a project's tree puts one; the sections inside it are ui too.
     case ui
+    /// A whiteboard (`specboard://SpecBoard/Docs/Design:CardKinds`「ホワイトボード（whiteboard）」): sketches, notes and
+    /// SVGs joined by arrows, a design's ideas explained as a picture. Opened on its map, which draws a sketch as
+    /// its shape and a note as a sticky (`CardCanvasView.drawsSketches`).
+    case whiteboard
 
     /// The built-in kinds a section directly under main's root may be of — what a new project has
     /// there (Docs・Schemas・Definitions・Charts・Free). Which are there, and in what order, is each
@@ -79,6 +83,7 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
         case .free: Set(SchemaKind.made).subtracting([.frame])
         case .board, .complete, .cancelled: [.freedoc, .note, .goal, .task]
         case .ui: [.html, .svg, .note, .frame]
+        case .whiteboard: [.sketch, .note, .svg, .image]
         }
     }
 
@@ -301,9 +306,7 @@ struct SchemaDirectory {
     let ghosts: [CardGhost]
     /// Whether a section may be named by its own name alone when only one has it
     /// (`Rules` for `Tenant/Rules`). Off: with the same name in two places it rarely
-    /// resolves, and where it does the reader has to guess which. Only
-    /// `Repository.qualifyLeafPaths` reads paths written that old way, once, to
-    /// write them out in full.
+    /// resolves, and where it does the reader has to guess which.
     var leavesAllowed = false
     /// Whether a tree may be named the old way, by its root's name and `/`
     /// (`Main/Core`, `refunds/Store`). Off: that is refused with the way it is written

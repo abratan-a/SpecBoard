@@ -614,7 +614,9 @@ impl Sequence {
             if open_box.is_none()
                 && let (Some(id), Some(name)) = (group, &p.group_name)
             {
-                lines.push(format!("    box {}", safe(name)));
+                // `transparent` first: mermaid reads a box's first word as its colour when it
+                // names one, and an actor called "Gray …" would lose that word.
+                lines.push(format!("    box transparent {}", safe(name)));
                 open_box = Some(id);
             }
             lines.push(format!(
@@ -1253,10 +1255,6 @@ impl<'p, 'a> Builder<'p, 'a> {
                 _ => (4, 0, i),
             }
         });
-        let mut order = vec![0; places.len()];
-        for (at, &i) in places.iter().enumerate() {
-            order[i] = at;
-        }
         let drawn_actors: Vec<&str> = self
             .participants
             .iter()
@@ -1270,22 +1268,51 @@ impl<'p, 'a> Builder<'p, 'a> {
                 .iter()
                 .any(|&o| o != s && self.actors.contains(s, o))
         };
+        let own_of = |i: usize| {
+            let p = &self.participants[i];
+            p.role == "actor" && p.section.as_deref().is_some_and(opened)
+        };
+        let group_of = |i: usize| -> Option<String> {
+            let p = &self.participants[i];
+            (p.role == "actor")
+                .then(|| {
+                    p.section.as_deref().and_then(|s| {
+                        if own_of(i) {
+                            Some(s.to_string())
+                        } else {
+                            self.actors.parent_actor(s)
+                        }
+                    })
+                })
+                .flatten()
+        };
+        // One bracket an actor: the lifelines it holds side by side, where the first of them is,
+        // so that it is not drawn twice.
+        let groups: Vec<Option<String>> = places.iter().map(|&i| group_of(i)).collect();
+        let mut together = Vec::with_capacity(places.len());
+        let mut taken = vec![false; places.len()];
+        for at in 0..places.len() {
+            if taken[at] {
+                continue;
+            }
+            for k in at..places.len() {
+                if !taken[k] && (k == at || (groups[at].is_some() && groups[k] == groups[at])) {
+                    together.push(places[k]);
+                    taken[k] = true;
+                }
+            }
+        }
+        let places = together;
+        let mut order = vec![0; places.len()];
+        for (at, &i) in places.iter().enumerate() {
+            order[i] = at;
+        }
         let drawn = places
             .iter()
             .map(|&i| {
                 let p = &self.participants[i];
-                let own = p.role == "actor" && p.section.as_deref().is_some_and(opened);
-                let group = (p.role == "actor")
-                    .then(|| {
-                        p.section.as_deref().and_then(|s| {
-                            if own {
-                                Some(s.to_string())
-                            } else {
-                                self.actors.parent_actor(s)
-                            }
-                        })
-                    })
-                    .flatten();
+                let own = own_of(i);
+                let group = group_of(i);
                 Drawn {
                     label: match (&p.with_section, shared[p.label.as_str()]) {
                         (Some(longer), n) if n > 1 => longer.clone(),
@@ -2391,6 +2418,25 @@ impl<'p, 'a> Builder<'p, 'a> {
     }
 
     /// A way that only fails, as one line on this flow's lifeline: the way, how it ends and — when
+    /// A wait's note: what it waits for, and until when.
+    fn wait_note(&mut self, node: &FlowNode) -> Item {
+        let what = if node.wait_for.as_deref() == Some("event") {
+            node.event
+                .as_ref()
+                .map(|e| text!("charts.event.of", flow = e.flow, outcome = e.outcome))
+        } else {
+            node.wait_for.clone()
+        };
+        let what = what.unwrap_or_default();
+        self.note(
+            match node.timeout.as_deref() {
+                Some(timeout) => text!("charts.note.waitUntil", what, timeout),
+                None => format!("wait {what}"),
+            },
+            NoteKind::Plain,
+        )
+    }
+
     /// someone waits for the flow — to whom that goes.
     fn mark(&mut self, way: String, end: &str) -> Item {
         let node = self.by_name.get(end).copied();
@@ -2399,10 +2445,12 @@ impl<'p, 'a> Builder<'p, 'a> {
             .unwrap_or_else(|| "end".into());
         // Inside the bar of a call on its caller's own lifeline, the way back is the end of that bar.
         let back = if self.has_caller {
+            let mut seen = std::collections::HashSet::new();
             let to: Vec<String> = self
                 .begins_partners()
                 .iter()
                 .filter(|o| !(self.unfolded && o.at == self.me))
+                .filter(|o| seen.insert(o.at))
                 .map(|o| self.participants[o.at].label.clone())
                 .collect();
             if to.is_empty() {
@@ -2585,6 +2633,9 @@ impl<'p, 'a> Builder<'p, 'a> {
                 if node.kind == "run" {
                     items.extend(self.run(node));
                 }
+                if node.kind == "wait" {
+                    items.push(self.wait_note(node));
+                }
                 let meet = self.meeting(&node.nexts);
                 let mut until = stops.clone();
                 if let Some(m) = &meet {
@@ -2595,12 +2646,53 @@ impl<'p, 'a> Builder<'p, 'a> {
                     .iter()
                     .map(|way| (String::new(), self.walk(Some(way.clone()), &until)))
                     .collect();
-                items.push(Item::Block {
+                let par = Item::Block {
                     kind: "par",
                     sections,
                     origin: self.origin_of(&name),
                     frame: None,
-                });
+                };
+                // Its time running out, or its failing, drawn as when it goes on one way: a mark or a
+                // break where that stops in failure at once, else its own way beside the ones on.
+                let (late, on_label, late_label) = match node.kind.as_str() {
+                    "wait" => (
+                        node.on_timeout.clone(),
+                        text!("charts.way.inTime"),
+                        text!("charts.way.timeout"),
+                    ),
+                    "run" => (
+                        node.on_error.clone(),
+                        text!("charts.way.success"),
+                        text!("charts.way.failure"),
+                    ),
+                    _ => (None, String::new(), String::new()),
+                };
+                match late.filter(|l| !node.nexts.contains(l)) {
+                    None => items.push(par),
+                    Some(late) if self.fails_bare(Some(&late)) => {
+                        items.push(par);
+                        items.push(self.mark(late_label, &late));
+                    }
+                    Some(late) if self.failing(Some(&late)) => {
+                        items.push(par);
+                        let stop = self.stop(&late);
+                        items.push(Item::Block {
+                            kind: "break",
+                            sections: vec![(late_label, stop)],
+                            origin: self.origin_of(&name),
+                            frame: None,
+                        });
+                    }
+                    Some(late) => {
+                        let late_items = self.walk(Some(late), &until);
+                        items.push(Item::Block {
+                            kind: "alt",
+                            sections: vec![(on_label, vec![par]), (late_label, late_items)],
+                            origin: self.origin_of(&name),
+                            frame: None,
+                        });
+                    }
+                }
                 current = meet
                     .as_deref()
                     .and_then(|m| self.by_name.get(m))
@@ -2672,21 +2764,7 @@ impl<'p, 'a> Builder<'p, 'a> {
                     current = None;
                 }
                 "wait" => {
-                    let what = if node.wait_for.as_deref() == Some("event") {
-                        node.event
-                            .as_ref()
-                            .map(|e| text!("charts.event.of", flow = e.flow, outcome = e.outcome))
-                    } else {
-                        node.wait_for.clone()
-                    };
-                    let what = what.unwrap_or_default();
-                    items.push(self.note(
-                        match node.timeout.as_deref() {
-                            Some(timeout) => text!("charts.note.waitUntil", what, timeout),
-                            None => format!("wait {what}"),
-                        },
-                        NoteKind::Plain,
-                    ));
+                    items.push(self.wait_note(node));
                     current = next.clone();
                     let back = |to: &String| self.silent.contains(&(name.clone(), to.clone()));
                     let late = node

@@ -3,6 +3,7 @@
   "batch.asks.more": "{count} more steps",
   "batch.broken.targetGone": "What {via} of {at} points to is missing",
   "batch.broken.unresolved": "\"{path}\" in {via} of {at} does not resolve. {hint}",
+  "batch.changes.more": "and {count} more",
   "batch.failed.added": "steps[{step}] ({tool}) does not go through: {error}. Nothing was staged",
   "batch.failed.earlier": "{step}, staged earlier, does not go through in the project as it is now: {error}. Nothing was staged",
   "batch.failed.later": ". \"{path}\" is made by the later steps[{later}] ({tool}). Steps run in order, so put the step that makes it first (a flow's nodes made in one card_create, with no target and value keyed by path, may point at each other in any order)",

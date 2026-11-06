@@ -38,6 +38,9 @@ pub(super) struct Gathered {
     lines: HashMap<Key, Vec<Said>>,
     rows: HashMap<Key, Vec<(Table, String, Option<String>)>>,
     seen: HashSet<(Key, Table, String)>,
+    /// The branch's frozen copies of main it let go of or put back, each as it was before (`frozen`).
+    frozen: HashMap<Key, Vec<(String, String, Option<String>)>>,
+    frozen_seen: HashSet<(Key, String, String)>,
     kinds: HashMap<Key, String>,
     pub(super) written: Vec<(String, Keyed)>,
 }
@@ -270,6 +273,41 @@ impl Gathered {
         Ok(())
     }
 
+    /// A branch's frozen copy of main (`branch_frozen`, of the table `tbl`) as it was before the
+    /// transaction first changed it: its document and when it was frozen, none where there was none.
+    /// Kept beside the rows, as the table `frozen:<tbl>`, so that going back puts it back too.
+    pub(super) fn frozen_before(
+        &mut self,
+        conn: &Connection,
+        project: &str,
+        tree: &str,
+        tbl: &str,
+        id: &str,
+    ) -> Result<(), String> {
+        let key = (project.to_string(), tree.to_string());
+        if !self
+            .frozen_seen
+            .insert((key.clone(), tbl.to_string(), id.to_string()))
+        {
+            return Ok(());
+        }
+        self.touch(&key);
+        let was = conn
+            .query_row(
+                "SELECT doc, at FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = ? AND id = ?",
+                params![project, tree, tbl, id],
+                |r| Ok((r.get::<_, Option<String>>(0)?, r.get::<_, Option<String>>(1)?)),
+            )
+            .optional()
+            .map_err(db)?
+            .map(|(doc, at)| serde_json::json!({"doc": doc, "at": at}).to_string());
+        self.frozen
+            .entry(key)
+            .or_default()
+            .push((tbl.to_string(), id.to_string(), was));
+        Ok(())
+    }
+
     /// The commits, written: one per tree the transaction wrote. A write to a tree the
     /// other side holds is refused, and so the whole transaction; the window's writes to
     /// a tree it holds are added to the one commit it makes.
@@ -279,9 +317,10 @@ impl Gathered {
         for key in &self.order {
             let (project, tree) = key;
             let changed = self.rows.get(key).map(Vec::as_slice).unwrap_or(&[]);
+            let frozen = self.frozen.get(key).map(Vec::as_slice).unwrap_or(&[]);
             let said = self.lines.get(key).map(Vec::as_slice).unwrap_or(&[]);
             let kind = self.kinds.get(key);
-            let wrote = !changed.is_empty() || !said.is_empty();
+            let wrote = !changed.is_empty() || !frozen.is_empty() || !said.is_empty();
             // A mark alone makes a commit only when it is what happened (an export).
             if !wrote && !kind.is_some_and(|k| STANDS_ALONE.contains(&k.as_str())) {
                 continue;
@@ -367,9 +406,53 @@ impl Gathered {
                 )
                 .map_err(db)?;
             }
+            for (tbl, row_id, before) in frozen {
+                conn.execute(
+                    "INSERT OR IGNORE INTO commit_rows (commit_id, tbl, row_id, before) VALUES (?, ?, ?, ?)",
+                    params![id, format!("{FROZEN_PREFIX}{tbl}"), row_id, before],
+                )
+                .map_err(db)?;
+            }
         }
         Ok(())
     }
+}
+
+/// What the table of a commit's row is called when it is a branch's frozen copy of main: an app
+/// of before reads no table of that name, and passes it by.
+const FROZEN_PREFIX: &str = "frozen:";
+
+/// The frozen copies the commits `ids` (oldest first) let go of or put back, each as it was before
+/// the first of them that did: (its table, its id, what it was).
+fn frozen_of(
+    conn: &Connection,
+    ids: &[&str],
+) -> Result<Vec<(String, String, Option<String>)>, String> {
+    let mut stmt = conn
+        .prepare("SELECT tbl, row_id, before FROM commit_rows WHERE commit_id = ? AND tbl LIKE 'frozen:%'")
+        .map_err(db)?;
+    let mut seen = HashSet::new();
+    let mut out = Vec::new();
+    for id in ids {
+        let rows = stmt
+            .query_map([id], |r| {
+                Ok((
+                    r.get::<_, String>(0)?,
+                    r.get::<_, String>(1)?,
+                    r.get::<_, Option<String>>(2)?,
+                ))
+            })
+            .map_err(db)?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(db)?;
+        for (tbl, row, before) in rows {
+            let tbl = tbl.trim_start_matches(FROZEN_PREFIX).to_string();
+            if seen.insert((tbl.clone(), row.clone())) {
+                out.push((tbl, row, before));
+            }
+        }
+    }
+    Ok(out)
 }
 
 fn exists(conn: &Connection, query: &str, id: &str) -> Result<bool, String> {
@@ -545,26 +628,25 @@ impl Tx<'_> {
         if let Some(author) = only_by {
             // Another's that wrote no card nor section (the lock put on or taken off) is not
             // undone by going back: not counted.
-            let wrote = |commit: &str| -> bool {
-                self.tx
+            let wrote = |commit: &str| -> Result<bool, String> {
+                Ok(self
+                    .tx
                     .query_row(
                         "SELECT 1 FROM commit_rows WHERE commit_id = ? LIMIT 1",
                         [commit],
                         |_| Ok(()),
                     )
                     .optional()
-                    .ok()
-                    .flatten()
-                    .is_some()
+                    .map_err(db)?
+                    .is_some())
             };
-            let others: Vec<String> = range
-                .iter()
-                .filter(|c| &c.author != author && wrote(&c.id))
-                .map(|c| {
+            let mut others: Vec<String> = Vec::new();
+            for c in &range {
+                if &c.author != author && wrote(&c.id)? {
                     let who = author_said(&c.author.kind, c.author.name.as_deref());
-                    text!("history.revert.otherCommit", seq = c.seq, who)
-                })
-                .collect();
+                    others.push(text!("history.revert.otherCommit", seq = c.seq, who));
+                }
+            }
             if !others.is_empty() {
                 return Err(text!(
                     "history.revert.othersIn",
@@ -623,6 +705,7 @@ impl Tx<'_> {
         seq: i64,
         only_by: Option<&Author>,
     ) -> Result<usize, String> {
+        self.refuse_result(project, tree)?;
         if tree.is_empty() && self.locked_at(project)?.is_some() {
             return Err(locked_revert());
         }
@@ -680,10 +763,22 @@ impl Tx<'_> {
                 )
                 .map_err(db)?;
         }
+        // The frozen copies of main the range let go of, as they were before it.
+        let ids: Vec<&str> = range.iter().map(|c| c.0.as_str()).collect();
+        for (tbl, id, before) in frozen_of(&self.tx, &ids)? {
+            self.put_frozen_back(project, tree, &tbl, &id, before.as_deref())?;
+        }
         for commit in &range {
             self.tx
                 .execute("UPDATE commits SET reverted = 1 WHERE id = ?", [&commit.0])
                 .map_err(db)?;
+        }
+        // A merge undone here undoes its setting aside too: else the branch would be let go of
+        // for good once nothing remembers the merge.
+        if tree.is_empty() {
+            let commits: Vec<String> = range.iter().map(|c| c.0.clone()).collect();
+            let asides = self.asides(project, &commits)?;
+            self.restore_asides(project, &asides)?;
         }
         self.mark(project, tree, "revert");
         self.line(
@@ -792,6 +887,17 @@ impl Tx<'_> {
     pub fn cut(&mut self, project: &str, tree: &str, seq: i64) -> Result<usize, String> {
         if !exists_seq(&self.tx, project, tree, seq)? {
             return Err(text!("history.commit.none", seq));
+        }
+        // A group being put right goes back to where it began when given up: that commit stays.
+        if let Some(began) = self
+            .holds(project, tree)?
+            .iter()
+            .filter(|h| h.holder == "screen")
+            .map(|h| h.from_seq)
+            .min()
+            && seq > began
+        {
+            return Err(text!("history.cut.groupOn", began));
         }
         let cut = self
             .tx
@@ -1059,7 +1165,9 @@ impl Tx<'_> {
             return Err(text!("history.commit.noneOrCut", seq));
         };
         let rows = around(&self.tx, project, tree, seq)?;
-        if rows.is_empty() {
+        // A commit that only let go of frozen copies (main taken in where the branch wrote none of
+        // what main changed) wrote something all the same.
+        if rows.is_empty() && frozen_of(&self.tx, &[&commit.id])?.is_empty() {
             return Err(text!("history.undo.wroteNothing", seq));
         }
         let by = Author {
@@ -1159,10 +1267,70 @@ impl Tx<'_> {
         if !conflicts.is_empty() {
             return Ok((commit, Err(conflicts)));
         }
-        if undoing.is_empty() {
+        if undoing.is_empty() && self.frozen_back(project, tree, &commit)?.is_empty() {
             return Err(text!("history.undo.already", seq));
         }
         Ok((commit, Ok(undoing)))
+    }
+
+    /// The frozen copies of main the commit let go of or put back, each as it was before it, where
+    /// it is not so now: what undoing it alone puts as it was. Not one a later commit of the branch
+    /// let go of or put back again, nor any once the branch took main in since (it sees main as it
+    /// is now from there on).
+    fn frozen_back(
+        &self,
+        project: &str,
+        tree: &str,
+        commit: &Commit,
+    ) -> Result<Vec<(String, String, Option<String>)>, String> {
+        if !is_branch(tree) {
+            return Ok(Vec::new());
+        }
+        let taken_since = self
+            .tx
+            .query_row(
+                "SELECT 1 FROM commits c JOIN commit_lines l ON l.commit_id = c.id
+                 WHERE c.project_id = ? AND c.branch_id = ? AND c.seq > ? AND l.kind = 'branch.merge' AND l.target_id = ?",
+                params![project, tree, commit.seq, project],
+                |_| Ok(()),
+            )
+            .optional()
+            .map_err(db)?
+            .is_some();
+        if taken_since {
+            return Ok(Vec::new());
+        }
+        let mut out = Vec::new();
+        for (tbl, id, before) in frozen_of(&self.tx, &[&commit.id])? {
+            let again = self
+                .tx
+                .query_row(
+                    "SELECT 1 FROM commits c JOIN commit_rows r ON r.commit_id = c.id
+                     WHERE c.project_id = ? AND c.branch_id = ? AND c.seq > ? AND r.tbl = ? AND r.row_id = ?",
+                    params![project, tree, commit.seq, format!("{FROZEN_PREFIX}{tbl}"), id],
+                    |_| Ok(()),
+                )
+                .optional()
+                .map_err(db)?
+                .is_some();
+            if again {
+                continue;
+            }
+            let now = self
+                .tx
+                .query_row(
+                    "SELECT doc, at FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = ? AND id = ?",
+                    params![project, tree, tbl, id],
+                    |r| Ok((r.get::<_, Option<String>>(0)?, r.get::<_, Option<String>>(1)?)),
+                )
+                .optional()
+                .map_err(db)?
+                .map(|(doc, at)| serde_json::json!({"doc": doc, "at": at}).to_string());
+            if now != before {
+                out.push((tbl, id, before));
+            }
+        }
+        Ok(out)
     }
 
     /// The commit `seq` of the tree undone alone, git's revert of one commit (`specboard://SpecBoard/Docs/Design:DesignBranches`
@@ -1178,11 +1346,13 @@ impl Tx<'_> {
         only_by: Option<&Author>,
         asked: bool,
     ) -> Result<UndoOne, String> {
+        self.refuse_result(project, tree)?;
         let (commit, work) = self.undo_work(project, tree, seq, only_by)?;
         let undoing = match work {
             Ok(rows) => rows,
             Err(conflicts) => return Ok(UndoOne::Conflicts(conflicts)),
         };
+        let frozen = self.frozen_back(project, tree, &commit)?;
         let hidden = self.hidden(project, tree)?;
         let names = self.paths_before(project, tree, seq)?;
         // Out of the way first, so names that change hands within the commit do not meet: a row of
@@ -1229,6 +1399,9 @@ impl Tx<'_> {
                     e
                 }
             })?;
+        }
+        for (tbl, id, before) in &frozen {
+            self.put_frozen_back(project, tree, tbl, id, before.as_deref())?;
         }
         self.undo_holds(project, tree, &puts, &names)?;
         self.undo_overlaps(project, tree, &hidden, &names)?;
@@ -1478,6 +1651,20 @@ impl Tx<'_> {
     /// The branches the merges among `commits` set aside, named on the branch `id` that undoes them:
     /// they come back when it is merged (`bring_back`).
     fn asides_of(&mut self, project: &str, id: &str, commits: &[String]) -> Result<(), String> {
+        let asides = self.asides(project, commits)?;
+        if !asides.is_empty() {
+            self.tx
+                .execute(
+                    "UPDATE branches SET reverts = ? WHERE id = ?",
+                    params![Value::from(asides).to_string(), id],
+                )
+                .map_err(db)?;
+        }
+        Ok(())
+    }
+
+    /// The branches the merges among `commits` set aside, still set aside.
+    fn asides(&mut self, project: &str, commits: &[String]) -> Result<Vec<String>, String> {
         let mut asides: Vec<String> = Vec::new();
         {
             let mut stmt = self
@@ -1500,15 +1687,7 @@ impl Tx<'_> {
                 }
             }
         }
-        if !asides.is_empty() {
-            self.tx
-                .execute(
-                    "UPDATE branches SET reverts = ? WHERE id = ?",
-                    params![Value::from(asides).to_string(), id],
-                )
-                .map_err(db)?;
-        }
-        Ok(())
+        Ok(asides)
     }
 }
 

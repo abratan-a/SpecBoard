@@ -380,7 +380,7 @@ pub(crate) fn connected<'a>(
         }
         if names.is_empty() {
             let text = if holder.kind == "formatdoc" {
-                crate::export::rows_markdown(&holder.rows, false, &mut |r| {
+                crate::export::rows_markdown(&holder.rows, crate::export::RowNames::No, &mut |r| {
                     (r.kind == "text").then(|| r.body.clone())
                 })
             } else if holder.kind == "stackdoc" {

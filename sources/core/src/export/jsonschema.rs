@@ -174,6 +174,26 @@ impl Writer<'_, '_> {
                 leaf.insert("items".into(), Value::Object(item));
             }
             leaf.insert("type".into(), json!(list));
+        } else if !field.is_array
+            && !field.also.is_empty()
+            && let Some(Value::String(r)) = leaf.get("$ref").cloned()
+        {
+            // A shape it has inside, or the other types it takes (null too where it may be), as
+            // the instance check takes them: a list is of the shape, and no other object is.
+            let others: Vec<String> = super::data::type_list("", &field.also, field.is_nullable)
+                .into_iter()
+                .filter(|t| !t.is_empty() && t != "object" && t != "array")
+                .collect();
+            let mut any = vec![json!({"$ref": r})];
+            if !others.is_empty() {
+                any.push(json!({"type": super::data::one_or_list(others)}));
+            }
+            if field.also.iter().any(|t| t == "array") {
+                any.push(json!({"type": "array", "items": {"$ref": r}}));
+            }
+            let mut replaced = Map::new();
+            replaced.insert("anyOf".into(), Value::Array(any));
+            leaf = replaced;
         } else if field.is_nullable && !field.is_array {
             if let Some(Value::String(t)) = leaf.get("type").cloned() {
                 leaf.insert("type".into(), json!([t, "null"]));
@@ -249,12 +269,16 @@ impl Writer<'_, '_> {
 
         let mut wrapped = if field.is_array {
             let mut w = Map::new();
-            // Null is the array's, not its elements'.
-            if field.is_nullable {
-                w.insert("type".into(), json!(["array", "null"]));
-            } else {
-                w.insert("type".into(), "array".into());
-            }
+            // Null is the array's, not its elements', and so are the other types it takes.
+            // An element with a shape of its own takes no other object, as the instance check.
+            let also: Vec<String> = field
+                .also
+                .iter()
+                .filter(|t| !(*t == "object" && (field.is_ref() || field.is_object())))
+                .cloned()
+                .collect();
+            let types = super::data::type_list("array", &also, field.is_nullable);
+            w.insert("type".into(), super::data::one_or_list(types));
             w.insert("items".into(), Value::Object(leaf));
             w
         } else {
@@ -366,9 +390,13 @@ pub fn build(card: &Card, project: &Project, placement: Option<&Placement>) -> V
                     .map(|p| {
                         let mut out = Map::new();
                         out.insert("name".into(), p.name.clone().into());
-                        out.insert("excludes".into(), strings(&p.excludes));
+                        // Paths said as the schema and the field, as a rule's are: no app path.
+                        out.insert(
+                            "excludes".into(),
+                            Value::Array(p.excludes.iter().map(|e| writer.pointer(e)).collect()),
+                        );
                         if let Some(v) = &p.value_at {
-                            out.insert("valueAt".into(), v.clone().into());
+                            out.insert("valueAt".into(), writer.pointer(v));
                         }
                         if !p.signed_by.is_empty() {
                             out.insert(

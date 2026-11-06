@@ -344,7 +344,7 @@ fn an_implementation_s_line_lands_at_a_function_kept_as_the_file_and_where_in_it
             .contains(&json!({"path": format!("{ORDER}.id"), "at": "Order.discount"})),
         "{file}"
     );
-    // What may be drawn to it: the implementation's line alone; none from it.
+    // What may be drawn to it: the implementation's line and the tests' line; none from it.
     let kinds = ok(
         &core,
         "card_read",
@@ -356,7 +356,7 @@ fn an_implementation_s_line_lands_at_a_function_kept_as_the_file_and_where_in_it
         .iter()
         .filter_map(|l| l["line"].as_str())
         .collect();
-    assert_eq!(names, ["implementedBy"], "{kinds}");
+    assert_eq!(names, ["implementedBy", "testedBy"], "{kinds}");
     refused(
         &core,
         "card_read",

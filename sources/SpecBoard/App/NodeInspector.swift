@@ -50,10 +50,11 @@ struct NodeInspector: View {
                     Button(L10n[.Nodes.buttonOpenTarget(shown(target))]) { model.open(path: target, from: home) }
                 }
                 Spacer()
-                Button(L10n[.Flow.menuDeleteNode], role: .destructive) {
+                Button(role: .destructive) {
                     model.clearRow()
                     model.setFlowNodes(flow.id, FlowEditing.remove(node.name, from: flow.nodes))
-                }
+                } label: { Label(L10n[.Flow.menuDeleteNode], systemImage: "trash") }
+                .buttonStyle(.borderless)
                 .help(L10n[.Nodes.helpDeleteNode])
             }
             .controlSize(.small)
@@ -115,11 +116,13 @@ struct NodeInspector: View {
                 }
                 .padding(6).background(RoundedRectangle(cornerRadius: 6).fill(Color.secondary.opacity(0.06)))
             }
-            Button(L10n[.Nodes.buttonAddBranch]) {
-                guard let first = others.first else { return }
-                change { $0.branches.append(FlowBranch(when: L10n[.Nodes.defaultCondition], next: first)) }("")
-            }
-            .controlSize(.small).disabled(others.isEmpty)
+            // Where it goes is picked first: a branch is a line, and a line goes somewhere.
+            Menu {
+                ForEach(FlowBranches.targets(of: node, among: flow.nodes.map(\.name)), id: \.self) { name in
+                    Button(name) { change { node, _ in node = FlowBranches.adding(to: node, next: name) }("") }
+                }
+            } label: { Label(L10n[.Nodes.buttonAddBranch], systemImage: "plus") }
+            .menuStyle(.borderlessButton).fixedSize().font(.app(11.5)).disabled(others.isEmpty)
             way("else", node.otherwise, help: L10n[.Nodes.helpElse]) { value in change { $0.otherwise = value }("") }
         case "wait":
             row("for", help: L10n[.Nodes.helpWaitFor]) {
@@ -353,11 +356,9 @@ struct NodeInspector: View {
     @ViewBuilder
     private func way(_ title: String?, _ value: String?, optional: Bool = false, help: String = "",
                      _ set: @escaping (String?) -> Void) -> some View {
-        let picker = Picker("", selection: Binding(get: { value ?? "" }, set: { set($0.isEmpty ? nil : $0) })) {
-            Text(optional ? L10n[.Common.wordNone] : L10n[.Nodes.wordUndecided]).tag("")
-            ForEach(others, id: \.self) { Text($0).tag($0) }
-        }
-        .labelsHidden()
+        let picker = ChoiceMenu(options: [("", optional ? L10n[.Common.wordNone] : L10n[.Nodes.wordUndecided])] + others.map { ($0, $0) },
+                                selection: Binding(get: { value ?? "" }, set: { set($0.isEmpty ? nil : $0) }))
+            .fixedSize()
         if let title { row(title, help: help) { picker } } else { picker }
     }
 
@@ -377,10 +378,9 @@ struct NodeInspector: View {
 
     private func choice(_ value: String?, _ options: [String], words: [String: String], none: String? = nil,
                         _ set: @escaping (String?) -> Void) -> some View {
-        Picker("", selection: Binding(get: { value ?? "" }, set: { set($0.isEmpty ? nil : $0) })) {
-            if let none { Text(none).tag("") } else if value == nil { Text(L10n[.Nodes.wordUndecided]).tag("") }
-            ForEach(options, id: \.self) { Text(words[$0] ?? $0).tag($0) }
-        }
-        .labelsHidden()
+        let empty: [(value: String, text: String)] = none.map { [("", $0)] } ?? (value == nil ? [("", L10n[.Nodes.wordUndecided])] : [])
+        return ChoiceMenu(options: empty + options.map { ($0, words[$0] ?? $0) },
+                          selection: Binding(get: { value ?? "" }, set: { set($0.isEmpty ? nil : $0) }))
+            .fixedSize()
     }
 }

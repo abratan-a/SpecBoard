@@ -18,6 +18,7 @@
   "export.data.pathNeeded": "The path of a field or an element is needed",
   "export.embed.flowShape": "A flow's diagram is |flowchart or |sequence (not |{option})",
   "export.embed.kindOption": "A diagram of a {kind} does not take |{option}",
+  "export.embed.noCard": "There is no card \"{path}\"",
   "export.embed.noSection": "The section \"{name}\" is not found",
   "export.embed.notAField": "Only a card or a section can be a diagram (to point to a field, use [[…]])",
   "export.embed.notDiagram": "A {kind} cannot be a diagram (to link to it, use [[…]])",

@@ -88,7 +88,7 @@ fn typescript_s_exports_and_decorators_are_in_their_ranges_and_its_overloads_are
 }
 
 #[test]
-fn tsx_reads_as_typescript_does() {
+fn tsx_s_sample_reads_as_its_kept_answer() {
     check("sample.tsx");
 }
 
@@ -111,7 +111,7 @@ fn tsx_finds_them_as_typescript_does() {
 }
 
 #[test]
-fn javascript_finds_them_as_typescript_does() {
+fn javascript_s_shapes_read_as_their_kept_answer() {
     check("shapes.js");
 }
 

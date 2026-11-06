@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Bridges the AppKit canvas into SwiftUI. The canvas owns its own layers and is
 /// never rebuilt from scratch — `show` is called when the project changes, not when
@@ -13,6 +14,9 @@ struct CardCanvas: NSViewRepresentable {
     var surroundings = Surroundings()
     /// Which section that is, for `CardCanvasController.shownSection`.
     var section: String = ""
+    /// What where it looks is kept by (`CardCanvasController.look`): the section, unless a map tab keeps its own
+    /// (`AppModel.mapLookKey`).
+    var lookKey: String? = nil
     var controller: CardCanvasController
     /// What a press, a double-click, Return and a right-click on a card or a row do here
     /// (`DiagramPresses`): the same rule on every diagram.
@@ -42,6 +46,15 @@ struct CardCanvas: NSViewRepresentable {
     var drawsParts = false
     var partFace: ((SchemaNode, (() -> Void)?) -> PartFaces.Answer)? = nil
     var partLook = CardCanvasView.PartLook()
+    /// Whether the section is a whiteboard (`CardCanvasView.drawsSketches`), and where a sketch goes while one of its
+    /// tools is chosen (`CardCanvasView.onPlaceAt`).
+    var drawsSketches = false
+    var onPlaceAt: ((GridPoint) -> Void)? = nil
+    var drawsArrow = false
+    /// An image card's picture (`CardCanvasView.imagePicture`).
+    var imagePicture: ((SchemaNode, (() -> Void)?) -> CGImage?)? = nil
+    /// A picture pasted or dropped on a whiteboard (`CardCanvasView.onPicture`).
+    var onPicture: ((Data, GridPoint) -> Void)? = nil
     var onClickEmpty: () -> Void = {}
     /// How the diagram lays its cards out (§12).
     var settings = LayoutSettings.standard
@@ -76,6 +89,11 @@ struct CardCanvas: NSViewRepresentable {
         view.drawsParts = drawsParts
         view.partFace = partFace
         view.partLook = partLook
+        view.drawsSketches = drawsSketches
+        view.onPlaceAt = onPlaceAt
+        view.drawsArrow = drawsArrow
+        view.imagePicture = imagePicture
+        view.onPicture = onPicture
         view.onClickEmpty = onClickEmpty
         wire(groups, view)
         view.show(detail, filters: controller.filters,
@@ -83,10 +101,10 @@ struct CardCanvas: NSViewRepresentable {
         view.showLine(pickedLine)
         view.showGroup(groups?.picked)
         // Made again — back from a card's editor, say: looking where it looked.
-        if let look = controller.look(for: section) { view.restore(look) }
+        if let look = controller.look(for: lookKey ?? section) { view.restore(look) }
         context.coordinator.shown = revision
         context.coordinator.controller = controller
-        context.coordinator.section = section
+        context.coordinator.section = lookKey ?? section
         controller.shownSection = section
         controller.shown()
         return view
@@ -112,9 +130,13 @@ struct CardCanvas: NSViewRepresentable {
         view.documentText = documentText
         view.partFace = partFace
         view.partLook = partLook
+        view.onPlaceAt = onPlaceAt
+        view.drawsArrow = drawsArrow
+        view.imagePicture = imagePicture
+        view.onPicture = onPicture
         view.onClickEmpty = onClickEmpty
         wire(groups, view)
-        context.coordinator.section = section
+        context.coordinator.section = lookKey ?? section
         view.curvesOnly = curvesOnly
         if view.pickedLine != pickedLine { view.showLine(pickedLine) }
         defer { if view.pickedGroup != groups?.picked { view.showGroup(groups?.picked) } }
@@ -126,6 +148,7 @@ struct CardCanvas: NSViewRepresentable {
         let arranged = context.coordinator.arranged != layoutGeneration
         context.coordinator.arranged = layoutGeneration
         view.drawsParts = drawsParts
+        view.drawsSketches = drawsSketches
         // Read again for a write that left all it draws as it was (another tree's, say): not rebuilt.
         view.show(detail, filters: controller.filters,
                   fit: arranged, surroundings: surroundings, settings: settings, cardWidth: cardWidth, marks: marks,
@@ -172,6 +195,7 @@ struct CardCanvas: NSViewRepresentable {
         hasher.combine(detail.schemas.map(\.id))
         hasher.combine(section)
         hasher.combine(drawsParts)
+        hasher.combine(drawsSketches)
         hasher.combine(settings)
         hasher.combine(cardWidth)
         hasher.combine(marks.changed.sorted())
@@ -202,6 +226,8 @@ struct ContentView: View {
     @State private var connections = CardCanvasController()
     @State private var hosts = RemoteHosts()
     @Environment(\.colorScheme) private var colorScheme
+    /// The window's undo, which the model puts what it writes on (⌘Z).
+    @Environment(\.undoManager) private var undoManager
 
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
 
@@ -221,6 +247,8 @@ struct ContentView: View {
     /// The relation panel's filter window (線の引き方・セクション外・種別), open or not. The kinds
     /// of line are switched at the diagram's top (`LineSwitches`, `DiagramFrame`).
     @State private var filtersOpen = false
+    /// The band's list of the cards folded inside others, open.
+    @State private var foldedOpen = false
 
     /// Read here so every body in this file re-renders when it changes.
     private var typography: Typography { Typography.shared }
@@ -344,10 +372,12 @@ struct ContentView: View {
         }
         .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
         // What 表示 and 編集 in the menu bar act on: the diagram, when it is up.
-        .focusedSceneValue(\.diagram, model.detail != nil && !model.atHome ? diagramActions : nil)
+        .focusedSceneValue(\.diagram, (model.detail != nil && !model.atHome) || settingsPage != nil ? diagramActions : nil)
         .sheet(item: $model.newSchemaRequest) { request in newSchemaPrompt(request) }
         .sheet(item: $model.mergeAsk) { request in MergeSheet(model: model, request: request) }
-        .sheet(item: $model.undoRefusal) { refusal in UndoConflictsSheet(refusal: refusal) }
+        .onAppear { model.undoManager = undoManager }
+        .onChange(of: undoManager) { _, now in model.undoManager = now }
+        .sheet(item: $model.undoRefusal) { refusal in UndoConflictsSheet(refusal: refusal) { ConflictText.order(of: $0, in: model.detail?.directory) } }
         // A name the window asks for itself: a card ghost's, where its section has the name.
         .nameSheet($model.nameAsk)
         // A goal's cancel that throws away what its branch has and main does not, asked first.
@@ -491,12 +521,24 @@ struct ContentView: View {
             detail: detail,
             surroundings: model.surroundings,
             key: model.shownSectionKey,
+            lookKey: model.mapLookKey,
             controller: graph,
             dataGeneration: model.dataGeneration,
             presses: .relationPanel(model, graph),
             onMove: { model.moveByHand($0, to: $1) },
             keepsPlaces: detail.directory.section(id: model.shownSectionKey)?.kind?.keepsPlaces == true,
             drawsParts: detail.directory.section(id: model.shownSectionKey)?.kind == .ui,
+            drawsSketches: detail.directory.section(id: model.shownSectionKey)?.kind == .whiteboard,
+            onPlaceAt: model.shownWhiteboard == nil || model.sketchTool == nil || model.sketchTool == AppModel.arrowTool ? nil : { cell in
+                if model.sketchTool == AppModel.imageTool {
+                    model.sketchTool = nil
+                    Self.choosePicture { model.placeImage($0, at: cell) }
+                } else {
+                    _ = model.placeSketch(at: cell)
+                }
+            },
+            drawsArrow: model.sketchTool == AppModel.arrowTool,
+            onPicture: model.shownWhiteboard == nil || model.isReadOnly ? nil : { _ = model.placeImage($0, at: $1) },
             onResize: { model.resizeByHand($0, to: $1) },
             onFormPress: { model.pressForm($0, $1) },
             onPlaceOutside: { [section = model.shownSectionKey] placed in model.keepPlaced(placed, on: section) },
@@ -509,18 +551,22 @@ struct ContentView: View {
             caption: WorkDirCaption.of(model.shownSectionKey, model),
             bandTools: AnyView(mapBandTools),
             bandEnd: AnyView(HStack(spacing: 8) {
+                foldedChip
+                overlapChip
                 arrangeMenu
                 filterButton(detail)
                 if let switcher { switcher }
             }),
             groups: model.sectionGroupHooks(model.shownSectionKey)))
+        // A map tab of its own made anew as it comes forward: what it looks at kept apart from the others.
+        .id(model.frontMapKey ?? "")
     }
 
     /// Whether the property panel goes with what is open: a section's cards or a card,
     /// not a root's dashboard, the project's settings nor its inspection.
     private var propertiesFit: Bool {
         switch model.here {
-        case .section, .card, .connections: true
+        case .section, .map, .card, .connections: true
         case .root, .settings, .inspection: false
         }
     }
@@ -588,6 +634,8 @@ struct ContentView: View {
             FormatDocEditor(model: model, doc: card, editable: !model.isReadOnly)
         case .stackdoc:
             StackDocEditor(model: model, doc: card, editable: !model.isReadOnly) { model.open(path: $0, from: $1) }
+        case .spec:
+            SpecEditor(model: model, doc: card, editable: !model.isReadOnly) { model.open(path: $0, from: $1) }
         case .instance:
             InstanceEditor(model: model, card: card, editable: !model.isReadOnly)
         case .table:
@@ -620,7 +668,7 @@ struct ContentView: View {
     /// The menu bar's: zoom and fit on the card map shown, else on the relation panel; 整える and
     /// 線に沿って並べ直す on a section's map alone (a card map's cards are put by hand).
     private var diagramActions: DiagramActions {
-        let canvas = { model.mapCanvas ?? graph }
+        let canvas = { model.diagramZoom(fallback: graph) }
         let arrange = model.arrangeActions
         return DiagramActions(
             toggleNavPanel: { navPanelVisible.toggle() },
@@ -632,7 +680,8 @@ struct ContentView: View {
             tidy: arrange.tidy,
             arrangeByLines: arrange.arrangeByLines,
             closesTabs: settingsPage == nil,
-            closeTab: model.activeTab == nil ? nil : { model.closeTab() })
+            closeTab: model.activeTab == nil ? nil : { model.closeTab() },
+            closeSettings: settingsPage == nil ? nil : { settingsPage = nil })
     }
 
     /// Which schemas have a card right now. The list uses it to mark the rows that
@@ -653,28 +702,61 @@ struct ContentView: View {
             tagsToggle
             notesToggle
         }
+        if model.shownWhiteboard != nil { whiteboardTools }
+    }
+
+    /// A whiteboard's tools: 「選ぶ」, a shape or a sticky to place where the map is next pressed, and 「矢印」 to
+    /// draw one from a part to another. Not pressed where the cards are read only.
+    private var whiteboardTools: some View {
+        HStack(spacing: 6) {
+            toolToggle(nil, L10n[.Root.whiteboardToolSelect], "cursorarrow", L10n[.Root.whiteboardToolSelectHelp])
+            Divider().frame(height: 14)
+            toolToggle("rect", L10n[.Root.whiteboardToolRect], "rectangle", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("rounded", L10n[.Root.whiteboardToolRounded], "app", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("ellipse", L10n[.Root.whiteboardToolEllipse], "circle", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("diamond", L10n[.Root.whiteboardToolDiamond], "diamond", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("cylinder", L10n[.Root.whiteboardToolCylinder], "cylinder", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("text", L10n[.Root.whiteboardToolText], "textformat", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle("note", L10n[.Root.whiteboardToolNote], "note", L10n[.Root.whiteboardToolPlaceHelp])
+            toolToggle(AppModel.imageTool, L10n[.Root.whiteboardToolImage], "photo", L10n[.Root.whiteboardToolImageHelp])
+            Divider().frame(height: 14)
+            toolToggle(AppModel.arrowTool, L10n[.Root.whiteboardToolArrow], "arrow.right", L10n[.Root.whiteboardToolArrowHelp])
+        }
+        .disabled(model.isReadOnly)
+    }
+
+    /// A picture chosen from a file, handed on read; nothing when none is chosen or it cannot be read.
+    static func choosePicture(_ chosen: @escaping (Data) -> Void) {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.png, .jpeg, .gif, .tiff, .heic]
+        panel.allowsMultipleSelection = false
+        panel.begin { answer in
+            guard answer == .OK, let url = panel.url, let data = try? Data(contentsOf: url) else { return }
+            chosen(data)
+        }
+    }
+
+    private func toolToggle(_ tool: String?, _ title: String, _ image: String, _ help: String) -> some View {
+        BarToggle(title: title, systemImage: image,
+                  isOn: Binding(get: { model.sketchTool == tool }, set: { if $0 { model.sketchTool = tool } }))
+            .font(.app(10.5))
+            .help(help)
     }
 
     /// 「見出し」: the parts' tags shown over the map or hidden — kept for the window.
     private var tagsToggle: some View {
-        Toggle(isOn: Binding(get: { model.partTags }, set: { model.partTags = $0 })) {
-            Label(L10n[.Root.uiTagsTitle], systemImage: "tag").font(.app(10.5))
-        }
-        .toggleStyle(.button)
-        .controlSize(.small)
-        .fixedSize()
-        .help(L10n[.Root.uiTagsHelp])
+        BarToggle(title: L10n[.Root.uiTagsTitle], systemImage: "tag", onImage: "tag.fill",
+                  isOn: Binding(get: { model.partTags }, set: { model.partTags = $0 }))
+            .font(.app(10.5))
+            .help(L10n[.Root.uiTagsHelp])
     }
 
     /// 「ノート」: the parts' notes shown over the map or hidden — kept for the window; the review dots stay.
     private var notesToggle: some View {
-        Toggle(isOn: Binding(get: { model.partNotes }, set: { model.partNotes = $0 })) {
-            Label(L10n[.Root.uiNotesTitle], systemImage: "note.text").font(.app(10.5))
-        }
-        .toggleStyle(.button)
-        .controlSize(.small)
-        .fixedSize()
-        .help(L10n[.Root.uiNotesHelp])
+        BarToggle(title: L10n[.Root.uiNotesTitle], systemImage: "note.text",
+                  isOn: Binding(get: { model.partNotes }, set: { model.partNotes = $0 }))
+            .font(.app(10.5))
+            .help(L10n[.Root.uiNotesHelp])
     }
 
     /// The cards put there for a look, and a way to let them all go at once.
@@ -682,17 +764,48 @@ struct ContentView: View {
     private var temporaryChip: some View {
         if !model.surroundings.temporary.isEmpty {
             Button { model.clearForNow() } label: {
-                HStack(spacing: 4) {
-                    Text(L10n[.Root.temporaryCount(model.surroundings.temporary.count)]).font(.app(10.5))
-                    Image(systemName: "xmark").font(.app(8.5, weight: .semibold))
-                }
-                .padding(.horizontal, 7).padding(.vertical, 2)
-                .overlay(RoundedRectangle(cornerRadius: 5)
-                    .strokeBorder(Color(nsColor: theme.brass), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
+                Label(L10n[.Root.temporaryCount(model.surroundings.temporary.count)], systemImage: "xmark.circle")
+                    .font(.app(10.5)).lineLimit(1)
+                    .foregroundStyle(Color(nsColor: theme.brassInk))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
             .fixedSize()
             .help(L10n[.Root.temporaryClearHelp])
+        }
+    }
+
+    /// 「重なり N か所」 left of 「整列」 while cards overlap on the map: pressed, the map is tidied as 整える does.
+    @ViewBuilder
+    private var overlapChip: some View {
+        if let tidy = model.arrangeActions.tidy, let word = MapBand.overlapWord(graph.overlaps) {
+            Button { tidy() } label: {
+                Label(word, systemImage: "square.on.square")
+                    .font(.app(10.5)).lineLimit(1)
+                    .foregroundStyle(Color(nsColor: theme.brassInk))
+            }
+            .buttonStyle(.borderless)
+            .fixedSize()
+            .help(L10n[.Root.overlapsHelp])
+        }
+    }
+
+    /// 「N 枚は中に畳んでいます」 left of the overlaps while the map draws value objects and enums inside the
+    /// cards that hold them: pressed, they are listed with the fields holding them.
+    @ViewBuilder
+    private var foldedChip: some View {
+        let folded = MapBand.folded(model, filters: graph.filters)
+        if let word = MapBand.foldedWord(folded.count) {
+            Button { foldedOpen.toggle() } label: {
+                Label(word, systemImage: "rectangle.compress.vertical")
+                    .font(.app(10.5)).lineLimit(1)
+                    .foregroundStyle(Color(nsColor: theme.brassInk))
+            }
+            .buttonStyle(.borderless)
+            .fixedSize()
+            .help(L10n[.Root.foldedHelp])
+            .popover(isPresented: $foldedOpen, arrowEdge: .bottom) {
+                FoldedList(model: model, folded: folded) { foldedOpen = false }
+            }
         }
     }
 

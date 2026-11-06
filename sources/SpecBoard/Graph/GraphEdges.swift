@@ -43,6 +43,15 @@ struct GraphFilters: Equatable {
         return true
     }
 
+    /// What a section ghost is stacked as tall as: the kinds of line drawn from the start, whatever was
+    /// switched by hand — as the core counts a ghost's rows, so that the two put it alike.
+    func forStacking(with kinds: LineKinds) -> GraphFilters {
+        var out = self
+        out.hiddenLines = Set(kinds.list.filter { !$0.visible }.map(\.line))
+        out.shownLines = []
+        return out
+    }
+
     /// As the drawing reads them: the kinds hidden from the start and not switched on, hidden.
     func drawing(with kinds: LineKinds) -> GraphFilters {
         var out = self
@@ -136,9 +145,10 @@ struct GraphEdge {
     var vias: [Relation]
 
     /// The kind of line it is drawn as: the first of its lines leaving `from`.
-    var line: String {
-        (vias.first { $0.fromSchemaId == from } ?? vias[0]).line
-    }
+    var line: String { first.line }
+
+    /// The first of its lines leaving `from`, which it is drawn as.
+    var first: Relation { vias.first { $0.fromSchemaId == from } ?? vias[0] }
 
     /// The row this line lands on, when it names one.
     var landingPath: String? {
@@ -421,7 +431,8 @@ enum GraphEdges {
             let reverse = "\(r.toSchemaId)|\(r.fromSchemaId)|\(r.line)"
             // Two documents naming each other say two things, each from its own
             // clause to the other's: neither is the far end of the other.
-            if r.line != Line.mentions,
+            // Nor two arrows: each is drawn by its own label and look.
+            if r.line != Line.mentions, r.line != Line.arrow,
                let key = byDirection[reverse]?.first(where: { !paired.contains($0) }),
                var edge = map[key] {
                 paired.insert(key)
@@ -608,6 +619,50 @@ enum GraphEdges {
             y: (p0.y + 3 * p1.y + 3 * p2.y + p3.y) / 8 - 5)
 
         return Wire(start: p0, control1: p1, control2: p2, end: p3, label: label)
+    }
+
+    /// Where a line's mark of `size` sits on `wire`: at its middle, or — that over a card — the place
+    /// along it nearest the middle where the mark is clear of every card. Over cards all the way, the middle.
+    static func markSpot(of wire: Wire, size: CGSize, clearOf boxes: [CGRect]) -> CGPoint {
+        clearSpot(of: wire, size: size, clearOf: boxes) ?? wire.label
+    }
+
+    /// Where an arrow's label goes, and on how many lines: on one where it is clear of the shapes; else on
+    /// two (`twoLines`, its size wrapped so — nil when it does not go on two) where those are clear; else on
+    /// one at the line's middle, over the shapes, as there is no room for it anywhere.
+    static func arrowLabel(of wire: Wire, oneLine: CGSize, twoLines: CGSize?,
+                           clearOf boxes: [CGRect]) -> (spot: CGPoint, size: CGSize, lines: Int) {
+        if let spot = clearSpot(of: wire, size: oneLine, clearOf: boxes) { return (spot, oneLine, 1) }
+        if let twoLines, let spot = clearSpot(of: wire, size: twoLines, clearOf: boxes) { return (spot, twoLines, 2) }
+        return (wire.label, oneLine, 1)
+    }
+
+    /// Where a mark of `size` sits clear of the boxes: the line's middle, else the nearest spot along it;
+    /// nil when there is none.
+    private static func clearSpot(of wire: Wire, size: CGSize, clearOf boxes: [CGRect]) -> CGPoint? {
+        func rect(_ at: CGPoint) -> CGRect {
+            CGRect(x: at.x - size.width / 2, y: at.y - size.height / 2, width: size.width, height: size.height)
+        }
+        func clear(_ at: CGPoint) -> Bool { !boxes.contains { $0.intersects(rect(at)) } }
+        if clear(wire.label) { return wire.label }
+        func along(_ t: CGFloat) -> CGPoint {
+            let on: CGPoint
+            if wire.corners.isEmpty {
+                let u = 1 - t
+                let (a, b, c, d) = (u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t)
+                on = CGPoint(x: a * wire.start.x + b * wire.control1.x + c * wire.control2.x + d * wire.end.x,
+                             y: a * wire.start.y + b * wire.control1.y + c * wire.control2.y + d * wire.end.y)
+            } else {
+                on = LineRouter.point(wire.corners, at: t)
+            }
+            return CGPoint(x: on.x, y: on.y - 5)
+        }
+        for step in 1...40 {
+            for t in [0.5 - CGFloat(step) * 0.01, 0.5 + CGFloat(step) * 0.01] where clear(along(t)) {
+                return along(t)
+            }
+        }
+        return nil
     }
 
     /// The middle of a card's header, in the same space as the boxes.

@@ -147,7 +147,7 @@ extension CoreClient {
         try previewed("merge_preview", Self.merging(project, source, target, take))
     }
 
-    /// The merge, written. The core says nothing more than what it merged. With `places`,
+    /// The merge, written: what it merged, and the goals still naming the branch it set aside. With `places`,
     /// every box the source branch moved goes in over the target's (`specboard://SpecBoard/Docs/Design:DesignBranches` §6).
     /// A branch merged into main is set aside, unless `keep`.
     func merge(_ project: String, source: String?, target: String?, take: MergeTake, places: Bool = false,
@@ -155,7 +155,12 @@ extension CoreClient {
         var fields = Self.merging(project, source, target, take)
         fields["places"] = places
         fields["keep"] = keep
-        return MergeResult(preview: try previewed("merge", fields), warnings: [])
+        let answer = try ordered("merge", fields)
+        var stillNamed: [String] = []
+        if case .object(let body) = answer, case .array(let named)? = body["stillNamed"] {
+            stillNamed = named.compactMap { if case .string(let path) = $0 { path } else { nil } }
+        }
+        return MergeResult(preview: try preview(of: answer), stillNamed: stillNamed)
     }
 
     /// A request approved: merged into main as it was tried, the boxes the branch moved
@@ -191,8 +196,11 @@ extension CoreClient {
 
     /// One commit of a tree taken back alone. The units are read in their own order, as the merge
     /// window shows a conflict's values.
-    func undoCommit(_ project: String, branch: String?, seq: Int) throws -> Undid {
-        let answer = try ordered("undo_commit", ["project": project, "branch": branch ?? "", "seq": seq])
+    func undoCommit(_ project: String, branch: String?, seq: Int, inPlace: Bool = false) throws -> Undid {
+        var fields: [String: Any] = ["project": project, "branch": branch ?? "", "seq": seq]
+        // ⌘Z: taken back where it is, main too (`undo_commit`'s `inPlace`).
+        if inPlace { fields["inPlace"] = true }
+        let answer = try ordered("undo_commit", fields)
         guard case .object(let body) = answer else { throw Refusal.unreadable(answer.compact()) }
         guard case .array(let rows)? = body["conflicts"] else {
             if case .string(let made)? = body["branch"] { return .done(branch: made) }

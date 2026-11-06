@@ -211,6 +211,10 @@ fn a_way_into_the_middle_of_another_way_is_said_once_not_copied() {
         let bar = format!("Note over P1: {once}");
         assert_eq!(chart.matches(bar.as_str()).count(), 1, "{once}: {chart}");
     }
+    // The other ways that reach one say where they go on.
+    for on in ["Note over P1: → えっくす へ", "Note over P1: → y へ"] {
+        assert_eq!(chart.matches(on).count(), 1, "{on}: {chart}");
+    }
 }
 
 #[test]
@@ -252,7 +256,7 @@ fn a_diagram_too_large_to_draw_is_refused_naming_the_flow() {
 
 #[test]
 fn a_document_holding_a_diagram_too_large_says_so_in_its_place() {
-    // A document is still read and written out: the diagram in it says why it is not drawn.
+    // The diagram a document embeds says why it is not drawn, and stays short.
     let core = Core::open(script_store()).unwrap();
     let flow = format!("{SECTION}:Huge");
     let long = "長い説明".repeat(60_000);

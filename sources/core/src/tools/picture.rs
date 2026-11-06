@@ -245,10 +245,13 @@ fn resolve(store: &Store, tool: &str, args: &Args) -> Result<Asked, String> {
     if let Some(kinds) = a.strings("kinds") {
         let kept = super::diagram::kinds_asked(&project, &kinds)?;
         if !kept.is_empty() {
-            let said: Vec<Value> = kept
-                .iter()
-                .map(|k| crate::export::mermaid::said_kind(k).into())
-                .collect();
+            let mut said: Vec<Value> = Vec::new();
+            for k in &kept {
+                let name: Value = crate::export::mermaid::said_kind(&project, k).into();
+                if !said.contains(&name) {
+                    said.push(name);
+                }
+            }
             request.insert("kinds".into(), Value::Array(said));
         }
     }

@@ -92,6 +92,9 @@ enum CodeText {
         view.isRichText = false
         view.drawsBackground = true
         view.backgroundColor = .textBackgroundColor
+        // Its background and the tinted lines are drawn across the rect asked for: kept to its own box, off the
+        // gutter beside it.
+        view.clipsToBounds = true
         view.textContainerInset = NSSize(width: 6, height: 8)
         view.isHorizontallyResizable = true
         view.isVerticallyResizable = true
@@ -175,6 +178,9 @@ final class LineNumberRuler: NSRulerView {
         self.textView = textView
         super.init(scrollView: scrollView, orientation: .verticalRuler)
         clientView = textView
+        // AppKit lets a view draw past its bounds unless it clips, and the rect a ruler is asked to draw can reach
+        // past them: its line went up over the bars above the file.
+        clipsToBounds = true
         fit(lines: 1)
     }
 
@@ -195,7 +201,7 @@ final class LineNumberRuler: NSRulerView {
         NSColor.textBackgroundColor.setFill()
         bounds.fill()
         NSColor.separatorColor.setFill()
-        NSRect(x: bounds.maxX - 1, y: rect.minY, width: 1, height: rect.height).fill()
+        NSRect(x: bounds.maxX - 1, y: rect.minY, width: 1, height: rect.height).intersection(bounds).fill()
         guard let view = textView, let layout = view.layoutManager, let container = view.textContainer else { return }
         let text = view.string as NSString
         let starts = view.starts

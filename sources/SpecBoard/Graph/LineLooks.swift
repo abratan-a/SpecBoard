@@ -97,10 +97,15 @@ nonisolated struct LineField: Codable, Hashable, Sendable, Identifiable {
     var many: Int
     /// A group's own fields.
     var fields: [LineField]
+    /// What it is taken as while none is written (an arrow's colour), as words.
+    var defaultText: String? = nil
 
     var id: String { name }
 
-    private enum CodingKeys: String, CodingKey { case name, label, description, fieldtype, options, required, many, fields }
+    private enum CodingKeys: String, CodingKey {
+        case name, label, description, fieldtype, options, required, many, fields
+        case defaultText = "default"
+    }
 
     init(name: String, label: String = "", description: String = "", fieldtype: String = "text",
          options: [String] = [], required: Bool = false, many: Int = 0, fields: [LineField] = []) {
@@ -128,6 +133,7 @@ nonisolated struct LineField: Codable, Hashable, Sendable, Identifiable {
             many = (try? c.decodeIfPresent(Int.self, forKey: .many)) ?? 0
         }
         fields = (try? c.decodeIfPresent([LineField].self, forKey: .fields)) ?? []
+        defaultText = try? c.decodeIfPresent(String.self, forKey: .defaultText)
     }
 
     /// As the panel names it: its label, or its name.

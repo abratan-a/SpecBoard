@@ -296,3 +296,48 @@ fn what_cannot_be_undone_is_refused_with_its_reason_and_nothing_written() {
     let said = undo(&core, "no-such-branch", 1);
     assert!(said.get("error").is_some(), "{said}");
 }
+
+#[test]
+fn mains_commit_is_undone_in_place_when_the_window_asks_and_a_locked_main_refuses() {
+    // ⌘Z: the window takes back a commit of its own where it is, main too, by a commit of its own.
+    let core = Core::open(script_store()).unwrap();
+    let was = card(&core, "main", "Schemas:Customer")["description"].clone();
+    window(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Customer", "value": {"description": "まちがい"}}),
+    );
+    let slip = newest(&core, "")["seq"].as_i64().unwrap();
+    let project = project_id(&core);
+    let said = op(
+        &core,
+        json!({"op": "undo_commit", "project": project, "branch": "", "seq": slip, "inPlace": true}),
+    );
+    assert!(said.get("error").is_none(), "{said}");
+    assert!(said["result"].get("branch").is_none(), "{said}");
+    assert_eq!(card(&core, "main", "Schemas:Customer")["description"], was);
+    let undoing = newest(&core, "")["seq"].as_i64().unwrap();
+    assert!(undoing > slip);
+    // Redone: the undoing commit taken back the same way.
+    let said = op(
+        &core,
+        json!({"op": "undo_commit", "project": project, "branch": "", "seq": undoing, "inPlace": true}),
+    );
+    assert!(said.get("error").is_none(), "{said}");
+    assert_eq!(
+        card(&core, "main", "Schemas:Customer")["description"],
+        "まちがい"
+    );
+    // A locked main is written by a merge alone.
+    let locked = op(
+        &core,
+        json!({"op": "main_lock", "project": project, "on": true}),
+    );
+    assert!(locked.get("error").is_none(), "{locked}");
+    let last = newest(&core, "")["seq"].as_i64().unwrap();
+    let said = op(
+        &core,
+        json!({"op": "undo_commit", "project": project, "branch": "", "seq": last, "inPlace": true}),
+    );
+    assert!(said.get("error").is_some(), "{said}");
+}

@@ -47,18 +47,16 @@ struct SettingsScreen: View {
     var body: some View {
         let shown = page ?? .general
         HStack(spacing: 0) {
-            List(selection: Binding(get: { page }, set: { if let chosen = $0 { page = chosen } })) {
-                ForEach(SettingsPage.allCases) { item in
-                    Label(item.title, systemImage: item.symbol)
-                        .font(.app(12.5))
-                        .tag(item)
-                }
-            }
-            .listStyle(.sidebar)
-            // Its first row: under the window's buttons, and where the window is taken hold of.
-            // An inset rather than a row above, so the list's own background reaches the top.
-            .safeAreaInset(edge: .top, spacing: 0) {
+            // As the nav panel draws its rows, on the window's own background: a system sidebar shows
+            // the desktop through it, which the nav panel beside it never does
+            // (`specboard://SpecBoard/Docs/Design:UI` §6 「設定」).
+            VStack(alignment: .leading, spacing: 2) {
+                // Its first row: under the window's buttons, and where the window is taken hold of.
                 TopRow(room: 0) { Spacer(minLength: 0) }
+                ForEach(SettingsPage.allCases) { item in
+                    SettingsListRow(item: item, current: item == shown) { page = item }
+                }
+                Spacer(minLength: 0)
             }
             .frame(width: 200)
 
@@ -129,9 +127,8 @@ struct SettingsScreen: View {
                         .frame(width: 52)
                     Button(L10n[.Settings.textSizeLarger]) { typography.enlarge() }
                         .disabled(!typography.canEnlarge)
+                    // A button as its neighbours are: in grey text alone it did not read as one.
                     Button(L10n[.Settings.textSizeDefault]) { typography.reset() }
-                        .font(.app(10.5)).buttonStyle(.plain)
-                        .foregroundStyle(.secondary)
                 }
             }
             settingsSection(L10n[.Settings.languageTitle]) {
@@ -231,5 +228,31 @@ struct CoveredBySettings: ViewModifier {
             guard covered, !context.coordinator.covered, let window = view.window else { return }
             window.makeFirstResponder(nil)
         }
+    }
+}
+
+/// One item of the settings screen's list, as the nav panel's rows above the branches are: lit with the
+/// accent while it is the one shown, grey under the pointer.
+private struct SettingsListRow: View {
+    var item: SettingsPage
+    var current: Bool
+    var choose: () -> Void
+
+    var body: some View {
+        Button(action: choose) {
+            HStack(spacing: 8) {
+                Image(systemName: item.symbol)
+                    .font(.app(12))
+                    .foregroundStyle(current ? Color.accentColor : .secondary)
+                    .frame(width: 16)
+                Text(item.title).font(.app(12.5, weight: current ? .semibold : .regular))
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .modifier(NavRowSlot(current: current, gap: EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)))
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(current ? .isSelected : [])
     }
 }

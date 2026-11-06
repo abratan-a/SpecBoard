@@ -58,7 +58,16 @@ struct SequenceCanvas: NSViewRepresentable {
 }
 
 /// Lets the editor's "全体を表示" fit the sequence diagram as it fits the card map.
-final class SequenceController {
+final class SequenceController: DiagramZoom {
+    func zoomIn() { zoom(by: 1.25) }
+    func zoomOut() { zoom(by: 0.8) }
+    func actualSize() { scroll?.magnification = 1 }
+
+    private func zoom(by factor: CGFloat) {
+        guard let scroll else { return }
+        scroll.magnification = min(scroll.maxMagnification, max(scroll.minMagnification, scroll.magnification * factor))
+    }
+
     weak var scroll: NSScrollView?
 
     /// The provided flow whose frame is to be brought under the heads once the chart has drawn it.
@@ -230,15 +239,15 @@ struct SequenceLayout {
     var lifelineTop: CGFloat = 0
     var lifelineBottom: CGFloat = 0
 
-    /// A participant's word for what it is, on its card's header.
+    /// A participant's word for what it is, on its card's header: its kind's name, as a card's tag says
+    /// it. A gap's lane and anyone's are no kind, and say what they are by their names and marks: none.
     static func badge(_ participant: SequenceDiagram.Participant, kinds: [String: SchemaKind]) -> String {
         switch participant.role {
         case .own, .flow: return "flow"
         case .actor: return "actor"
         case .store: return "store"
         case .program: return "program"
-        case .anyone: return "any"
-        case .noPartner, .noStore: return "gap"
+        case .anyone, .noPartner, .noStore: return ""
         }
     }
 
@@ -430,6 +439,13 @@ struct SequenceLayout {
 
     init() {}
 
+    /// How wide a step's name and heading are set left of its bar: never narrower than the node's name.
+    static func stepNameWidth(_ step: SequenceDiagram.Step) -> CGFloat {
+        let name = step.node.map { width($0, stepNameFont) + 4 } ?? 0
+        let heading = width(step.label, noteFont) + 4
+        return max(name, min(220, max(40, heading)))
+    }
+
     init(_ diagram: SequenceDiagram, kinds: [String: SchemaKind], theme: GraphTheme, folded: Set<String> = [],
          ink: (SequenceDiagram.Message) -> NSColor) {
         let margin = Self.margin
@@ -440,7 +456,9 @@ struct SequenceLayout {
         let widths = participants.enumerated().map { index, participant -> CGFloat in
             let mark: CGFloat = participant.role == .actor || participant.role == .anyone || participant.role.isGap ? 18 : 0
             let chip: CGFloat = Self.titleChip(participant) == nil ? 0 : Self.headChipWidth + 4
-            let head = chip + mark + Self.width(participant.name, Self.nameFont) + 24 + Self.width(Self.badge(participant, kinds: kinds), Self.badgeFont) + 10
+            let badge = Self.badge(participant, kinds: kinds)
+            let head = chip + mark + Self.width(participant.name, Self.nameFont) + 24
+                + (badge.isEmpty ? 0 : Self.width(badge, Self.badgeFont) + 10)
             let under = Self.width(Self.place(participant, me: diagram.me == index), Self.placeFont) + 24
             return min(320, max(150, max(head, under)))
         }
@@ -457,6 +475,13 @@ struct SequenceLayout {
             guard hi - 1 < gaps.count else { continue }
             let span = gaps[lo..<hi].reduce(0, +)
             if span < need { gaps[hi - 1] += need - span }
+        }
+        // A step's name stands left of its lifeline's bar: room for it right of the bars, nested ones too, on
+        // the lifeline to its left.
+        for case .step(let step) in SequenceDiagram.flattened(diagram.items) where step.node != nil {
+            guard step.over > 0, step.over - 1 < gaps.count else { continue }
+            let need = Self.stepNameWidth(step) + Self.barWidth + 6 + Self.barWidth / 2 + 3 * 6 + 8
+            gaps[step.over - 1] = max(gaps[step.over - 1], need)
         }
         var cursor = margin + (widths.first ?? 150) / 2
         for (index, width) in widths.enumerated() {
@@ -674,9 +699,7 @@ struct SequenceLayout {
                         // Never broken inside the node's name: the gutter is as wide as it, and the diagram
                         // moves right where it reaches past the margin. Left of every bar on the lifeline.
                         let text = Self.stepText(step, theme: theme)
-                        let name = step.node.map { Self.width($0, Self.stepNameFont) + 4 } ?? 0
-                        let heading = Self.width(step.label, Self.noteFont) + 4
-                        let wide = max(name, min(220, max(40, heading)))
+                        let wide = Self.stepNameWidth(step)
                         let high = Self.height(text, width: wide)
                         label = CGRect(x: center(step.over) - Self.barWidth / 2 - 6 - wide, y: y, width: wide, height: high)
                         barTop = y

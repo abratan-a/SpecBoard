@@ -120,6 +120,8 @@ fn drawn_as_document(card: &Card, doc_view: &str) -> bool {
     match card.kind.as_str() {
         "freedoc" | "stackdoc" | crate::kinds::TABLE => true,
         "formatdoc" => card.doc_view.as_deref().unwrap_or(doc_view) == "document",
+        // Its scenarios are what a spec is looked over by: rows unless the card itself asks otherwise.
+        "spec" => card.doc_view.as_deref() == Some("document"),
         _ => false,
     }
 }
@@ -144,10 +146,96 @@ pub(crate) fn size_value((w, h): OwnSize) -> Value {
     Value::Object(out)
 }
 
-/// A card's width in grid units: its own when it has one; the project's ten otherwise.
+/// A card's width in grid units: its own when it has one; a whiteboard's sketch as wide as its text
+/// says; the project's ten otherwise.
 pub(crate) fn card_columns(card: &Card, kinds: &Kinds) -> i64 {
-    own_size(card, kinds).map_or(CARD_COLUMNS, |s| s.0)
+    own_size(card, kinds).map_or_else(
+        || {
+            if card.kind == crate::kinds::SKETCH {
+                sketch_size(card).0
+            } else if card.kind == crate::kinds::IMAGE {
+                image_size(card).0
+            } else {
+                CARD_COLUMNS
+            }
+        },
+        |s| s.0,
+    )
 }
+
+/// How wide a grid unit is for a sketch's text: the standard card's tenth. A sketch is measured on
+/// this one basis whatever the project's card width, and the screen draws its text in proportion
+/// to the column it is given, so the box the core places is the box the text fills.
+const SKETCH_COLUMN: f64 = CARD_WIDTH / CARD_COLUMNS as f64;
+
+/// A sketch's size in grid units, from its text as the screen draws it (`SketchShape` on screen):
+/// its longest line at 13 points across, with room inside the shape — more in a diamond and an
+/// ellipse, whose middle is narrower, and in a cylinder for its top — and as many lines down as its
+/// lines take wrapped at that width (at its own width, when it has one). The words' widths are
+/// estimated as the screen's font draws them: a letter of the Latin alphabet about 7.5 points, any
+/// other about 13.
+pub(crate) fn sketch_size(card: &Card) -> (i64, i64) {
+    let text = card
+        .form
+        .as_ref()
+        .and_then(|f| f["fields"]["text"].as_str())
+        .unwrap_or("");
+    let shape = card
+        .form
+        .as_ref()
+        .and_then(|f| f["fields"]["shape"].as_str())
+        .unwrap_or("rounded");
+    // As drawn: a reference by the words it is shown by, bold without its marks.
+    let said = crate::notetext::plain_note(text, &[]).replace("**", "");
+    let widths: Vec<f64> = said
+        .lines()
+        .map(|l| {
+            l.chars()
+                .map(|c| if c.is_ascii() { 7.5 } else { 13.0 })
+                .sum::<f64>()
+        })
+        .collect();
+    let (wide, tall) = match shape {
+        "diamond" => (1.6, 1.8),
+        "ellipse" => (1.3, 1.4),
+        _ => (1.0, 1.0),
+    };
+    let longest = widths.iter().copied().fold(0.0, f64::max);
+    let columns = card
+        .size
+        .map(|s| s.w)
+        .unwrap_or_else(|| (((longest + 32.0) * wide / SKETCH_COLUMN).ceil() as i64).clamp(3, 14));
+    let room = (columns as f64 * SKETCH_COLUMN / wide - 32.0).max(SKETCH_COLUMN);
+    let lines: f64 = widths
+        .iter()
+        .map(|w| (w / room).ceil().max(1.0))
+        .sum::<f64>()
+        .max(1.0);
+    let height = (lines * 18.0 + 24.0) * tall + if shape == "cylinder" { 14.0 } else { 0.0 };
+    (columns, rows_for_height(height).max(2))
+}
+
+/// An image's size in grid units with none of its own: as wide as its picture is in pixels, at a
+/// point a pixel on the standard column (`SKETCH_COLUMN`), 20 columns at the most, and as tall as its
+/// sides say at that width, 100 rows at the most. A card whose picture is not read yet is the standard card's width.
+pub(crate) fn image_size(card: &Card) -> (i64, i64) {
+    let side = |name: &str| {
+        card.form
+            .as_ref()
+            .and_then(|f| f["fields"][name].as_f64())
+            .filter(|v| *v > 0.0)
+    };
+    let (Some(w), Some(h)) = (side("width"), side("height")) else {
+        return (CARD_COLUMNS, 4);
+    };
+    let columns = ((w / SKETCH_COLUMN).ceil() as i64).clamp(1, 20);
+    let height = columns as f64 * SKETCH_COLUMN * h / w;
+    (columns, rows_for_height(height).clamp(1, IMAGE_ROWS))
+}
+
+/// The most rows an image's box takes by its picture: a picture far taller than it is wide is shown in a box no
+/// taller than a long page.
+const IMAGE_ROWS: i64 = 100;
 
 /// How wide in points a card `w` grid units wide is drawn; the project's card width when it has
 /// no width of its own.
@@ -355,6 +443,12 @@ pub(crate) fn rows_sized(
     own: Option<OwnSize>,
 ) -> i64 {
     let kinds = project.defs.cards();
+    if card.kind == crate::kinds::SKETCH && own.is_none_or(|s| s.1.is_none()) {
+        return sketch_size(card).1;
+    }
+    if card.kind == crate::kinds::IMAGE && own.is_none_or(|s| s.1.is_none()) {
+        return image_size(card).1;
+    }
     if let Some((_, Some(h))) = own {
         return if scrolls(card, project, layout) {
             h.max(LEAST_ROWS)
@@ -657,6 +751,9 @@ fn row_count(card: &Card) -> usize {
             usize::from(top_points(card)) + items(&card.rows)
         }
         "entity" | "value" => fields(&card.fields),
+        // Its story's three parts a row each, written or not, and a row a scenario (`SpecRows` on
+        // screen): as many rows whatever the words, which the core does not measure.
+        "spec" => 3 + card.scenarios().len(),
         _ => 0,
     }
 }
@@ -802,6 +899,104 @@ pub(crate) type Rect = (i64, i64, i64, i64);
 
 pub(crate) fn intersects(a: Rect, b: Rect) -> bool {
     a.0 < b.0 + b.2 && b.0 < a.0 + a.2 && a.1 < b.1 + b.3 && b.1 < a.1 + a.3
+}
+
+/// The section kind where sketches are drawn and joined by arrows.
+pub(crate) const WHITEBOARD: &str = "whiteboard";
+
+/// Where a whiteboard's boxes with no place go: in columns right of every placed box, a column a
+/// step along the arrows between them from those no arrow among them reaches — those an arrow
+/// reaches from two ways in the column of the longer — each column top down in the boxes' order.
+/// One a loop of arrows reaches only goes in the column after the one it is first met from.
+pub(crate) fn along_arrows(
+    project: &crate::export::Project,
+    boxes: &[OwnBox],
+    margin: i64,
+) -> Vec<(String, (i64, i64))> {
+    let unplaced: Vec<&OwnBox> = boxes.iter().filter(|b| b.at.is_none()).collect();
+    if unplaced.is_empty() {
+        return Vec::new();
+    }
+    let ids: Vec<&str> = unplaced.iter().map(|b| b.id.as_str()).collect();
+    let arrows: Vec<(usize, usize)> = unplaced
+        .iter()
+        .enumerate()
+        .flat_map(|(i, b)| {
+            project
+                .card(&b.id)
+                .map(|c| c.connections.iter().filter(|l| l.line == "arrow"))
+                .into_iter()
+                .flatten()
+                .filter_map(|l| ids.iter().position(|id| Some(*id) == l.to.as_deref()))
+                .map(move |j| (i, j))
+                .collect::<Vec<_>>()
+        })
+        .filter(|(i, j)| i != j)
+        .collect();
+    // Columns by the longest way in: the arrows that close a loop cut where a walk from the boxes
+    // no arrow reaches (then from the rest, for a loop with no way in) meets them again, and each box a
+    // column after the furthest of those it is reached from.
+    let n = unplaced.len();
+    let mut out_of: Vec<Vec<usize>> = vec![Vec::new(); n];
+    for (i, j) in &arrows {
+        out_of[*i].push(*j);
+    }
+    let reached: Vec<bool> = (0..n)
+        .map(|j| arrows.iter().any(|(_, t)| *t == j))
+        .collect();
+    // 0 unseen, 1 on the walk, 2 done; the order each is done in, the last first along the arrows.
+    let mut state = vec![0u8; n];
+    let mut done = Vec::with_capacity(n);
+    let mut kept: Vec<Vec<usize>> = vec![Vec::new(); n];
+    for start in (0..n).filter(|i| !reached[*i]).chain(0..n) {
+        if state[start] != 0 {
+            continue;
+        }
+        state[start] = 1;
+        let mut walk = vec![(start, 0usize)];
+        while let Some((at, next)) = walk.last().copied() {
+            if let Some(&to) = out_of[at].get(next) {
+                walk.last_mut().unwrap().1 += 1;
+                match state[to] {
+                    0 => {
+                        kept[at].push(to);
+                        state[to] = 1;
+                        walk.push((to, 0));
+                    }
+                    2 => kept[at].push(to),
+                    _ => {}
+                }
+            } else {
+                state[at] = 2;
+                done.push(at);
+                walk.pop();
+            }
+        }
+    }
+    let mut column = vec![0usize; n];
+    for &at in done.iter().rev() {
+        for &to in &kept[at] {
+            column[to] = column[to].max(column[at] + 1);
+        }
+    }
+    let left = boxes
+        .iter()
+        .filter_map(|b| b.at.map(|(x, _)| x + b.size.0 + margin))
+        .max()
+        .unwrap_or(0);
+    let columns = column.iter().max().copied().unwrap_or(0) + 1;
+    let mut out = Vec::new();
+    let mut x = left;
+    for c in 0..columns {
+        let here: Vec<usize> = (0..unplaced.len()).filter(|i| column[*i] == c).collect();
+        let mut y = 0;
+        for i in &here {
+            out.push((unplaced[*i].id.clone(), (x, y)));
+            y += unplaced[*i].size.1 + margin;
+        }
+        x += here.iter().map(|i| unplaced[*i].size.0).max().unwrap_or(0) + margin * 2;
+    }
+    out
 }
 
 /// Whether the diagram of `section` keeps a box where it is written: a ui section's parts sit

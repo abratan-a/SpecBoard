@@ -405,3 +405,23 @@ fn a_listen_that_passes_is_left_to_the_http_side_to_open() {
         "未対応のメソッドです: subscriptions/listen"
     );
 }
+
+#[test]
+fn a_select_says_whether_an_actor_opens_as_its_map_or_its_sequence() {
+    let s = seen();
+    let result = call(
+        &s.core,
+        &s.driver.1,
+        json!({"op": "select", "project": "見本", "target": "Schemas", "value": {"view": "sequence"}}),
+    );
+    assert_eq!(result["isError"], false, "{result}");
+    let asked = s.window.asked.lock().unwrap().clone();
+    assert_eq!(asked[0].0["value"], json!({"view": "sequence"}));
+    let said = error_of(&call(
+        &s.core,
+        &s.driver.1,
+        json!({"op": "select", "project": "見本", "target": "Schemas", "value": {"view": "chart"}}),
+    ));
+    assert!(said.contains("map") && said.contains("sequence"), "{said}");
+    assert_eq!(s.window.asked.lock().unwrap().len(), 1);
+}

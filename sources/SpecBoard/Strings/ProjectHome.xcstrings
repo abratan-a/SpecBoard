@@ -188,13 +188,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cards %lld / Fields %lld / References %lld / Max nesting %lld"
+            "value" : "Cards %lld / Fields %lld / Lines %lld / Nesting depth %lld"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード %lld / フィールド %lld / 参照 %lld / 最大ネスト %lld"
+            "value" : "カード %lld / フィールド %lld / 線 %lld / 入れ子の深さ %lld"
           }
         }
       }
@@ -699,6 +699,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "プロジェクト名（日本語可）"
+          }
+        }
+      }
+    },
+    "new.place" : {
+      "comment" : "Label of the place picker in the new project form opened from All Projects.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "置き場"
+          }
+        }
+      }
+    },
+    "new.title" : {
+      "comment" : "Title of the new project form opened from All Projects, where the place is chosen in the form.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいプロジェクト"
           }
         }
       }

@@ -229,3 +229,47 @@ fn a_commit_is_read_for_several_paths_at_once() {
         .collect();
     assert_eq!(paths, ["Free:A", "Free:C"], "{read}");
 }
+
+#[test]
+fn an_enums_values_changed_on_a_branch_are_said_in_its_diff() {
+    let core = core();
+    ok(&core, "branch_create", json!({"target": "work"}));
+    ok(
+        &core,
+        "card_create",
+        json!({"branch": "work", "target": "Schemas:Status.cancelled", "value": {"label": "取消"}}),
+    );
+    ok(
+        &core,
+        "card_delete",
+        json!({"branch": "work", "target": "Schemas:Status.shipped"}),
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"branch": "work", "target": "Schemas:Status.open", "value": {"name": "opened"}}),
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"branch": "work", "target": "Schemas:Status.paid", "value": {"label": "支払い済み", "description": "代金を受け取った"}}),
+    );
+    let read = contents(&core, json!({}));
+    let status = read["changed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["card"] == "Schemas:Status")
+        .cloned()
+        .unwrap_or_else(|| panic!("{read}"));
+    assert_eq!(
+        status["changes"],
+        json!([
+            "値を足す opened, cancelled",
+            "値を消す open, shipped",
+            "値 paid の表示名を変える",
+            "値 paid の説明を変える"
+        ]),
+        "{status}"
+    );
+}

@@ -81,7 +81,7 @@ extension AppModel {
     }
 
     /// The actions of every card of the open tree that has some by their paths (`card_list`'s
-    /// `include: ["actions"]`, every page), read once until the next write (`letGoOfCardActions`): the
+    /// `include: ["actions"]`, every page), read once until the next write (`letGoOfAsides`): the
     /// board's goals and tasks, or a tree's parts. Narrowed to the kinds that carry actions, so the read
     /// does not grow with the cards that have none.
     private func treeCardActions() -> [String: [CardAction]] {
@@ -126,14 +126,15 @@ extension AppModel {
         return cardActions(id).filter { $0.available && $0.op == "reviewed" }
     }
 
-    /// The actions as read before a write: read again after it, as a write may change any of them
-    /// (a card's status, a branch made or deleted). What was read shows until then; a read still out
-    /// is not taken in, as it answers for before the write.
-    func letGoOfCardActions() {
-        for key in asideKept.keys where key.hasPrefix(Self.cardActionsKey) {
-            asideBefore[key] = asideKept.removeValue(forKey: key)
-        }
-        asideAsked = asideAsked.filter { !$0.hasPrefix(Self.cardActionsKey) }
+    /// What was read beside the project, as read before a write: read again after it, as a write may
+    /// change any of it. What was kept shows until then, for what is asked again; what was kept
+    /// before and not asked since goes. A read still out is not taken in, as it answers for before.
+    /// `keeping` names the reads a write does not change, kept as they are.
+    func letGoOfAsides(keeping kept: (String) -> Bool = { _ in false }) {
+        let going = asideKept.filter { !kept($0.key) }
+        asideBefore = going.merging(asideBefore.filter { asideAsked[$0.key] != nil }) { now, _ in now }
+        asideKept = asideKept.filter { kept($0.key) }
+        asideAsked = asideAsked.filter { kept($0.key) }
     }
 
     /// An action pressed, on a button or in a menu: start asks for the branch's name first, starting
@@ -167,6 +168,24 @@ extension AppModel {
                let read = try? JSONSerialization.jsonObject(with: Data(json.compact().utf8)) as? [String: Any] {
                 answer = read
             }
+        } then: { [weak self] in
+            self?.cardActed(answer)
+        }
+    }
+
+    /// The goal a merge notice offers to finish (`AppModel+GoalNotice`), finished on the board as its
+    /// panel's 完了 does, the window on main or the board alike. Once asked, the notice no longer offers it.
+    func finishGoal(_ goal: String, in project: String) {
+        guard detail?.project.id == project else { return }
+        var answer: [String: Any] = [:]
+        write {
+            let said = try tool("card_action", target: goal, value: [:], ["op": "finish", "branch": Board.word], inTree: false)
+            if case .object(let wrapped) = said, let json = wrapped["json"],
+               let read = try? JSONSerialization.jsonObject(with: Data(json.compact().utf8)) as? [String: Any] {
+                answer = read
+            }
+            finishedGoals.insert(Self.finishedKey(goal, project))
+            if goalNotice?.goal == goal, goalNotice?.project == project { goalNotice = nil }
         } then: { [weak self] in
             self?.cardActed(answer)
         }

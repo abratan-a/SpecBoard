@@ -168,7 +168,7 @@ impl Core {
                         archived = Some(tx.archive_copy(&id)?);
                     }
                     // Reached by the same access keys as before: this store's, not the
-                    // file's (`Repository.replace`).
+                    // file's.
                     let kept = match write::peek(file) {
                         Some((id, _)) if landing == write::Landing::Replacing => {
                             Some(crate::access::kept(tx.conn(), &id)?)
@@ -238,6 +238,9 @@ impl Core {
                     "undo_commit" => {
                         let seq = number(request, "seq", op, &text!("ops.what.commitSeq"))?;
                         let name = request.get("name").and_then(Value::as_str);
+                        // ⌘Z: the window's own commit taken back where it is, main too.
+                        let in_place =
+                            request.get("inPlace").and_then(Value::as_bool) == Some(true);
                         let project_name = tx
                             .reader()
                             .project(project)?
@@ -254,6 +257,7 @@ impl Core {
                             name,
                             None,
                             false,
+                            in_place,
                         )?;
                         Ok(match undid {
                             Undid::Done {

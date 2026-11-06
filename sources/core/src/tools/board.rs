@@ -100,6 +100,27 @@ pub(crate) fn matching(
         {
             return Err(before);
         }
+        // A name no kind of the cards has: refused with the fields they have, as a section or a
+        // kind not there is, rather than finding nothing.
+        if !cards.is_empty() {
+            let mut there: Vec<String> = Vec::new();
+            for card in cards.iter() {
+                for field in kinds
+                    .get(&card.kind)
+                    .into_iter()
+                    .flat_map(|k| k.fields.iter())
+                {
+                    if !there.contains(&field.name) {
+                        there.push(field.name.clone());
+                    }
+                }
+            }
+            return Err(text!(
+                "board.fields.unknown",
+                name,
+                fields = crate::text::list(&there)
+            ));
+        }
     }
     // A goal's value of before (`進行中`), said with its value of now.
     for (name, value) in wanted {

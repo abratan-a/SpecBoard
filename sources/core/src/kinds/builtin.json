@@ -1,5 +1,5 @@
 {
-  "version": 23,
+  "version": 27,
   "kinds": [
     {
       "kind": "base",
@@ -25,7 +25,7 @@
           "name": "absentFields", "fieldtype": "group", "many": true, "label": "持たないフィールド", "description": "意図して持たないフィールドと、その理由",
           "fields": [
             { "name": "name", "fieldtype": "text", "required": true, "label": "フィールド名" },
-            { "name": "reason", "fieldtype": "text", "required": true, "label": "持たない理由" }
+            { "name": "reason", "fieldtype": "text", "required": true, "paths": true, "label": "持たない理由" }
           ]
         },
         { "name": "discriminator", "fieldtype": "text", "pattern": "identifier", "label": "判別のフィールド", "description": "判別に使うフィールド名（各フィールドの variants と組）" }
@@ -379,6 +379,53 @@
       "semantics": { "lines": "stackdoc", "exports": ["markdown"], "editor": "stackdoc" }
     },
     {
+      "kind": "spec",
+      "extends": "base",
+      "label": "仕様",
+      "color": "#57606A",
+      "connectable": true,
+      "context": {
+        "purpose": "機能ごとの仕様を、ねらい（As・I want・So that）と Scenario（Given・When・Then の段）の決まった形で書く文書。Scenario ごとにパスがあり（<カード>.<Scenario の name>）、確かめるテストへ線を引く",
+        "use_when": "受け入れ条件を Scenario で書き、どの Scenario にも確かめるテストがあるかを見渡したいとき",
+        "not_for": "形の決まっていない文書（freedoc）・決めた書式の設計書（formatdoc）・積み重なる文書（stackdoc）"
+      },
+      "fields": [
+        { "name": "as", "fieldtype": "text", "max": 500, "paths": true, "label": "As", "description": "誰の話か" },
+        { "name": "iWant", "fieldtype": "text", "max": 500, "paths": true, "label": "I want", "description": "何をしたいか" },
+        { "name": "soThat", "fieldtype": "text", "max": 500, "paths": true, "label": "So that", "description": "なぜか" },
+        { "name": "about", "fieldtype": "markdown", "max": 200000, "label": "補足", "description": "ねらいのあとに書く本文。[[path]]・{{path}}・![[path]] が使える" },
+        { "name": "view", "fieldtype": "radio", "options": ["rows", "document"], "look": true, "label": "セクションマップでの見え方" }
+      ],
+      "rows": [
+        {
+          "name": "scenarios",
+          "label": "Scenario",
+          "address": "name",
+          "max_total": 1000,
+          "fields": [
+            { "name": "name", "fieldtype": "text", "required": true, "pattern": "identifier", "unique": true, "label": "名前", "description": "パスに使う名前（例 addRemove）" },
+            { "name": "heading", "fieldtype": "text", "max": 200, "label": "題" },
+            { "name": "note", "fieldtype": "markdown", "max": 200000, "label": "補足", "description": "段のあとに書く本文" }
+          ],
+          "rows": [
+            {
+              "name": "steps",
+              "label": "段",
+              "address": "index",
+              "fields": [
+                { "name": "given", "fieldtype": "text", "max": 2000, "paths": true, "label": "Given" },
+                { "name": "when", "fieldtype": "text", "max": 2000, "paths": true, "label": "When" },
+                { "name": "then", "fieldtype": "text", "max": 2000, "paths": true, "label": "Then" },
+                { "name": "and", "fieldtype": "text", "max": 2000, "paths": true, "label": "And" },
+                { "name": "but", "fieldtype": "text", "max": 2000, "paths": true, "label": "But" }
+              ]
+            }
+          ]
+        }
+      ],
+      "semantics": { "checks": "spec", "lines": "spec", "exports": ["markdown"], "editor": "spec" }
+    },
+    {
       "kind": "note",
       "extends": "base",
       "label": "付箋",
@@ -417,6 +464,47 @@
       ],
       "face": { "svg": "body" },
       "semantics": { "exports": ["svg"], "editor": "page" }
+    },
+    {
+      "kind": "sketch",
+      "extends": "base",
+      "label": "図形",
+      "color": "#57606A",
+      "connectable": true,
+      "on_double_click": "edit_in_place",
+      "context": {
+        "purpose": "ホワイトボードで考えを絵にする部品。形（四角・角丸・丸・ひし形・円柱・文字だけ）と中の字と色を持ち、カードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。位置を書かなければ、同じ呼び出しで作ったものは矢印をたどって左から右へ並ぶ。大きさは手で決めなければ字から決まる",
+        "use_when": "設計の考えを、図形と矢印の絵で人に説明するとき（ホワイトボードのセクションに置く）",
+        "not_for": "データの形（entity）・処理の流れ（flow）のように、プロジェクトの中身そのものを書くとき"
+      },
+      "fields": [
+        { "name": "shape", "fieldtype": "radio", "options": ["rect", "rounded", "ellipse", "diamond", "cylinder", "text"], "optionLabels": { "rect": "四角", "rounded": "角丸", "ellipse": "丸", "diamond": "ひし形", "cylinder": "円柱", "text": "文字だけ" }, "default": "rounded", "label": "形" },
+        { "name": "text", "fieldtype": "markdown", "max": 2000, "label": "字", "description": "図形の真ん中に書く字（Markdown。**太字** と [[パス]] のリンク）" },
+        { "name": "fill", "fieldtype": "radio", "options": ["blue", "green", "amber", "red", "violet", "grey", "none"], "optionLabels": { "blue": "青", "green": "緑", "amber": "黄", "red": "赤", "violet": "紫", "grey": "灰", "none": "なし" }, "default": "blue", "label": "塗り" },
+        { "name": "stroke", "fieldtype": "radio", "options": ["blue", "green", "amber", "red", "violet", "grey"], "optionLabels": { "blue": "青", "green": "緑", "amber": "黄", "red": "赤", "violet": "紫", "grey": "灰" }, "default": "blue", "label": "縁" }
+      ],
+      "semantics": { "editor": "panel" }
+    },
+    {
+      "kind": "image",
+      "extends": "base",
+      "label": "画像",
+      "color": "#57606A",
+      "connectable": true,
+      "context": {
+        "purpose": "ホワイトボードに置く絵（スクリーンショット・写真）。PNG・JPEG・GIF で 1 枚 5MB まで。中身はカードに入れず、プロジェクトの画像の置き場に中身ごとに 1 つだけ持ち、カードは中身の名前（sha256）と形式・原寸を持つ。中身は imageData（base64）か imageFrom（作業ディレクトリのファイル）で渡し、card_read の as: image で絵そのものを読む",
+        "use_when": "今の画面や手描きの絵のように、図形では描けない見た目をホワイトボードで見せるとき",
+        "not_for": "図形と矢印で描ける説明（sketch）・SVG で書ける図（svg）"
+      },
+      "fields": [
+        { "name": "image", "fieldtype": "text", "max": 64, "show": "action", "label": "中身", "description": "中身の sha256。コアが imageData か imageFrom から書く" },
+        { "name": "format", "fieldtype": "text", "max": 8, "show": "action", "label": "形式", "description": "png・jpeg・gif。コアが中身から書く" },
+        { "name": "width", "fieldtype": "number", "show": "action", "label": "原寸の幅", "description": "原寸の幅（ピクセル）。コアが中身から書く" },
+        { "name": "height", "fieldtype": "number", "show": "action", "label": "原寸の高さ", "description": "原寸の高さ（ピクセル）。コアが中身から書く" },
+        { "name": "bytes", "fieldtype": "number", "show": "action", "label": "バイト数", "description": "中身のバイト数。コアが中身から書く" },
+        { "name": "alt", "fieldtype": "text", "max": 500, "label": "説明", "description": "何の絵か" }
+      ],
+      "semantics": { "editor": "panel" }
     },
     {
       "kind": "html",
@@ -540,13 +628,14 @@
     }
   ],
   "sections": [
-    { "section": "document", "label": "ドキュメント", "icon": { "name": "doc.text", "color": "#007AFF" }, "description": "文書（freedoc・formatdoc・stackdoc）と、そのそばの付箋（note）・図（svg・html）を置く", "context": { "use_when": "仕様書・設計書・読み方の文書を書くとき", "not_for": "データの形（schema）・処理の流れ（chart）" }, "holds": ["freedoc", "formatdoc", "stackdoc", "table", "note", "svg", "html"], "sections": ["document"], "opens": "relations", "trees": ["main"] },
+    { "section": "document", "label": "ドキュメント", "icon": { "name": "doc.text", "color": "#007AFF" }, "description": "文書（freedoc・formatdoc・stackdoc・spec）と、そのそばの付箋（note）・図（svg・html）を置く", "context": { "use_when": "仕様書・設計書・読み方の文書を書くとき", "not_for": "データの形（schema）・処理の流れ（chart）" }, "holds": ["freedoc", "formatdoc", "stackdoc", "spec", "table", "note", "svg", "html"], "sections": ["document", "whiteboard"], "opens": "relations", "trees": ["main"] },
+    { "section": "whiteboard", "label": "ホワイトボード", "icon": { "name": "scribble.variable", "color": "#AF52DE" }, "description": "図形（sketch）と付箋（note）・svg・画像（image）を矢印（arrow）でつなぎ、設計の考えを絵で説明する。開くと図形を形そのもので描く。描いたら section_read の as: picture で絵を読んで確かめる", "context": { "use_when": "AI が設計の考えを人に絵で説明するとき。人が考えを描いて AI に見せるとき", "not_for": "プロジェクトの中身（形・流れ・文書）そのもの" }, "holds": ["sketch", "note", "svg", "image"], "sections": ["whiteboard"], "opens": "relations", "trees": ["main"] },
     { "section": "ui", "label": "UI", "icon": { "name": "macwindow", "color": "#007AFF" }, "description": "画面の案を部品（html・svg）とはめ込み（frame）で組む。付箋（note）も置ける。開くとセクションマップに、部品を組み上げた画面と同じ見た目で描く", "context": { "use_when": "画面の見え方を、部品を置いて組み上げた画面そのもので決めるとき。いくつもの画面で使う組は別の UI のセクションにして、はめ込みで使う", "not_for": "文書のそばの図（document の svg・html）" }, "holds": ["html", "svg", "note", "frame"], "sections": ["ui"], "opens": "relations", "trees": ["main"] },
     { "section": "schema", "label": "スキーマ", "icon": { "name": "tablecells", "color": "#FF9500" }, "description": "データの形（entity・value・enum）と置き場（store）を置く", "context": { "use_when": "記録・値の形・列挙と、それを置く所を書くとき。部品ごとに中のセクションに分ける", "not_for": "処理の流れ（chart）・文書（document）" }, "holds": ["entity", "value", "enum", "store", "note"], "sections": ["schema"], "opens": "relations", "trees": ["main"] },
     { "section": "definition", "label": "定義", "icon": { "name": "curlybraces", "color": "#30B0C7" }, "description": "外へ約束する定義（API の引数・設定ファイル・メッセージの形）を、形（entity・value・enum・store）とデータ（instance）・表（table）で一緒に置く", "context": { "use_when": "API の引数・設定ファイル・メッセージの形のように外へ約束する定義を、形と実例（データ）で一緒に持つとき。部品ごとに中のセクションに分ける", "not_for": "外へ約束しない記録の形と置き場（schema）・処理の流れ（chart）" }, "holds": ["entity", "value", "enum", "store", "instance", "table", "note"], "sections": ["definition"], "opens": "relations", "trees": ["main"] },
     { "section": "chart", "label": "チャート", "icon": { "name": "arrow.triangle.branch", "color": "#FF3B30" }, "description": "部品がすることと処理の流れ（flow）を置く", "context": { "use_when": "部品の入口と処理の順を flow で書くとき。部品ごとに中のセクションに分ける。部品は アクターのセクション（type actor）にする", "not_for": "データの形（schema）" }, "holds": ["flow", "note"], "sections": ["chart", "actor"], "opens": "relations", "trees": ["main"] },
     { "section": "actor", "label": "アクター", "icon": { "name": "cube", "color": "#0A84FF" }, "description": "何かを提供し、何かを使う者（アプリ・サーバ・DB などの部品、人、外のサービス）。することを flow で持つ", "context": { "use_when": "部品ごとに分けるとき（チャートのセクションの中に置き、いくらでも中のアクターに分けられる）。人や外のサービスも、すること・提供する口（API）を flow で書いて置く。figure は system・person・outside。store のゴーストを置くと、その store はこのアクターのもの", "not_for": "目的でまとめるだけのもの（テスト・シナリオ。チャートのセクション）" }, "holds": ["flow", "note"], "sections": ["actor", "chart"], "opens": "relations", "trees": [] },
-    { "section": "free", "label": "フリー", "icon": { "name": "tray", "color": "#8E8E93" }, "description": "どの種類のカードも置ける下書きの場所。合うセクションへ移して整理する", "context": { "use_when": "置き場の決まらないカードをいったん置くとき。あとで合うセクションへ移す", "not_for": "整理したあとのカードの置き場" }, "holds": ["*"], "sections": ["free"], "opens": "relations", "trees": ["main", "board"] },
+    { "section": "free", "label": "フリー", "icon": { "name": "tray", "color": "#8E8E93" }, "description": "どの種類のカードも置ける下書きの場所。合うセクションへ移して整理する", "context": { "use_when": "置き場の決まらないカードをいったん置くとき。あとで合うセクションへ移す", "not_for": "整理したあとのカードの置き場" }, "holds": ["*"], "sections": ["free", "whiteboard"], "opens": "relations", "trees": ["main", "board"] },
     { "section": "goals", "label": "ボード", "icon": { "name": "checklist", "color": "#34C759" }, "description": "プロジェクトボードの目標（goal）とタスク（task）を置く", "context": { "use_when": "やることを目標とタスクで持つとき（ボードの根の直下）", "not_for": "仕様と設計（main に書く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals", "complete", "cancelled"], "opens": "relations", "trees": ["board"] },
     { "section": "complete", "label": "完了", "icon": { "name": "checkmark.circle", "color": "#34C759" }, "description": "ボードの Goals の中の、完了した目標と済んだタスクの置き場。カードのアクション（finish・done）がここへ移す", "context": { "use_when": "読むとき・済んだものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
     { "section": "cancelled", "label": "打ち切り", "icon": { "name": "xmark.circle", "color": "#8E8E93" }, "description": "ボードの Goals の中の、打ち切った目標とタスクの置き場。カードのアクション（cancel）がここへ移す", "context": { "use_when": "読むとき・打ち切ったものを見返すとき（Goals の中に 1 つ。名前は変えてよい）", "not_for": "進めている目標（Goals に置く）" }, "holds": ["goal", "task", "freedoc", "note"], "sections": ["goals"], "opens": "relations", "trees": [] },
@@ -638,6 +727,17 @@
       "to": { "kinds": ["file"], "at": ["card", "symbol"] },
       "max": null,
       "export": { "as": "none" }
+    },
+    {
+      "line": "testedBy", "label": "確かめるテスト", "description": "仕様の項目やカードを、どのテストで確かめているか",
+      "context": { "purpose": "仕様の項目やカードを、どのテストで確かめているか。仕様・設計のカード（とその行）から、それを確かめるテストのカード（とその行）か、作業ディレクトリのテストのファイルや関数へ。仕様の行からどのテストへも同じ名前で引くので、どのプロジェクトでもテストの無い項目を同じに探せる", "use_when": "仕様の項目を確かめるテストを言うとき" },
+      "base": "link",
+      "look": { "color": "green", "dash": "dotted", "begin": "none", "end": "arrow" },
+      "from": [{ "kinds": ["*"], "at": ["card", "row"] }],
+      "to": { "kinds": ["*", "file"], "at": ["card", "row", "symbol"] },
+      "max": null,
+      "export": { "as": "none" },
+      "visible": false
     },
     {
       "line": "mentions", "label": "言及", "description": "本文の [[ ]] が指す所",
@@ -785,6 +885,22 @@
         { "name": "use", "label": "使い方", "fieldtype": "radio", "options": ["sign", "verify"], "required": true, "description": "sign は署名を作る鍵（秘密鍵かそのハンドル）、verify は署名を確かめる鍵（公開鍵）" }
       ],
       "owner": ["flow"],
+      "export": { "as": "none" }
+    },
+    {
+      "line": "arrow", "label": "矢印", "description": "ホワイトボードの図形・付箋・svg・画像のあいだの矢印。字・破線・向き・色を 1 本ごとに持つ",
+      "context": { "purpose": "ホワイトボードで、図形どうしのつながりや流れを矢印で見せる。見え方は 1 本ごとの欄で決める", "use_when": "ホワイトボードで説明の絵を描くとき", "not_for": "プロジェクトの中身どうしの線（link・embed など）" },
+      "base": "link",
+      "look": { "color": "grey", "dash": "solid", "begin": "none", "end": "triangle" },
+      "from": [{ "kinds": ["sketch", "note", "svg", "image"], "at": "card" }],
+      "to": { "kinds": ["sketch", "note", "svg", "image"], "at": ["card"] },
+      "max": null,
+      "fields": [
+        { "name": "label", "fieldtype": "text", "max": 200, "label": "字", "description": "線の真ん中に書く字" },
+        { "name": "dashed", "fieldtype": "checkbox", "label": "破線" },
+        { "name": "ends", "fieldtype": "radio", "options": ["none", "end", "both"], "optionLabels": { "none": "なし", "end": "先だけ", "both": "両方" }, "default": "end", "label": "矢じり" },
+        { "name": "color", "fieldtype": "radio", "options": ["blue", "green", "amber", "red", "violet", "grey"], "optionLabels": { "blue": "青", "green": "緑", "amber": "黄", "red": "赤", "violet": "紫", "grey": "灰" }, "default": "grey", "label": "色" }
+      ],
       "export": { "as": "none" }
     }
   ],

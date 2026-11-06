@@ -228,8 +228,9 @@ struct MergePreview {
 /// What a merge wrote.
 struct MergeResult {
     var preview: MergePreview
-    /// Paths the merge left unresolved in the target.
-    var warnings: [String]
+    /// Into main and set aside: the board's goals that still have the branch as their work branch, by
+    /// their paths — the merge does not write the board itself, so the window offers to finish them.
+    var stillNamed: [String]
 }
 
 /// How MCP stands with one of what it may do (a project's items, `mcp_writes`; a key's,

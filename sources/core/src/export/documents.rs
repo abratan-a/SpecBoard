@@ -51,17 +51,49 @@ pub fn table(columns: &[String], cells: &[Vec<String>], cell: &dyn Fn(&str) -> S
     lines.join("\n")
 }
 
-/// The rows as Markdown: each item a heading as deep as it is, each other row what
-/// `render` makes of it. With `named`, each item's heading has its path in the document under it
-/// as a comment (`<!-- row intro.goal -->`): a body's `[[Doc.intro.goal]]` is found by it though
-/// the heading says something else, and a drawn page does not show it.
+/// What an item's heading says of its row besides its title (`rows_markdown`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum RowNames {
+    /// Nothing.
+    No,
+    /// Its path in the document under it as a comment (`<!-- row intro.goal -->`): a body's
+    /// `[[Doc.intro.goal]]` is found by it though the heading says something else, and a drawn page
+    /// does not show it.
+    Marked,
+    /// That, and an anchor of the path above it (`row_anchor`), for a link written out to land on.
+    Anchored,
+}
+
+/// The anchor of a formatdoc's row in a file it is written to: `row-` and the names of the way down
+/// to it joined by `.`, each letter or digit of ASCII, `_` and `-` as it is, any other character as
+/// `_<hex>_`. Made of the path, not the heading, so rewording a heading leaves the links to it whole.
+pub fn row_anchor(names: &[String]) -> String {
+    let said: Vec<String> = names
+        .iter()
+        .map(|name| {
+            name.chars()
+                .map(|c| {
+                    if c.is_ascii_alphanumeric() || c == '_' || c == '-' {
+                        c.to_string()
+                    } else {
+                        format!("_{:x}_", c as u32)
+                    }
+                })
+                .collect()
+        })
+        .collect();
+    format!("row-{}", said.join("."))
+}
+
+/// The rows as Markdown: each item a heading as deep as it is (with what `named` says of it), each
+/// other row what `render` makes of it.
 pub(crate) fn rows_markdown(
     rows: &[FormatRow],
-    named: bool,
+    named: RowNames,
     render: &mut dyn FnMut(&FormatRow) -> Option<String>,
 ) -> String {
     let mut parts: Vec<String> = Vec::new();
-    rows_parts(rows, 0, "", named, None, &mut parts, render);
+    rows_parts(rows, 0, &[], named, None, &mut parts, render);
     parts.join("\n\n")
 }
 
@@ -70,12 +102,12 @@ pub(crate) fn rows_markdown(
 pub(crate) fn row_markdown(
     rows: &[FormatRow],
     names: &[String],
-    named: bool,
+    named: RowNames,
     render: &mut dyn FnMut(&FormatRow) -> Option<String>,
 ) -> Option<String> {
     crate::export::paths::format_row(names, rows)?;
     let mut parts: Vec<String> = Vec::new();
-    rows_parts(rows, 0, "", named, Some(names), &mut parts, render);
+    rows_parts(rows, 0, &[], named, Some(names), &mut parts, render);
     Some(parts.join("\n\n"))
 }
 
@@ -84,8 +116,8 @@ pub(crate) fn row_markdown(
 fn rows_parts(
     list: &[FormatRow],
     depth: usize,
-    trail: &str,
-    named: bool,
+    trail: &[String],
+    named: RowNames,
     only: Option<&[String]>,
     parts: &mut Vec<String>,
     render: &mut dyn FnMut(&FormatRow) -> Option<String>,
@@ -98,11 +130,9 @@ fn rows_parts(
             Some([name, rest @ ..]) if *name == row.name => (false, Some(rest)),
             Some(_) => continue,
         };
-        let path = if trail.is_empty() {
-            crate::pathtext::quote(&row.name).into_owned()
-        } else {
-            crate::pathtext::member(trail, &row.name)
-        };
+        let mut names = trail.to_vec();
+        names.push(row.name.clone());
+        let path = crate::pathtext::join_names(names.iter().map(String::as_str));
         if here {
             if row.kind == "item" {
                 let title = if row.heading.is_empty() {
@@ -111,10 +141,14 @@ fn rows_parts(
                     &row.heading
                 };
                 let heading = format!("{} {title}", "#".repeat((depth + 2).min(6)));
-                parts.push(if named {
-                    format!("{heading}\n{}", charts::marker(&format!("row {path}")))
-                } else {
-                    heading
+                let marked = || format!("{heading}\n{}", charts::marker(&format!("row {path}")));
+                parts.push(match named {
+                    RowNames::No => heading,
+                    RowNames::Marked => marked(),
+                    // An HTML block ends only at a blank line: the heading is a line of its own.
+                    RowNames::Anchored => {
+                        format!("<a id=\"{}\"></a>\n\n{}", row_anchor(&names), marked())
+                    }
                 });
             } else if let Some(text) = render(row) {
                 let text = text.trim_matches(|c: char| {
@@ -132,7 +166,7 @@ fn rows_parts(
             }
         }
         if row.kind == "item" && (here || below.is_some()) {
-            rows_parts(&row.rows, depth + 1, &path, named, below, parts, render);
+            rows_parts(&row.rows, depth + 1, &names, named, below, parts, render);
         }
     }
 }
@@ -378,32 +412,75 @@ fn charts_in<'a>(target: &str, base: &str, project: &Project<'a>) -> Option<Vec<
     Some(out)
 }
 
-/// A table's `![[…]]`: the table, not a diagram; none for any other.
-fn table_embed(r: &Ref, note: &Card, project: &Project) -> Option<String> {
+/// A table's `![[…]]` in `text`: the table, not a diagram, set apart from the text around it by a blank
+/// line on each side (a table runs on until a blank line: the words after it would be read as one of
+/// its rows); none for any other.
+fn table_embed(r: &Ref, text: &str, note: &Card, project: &Project) -> Option<String> {
     if r.kind != Kind::Embed {
         return None;
     }
     let base = project.section_of(note);
-    match mermaid::find_embed(&r.path, r.option.as_deref(), &base, project) {
-        Ok(mermaid::Embed::Card(card)) if card.kind == crate::kinds::TABLE => Some(format!(
-            "\n{}",
+    let table = match mermaid::find_embed(&r.path, r.option.as_deref(), &base, project) {
+        Ok(mermaid::Embed::Card(card)) if card.kind == crate::kinds::TABLE => {
             crate::tools::tables::markdown(&crate::tools::tables::build(project, card))
-        )),
-        _ => None,
-    }
+        }
+        _ => return None,
+    };
+    let before = &text[..r.start];
+    let after = &text[r.end..];
+    let lead = if before.is_empty() || before.ends_with("\n\n") {
+        ""
+    } else if before.ends_with('\n') {
+        "\n"
+    } else {
+        "\n\n"
+    };
+    let tail = if after.is_empty() || after.starts_with("\n\n") {
+        ""
+    } else if after.starts_with('\n') {
+        "\n"
+    } else {
+        "\n\n"
+    };
+    Some(format!("{lead}{}{tail}", table.trim_end_matches('\n')))
 }
 
 /// One `![[…]]`, drawn: a mermaid block, or a line saying why not; a table, the paths its cells
 /// name as `links` says them.
-fn embed(r: &Ref, note: &Card, project: &Project, links: &dyn Fn(&str) -> String) -> String {
+fn embed(
+    r: &Ref,
+    text: &str,
+    note: &Card,
+    project: &Project,
+    links: &dyn Fn(&str) -> String,
+) -> String {
     let base = project.section_of(note);
-    if let Some(table) = table_embed(r, note, project) {
+    if let Some(table) = table_embed(r, text, note, project) {
         return links(&table);
     }
     match mermaid::embedded(&r.path, r.option.as_deref(), &base, project) {
         Ok(diagram) => format!("\n```mermaid\n{diagram}```\n"),
-        Err(why) => format!("> ⚠︎ {} — {why}", code(&r.written(&plain_path(&r.path)))),
+        // Written as it was, section and all, so a reader can find it in the text; and why, as
+        // a reader acts on it — not the tools an AI would search with.
+        Err(why) => format!(
+            "> ⚠︎ {} — {}",
+            code(&r.written(&r.path)),
+            for_reader(&r.path, &base, project).unwrap_or(why)
+        ),
     }
+}
+
+/// Why an embed finds no card, said to a person reading the document: the card is not there (the
+/// tools' own words go on to say how to search for it).
+fn for_reader(path: &str, base: &str, project: &Project) -> Option<String> {
+    let (section, rest) = crate::pathtext::split_section(path);
+    if rest.is_empty() || project.find_seeing(path, base).is_some() {
+        return None;
+    }
+    if section.is_some_and(|s| project.directory.section_from(s.trim(), base).is_none()) {
+        return None;
+    }
+    Some(text!("export.embed.noCard", path))
 }
 
 /// How a note's text reads written out to `here`.
@@ -418,10 +495,10 @@ pub(super) fn render(
     let links = |t: &str| places(t, note, project, here, paths);
     notetext::transform(text_in, |r| {
         Some(match r.kind {
-            Kind::Embed => embed(r, note, project, &links),
+            Kind::Embed => embed(r, text_in, note, project, &links),
             Kind::Value => match project_value(project, &r.path, &base) {
                 Some(found) => code(&found),
-                None => format!("~~{}~~", code(&r.written(&plain_path(&r.path)))),
+                None => format!("~~{}~~", code(&r.written(&r.path))),
             },
             Kind::Place => place(r, note, project, here, paths),
         })
@@ -495,7 +572,28 @@ fn place(
         None => code(&plain),
     };
     match target.and_then(|t| paths.get(&t.id).map(|there| (t, there))) {
-        Some((t, there)) => format!("[{shown}]({})", link(here, there, t, project, paths)),
+        Some((t, there)) => {
+            // A formatdoc's row: to its item's anchor in that file (`row_anchor`), the nearest item
+            // holding a row that is not one; a spec's scenario: to its own.
+            let item = field
+                .and_then(|f| {
+                    let names = crate::pathtext::names(&f);
+                    match t.kind.as_str() {
+                        "formatdoc" => Some(crate::export::paths::format_item(&names, &t.rows)),
+                        "spec" => names
+                            .first()
+                            .filter(|n| t.scenarios().iter().any(|s| &s.name == *n))
+                            .map(|n| vec![n.clone()]),
+                        _ => None,
+                    }
+                })
+                .filter(|names| !names.is_empty());
+            let to = link(here, there, t, project, paths);
+            match item {
+                Some(names) => format!("[{shown}]({to}#{})", row_anchor(&names)),
+                None => format!("[{shown}]({to})"),
+            }
+        }
         None => shown,
     }
 }
@@ -512,13 +610,20 @@ pub fn markdown(
         project,
         &|t: &str| render(t, note, project, here, paths),
         &|t: &str| places(t, note, project, here, paths),
+        RowNames::Anchored,
     )
 }
 
 /// A text of `note` as `card_read`'s `as: markdown` gives it: its paths `[[…]]` and pictures
-/// `![[…]]` as written, a table's `![[…]]` the table.
+/// `![[…]]` as written, a table's `![[…]]` the table, and a value put in (`{{…}}`) the value with its path
+/// after it, for the reader to follow as a path.
 pub(super) fn as_written(text_in: &str, note: &Card, project: &Project) -> String {
-    notetext::transform(text_in, |r| table_embed(r, note, project))
+    let base = project.section_of(note);
+    notetext::transform(text_in, |r| match r.kind {
+        Kind::Value => project_value(project, &r.path, &base)
+            .map(|found| format!("{} ({})", code(&found), r.written(&r.path))),
+        _ => table_embed(r, text_in, note, project),
+    })
 }
 
 /// A note's or a document's Markdown with its texts as written — its paths `[[…]]` and
@@ -530,6 +635,7 @@ pub fn markdown_as_written(note: &Card, project: &Project) -> String {
         project,
         &|t: &str| as_written(t, note, project),
         &|t: &str| t.to_string(),
+        RowNames::Marked,
     )
 }
 
@@ -552,7 +658,7 @@ pub fn version_markdown(
 pub fn version_as_written(note: &Card, name: &str, project: &Project) -> Option<String> {
     let version = note.versions().into_iter().find(|v| v.name == name)?;
     Some(version_text(&version, &|t: &str| {
-        notetext::transform(t, |r| table_embed(r, note, project))
+        notetext::transform(t, |r| table_embed(r, t, note, project))
     }))
 }
 
@@ -587,6 +693,7 @@ fn composed(
     project: &Project,
     r: &dyn Fn(&str) -> String,
     links: &dyn Fn(&str) -> String,
+    named: RowNames,
 ) -> String {
     let title = if note.label.is_empty() {
         &note.name
@@ -601,13 +708,85 @@ fn composed(
         parts.extend(note.versions().iter().map(|v| version_text(v, r)));
         return parts.join("\n\n");
     }
+    if note.kind == "spec" {
+        return spec_markdown(note, title, r, named);
+    }
     if note.kind != "formatdoc" {
         return r(&note.body);
     }
-    let body = rows_markdown(&note.rows, true, &mut |row| {
+    let body = rows_markdown(&note.rows, named, &mut |row| {
         row_text(row, note, project, r, links)
     });
     format!("# {title}\n\n{body}")
+}
+
+/// A spec as Markdown, as the spec documents read (`specboard://SpecBoard/Docs/Design:CardKinds`「仕様（spec）」):
+/// `# Feature:` and its title, its story under a heading in the language written out, what it says
+/// after it, then each scenario as a heading of its own marked by its name (as a formatdoc's item)
+/// with its steps as a list, the keywords as Gherkin has them.
+fn spec_markdown(note: &Card, title: &str, r: &dyn Fn(&str) -> String, named: RowNames) -> String {
+    let mut parts = vec![format!("# Feature: {title}")];
+    let story: Vec<String> = [("as", "As"), ("iWant", "I want"), ("soThat", "So that")]
+        .iter()
+        .filter_map(|(key, word)| {
+            let said = note.spec_field(key);
+            (!said.trim().is_empty()).then(|| format!("- **{word}** {}", r(&said).trim()))
+        })
+        .collect();
+    if !story.is_empty() {
+        parts.push(format!(
+            "## {}
+
+{}",
+            text!("exportDocs.spec.story"),
+            story.join("\n")
+        ));
+    }
+    let about = note.spec_field("about");
+    if !about.trim().is_empty() {
+        parts.push(r(&about).trim_end().to_string());
+    }
+    for scenario in note.scenarios() {
+        let title = if scenario.heading.is_empty() {
+            &scenario.name
+        } else {
+            &scenario.heading
+        };
+        let heading = format!("## Scenario: {title}");
+        let names = vec![scenario.name.clone()];
+        let marked = || {
+            format!(
+                "{heading}\n{}",
+                charts::marker(&format!("row {}", scenario.name))
+            )
+        };
+        parts.push(match named {
+            RowNames::No => heading.clone(),
+            RowNames::Marked => marked(),
+            RowNames::Anchored => format!("<a id=\"{}\"></a>\n\n{}", row_anchor(&names), marked()),
+        });
+        let steps: Vec<String> = scenario
+            .steps
+            .iter()
+            .map(|(keyword, said)| {
+                let word = match keyword.as_str() {
+                    "given" => "Given",
+                    "when" => "When",
+                    "then" => "Then",
+                    "and" => "And",
+                    _ => "But",
+                };
+                format!("- **{word}** {}", r(said).trim())
+            })
+            .collect();
+        if !steps.is_empty() {
+            parts.push(steps.join("\n"));
+        }
+        if !scenario.note.trim().is_empty() {
+            parts.push(r(&scenario.note).trim_end().to_string());
+        }
+    }
+    parts.join("\n\n")
 }
 
 /// One item of a formatdoc (or one row) as Markdown with its texts as written (`card_read`'s
@@ -616,7 +795,7 @@ fn composed(
 pub fn row_as_written(note: &Card, names: &[String], project: &Project) -> Option<String> {
     let r = |t: &str| as_written(t, note, project);
     let links = |t: &str| t.to_string();
-    row_markdown(&note.rows, names, true, &mut |row| {
+    row_markdown(&note.rows, names, RowNames::Marked, &mut |row| {
         row_text(row, note, project, &r, &links)
     })
 }
@@ -636,7 +815,7 @@ fn row_text(
         "table" => Some(table(&row.columns, &row.cells, r)),
         "diagram" => Some(r(&format!("![[{}]]", row.target))),
         "diagrams" => Some(match charts_in(&row.target, &base, project) {
-            None => format!("~~{}~~", code(&plain_path(&row.target))),
+            None => format!("~~{}~~", code(&row.target)),
             Some(found) => found
                 .iter()
                 .map(|c| {
@@ -648,7 +827,7 @@ fn row_text(
         // The way to the card above what it holds as a table, so the table says which card it
         // is; a card of no table, the way to it alone.
         "card" => Some(match project.find(&row.target, &base) {
-            None => format!("~~{}~~", code(&plain_path(&row.target))),
+            None => format!("~~{}~~", code(&row.target)),
             Some(card) => {
                 let at = links(&format!("[[{}]]", project.full(card)));
                 match card_table(card, project, r, links) {

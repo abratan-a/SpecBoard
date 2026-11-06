@@ -202,6 +202,11 @@ pub(crate) fn said(export: &Export, project: &crate::export::Project) -> Value {
                     if !e.kinds.is_empty() {
                         row.insert("kinds".into(), json!(e.kinds));
                     }
+                    // What the row leaves out, and why: a row that writes nothing says so.
+                    let left = unwritten(e, &export.name, &paths.project);
+                    if !left.is_empty() {
+                        row.insert("unwritten".into(), json!(left));
+                    }
                     Value::Object(row)
                 })
                 .collect(),
@@ -361,24 +366,30 @@ fn entries_of(raw: &Value, key: &str, paths: &Paths) -> Result<Vec<Entry>, Strin
 fn takes_nothing(export: &Export, paths: &Paths) -> Vec<String> {
     let mut out = Vec::new();
     for entry in &export.entries {
-        if !entry.kinds.is_empty() || paths.project.card(&entry.from).is_some() {
-            continue;
-        }
-        let alone = Export {
-            id: export.id.clone(),
-            name: export.name.clone(),
-            entries: vec![entry.clone()],
-            exclude: export.exclude.clone(),
-        };
-        let resolved = crate::export::settings::resolve(&[alone], &paths.project);
-        if resolved.by_card.is_empty() && resolved.pages.is_empty() {
-            out.push(text!(
-                "exports.entry.takesNothing",
-                at = format!("{} → {}", paths.said_from(entry), entry.to)
-            ));
+        let at = format!("{} → {}", paths.said_from(entry), entry.to);
+        for line in unwritten(entry, &export.name, &paths.project) {
+            out.push(format!("{at}: {line}"));
         }
     }
     out
+}
+
+/// What an entry leaves out and why (`settings::left_out`), a line each: `<kinds> は書きません（<why>）`.
+fn unwritten(
+    entry: &crate::export::settings::Entry,
+    export: &str,
+    project: &crate::export::Project,
+) -> Vec<String> {
+    crate::export::settings::left_out(entry, export, project)
+        .into_iter()
+        .map(|(kinds, why)| {
+            text!(
+                "exports.leftOut.line",
+                kinds = crate::text::list(&kinds),
+                why
+            )
+        })
+        .collect()
 }
 
 /// A list of cards and sections as written: their ids.

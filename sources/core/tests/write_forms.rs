@@ -167,9 +167,21 @@ fn values_named_by_value_are_refused_with_the_call_written_by_name() {
         "{said}"
     );
     sent(&core, &said);
+    // Sent as written by name: the values are those.
     let read = ok(&core, "card_read", json!({"target": "Schemas:Status"}));
-    assert!(
-        read.get("values").is_none() || read["values"].is_array(),
+    let values: Vec<(Value, Value)> = read["values"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{read}"))
+        .iter()
+        .map(|v| (v["name"].clone(), v["label"].clone()))
+        .collect();
+    assert_eq!(
+        values,
+        [
+            (json!("open"), json!("受付")),
+            (json!("paid"), Value::Null),
+            (json!("lost"), Value::Null)
+        ],
         "{read}"
     );
     // In a call that makes cards, each target's value is named in `use`.
@@ -482,7 +494,7 @@ fn inside_a_batch_the_fix_is_in_the_batch_call() {
 }
 
 #[test]
-fn a_number_a_float_field_takes_is_not_refused() {
+fn a_number_goes_to_an_integer_and_a_decimal_is_written_as_its_digits() {
     let core = with_order();
     // `qty` is an integer, `total` alone is the decimal: a number for the integer goes through.
     ok(
@@ -490,4 +502,125 @@ fn a_number_a_float_field_takes_is_not_refused() {
         "card_update",
         json!({"target": "Data:Order1.lines[0].qty", "value": {"value": 2}}),
     );
+    // The decimal is written as its digits, not as a number.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Data:Order1.total", "value": {"value": "12.50"}}),
+    );
+    let said = refused(
+        &core,
+        "card_update",
+        json!({"target": "Data:Order1.total", "value": {"value": 12.5}}),
+    );
+    assert!(said.contains("10 進の数の文字"), "{said}");
+}
+
+fn lines_of(core: &Core, path: &str) -> Vec<Value> {
+    ok(core, "card_read", json!({"target": path}))["connections"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+}
+
+#[test]
+fn a_line_is_changed_where_it_is() {
+    let core = core();
+    let order = "Schemas/Ordering:Order";
+    let edit = |edits: Value| json!({"target": order, "value": {"connections": edits}});
+    ok(
+        &core,
+        "card_update",
+        edit(json!({"add": [
+            {"line": "link", "to": "Schemas:Customer", "description": "注文した客"},
+            {"line": "link", "to": "Schemas:Status", "description": "状態"}
+        ]})),
+    );
+    let before = lines_of(&core, order);
+    let at = before
+        .iter()
+        .position(|l| l["description"] == "注文した客")
+        .unwrap();
+    ok(
+        &core,
+        "card_update",
+        edit(json!({"change": [{
+            "line": "link", "to": "Schemas:Customer", "description": "注文した客",
+            "set": {"description": "頼んだ客"}
+        }]})),
+    );
+    let now = lines_of(&core, order);
+    assert_eq!(now.len(), before.len(), "{now:?}");
+    assert_eq!(now[at]["description"], "頼んだ客", "{now:?}");
+    for (i, line) in before.iter().enumerate().filter(|(i, _)| *i != at) {
+        assert_eq!(&now[i], line, "{now:?}");
+    }
+    // None that matches, and two that do: refused, nothing written.
+    let said = refused(
+        &core,
+        "card_update",
+        edit(
+            json!({"change": [{"line": "link", "to": "Schemas:Orders", "set": {"description": "x"}}]}),
+        ),
+    );
+    assert!(said.contains("合う線がありません"), "{said}");
+    let said = refused(
+        &core,
+        "card_update",
+        edit(json!({"change": [{"line": "link", "set": {"description": "x"}}]})),
+    );
+    assert!(said.contains("合う線が 2 本あります"), "{said}");
+    assert_eq!(lines_of(&core, order)[at]["description"], "頼んだ客");
+}
+
+#[test]
+fn a_version_is_moved_before_or_after_another() {
+    let core = core();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Log", "value": {"kind": "stackdoc", "versions": [
+            {"name": "v3", "key": "3.0", "body": "三"},
+            {"name": "v2", "key": "2.0", "body": "二"},
+            {"name": "v1", "key": "1.0", "body": "一"}]}}),
+    );
+    let names = |core: &Core| -> Vec<String> {
+        ok(core, "card_read", json!({"target": "Docs:Log"}))["versions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| {
+                v["path"]
+                    .as_str()
+                    .unwrap()
+                    .rsplit('.')
+                    .next()
+                    .unwrap()
+                    .to_string()
+            })
+            .collect()
+    };
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Docs:Log.v1", "value": {"before": "v3"}}),
+    );
+    assert_eq!(names(&core), ["v1", "v3", "v2"]);
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Docs:Log.v1", "value": {"after": "v2"}}),
+    );
+    assert_eq!(names(&core), ["v3", "v2", "v1"]);
+    refused(
+        &core,
+        "card_update",
+        json!({"target": "Docs:Log.v1", "value": {"before": "v1"}}),
+    );
+    refused(
+        &core,
+        "card_update",
+        json!({"target": "Docs:Log.v1", "value": {"before": "v9"}}),
+    );
+    assert_eq!(names(&core), ["v3", "v2", "v1"]);
 }

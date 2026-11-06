@@ -38,6 +38,7 @@
   "write.holds.refusalAppOn": "アプリバッチ処理中です（{name}、{since} から）。{client} の画面でまとめて直しているので、終わるまで書けません",
   "write.holds.refusalMcp": "MCP バッチ処理中です（{name}、{since} から）。終わるまで直せません。画面の帯の「取り消す」でバッチを取り消すと直せます",
   "write.lockedMain": "main はロック中です（merge でしか変えられません）。branch で直して merge します（MCP は引数 branch で branch を名指して書き、main へは branch_merge で入れます。ロック中の main へは MR になり、人が承認します）",
+  "write.lockedMain.screen": "main はロック中です（merge でしか変えられません）。branch で直して merge します（ロック中の main へは MR になり、承認して入れます）",
   "write.merge.boardNotMerged": "ボードは merge しません（main・branch の外の木です）",
   "write.merge.branchNotFound": "branch がありません",
   "write.merge.conflictAt": "{path} の {label}",
@@ -66,5 +67,6 @@
   "write.projectFile.notJson": "プロジェクトのファイルとして読めません（JSON ではありません）",
   "write.projectFile.notProjectFile": "プロジェクトのファイルではありません（format が {format} ではない）",
   "write.projectFile.oldVersion": "版 {version} のファイルは読めません（読めるのは版 11 から。前の名前と Swift の版で書いたものは読みません）",
-  "write.projectFile.projectNotFound": "プロジェクトが見つかりません"
+  "write.projectFile.projectNotFound": "プロジェクトが見つかりません",
+  "write.resultOnlyLooked": "merge したあとの main は見るだけで、書けません（閉じてから main か branch で直します）"
 }

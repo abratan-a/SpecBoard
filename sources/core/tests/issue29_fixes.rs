@@ -158,17 +158,27 @@ fn the_lines_a_process_row_may_draw_are_those_its_kind_of_row_writes() {
     assert_eq!(drawn(1), ["writes"]);
     assert_eq!(drawn(2), ["partner", "key"]);
     assert!(drawn(3).is_empty());
-    // What it says may be drawn goes through.
-    assert!(mcp_write(&core, 1, "writes").is_ok());
-    assert!(mcp_write(&core, 1, "partner").is_err());
+    // What it says may be drawn goes through. A partner is the row's own key, so a row that takes
+    // none refuses it even where the line could land (a flow); a read from a send is kept, not
+    // drawn, and said by the check.
+    assert!(mcp_write(&core, 1, "writes", "Schemas:Orders").is_ok());
+    assert!(mcp_write(&core, 2, "partner", "Charts/Shop:Checkout").is_ok());
+    let refused = mcp_write(&core, 1, "partner", "Charts/Shop:Checkout").unwrap_err();
+    assert!(refused.contains("partner は書けません"), "{refused}");
+    assert!(mcp_write(&core, 2, "reads", "Schemas:Orders").is_ok());
+    let problems = common::checked(&core, "main")["lineProblems"].to_string();
+    assert!(
+        problems.contains("send の行は読む（reads）の線を取りません"),
+        "{problems}"
+    );
 }
 
-fn mcp_write(core: &Core, step: usize, line: &str) -> Result<Value, String> {
+fn mcp_write(core: &Core, step: usize, line: &str, to: &str) -> Result<Value, String> {
     common::mcp(
         core,
         "card_update",
         json!({"target": "Charts/Shop:P.work", "value": {"connections": {"add": [
-            {"line": line, "from": format!("steps[{step}]"), "to": "Schemas:Orders"}]}}}),
+            {"line": line, "from": format!("steps[{step}]"), "to": to}]}}}),
     )
 }
 

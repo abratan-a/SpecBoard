@@ -406,7 +406,8 @@ fn work_cards<'a>(card: &'a Card, board: &Project<'a>) -> (Vec<&'a Card>, Vec<St
         let mut stack: Vec<&Card> = board.inner_of(&card.id);
         stack.reverse();
         while let Some(inner) = stack.pop() {
-            if super::cross::finished(board, inner) {
+            // Done by its own field: a task left undone in a finished goal is still to do.
+            if super::cross::done_itself(board, inner) {
                 done.push(board.full(inner));
                 continue;
             }

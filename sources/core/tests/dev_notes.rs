@@ -476,3 +476,43 @@ fn this_file_does_not_carry_the_names_it_looks_for() {
         }
     }
 }
+
+#[test]
+fn the_comments_point_at_no_code_that_is_gone() {
+    // The app's own store and merge (`Repository`) are the core's now: a comment naming them sends
+    // the reader looking for code that is not there.
+    let core = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let repo = core.parent().unwrap().parent().unwrap();
+    let mut code = Vec::new();
+    for dir in ["src", "tests", "agent", "ffi"] {
+        files(&core.join(dir), &["rs"], &["fixtures"], &mut code);
+    }
+    for dir in ["sources/SpecBoard", "sources/SpecBoardTests"] {
+        files(
+            &repo.join(dir),
+            &["swift"],
+            &["Resources", "Fixtures"],
+            &mut code,
+        );
+    }
+    let mut found = Vec::new();
+    for path in &code {
+        if path.ends_with("tests/dev_notes.rs") {
+            continue;
+        }
+        let source = std::fs::read_to_string(path).unwrap();
+        for (n, text) in comments(&source) {
+            if text.contains("Repository.") {
+                found.push(format!(
+                    "{}:{n}",
+                    path.strip_prefix(repo).unwrap_or(path).display()
+                ));
+            }
+        }
+    }
+    assert!(
+        found.is_empty(),
+        "無くなったコードを指す注釈:\n{}",
+        found.join("\n")
+    );
+}

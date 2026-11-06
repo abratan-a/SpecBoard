@@ -5,15 +5,15 @@ import SwiftUI
 /// label. A press on an item shows where it is, in its tree; an item that is as it was meant to be is
 /// marked so, saying why, and the mark taken off again.
 ///
-/// Every tree is looked at from here, picked at the top — the one open, when the page opens — so that
-/// what is wrong in a tree is not one tab among a root's views of it. Read off the main thread, and only
-/// while the page is shown: the whole tree is checked for it.
+/// Every tree is looked at from here, picked at the top — the one open (main while the board is), when the
+/// page opens — so that what is wrong in a tree is not one tab among a root's views of it. Read off the main
+/// thread, and only while the page is shown: the whole tree is checked for it.
 struct InspectionView: View {
     var model: AppModel
     /// The parts drawn open when the page opens: what to put right.
     var opened: Set<Inspection.Part> = [.fix]
 
-    /// The tree picked, as the inspection names it; the one open while none is.
+    /// The tree picked, as the inspection names it; while none is, the one it starts on (`inspectionStart`).
     @State private var picked: String?
     /// The parts opened or shut by hand, over `opened`.
     @State private var toggled: Set<Inspection.Part> = []
@@ -25,19 +25,14 @@ struct InspectionView: View {
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
 
     /// The tree looked at.
-    private var tree: String { picked ?? model.inspectionTree }
+    private var tree: String { picked ?? model.inspectionStart }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Text(L10n[.Inspection.pageTitle]).font(.app(13, weight: .semibold))
-                Picker("", selection: Binding(get: { tree }, set: { picked = $0 })) {
-                    ForEach(trees, id: \.word) { tree in
-                        Text(tree.title).tag(tree.word)
-                    }
-                }
-                .labelsHidden()
-                .fixedSize()
+                ChoiceMenu(options: trees.map { ($0.word, $0.title) }, selection: Binding(get: { tree }, set: { picked = $0 }))
+                    .fixedSize()
                 .help(L10n[.Inspection.pageTreeHelp])
                 Spacer()
             }

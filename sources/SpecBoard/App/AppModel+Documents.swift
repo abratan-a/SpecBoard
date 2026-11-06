@@ -51,7 +51,7 @@ extension AppModel {
 
     /// The open section, when it is a ui section: what the bar's switches for the parts' tags and notes are for.
     var shownUiSection: ProjectSection? {
-        guard case .section(let id) = here, let section = detail?.directory.section(id: id), section.kind == .ui else {
+        guard let id = mapShownSection, let section = detail?.directory.section(id: id), section.kind == .ui else {
             return nil
         }
         return section

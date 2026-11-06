@@ -469,7 +469,11 @@ fn a_section_entry_that_writes_no_card_is_told() {
         json!({"target": "none", "value": {"entries": [{"from": "Charts/Shop", "to": "flows/"}]}}),
     );
     let warnings = made["warnings"].to_string();
-    assert!(warnings.contains("この行は今は 1 枚も書きません"), "{made}");
+    // Why it writes none: the kinds it leaves out, and the reason for each.
+    assert!(
+        warnings.contains("flow は書きません（チャートは .md のファイルに書きます）"),
+        "{made}"
+    );
     assert!(warnings.contains("Charts/Shop → flows/"), "{made}");
     let fine = ok(
         &core,

@@ -80,7 +80,7 @@ fn a_request_is_made_with_its_conflicts_chosen_and_read_back() {
         &core,
         "branch_merge",
         json!({"target": "work", "value": {
-        "title": "客を直す（2）", "take": {"Schemas:Customer": {"label": "target"}}}}),
+        "title": "客を直す（2）", "take": {"Schemas:Customer": {"label": "into"}}}}),
     );
     let first = ok(&core, "mr_read", json!({"target": "1"}));
     assert_eq!(
@@ -719,4 +719,157 @@ fn a_request_made_or_withdrawn_is_told_of() {
     assert_eq!(told(&heard), 1);
     ok(&core, "mr_delete", json!({"target": 2}));
     assert_eq!(told(&heard), 1);
+}
+
+/// A tool called as the window calls it (`op: tool`): its answer, `error` or `result`.
+fn window(core: &Core, project: &str, name: &str, mut arguments: Value) -> Value {
+    arguments["project"] = project.into();
+    op(
+        core,
+        json!({"op": "tool", "name": name, "arguments": arguments}),
+    )
+}
+
+fn result_opened(core: &Core, project: &str) {
+    let branches = op(core, json!({"op": "branches", "project": project}));
+    let work = branches["result"]["branches"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|b| b["name"] == "work")
+        .unwrap()["id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let opened = op(
+        core,
+        json!({"op": "merge_result_open", "project": project, "source": work, "take": {"Schemas:Customer": {"label": "source"}}}),
+    );
+    assert!(opened.get("error").is_none(), "{opened}");
+}
+
+#[test]
+fn the_window_reads_the_result_it_opened_by_its_word() {
+    let (core, project) = setup();
+    result_opened(&core, &project);
+    let read = window(
+        &core,
+        &project,
+        "card_read",
+        json!({"branch": "~result", "target": "Schemas:Customer"}),
+    );
+    assert!(read.get("error").is_none(), "{read}");
+    assert!(read.to_string().contains("branch の客"), "{read}");
+    let said = refused(
+        &core,
+        "card_read",
+        json!({"branch": "~result", "target": "Schemas:Customer"}),
+    );
+    assert!(said.contains("branch「~result」はありません"), "{said}");
+}
+
+#[test]
+fn nothing_is_written_into_a_result_but_its_merge() {
+    let (core, project) = setup();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Log", "value": {"kind": "stackdoc", "versions": [
+            {"name": "v2", "key": "2.0", "body": "二"},
+            {"name": "v1", "key": "1.0", "body": "一"}]}}),
+    );
+    result_opened(&core, &project);
+    let written = window(
+        &core,
+        &project,
+        "card_update",
+        json!({"branch": "~result", "target": "Schemas:Customer", "value": {"description": "結果に書いた"}}),
+    );
+    assert!(written.get("error").is_some(), "{written}");
+    let read = |tree: &str, path: &str| {
+        window(
+            &core,
+            &project,
+            "card_read",
+            json!({"branch": tree, "target": path}),
+        )
+    };
+    assert!(
+        !read("~result", "Schemas:Customer")
+            .to_string()
+            .contains("結果に書いた")
+    );
+    assert!(
+        !read("main", "Schemas:Customer")
+            .to_string()
+            .contains("結果に書いた")
+    );
+    // How it looks: into the result only.
+    let opened = window(
+        &core,
+        &project,
+        "card_update",
+        json!({"branch": "~result", "target": "Docs:Log", "value": {"version": "v1"}}),
+    );
+    assert!(opened.get("error").is_none(), "{opened}");
+    assert_eq!(
+        ok(&core, "card_read", json!({"target": "Docs:Log"}))["version"],
+        Value::Null
+    );
+}
+
+#[test]
+fn what_follows_a_rename_does_not_stop_at_a_result_left_open() {
+    let (core, project) = setup();
+    let docs = ok(&core, "card_list", json!({"value": {"section": "Docs"}}));
+    let doc = docs["cards"][0]["path"].as_str().unwrap().to_string();
+    ok(
+        &core,
+        "card_update",
+        json!({"branch": "work", "target": "Schemas:Customer", "value": {"description": format!("[[{doc}]] を見る")}}),
+    );
+    result_opened(&core, &project);
+    let mut tree = ok(&core, "project_read", json!({}))["projectTree"].clone();
+    let docs = tree["main_sections"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|s| s["name"] == "Docs")
+        .unwrap();
+    docs["name"] = "Documents".into();
+    ok(
+        &core,
+        "project_update",
+        json!({"value": {"project_tree": tree}}),
+    );
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Customer", "value": {"name": "Client"}}),
+    );
+    ok(&core, "section_create", json!({"target": "Schemas/Moved"}));
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Client", "value": {"section": "Schemas/Moved"}}),
+    );
+}
+
+#[test]
+fn a_request_read_through_mcp_says_the_side_merged_into_as_into() {
+    let (core, project) = setup();
+    lock(&core, &project);
+    let made = ok(
+        &core,
+        "branch_merge",
+        json!({"target": "work", "value": {"title": "客を直す", "take": {"Schemas:Customer": {"label": "into"}}}}),
+    );
+    let conflict = &made["result"]["conflicts"][0];
+    assert_eq!(conflict["took"], "into", "{made}");
+    assert_eq!(conflict["into"], "main の客", "{made}");
+    assert!(conflict.get("target").is_none(), "{made}");
+    let read = ok(&core, "mr_read", json!({"target": "#1"}));
+    let conflict = &read["result"]["conflicts"][0];
+    assert_eq!(conflict["took"], "into", "{read}");
+    assert_eq!(conflict["into"], "main の客", "{read}");
 }

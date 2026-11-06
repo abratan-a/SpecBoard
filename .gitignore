@@ -20,3 +20,4 @@ build/
 .release-preview/
 # Local signing settings (read by sources/Config/Signing.xcconfig)
 sources/Config/Signing.local.xcconfig
+__pycache__/

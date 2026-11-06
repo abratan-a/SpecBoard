@@ -16,6 +16,8 @@ final class CardCanvasController {
     var filters = GraphFilters()
     /// The canvas in its selection mode (`CardCanvasView.selecting`).
     var isSelecting = false
+    /// How many pairs of cards overlap on the diagram (`CardCanvasView.overlaps`).
+    var overlaps = 0
 
     @ObservationIgnored weak var view: CardCanvasView?
 
@@ -43,6 +45,9 @@ final class CardCanvasController {
         }
         view.onSelectingChanged = { [weak self] on in
             DispatchQueue.main.async { self?.isSelecting = on }
+        }
+        view.onOverlapsChanged = { [weak self] count in
+            DispatchQueue.main.async { self?.overlaps = count }
         }
     }
 
@@ -95,6 +100,32 @@ final class CardCanvasController {
     }
 
     func look(for section: String) -> CardCanvasView.Look? { looks[section] }
+
+    /// Where the canvas on screen looks now, if one is.
+    var lookNow: CardCanvasView.Look? { view?.look }
+
+    /// The lines switched and the filters of each map tab while another is in front, by its key
+    /// (`AppModel.frontMapKey`).
+    @ObservationIgnored private var mapFilters: [String: GraphFilters] = [:]
+
+    /// The map tab `to` come forward from `from`: what `from` had switched, and where it looked (by
+    /// `leavingLook`), kept for it, and `to`'s put back — one not seen yet as they start. Not drawn on the
+    /// canvas on screen: that is `from`'s, made anew for `to` (`AppModel.frontMapKey`), and drawing it with
+    /// `to`'s filters could move where `from` is kept looking.
+    func switchMap(from: String, to: String, leavingLook: String) {
+        mapFilters[from] = filters
+        if let look = view?.look { looks[leavingLook] = look }
+        take(mapFilters[to] ?? GraphFilters())
+    }
+
+    /// What a map tab not in front has switched; nil when it was never in front.
+    func filters(of key: String) -> GraphFilters? { mapFilters[key] }
+
+    /// The lines switched and the filters made `next`, for the canvas made next (`switchMap`).
+    func take(_ next: GraphFilters) { filters = next }
+
+    /// Another tab bar: no map tab's switches kept.
+    func forgetMaps() { mapFilters = [:] }
 
     /// Select a card, moving the view only when it is not on screen. Held when
     /// there is no canvas yet, and carried out by the first `shown()`.

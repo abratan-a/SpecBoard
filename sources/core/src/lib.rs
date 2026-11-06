@@ -332,6 +332,8 @@ impl Core {
             .get("op")
             .and_then(Value::as_str)
             .ok_or_else(|| text!("core.error.noOp"))?;
+        // What the window asks is answered in the screen's words; MCP's in the tools' (`text::bind_screen`).
+        let _screen = text::bind_screen(op != "mcp");
         match op {
             "ping" => {
                 let result = json!({ "core": VERSION });
@@ -482,7 +484,13 @@ impl Core {
             Some(store) => store,
             None => match store::Store::open_reader(&self.place) {
                 Ok(store) => store,
-                Err(_) => return Ok(Reading::Locked(self.lock())),
+                Err(error) => {
+                    // Read under the writes' lock all the same, but said once: reads waiting on
+                    // writes from then on have a reason that can be found.
+                    static SAID: std::sync::Once = std::sync::Once::new();
+                    SAID.call_once(|| eprintln!("{}", text!("store.reader.fallback", error)));
+                    return Ok(Reading::Locked(self.lock()));
+                }
             },
         };
         let _ = workdir::take_in(&store, &self.work);
@@ -753,7 +761,7 @@ mod tests {
             [
                 "main のロックを外した",
                 "main をロックした",
-                "プロジェクトのファイル（版 33）から読み込んだ"
+                "プロジェクトのファイル（版 34）から読み込んだ"
             ]
         );
         let heard = heard.0.lock().unwrap();

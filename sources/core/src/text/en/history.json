@@ -5,6 +5,7 @@
   "history.commit.none": "There is no commit {seq}",
   "history.commit.noneAfter": "There is nothing newer than commit {seq}",
   "history.commit.noneOrCut": "There is no commit {seq} (no such number, or before where the history was cut)",
+  "history.cut.groupOn": "A group is being put right, so the history is not cut past commit #{began}, where it began (giving it up goes back there)",
   "history.migrate.builtinNames": "Gave the built-in kinds of line, enum values and goal values the names of now",
   "history.migrate.containers": "Moved what containers hold",
   "history.migrate.ghosts": "Moved the card ghosts",

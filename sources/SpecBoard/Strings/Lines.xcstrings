@@ -121,6 +121,24 @@
         }
       }
     },
+    "bar.joinedFolded" : {
+      "comment" : "Bar of the connections map: how many other cards the card is connected to, and how many of them are drawn folded inside the cards that hold them.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected to %1$lld cards (%2$lld folded inside)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld 枚とつながる（%2$lld 枚は中に畳む）"
+          }
+        }
+      }
+    },
     "connect.currentCount" : {
       "comment" : "Small note beside a kind of line in the connect popover: how many lines of that kind there already are.",
       "extractionState" : "manual",
@@ -615,6 +633,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開けないリンクです（%@）"
+          }
+        }
+      }
+    },
+    "link.cantOpenProject" : {
+      "comment" : "Error when a link names a project in the list that could not be opened (its agent does not answer, or it could not be read).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the project “%@” named in the link"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクのプロジェクト「%@」を開けませんでした"
+          }
+        }
+      }
+    },
+    "link.cantOpenProjectWhy" : {
+      "comment" : "Error when a link names a project in the list that could not be opened, with why it could not (the first argument is the project, the second the reason).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the project “%1$@” named in the link (%2$@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクのプロジェクト「%1$@」を開けませんでした（%2$@）"
           }
         }
       }

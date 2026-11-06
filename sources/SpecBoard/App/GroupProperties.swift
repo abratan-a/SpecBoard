@@ -62,12 +62,11 @@ struct GroupProperties: View {
             }
             PropertyRow("headerPlace", help: L10n[.Properties.groupHeaderPlaceHelp]) {
                 if editable {
-                    Picker("", selection: Binding(get: { group.headerPlace }, set: { place in
-                        model.setGroupLook(ref, "headerPlace", place == .topLeft ? nil : place.rawValue)
-                    })) {
-                        ForEach(MapGroup.HeaderPlace.allCases, id: \.self) { Text(Self.word($0)).tag($0) }
-                    }
-                    .labelsHidden().pickerStyle(.menu).fixedSize()
+                    ChoiceMenu(options: MapGroup.HeaderPlace.allCases.map { ($0, Self.word($0)) },
+                               selection: Binding(get: { group.headerPlace }, set: { place in
+                                   model.setGroupLook(ref, "headerPlace", place == .topLeft ? nil : place.rawValue)
+                               }))
+                        .fixedSize()
                 } else {
                     Text(Self.word(group.headerPlace))
                 }

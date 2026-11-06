@@ -49,7 +49,20 @@ extension AppModel {
             tell(error: { L10n.text(.Lines.linkNoProject(named), in: $0) })
             return false
         }
-        if detail?.project.id != project.id { select(project.id) }
+        if detail?.project.id != project.id {
+            lastError = nil
+            select(project.id)
+        }
+        // Not opened (its agent does not answer, or it could not be read): nothing of the project
+        // before is opened in its place, and why it was not, when it was said, is said with it.
+        guard detail?.project.id == project.id else {
+            let why = lastError
+            tell(error: { language in
+                why.map { L10n.text(.Lines.linkCantOpenProjectWhy(project.name, $0), in: language) }
+                    ?? L10n.text(.Lines.linkCantOpenProject(project.name), in: language)
+            })
+            return false
+        }
         if let branch = link.branch {
             switch branch.lowercased() {
             case SchemaDirectory.mainWord: openBranch(nil)

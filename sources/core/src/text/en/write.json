@@ -38,6 +38,7 @@
   "write.holds.refusalAppOn": "An app batch is in progress ({name}, since {since}). A batch edit is in progress in the window on {client}, so it cannot be written until it ends",
   "write.holds.refusalMcp": "An MCP batch is in progress ({name}, since {since}). It cannot be edited until it ends. Cancel the batch with \"Cancel\" on the window's banner to edit it",
   "write.lockedMain": "main is locked (only a merge can change it). Fix it on a branch and merge (MCP writes on the branch named by the branch argument and brings it into main with branch_merge. Into a locked main that becomes an MR, which a person approves)",
+  "write.lockedMain.screen": "main is locked (only a merge can change it). Fix it on a branch and merge (into a locked main that becomes an MR, which is approved to bring it in)",
   "write.merge.boardNotMerged": "The Project Board is not merged (it is a tree outside main and the branches)",
   "write.merge.branchNotFound": "Branch not found",
   "write.merge.conflictAt": "{label} of {path}",
@@ -66,5 +67,6 @@
   "write.projectFile.notJson": "Cannot read it as a project file (it is not JSON)",
   "write.projectFile.notProjectFile": "It is not a project file (format is not {format})",
   "write.projectFile.oldVersion": "A file of version {version} cannot be read (versions from 11 on can be read; files written under the previous name or by the Swift version are not read)",
-  "write.projectFile.projectNotFound": "Project not found"
+  "write.projectFile.projectNotFound": "Project not found",
+  "write.resultOnlyLooked": "The main as it would be after the merge is only to look at: close it and write in main or a branch"
 }

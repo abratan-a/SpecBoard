@@ -1,11 +1,15 @@
-//! A project as one JSON file, in the form of version 33: the project's row, main's sections in tree order
+//! A project as one JSON file, in the form of version 34: the project's row, main's sections in tree order
 //! and its cards by section, order and name, the branches as the store keeps them, the
 //! board, the diagram's settings — with the cards in their kinds' form, and last every box
-//! on a diagram (`places`), how cards look (`looks`), the check's marks (`inspectionMarks`) and the
-//! code the implementations' lines were recorded at (`codeMarks`).
+//! on a diagram (`places`), how cards look (`looks`), the check's marks (`inspectionMarks`), the
+//! code the implementations' lines were recorded at (`codeMarks`) and the pictures the image cards
+//! name (`images`).
 //! A file's change notes (`changelog`, a
 //! table nothing wrote, gone: `schema::NO_CHANGELOG`) are let go when it is read; no
-//! version is given for it. Version 33 has the built-in names of now: the kinds of line `rules`,
+//! version is given for it. Version 34 has the pictures of the whiteboards' image cards (`images`: each
+//! once, by the sha256 of its contents, the contents in base64); a file of before has none, and an app of
+//! before refuses one of 34 as newer rather than leave the cards naming pictures it does not hold.
+//! Version 33 has the built-in names of now: the kinds of line `rules`,
 //! `shapeOf`, `condition`, `awaits` and `partner`, an enum's value keyed by `name`, a goal's values in
 //! English; a file of before has those of before, moved as it is read (`name_move`). Version 32 has, on a flow's begin, that it receives from anyone (`anyCaller`);
 //! a file of before has none, and an app of before refuses one of 32 as newer rather than read it as a
@@ -54,7 +58,7 @@ use serde_json::{Map, Value};
 use std::collections::{HashMap, HashSet};
 
 pub const FORMAT: &str = "specboard/project";
-pub const VERSION: i64 = 33;
+pub const VERSION: i64 = 34;
 
 /// The form's name before a plan was called a project (versions 11 to 17), read still.
 pub const FORMAT_BEFORE: &str = "specboard/plan";
@@ -570,6 +574,30 @@ pub fn write(conn: &Connection, project_id: &str) -> Result<String, String> {
         .map_err(sql)?;
     if !code.is_empty() {
         body.insert("codeMarks".into(), Value::Array(code));
+    }
+    // The pictures, every one the project holds: a card of the history or of a branch may name one no
+    // card of main does.
+    let mut stmt = conn
+        .prepare(
+            "SELECT hash, format, width, height, bytes, data FROM images WHERE project_id = ? ORDER BY hash",
+        )
+        .map_err(sql)?;
+    let images: Vec<Value> = stmt
+        .query_map([project_id], |r| {
+            let mut out = Map::new();
+            out.insert("hash".into(), r.get::<_, String>(0)?.into());
+            out.insert("format".into(), r.get::<_, String>(1)?.into());
+            for (at, key) in [(2, "width"), (3, "height"), (4, "bytes")] {
+                out.insert(key.into(), r.get::<_, i64>(at)?.into());
+            }
+            out.insert("data".into(), r.get::<_, String>(5)?.into());
+            Ok(Value::Object(out))
+        })
+        .map_err(sql)?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(sql)?;
+    if !images.is_empty() {
+        body.insert("images".into(), Value::Array(images));
     }
     Ok(ojson::pretty(&Value::Object(body)) + "\n")
 }

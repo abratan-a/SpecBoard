@@ -674,6 +674,11 @@ fn a_merge_takes_a_branchs_groups_only_with_places_and_what_it_let_go_of_goes() 
         "branch_read",
         json!({"target": "work", "value": {"against": "main"}}),
     );
+    // Groups are places: nothing to settle before the merge.
+    assert!(
+        preview["conflicts"].as_array().is_none_or(|c| c.is_empty()),
+        "{preview}"
+    );
     let merged = ok(
         &core,
         "branch_merge",
@@ -804,7 +809,7 @@ fn groups_go_with_the_project_file_and_come_back_as_they_were() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 33);
+    assert_eq!(file["version"], 34);
     let rows: Vec<&Value> = file["places"]
         .as_array()
         .unwrap()
@@ -828,7 +833,7 @@ fn groups_go_with_the_project_file_and_come_back_as_they_were() {
     assert_eq!(groups(&core, "work"), json!({}));
     // A file a newer app wrote is refused.
     let mut newer = file.clone();
-    newer["version"] = 34.into();
+    newer["version"] = 35.into();
     let refused = op(
         &core,
         json!({"op": "project_file_read", "text": newer.to_string(), "landing": "replace"}),

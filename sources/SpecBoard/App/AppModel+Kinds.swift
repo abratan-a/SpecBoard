@@ -130,7 +130,7 @@ extension AppModel {
 
     /// Every definition the project has, built-in ones first, list by list (`kind_read`).
     func kindEntries() -> [KindEntry] {
-        guard let answer = try? tool("kind_read", inTree: false),
+        guard let answer = answered({ try tool("kind_read", inTree: false) }),
               case .object(let wrapped) = answer, case .object(let body)? = wrapped["json"] else { return [] }
         var out: [KindEntry] = []
         for list in KindList.allCases {
@@ -159,7 +159,7 @@ extension AppModel {
     /// What is directly under each root (`project_tree`) as the tab writes it: its
     /// JSON, as `project_read` says it (`projectTree`).
     func projectTreeText() -> String {
-        guard let answer = try? tool("project_read", inTree: false),
+        guard let answer = answered({ try tool("project_read", inTree: false) }),
               case .object(let wrapped) = answer, case .object(let body)? = wrapped["json"],
               let tree = body["projectTree"] else { return "" }
         return tree.pretty()
@@ -227,9 +227,11 @@ extension AppModel {
     /// A definition of the project's own written as `written` in place of the one called `name` (none
     /// for a new one), with the tab's `renames`, tried without writing (`dryRun`): what is wrong with
     /// it, all of it, and how many cards each rename moves.
-    func checkKind(_ list: KindList, replacing name: String?, with written: OJSON, renames: [OJSON] = []) -> KindsCheck {
+    func checkKind(_ list: KindList, replacing name: String?, with written: OJSON, opened: OJSON? = nil,
+                   renames: [OJSON] = []) -> KindsCheck {
         do {
-            return Self.checked(try kindTool(list, replacing: name, with: written, renames: renames, dryRun: true))
+            return Self.checked(try kindTool(list, replacing: name, with: written, opened: opened, renames: renames,
+                                             dryRun: true))
         } catch {
             return KindsCheck(ok: false, problems: [ErrorText.said(error)])
         }
@@ -239,8 +241,9 @@ extension AppModel {
     /// for a new one), with `renames` (one line in main's history). Whether it was written; why not
     /// is the window's error.
     @discardableResult
-    func saveKind(_ list: KindList, replacing name: String?, with written: OJSON, renames: [OJSON] = []) -> Bool {
-        write { _ = try kindTool(list, replacing: name, with: written, renames: renames, dryRun: false) }
+    func saveKind(_ list: KindList, replacing name: String?, with written: OJSON, opened: OJSON? = nil,
+                  renames: [OJSON] = []) -> Bool {
+        write { _ = try kindTool(list, replacing: name, with: written, opened: opened, renames: renames, dryRun: false) }
         return lastError == nil
     }
 
@@ -335,7 +338,7 @@ extension AppModel {
     /// target, `of` its list), one there written whole in its place (`kind_update`: each key it no
     /// longer has taken away, a name of its own its `name`, the tab's renames of its fields and rows
     /// its `renames`).
-    private func kindTool(_ list: KindList, replacing name: String?, with written: OJSON, renames: [OJSON],
+    private func kindTool(_ list: KindList, replacing name: String?, with written: OJSON, opened: OJSON?, renames: [OJSON],
                           dryRun: Bool) throws -> OJSON {
         guard case .object(var value) = written, case .string(let now)? = value[list.nameKey] else {
             throw CoreClient.Refusal(L10n[.Kinds.problemNameMissing(list.nameKey)])
@@ -347,13 +350,20 @@ extension AppModel {
             if dryRun { made["dryRun"] = .bool(true) }
             return try kindsCall("kind_create", target: now, value: made)
         }
-        // What it has now that what is written has not, taken away.
-        if case .object(let wrapped) = try kindsCall("kind_read", target: name, value: OrderedObject()),
-           case .object(let was)? = wrapped["json"] {
-            for key in was.keys where ![list.nameKey, "project", "of", "builtin", "noPlace", "contextChanged", "iconChanged"].contains(key)
-                && value[key] == nil {
-                value[key] = .null
-            }
+        // What it had when it was begun that what is written has not, taken away: a key another
+        // wrote since stays. Without what it was begun from, what it has now.
+        let was: OrderedObject?
+        if case .object(let begun)? = opened {
+            was = begun
+        } else if case .object(let wrapped) = try kindsCall("kind_read", target: name, value: OrderedObject()),
+                  case .object(let now)? = wrapped["json"] {
+            was = now
+        } else {
+            was = nil
+        }
+        for key in was?.keys ?? [] where ![list.nameKey, "project", "of", "builtin", "noPlace", "contextChanged", "iconChanged"].contains(key)
+            && value[key] == nil {
+            value[key] = .null
         }
         if now != name { value["name"] = .string(now) }
         let moved: [OJSON] = renames.compactMap { rename in

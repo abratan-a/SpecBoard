@@ -940,3 +940,112 @@ fn the_lines_to_files_made_or_pointed_elsewhere_are_taken_once() {
     assert_eq!(moved[0].at.as_deref(), Some("g"));
     assert!(taken(&mut store, &with("file:d1/b.rs", "g"), true).is_empty());
 }
+
+#[test]
+fn the_history_a_group_began_at_is_not_cut_while_it_is_on() {
+    let mut store = fresh();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "一")).unwrap();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "二")).unwrap();
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.begin_group(PROJECT, "").unwrap();
+    tx.commit().unwrap();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "三")).unwrap();
+    let last = history::commits(&store.conn, PROJECT, "", 1).unwrap()[0].seq;
+    // Cutting up to the group's own commit would take away the commit it goes back to.
+    let mut tx = store.write(Who::screen()).unwrap();
+    assert!(tx.cut(PROJECT, "", last).is_err());
+    drop(tx);
+    let mut tx = store.write(Who::screen()).unwrap();
+    assert_eq!(tx.abandon_group(PROJECT, "").unwrap(), 1);
+    tx.commit().unwrap();
+    assert_eq!(label(row(&store, "", "c1").unwrap().1), "二");
+}
+
+#[test]
+fn giving_up_a_group_that_merged_a_branch_brings_the_branch_back() {
+    let mut store = fresh();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "一")).unwrap();
+    put(&mut store, Who::screen(), "b1", &card("c2", "Item", "枝")).unwrap();
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.begin_group(PROJECT, "").unwrap();
+    tx.commit().unwrap();
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.merge(PROJECT, "b1", "", &merge::Take::new(), false, false)
+        .unwrap();
+    tx.commit().unwrap();
+    assert!(row(&store, "", "c2").is_some());
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.abandon_group(PROJECT, "").unwrap();
+    tx.commit().unwrap();
+    assert!(row(&store, "", "c2").is_none());
+    let back: (String, Option<String>) = store
+        .conn
+        .query_row(
+            "SELECT name, archived_at FROM branches WHERE id = 'b1'",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .unwrap();
+    assert_eq!(back, ("work".to_string(), None));
+}
+
+#[test]
+fn a_branch_set_aside_and_let_go_of_leaves_no_line_on_main() {
+    let mut store = fresh();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "一")).unwrap();
+    put(&mut store, Who::screen(), "b1", &card("c2", "Item", "枝")).unwrap();
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.merge(PROJECT, "b1", "", &merge::Take::new(), false, false)
+        .unwrap();
+    tx.commit().unwrap();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "二")).unwrap();
+    let last = history::commits(&store.conn, PROJECT, "", 1).unwrap()[0].seq;
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.cut(PROJECT, "", last).unwrap();
+    tx.commit().unwrap();
+    assert_eq!(
+        count(&store, "SELECT count(*) FROM branches WHERE id = 'b1'"),
+        0
+    );
+    assert_eq!(
+        count(
+            &store,
+            "SELECT count(*) FROM commit_lines WHERE kind = 'branch.delete'"
+        ),
+        0
+    );
+}
+
+#[test]
+fn a_bundle_writes_only_into_the_project_it_is_read_as() {
+    let mut store = fresh();
+    put(&mut store, Who::screen(), "", &card("c1", "Order", "一")).unwrap();
+    // A bundle of another project whose rows still name this one.
+    let mut bundled = bundle::bundle(&store.conn, PROJECT).unwrap();
+    bundled["project"] = json!("p2");
+    let tables = bundled["tables"].as_object_mut().unwrap();
+    // Only its project and its cards are checked here: rows keyed by ids of their own are left out.
+    for (table, rows) in tables.iter_mut() {
+        if table != "projects" && table != "card_docs" {
+            *rows = json!([]);
+        }
+    }
+    let project = &mut tables.get_mut("projects").unwrap()[0];
+    project["id"] = json!("p2");
+    project["slug"] = json!("other");
+    project["name"] = json!("Other");
+    for row in tables.get_mut("card_docs").unwrap().as_array_mut().unwrap() {
+        row["doc"] = json!(Value::Object(card("c1", "Order", "束")).to_string());
+    }
+    let mut tx = store.write(Who::screen()).unwrap();
+    tx.read_bundle(&bundled).unwrap();
+    tx.commit().unwrap();
+    assert_eq!(label(row(&store, "", "c1").unwrap().1), "一");
+    assert_eq!(
+        count(
+            &store,
+            "SELECT count(*) FROM card_docs WHERE project_id = 'p2'"
+        ),
+        1
+    );
+}

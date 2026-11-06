@@ -67,13 +67,13 @@ struct PropertyPanel: View {
                         Button(row.title) { row.pick(model, card) }
                     }
                 } label: {
-                    HStack(spacing: 5) {
-                        Text(pickedTitle(card)).font(.app(12, weight: .semibold, design: .monospaced)).lineLimit(1)
-                        Text(pickedKind(card)).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
-                    }
+                    Text(pickedTitle(card)).font(.app(12, weight: .semibold, design: .monospaced)).lineLimit(1)
                 }
                 .menuStyle(.borderlessButton)
+                .fixedSize()
                 .help(L10n[.Properties.headerMenuHelp])
+                // Beside the menu, not in its label: a borderless menu draws only the first text of its label.
+                Text(pickedKind(card)).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
             case .line:
                 let (title, kind) = Self.heading(model)
                 Text(title).font(.app(12, weight: .semibold)).lineLimit(1).truncationMode(.middle)
@@ -189,6 +189,9 @@ struct PropertyPanel: View {
         case .stackdoc:
             // Its versions: one picked is the one it has open (how it looks).
             return card.versions.map { version in Pick(title: version.key) { $0.openVersion($1.id, version.name) } }
+        case .spec:
+            // Its scenarios are written in its card editor, not picked from here.
+            return []
         case .goal:
             var out: [Pick] = []
             CustomRows.walk(card.customRows) { row, path in
@@ -201,7 +204,7 @@ struct PropertyPanel: View {
             return OwnRows.walk(def, card.ownRows).map { row in
                 Pick(title: String(repeating: "  ", count: row.depth) + row.title) { $0.selectRow($1.id, .customRow(row.path)) }
             }
-        case .note, .freedoc, .action, .task, .instance, .table, .svg, .html, .frame:
+        case .note, .freedoc, .action, .task, .instance, .table, .svg, .html, .frame, .sketch, .image:
             return []
         }
     }
@@ -613,14 +616,11 @@ struct SectionProperties: View {
                 PropertyRow("type", help: section.kind?.help ?? "") {
                     if let types = rows.types {
                         VStack(alignment: .leading, spacing: 2) {
-                            Picker("", selection: Binding(
-                                get: { section.kind?.rawValue ?? section.kindName ?? "" },
-                                set: { model.setSectionType(section.id, to: $0) })) {
-                                ForEach(types, id: \.self) { kind in
-                                    Text(SectionPanelRows.typeText(kind, in: detail)).tag(kind)
-                                }
-                            }
-                            .labelsHidden().pickerStyle(.menu).fixedSize()
+                            ChoiceMenu(options: types.map { ($0, SectionPanelRows.typeText($0, in: detail)) },
+                                       selection: Binding(
+                                           get: { section.kind?.rawValue ?? section.kindName ?? "" },
+                                           set: { model.setSectionType(section.id, to: $0) }))
+                                .fixedSize()
                             Text(L10n[.Properties.sectionTypeNote]).font(.app(10.5)).foregroundStyle(.tertiary)
                         }
                     } else {

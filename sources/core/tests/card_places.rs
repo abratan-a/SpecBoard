@@ -231,6 +231,58 @@ fn a_flow_made_with_its_nodes_where_they_sit_keeps_them_there() {
     assert!(at("Charts:Placed.done").is_object());
 }
 
+/// Nodes given no place go in columns by the steps from the start, left to right: the ways out of
+/// a node one under the other in the next column, one no way reaches right of the last. The places
+/// are kept as the boxes are, the making of the flow the one commit.
+#[test]
+fn a_flows_nodes_with_no_place_go_in_columns_by_the_steps_from_the_start() {
+    let core = Core::open(script_store()).unwrap();
+    let commits = |core: &Core| {
+        mcp(
+            core,
+            "branch_read",
+            json!({"target": "main", "value": {"as": "history"}}),
+        )["commits"]
+            .as_array()
+            .unwrap()
+            .len()
+    };
+    let before = commits(&core);
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts:Way": {"kind": "flow"},
+            "Charts:Way.start": {"kind": "begin", "trigger": "manual", "connections": [{"line": "next", "to": "check"}]},
+            "Charts:Way.check": {"kind": "eval", "connections": [
+                {"line": "condition", "to": "a", "fields": {"when": "x"}}, {"line": "else", "to": "b"}]},
+            "Charts:Way.a": {"kind": "end", "outcome": "success"},
+            "Charts:Way.b": {"kind": "end", "outcome": "failure"},
+            "Charts:Way.lone": {"kind": "end", "outcome": "success"}
+        }}),
+    );
+    let at = |name: &str| {
+        let read = mcp(
+            &core,
+            "card_read",
+            json!({"target": format!("Charts:Way.{name}"), "value": {"include": ["at"]}}),
+        );
+        (
+            read["topLeft"]["x"].as_i64().unwrap(),
+            read["topLeft"]["y"].as_i64().unwrap(),
+        )
+    };
+    let (start, check, a, b, lone) = (at("start"), at("check"), at("a"), at("b"), at("lone"));
+    assert!(
+        start.0 < check.0 && check.0 < a.0,
+        "{start:?} {check:?} {a:?}"
+    );
+    assert_eq!(a.0, b.0, "分かれた先は同じ列");
+    assert!(a.1 < b.1, "上から積む: {a:?} {b:?}");
+    assert!(lone.0 > a.0, "どこからも来ないものは右に: {lone:?}");
+    assert_eq!(commits(&core), before + 1, "置いた位置は変更にならない");
+}
+
 fn mcp(core: &Core, tool: &str, mut arguments: Value) -> Value {
     arguments["project"] = "見本".into();
     let (failed, text) = call(core, tool, arguments.clone());
@@ -998,4 +1050,72 @@ fn the_window_reads_whether_a_section_ghost_was_placed_by_hand() {
     tidy(&core);
     let read = ghosts(&core);
     assert_eq!(read[&shop], json!({"x": 40, "y": 5, "pinned": true}));
+}
+
+#[test]
+fn a_kind_of_line_hidden_at_first_neither_draws_a_section_ghost_nor_makes_it_taller() {
+    let core = lab_and_shop();
+    mcp(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Free/Store:Shelf": {"kind": "entity", "fields": [{"name": "row", "type": "string"}]},
+            "Free/Shop:Extra": {"kind": "entity", "fields": [{"name": "note", "type": "string"}]},
+            "Free/Lab:Memo": {"kind": "note", "topLeft": {"x": 0, "y": 30},
+                "body": "棚は [[Free/Store:Shelf]]、ほかに [[Free/Shop:Extra]]"},
+        }}),
+    );
+    put_on_lab(&core, &[("§Shop", 30, 0), ("§Store", 30, 2)]);
+    let boxes = places(&core, "Free/Lab");
+    // Reached only by mentions, which are drawn only when switched on.
+    assert_eq!(boxes["Free/Store"]["drawn"], json!(false), "{boxes}");
+    // Bill, its total, Item and Customer: four rows, as before the mention.
+    assert_eq!(
+        boxes["Free/Shop"]["bottomRight"],
+        json!({"x": 39, "y": 5}),
+        "{boxes}"
+    );
+    let said: Vec<Value> = checked(&core, "main")["overlaps"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+        .into_iter()
+        .filter(|o| o["section"] == "Free/Lab")
+        .collect();
+    assert!(said.is_empty(), "{said:?}");
+}
+
+#[test]
+fn an_overlap_listed_says_whose_diagram_it_is_on() {
+    let core = Core::open(script_store()).unwrap();
+    mcp(&core, "section_create", json!({"target": "Schemas/Shapes"}));
+    for (name, y) in [("Grows", 0), ("Below", 12)] {
+        mcp(
+            &core,
+            "card_create",
+            json!({"target": format!("Schemas/Shapes:{name}"), "value": {"kind": "entity", "topLeft": {"x": 0, "y": y}}}),
+        );
+    }
+    let fields: Vec<String> = (0..20)
+        .map(|n| format!("Schemas/Shapes:Grows.f{n}"))
+        .collect();
+    mcp(
+        &core,
+        "card_create",
+        json!({"target": fields, "value": {"type": "string"}}),
+    );
+    let list = mcp(
+        &core,
+        "inspection_list",
+        json!({"value": {"show": "info", "group": "overlaps"}}),
+    );
+    let items = list["items"].as_array().cloned().unwrap_or_default();
+    let below = items
+        .iter()
+        .find(|i| i["at"] == "Schemas/Shapes:Below")
+        .unwrap_or_else(|| panic!("{list}"));
+    assert_eq!(
+        below["problem"], "Schemas/Shapes の図で Schemas/Shapes:Grows に重なっています",
+        "{list}"
+    );
 }

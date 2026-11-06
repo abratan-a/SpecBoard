@@ -127,6 +127,15 @@ pub fn walk<'a>(head: &'a Card, written: &[String], project: &Project<'a>) -> Op
                 },
             );
         }
+        // A spec's scenario by its name, and nothing inside it.
+        "spec" => {
+            return (names.len() == 1 && head.scenarios().iter().any(|s| s.name == names[0])).then(
+                || Walk {
+                    place: Place::CustomRow,
+                    legs: vec![names.to_vec()],
+                },
+            );
+        }
         "custom_goal" => {
             let mut list = &head.custom_rows;
             for name in names {

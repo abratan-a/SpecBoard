@@ -98,13 +98,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "“%@” is a card ghost, but it points at nothing (the card it pointed at is gone; re-point it with target in card_update, or delete it with card_delete)"
+            "value" : "“%@” is a card ghost, but it points at nothing (the card it pointed at is gone; re-point it with target in the property panel, or delete the ghost)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "「%@」はカードゴーストですが、指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）"
+            "value" : "「%@」はカードゴーストですが、指す先がありません（指していたカードは消えました。プロパティパネルの target で付け替えるか、ゴーストを消します）"
           }
         }
       }
@@ -188,13 +188,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "It points at nothing (the card it pointed at is gone; re-point it with target in card_update, or delete it with card_delete)"
+            "value" : "It points at nothing (the card it pointed at is gone; re-point it with target in the property panel, or delete the ghost)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）"
+            "value" : "指す先がありません（指していたカードは消えました。プロパティパネルの target で付け替えるか、ゴーストを消します）"
           }
         }
       }
@@ -224,13 +224,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Following what it points at goes in a circle (re-point it with target in card_update)"
+            "value" : "Following what it points at goes in a circle (re-point it with target in the property panel)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "指す先をたどると輪になっています（card_update の target で付け替えます）"
+            "value" : "指す先をたどると輪になっています（プロパティパネルの target で付け替えます）"
           }
         }
       }
@@ -859,6 +859,24 @@
         }
       }
     },
+    "tab.duplicateMapTab" : {
+      "comment" : "Context menu item of a map tab: opens the same section in a new map tab, looked at the same way.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicate Tab"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タブを複製"
+          }
+        }
+      }
+    },
     "tab.more" : {
       "comment" : "Tooltip of the » button at the right end of the tab bar: how many tabs do not fit.",
       "extractionState" : "manual",
@@ -873,6 +891,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ほかのタブ %lld 枚"
+          }
+        }
+      }
+    },
+    "tab.newMapTab" : {
+      "comment" : "Context menu item of a map tab: opens the same section in a new map tab, looked at as it starts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Tab"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいタブを表示"
           }
         }
       }

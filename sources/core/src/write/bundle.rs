@@ -12,7 +12,7 @@ use serde_json::{Map, Value, json};
 
 /// The tables a project is kept in, and how its rows are found (`?1` the project's id), in the order they
 /// are put in (a row after what it refers to).
-const TABLES: [(&str, &str); 15] = [
+const TABLES: [(&str, &str); 16] = [
     ("projects", "id = ?1"),
     ("default_view", "project_id = ?1"),
     ("branches", "project_id = ?1"),
@@ -37,6 +37,7 @@ const TABLES: [(&str, &str); 15] = [
     ("branch_frozen", "project_id = ?1"),
     ("inspection_marks", "project_id = ?1"),
     ("code_marks", "project_id = ?1"),
+    ("images", "project_id = ?1"),
 ];
 
 /// What a bundle from a store of another form is told.
@@ -193,6 +194,8 @@ impl Tx<'_> {
                     .iter()
                     .map(|name| match (table, name.as_str()) {
                         ("projects", "archived_at" | "mcp_writes") => rusqlite::types::Value::Null,
+                        // Every row is the project read in: one naming another written into it.
+                        (_, "project_id") => rusqlite::types::Value::Text(project.clone()),
                         ("projects", "slug") => rusqlite::types::Value::Text(slug.clone()),
                         _ => sql_value(row.get(name).unwrap_or(&Value::Null)),
                     })

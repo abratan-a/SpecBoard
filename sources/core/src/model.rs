@@ -172,6 +172,20 @@ impl Version {
     }
 }
 
+/// A scenario of a spec: a row of its `scenarios` — its name for paths, its heading, its steps (each
+/// one keyword, `given`, `when`, `then`, `and` or `but`, and its words) and what is written after them.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Scenario {
+    pub id: String,
+    pub name: String,
+    pub heading: String,
+    pub steps: Vec<(String, String)>,
+    pub note: String,
+}
+
+/// The keywords of a spec's steps, in the order they are told.
+pub const STEP_KEYWORDS: [&str; 5] = ["given", "when", "then", "and", "but"];
+
 /// One line of a card: of a kind of line the project defines, from a row of the card (`from`,
 /// empty for its head) to a card or a card ghost (`to`, by id; none for a pointer told
 /// apart by its discriminator), landing in it at `at` (its names there, or a path in full
@@ -223,7 +237,7 @@ impl Card {
     pub fn is_writing(&self) -> bool {
         matches!(
             self.kind.as_str(),
-            "note" | "freedoc" | "formatdoc" | "stackdoc"
+            "note" | "freedoc" | "formatdoc" | "stackdoc" | "spec"
         )
     }
 
@@ -248,6 +262,58 @@ impl Card {
                     key: text("key"),
                     heading: text("heading"),
                     body: text("body"),
+                }
+            })
+            .collect()
+    }
+
+    /// One of a spec's story fields (`as`, `iWant`, `soThat`, `about`), empty when not written.
+    pub fn spec_field(&self, name: &str) -> String {
+        if self.kind != "spec" {
+            return String::new();
+        }
+        self.form
+            .as_ref()
+            .and_then(|f| f.get("fields"))
+            .and_then(|f| f.get(name))
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string()
+    }
+
+    /// A spec's scenarios, in its order (`specboard://SpecBoard/Docs/Design:CardKinds`「仕様（spec）」):
+    /// none for any other kind.
+    pub fn scenarios(&self) -> Vec<Scenario> {
+        if self.kind != "spec" {
+            return Vec::new();
+        }
+        self.form
+            .as_ref()
+            .and_then(|f| f.get("rows"))
+            .and_then(|r| r.get("scenarios"))
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .map(|row| {
+                let text = |key: &str| row["fields"][key].as_str().unwrap_or_default().to_string();
+                let steps = row["rows"]["steps"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|step| {
+                        STEP_KEYWORDS.iter().find_map(|k| {
+                            step["fields"][*k]
+                                .as_str()
+                                .map(|said| (k.to_string(), said.to_string()))
+                        })
+                    })
+                    .collect();
+                Scenario {
+                    id: row["id"].as_str().unwrap_or_default().to_string(),
+                    name: text("name"),
+                    heading: text("heading"),
+                    steps,
+                    note: text("note"),
                 }
             })
             .collect()
@@ -517,7 +583,7 @@ impl ExportSetting {
                 }
                 None
             }
-            "freedoc" | "formatdoc" | "stackdoc" => {
+            "freedoc" | "formatdoc" | "stackdoc" | "spec" => {
                 if !folder && !markdown {
                     return Some(keyed!("model.problem.docTarget"));
                 }

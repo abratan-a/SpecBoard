@@ -30,6 +30,9 @@ struct KindsView: View {
     @State private var newOf: AppModel.KindList?
     /// What is written, as the JSON editor shows it, and what the core said of it.
     @State private var draft = ""
+    /// The definition as it was read when the draft began from it: what saving takes keys away
+    /// against, so a key another writes meanwhile stays (`saveKind`'s `opened`).
+    @State private var begun: String?
     @State private var check: AppModel.KindsCheck?
     /// The same draft as the form reads it, and why the form cannot read what the JSON says now.
     @State private var form: KindDraft?
@@ -79,6 +82,7 @@ struct KindsView: View {
             _entries = State(initialValue: start.entries)
             _picked = State(initialValue: start.picked)
             _draft = State(initialValue: start.draft)
+            _begun = State(initialValue: start.entries.first { $0.id == start.picked }?.text)
             _check = State(initialValue: start.check)
             _removing = State(initialValue: start.removing)
             _startMode = State(initialValue: start.mode)
@@ -486,6 +490,7 @@ struct KindsView: View {
         setEntries(model.kindEntries())
         context = entry?.context ?? [:]
         draft = entry?.text ?? ""
+        begun = entry?.text
         loadForm()
     }
 
@@ -572,6 +577,7 @@ struct KindsView: View {
         if let picked, !entries.contains(where: { $0.id == picked }) { self.picked = nil }
         if newOf == nil, draft == (was ?? "") || entry == nil {
             draft = entry?.text ?? ""
+            begun = entry?.text
             if form.map({ !$0.canUndo }) ?? true { loadForm() }
         }
     }
@@ -584,6 +590,7 @@ struct KindsView: View {
             draft = treeSaved
         } else {
             draft = entry?.text ?? ""
+            begun = entry?.text
         }
         context = entry?.context ?? [:]
         builtinMark = nil
@@ -595,6 +602,7 @@ struct KindsView: View {
         picked = nil
         newOf = list
         draft = list.template
+        begun = nil
         check = nil
         reset()
     }
@@ -698,7 +706,8 @@ struct KindsView: View {
         switch KindsEditing.parse(draft, as: writing.list) {
         case .failure(let why): return AppModel.KindsCheck(ok: false, problems: [why.said])
         case .success(let written):
-            return model.checkKind(writing.list, replacing: writing.name, with: written, renames: currentRenames)
+            return model.checkKind(writing.list, replacing: writing.name, with: written,
+                                   opened: begun.flatMap(OJSON.parse), renames: currentRenames)
         }
     }
 
@@ -711,7 +720,8 @@ struct KindsView: View {
             return
         }
         guard let writing, case .success(let written) = KindsEditing.parse(draft, as: writing.list) else { return }
-        guard model.saveKind(writing.list, replacing: writing.name, with: written, renames: currentRenames) else { return }
+        guard model.saveKind(writing.list, replacing: writing.name, with: written,
+                             opened: begun.flatMap(OJSON.parse), renames: currentRenames) else { return }
         setEntries(model.kindEntries())
         var saved: String?
         if case .object(let o) = written, case .string(let name)? = o[writing.list.nameKey] {

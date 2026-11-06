@@ -332,8 +332,7 @@ fn a_merge_request_keeps_its_branch_only_when_it_asks_and_only_once_approved() {
     assert!(branches(&core).contains(&"refused".to_string()));
 }
 
-/// The project's tree is the project's: renamed in main, every branch has it renamed, what the branch
-/// kept of it as main was let go of.
+/// The project's tree is the project's: renamed in main, a branch made before has it renamed.
 #[test]
 fn the_projects_tree_reaches_a_branch_made_before() {
     let core = Core::open(script_store()).unwrap();

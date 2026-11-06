@@ -70,7 +70,8 @@ enum FlowCardMap {
     }
 
     /// What its card shows, as many as `FlowNode.rowCount` says: what it is, then
-    /// each way out, the line leaving from that row.
+    /// each way out, the line leaving from that row. Each row is said by the key MCP writes it with
+    /// (`specboard://SpecBoard/Docs/Design:UI` §9), the ways out too: what a person reads is what an AI writes.
     static func rows(_ node: FlowNode) -> [CardRow] {
         var out: [CardRow] = []
         func row(_ path: String, _ label: String, _ text: String, _ detail: String? = nil) {
@@ -78,9 +79,9 @@ enum FlowCardMap {
                                step: StepRow(label: label, text: text, detail: detail)))
         }
         func ways() {
-            if node.nexts.isEmpty { row("#next", BuiltinWords.line(Line.next), "—") }
+            if node.nexts.isEmpty { row("#next", Line.next, "—") }
             for (index, next) in node.nexts.enumerated() {
-                row("#next.\(index)", BuiltinWords.line(Line.next), "→ \(next)", node.nexts.count > 1 ? L10n[.Diagram.flowBranches] : nil)
+                row("#next.\(index)", Line.next, "→ \(next)", node.nexts.count > 1 ? L10n[.Diagram.flowBranches] : nil)
             }
         }
         switch node.kind {
@@ -109,14 +110,14 @@ enum FlowCardMap {
                     + (node.returns.isEmpty ? "" : " ⇠ \(node.returns.joined(separator: ", "))"))
             }
             ways()
-            if let onError = node.onError { row("#err", BuiltinWords.line(Line.onError), "→ \(onError)") }
+            if let onError = node.onError { row("#err", Line.onError, "→ \(onError)") }
         case "eval":
             if let value = node.value { row("#k", "value", value) }
             if node.branches.isEmpty { row("#b", "when", "—") }
             for (index, branch) in node.branches.enumerated() {
                 row("#b.\(index)", "when", NoteText.transform(branch.when) { $0.shown ?? $0.path }, "→ \(branch.next)")
             }
-            row("#else", BuiltinWords.line(Line.otherwise), node.otherwise.map { "→ \($0)" } ?? "—")
+            row("#else", Line.otherwise, node.otherwise.map { "→ \($0)" } ?? "—")
         case "wait":
             let what = node.waitFor == "event" ? L10n[.Diagram.flowEventOutcome(node.event?.outcome ?? "", node.event?.flow ?? "")]
                 : node.waitFor ?? "—"

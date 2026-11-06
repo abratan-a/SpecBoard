@@ -151,7 +151,11 @@ pub fn line_comment(text: &str) -> String {
 
 /// Text for a mermaid label, kept inside its quotes and on its line.
 pub fn mermaid_text(text: &str) -> String {
-    line_comment(text).replace('"', "'").replace('#', "＃")
+    // A backtick right after `["` starts mermaid's Markdown text: full width, it is a letter.
+    line_comment(text)
+        .replace('"', "'")
+        .replace('#', "＃")
+        .replace('`', "｀")
 }
 
 /// A name on a class's member line of mermaid, kept from being read as its syntax: what mermaid
@@ -297,5 +301,11 @@ mod tests {
         assert_eq!(pointer_token("注文 v2"), "%E6%B3%A8%E6%96%87%20v2");
         assert_eq!(member_text("f(x): {a}"), "f（x）： ｛a｝");
         assert_eq!(access("v", "'a.b'.c"), "v[\"a.b\"].c");
+    }
+
+    #[test]
+    fn a_backtick_in_a_label_is_written_full_width() {
+        assert_eq!(mermaid_text("`foo"), "｀foo");
+        assert_eq!(mermaid_text("a `b` c"), "a ｀b｀ c");
     }
 }

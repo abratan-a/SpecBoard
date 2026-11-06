@@ -497,6 +497,8 @@ pub(crate) fn update_version(
     if value.is_empty() {
         return Err(text!("inner.error.nothingToChange"));
     }
+    let mut value = value.clone();
+    let beside = beside(&mut value)?;
     let open = Seen::in_tx(tx, scope)?
         .project()
         .card(id)
@@ -520,7 +522,7 @@ pub(crate) fn update_version(
         .ok_or_else(|| text!("inner.error.versionNotFound", name = old))?;
     // What its body was, changed in part: answered short through MCP (`in_part::quiet`).
     let mut in_part = None;
-    for (key, given) in value {
+    for (key, given) in &value {
         if key == "name" {
             continue;
         }
@@ -553,6 +555,15 @@ pub(crate) fn update_version(
         }
         None => old.to_string(),
     };
+    // Put elsewhere among the versions, by the name of one of them.
+    if let Some(beside) = &beside {
+        let from = versions
+            .iter()
+            .position(|v| row_name(v) == Some(at.as_str()))
+            .ok_or_else(|| text!("inner.error.versionNotFound", name = old))?;
+        let moved = versions.remove(from);
+        put_beside(&mut versions, moved, beside)?;
+    }
     let mut answer = write_versions(tx, scope, id, versions, &moves, Some(&at))?;
     if let Some((before, after)) = in_part.filter(|_| tx.who().side == crate::write::Side::Mcp) {
         super::in_part::quieted(&mut answer, "body", &before, &after);
@@ -580,4 +591,183 @@ pub(crate) fn delete_version(
     let mut versions = wire_list(tx, scope, id, "versions")?;
     versions.retain(|v| row_name(v) != Some(name));
     write_versions(tx, scope, id, versions, &[], None)
+}
+
+// MARK: - Scenarios of a spec
+
+/// The steps of scenarios as they are written (`[{given: …}, …]`), held to their form: each one of
+/// the keywords and its words, nothing else. `at` names where they are in what is said.
+pub(crate) fn steps_problems(steps: Option<&Value>, at: &str) -> Vec<String> {
+    let Some(steps) = steps else {
+        return Vec::new();
+    };
+    let Some(list) = steps.as_array() else {
+        return vec![text!("inner.error.stepsList", at)];
+    };
+    let mut out = Vec::new();
+    for (i, step) in list.iter().enumerate() {
+        let keys: Vec<&String> = step
+            .as_object()
+            .map(|o| o.keys().collect())
+            .unwrap_or_default();
+        let one = keys.len() == 1
+            && crate::model::STEP_KEYWORDS.contains(&keys[0].as_str())
+            && step[keys[0].as_str()].is_string();
+        if !one {
+            out.push(text!(
+                "inner.error.stepForm",
+                at,
+                i,
+                keywords = crate::model::STEP_KEYWORDS.join(" / ")
+            ));
+        }
+    }
+    out
+}
+
+/// The steps of every scenario a spec's value writes, held to their form.
+pub(crate) fn scenarios_problems(scenarios: Option<&Value>) -> Vec<String> {
+    scenarios
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .enumerate()
+        .flat_map(|(i, s)| steps_problems(s.get("steps"), &format!("scenarios[{i}].steps")))
+        .collect()
+}
+
+/// A spec's scenarios written back whole, answered with the scenario at `reading` (its name), or
+/// the card.
+fn write_scenarios(
+    tx: &mut Tx,
+    scope: &Scope,
+    id: &str,
+    list: Vec<Value>,
+    moves: &[(Vec<String>, Vec<String>)],
+    reading: Option<&str>,
+) -> Result<Value, String> {
+    let mut value = Map::new();
+    value.insert("scenarios".to_string(), Value::Array(list));
+    let said = edit_card(tx, scope, id, &value, moves)?;
+    let seen = Seen::in_tx(tx, scope)?;
+    let project = seen.project();
+    let card = project
+        .card(id)
+        .ok_or_else(|| text!("inner.error.unreadable"))?;
+    let view = match reading {
+        Some(name) => seen.scenario_view(card, name),
+        None => seen.card_view(card, &Projection::none(), None),
+    };
+    Ok(super::warned(view, &said))
+}
+
+/// A scenario added, as its path names it (`Docs:Lines.addRemove`): last, or before or after the
+/// one the value names.
+pub(crate) fn create_scenario(
+    tx: &mut Tx,
+    scope: &Scope,
+    path: &str,
+    value: &Map<String, Value>,
+) -> Result<Value, String> {
+    let seen = Seen::in_tx(tx, scope)?;
+    let project = seen.project();
+    let card = card_holding(&project, path)
+        .filter(|c| c.kind == "spec")
+        .ok_or_else(|| text!("inner.error.noSpec", path))?;
+    let id = card.id.clone();
+    let names = crate::export::paths::WrittenPath::new(path)
+        .map(|w| w.names)
+        .unwrap_or_default();
+    let [name] = names.as_slice() else {
+        return Err(text!("inner.error.scenarioPath", path));
+    };
+    let name = &crate::pathtext::unquote(name).into_owned();
+    let problems = steps_problems(value.get("steps"), "steps");
+    if !problems.is_empty() {
+        return Err(problems.join("\n"));
+    }
+    let mut scenarios = wire_list(tx, scope, &id, "scenarios")?;
+    if scenarios.iter().any(|s| row_name(s) == Some(name.as_str())) {
+        return Err(text!("inner.error.exists", path));
+    }
+    let mut value = value.clone();
+    let beside = beside(&mut value)?;
+    value.insert("name".into(), name.clone().into());
+    match &beside {
+        Some(beside) => put_beside(&mut scenarios, Value::Object(value), beside)?,
+        None => scenarios.push(Value::Object(value)),
+    }
+    write_scenarios(tx, scope, &id, scenarios, &[], Some(name))
+}
+
+/// What the value says, over what the scenario was; a new name renames it and the paths that name
+/// it (the lines from it); `before` or `after` moves it beside another.
+pub(crate) fn update_scenario(
+    tx: &mut Tx,
+    scope: &Scope,
+    id: &str,
+    old: &str,
+    value: &Map<String, Value>,
+) -> Result<Value, String> {
+    if value.is_empty() {
+        return Err(text!("inner.error.nothingToChange"));
+    }
+    let problems = steps_problems(value.get("steps"), "steps");
+    if !problems.is_empty() {
+        return Err(problems.join("\n"));
+    }
+    let mut value = value.clone();
+    let beside = beside(&mut value)?;
+    let mut scenarios = wire_list(tx, scope, id, "scenarios")?;
+    let renamed = value
+        .get("name")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|n| *n != old)
+        .map(str::to_string);
+    if let Some(name) = &renamed
+        && scenarios.iter().any(|s| row_name(s) == Some(name.as_str()))
+    {
+        return Err(text!("inner.error.exists", path = name));
+    }
+    let scenario = scenarios
+        .iter_mut()
+        .find(|s| row_name(s) == Some(old))
+        .and_then(Value::as_object_mut)
+        .ok_or_else(|| text!("inner.error.scenarioNotFound", name = old))?;
+    for (key, given) in &value {
+        if key != "name" {
+            scenario.insert(key.clone(), given.clone());
+        }
+    }
+    let mut moves = Vec::new();
+    let at = match &renamed {
+        Some(name) => {
+            scenario.insert("name".into(), name.clone().into());
+            moves.push((vec![old.to_string()], vec![name.clone()]));
+            name.clone()
+        }
+        None => old.to_string(),
+    };
+    if let Some(beside) = &beside {
+        let from = scenarios
+            .iter()
+            .position(|s| row_name(s) == Some(at.as_str()))
+            .ok_or_else(|| text!("inner.error.scenarioNotFound", name = old))?;
+        let moved = scenarios.remove(from);
+        put_beside(&mut scenarios, moved, beside)?;
+    }
+    write_scenarios(tx, scope, id, scenarios, &moves, Some(&at))
+}
+
+/// A scenario let go.
+pub(crate) fn delete_scenario(
+    tx: &mut Tx,
+    scope: &Scope,
+    id: &str,
+    name: &str,
+) -> Result<Value, String> {
+    let mut scenarios = wire_list(tx, scope, id, "scenarios")?;
+    scenarios.retain(|s| row_name(s) != Some(name));
+    write_scenarios(tx, scope, id, scenarios, &[], None)
 }

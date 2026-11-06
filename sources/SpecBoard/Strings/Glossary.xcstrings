@@ -217,6 +217,24 @@
         }
       }
     },
+    "legend.arrow" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrow: An arrow between a whiteboard's sketches, notes, SVGs and images. Each has its own text, dash, ends and colour"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矢印: ホワイトボードの図形・付箋・svg・画像のあいだの矢印。字・破線・向き・色を 1 本ごとに持つ"
+          }
+        }
+      }
+    },
     "legend.awaits" : {
       "comment" : "What a kind of line means, in the glossary's legend.",
       "extractionState" : "manual",
@@ -555,6 +573,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "形: データや表がどの形のものか"
+          }
+        }
+      }
+    },
+    "legend.testedBy" : {
+      "comment" : "What a kind of line means, in the glossary's legend.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tested by: Which tests check a specification's item or card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確かめるテスト: 仕様の項目やカードを、どのテストで確かめているか"
           }
         }
       }
@@ -1034,7 +1070,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Related to-dos. Those board cards that point at a card in main (and branches) by a line or a path in the body and are not finished (done tasks, goals whose status is 完了 or 打ち切り (done or cancelled), and the cards inside them are not shown). It appears in the Properties panel and in card_read"
+            "value" : "Related to-dos. Those board cards that point at a card in main (and branches) by a line or a path in the body and are not finished (done tasks, goals done or cancelled, and the cards inside them are not shown). It appears in the Properties panel and in card_read"
           }
         },
         "ja" : {
@@ -1095,6 +1131,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。頭に同じ守りを書く）"
+          }
+        }
+      }
+    },
+    "term.image" : {
+      "comment" : "What the word image means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A whiteboard's image. The project keeps its contents (a PNG, a JPEG or a GIF of 5MB at the most) once, and the card holds their sha256, its form and its size. Give the contents as imageData or imageFrom, and read the picture itself with card_read's as: image. Sized from its picture unless sized by hand"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホワイトボードの画像。中身（PNG・JPEG・GIF。5MB まで）はプロジェクトに中身ごとに 1 つだけ持ち、カードは中身の sha256 と形式・原寸を持つ。中身は imageData か imageFrom で渡し、card_read の as: image で絵そのものを読む。大きさは手で決めなければ原寸から決まる"
           }
         }
       }
@@ -1178,13 +1232,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The kind of a line. Built-in ones (embed, points, link, holds, shapeOf, rules, implementedBy, mentions, and the lines of flow nodes: next, condition, else, onError, onTimeout, runs, awaits, reads, writes, partner, key) and ones the project defines. The meaning (base of the definition) is embed (the type becomes the partner), designate (the type does not change and the partner is pointed at), or link (unrelated to the type). Read them with kind_list and kind_read, and define them with kind_create and kind_update"
+            "value" : "The kind of a line. Built-in ones (embed, points, link, holds, shapeOf, rules, implementedBy, testedBy, mentions, and the lines of flow nodes: next, condition, else, onError, onTimeout, runs, awaits, reads, writes, partner, key) and ones the project defines. The meaning (base of the definition) is embed (the type becomes the partner), designate (the type does not change and the partner is pointed at), or link (unrelated to the type). Read them with kind_list and kind_read, and define them with kind_create and kind_update"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線の種類。組み込み（embed・points・link・holds・shapeOf・rules・implementedBy・mentions と、flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）とプロジェクトが定義するもの。意味（定義の base）は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。kind_list・kind_read で読み、kind_create・kind_update で定義する"
+            "value" : "線の種類。組み込み（embed・points・link・holds・shapeOf・rules・implementedBy・testedBy・mentions と、flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）とプロジェクトが定義するもの。意味（定義の base）は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。kind_list・kind_read で読み、kind_create・kind_update で定義する"
           }
         }
       }
@@ -1214,13 +1268,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Putting what was changed in a branch into main (not available while it is being rebuilt)"
+            "value" : "Putting what was changed in a branch into main"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "branch で変えたことを main に入れること（作り直しているあいだは使えない）"
+            "value" : "branch で変えたことを main に入れること"
           }
         }
       }
@@ -1563,6 +1617,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "署名する（key の線、use: sign）"
+          }
+        }
+      }
+    },
+    "term.sketch" : {
+      "comment" : "What the word sketch means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A whiteboard's shape. It has a shape (rect, rounded, ellipse, diamond, cylinder, text), text (Markdown) and fill and border colours, and on the diagram it is drawn as the shape itself without a card's header. Joined by arrows (arrow). Sized from its text unless sized by hand; made with no place, it goes left to right along its arrows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホワイトボードの図形。形（rect・rounded・ellipse・diamond・cylinder・text）と字（Markdown）と塗り・縁の色を持ち、図の上ではカードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。大きさは手で決めなければ字から決まり、位置を書かずに作ったものは矢印をたどって左から右へ並ぶ"
+          }
+        }
+      }
+    },
+    "term.spec" : {
+      "comment" : "What the word spec means, in the glossary and the help of the screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A specification. A document placed in a Document section that holds a feature's story (As, I want, So that) and its scenarios, each a title and its steps (Given, When, Then, And, But). Each scenario has a path of its own (<card>.<name>), and lines to the tests that check it (testedBy) are drawn from it; a scenario without one is shown by the inspection. Exported as Markdown (# Feature, ## Scenario)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仕様。ドキュメントセクションに置く、機能のねらい（As・I want・So that）と Scenario（題と Given・When・Then・And・But の段）を決まった形で持つ文書。Scenario ごとにパス（<カード>.<name>）があり、確かめるテストへの線（testedBy）を引く。線の無い Scenario は点検に出る。エクスポートすると Markdown（# Feature・## Scenario）"
           }
         }
       }

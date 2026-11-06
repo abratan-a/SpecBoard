@@ -27,10 +27,15 @@
   "reads.hint.formatdocBody": "本文は value の as: markdown で読みます（ここは項目の見出しと数だけ。項目 1 つは target をそのパスまで伸ばす）",
   "reads.hint.itemBody": "中の項目の本文は、この項目 {item} を value の as: markdown で読みます（文書全体は {doc}）",
   "reads.hint.stackdocBody": "版の本文は value の as: markdown で読みます（版 1 つは target をそのパスまで伸ばす）",
+  "reads.image.empty": "{target} には中身がありません（imageData か imageFrom で渡します）",
+  "reads.image.gone": "{target} の中身がプロジェクトにありません",
+  "reads.image.notImage": "{target} は画像（image）のカードではありません",
+  "reads.image.oneTarget": "as: image は 1 枚ずつ読みます（{count} 枚が渡されました）",
   "reads.implementation.shape": "implementation は none・changed・unrecorded か、その並びです（{other} が渡されました）",
   "reads.in.container": "in は入れ物（goal・flow）のパスです",
   "reads.include.placesOnly": "include に使えない値です: {other}。使えるのは places と groups",
   "reads.include.unknown": "include に使えない値です: {unknown}。使えるのは {known}",
+  "reads.include.usedByEnumValue": "列挙の値の used_by は読めません（flow の中までは辿らない）。値 {name} を使っている所は card_list の query「{name}」で探します",
   "reads.kind.noOwn": "。プロジェクトの種類はありません",
   "reads.kind.orOwn": "か、プロジェクトの種類 {kinds}",
   "reads.kind.unknown": "kind の「{kind}」という種類はありません（組み込みの種類{own}）",
@@ -56,5 +61,7 @@
   "reads.section.unreadable": "セクション「{path}」を読めません",
   "reads.sectionList.sectionPath": "section は一覧するセクションのパスです（文字。そのセクションと中のセクションを並べます）",
   "reads.settingsNotSection": "Rules はセクションではなく、プロジェクトの設定です。project_read の value の as: rules で読みます（直すのは画面のプロジェクト設定で人）。作業ディレクトリは根の直下のセクション（種類 workdir）で、section_read で読みます",
+  "reads.tags.none": "（タグの付いたカードはありません）",
+  "reads.tags.unknown": "タグ「{tag}」はどのカードにも付いておらず、タグのグループの名前でもありません。あるタグ: {tags}",
   "reads.target.needed": "target が要ります"
 }

@@ -109,6 +109,14 @@ fn a_document_or_a_free_section_holds_them_and_a_schema_section_does_not() {
         holds.contains(&json!("svg")) && holds.contains(&json!("html")),
         "{kinds}"
     );
+    // A Free section takes them too.
+    for kind in ["svg", "html"] {
+        ok(
+            &core,
+            "card_create",
+            json!({"target": format!("Free:Pic{kind}"), "value": {"kind": kind, "body": PICTURE}}),
+        );
+    }
 }
 
 #[test]

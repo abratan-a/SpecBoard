@@ -253,6 +253,13 @@ func cardRows(
         if form.document { return CardContent(rows: top, hidden: 0, first: 0, all: top, fit: top.count, document: true) }
         return cardWindow(top, from: from, height: form.drawnHeight)
     }
+    // A spec: its story, then a row a scenario with how many tests check it (`SpecRows`); as a
+    // document, the picture of its text with its lines from its head.
+    if schema.kind == .spec {
+        let rows = SpecRows.rows(schema)
+        if form.document { return CardContent(rows: [], hidden: 0, first: 0, all: rows, fit: 0, document: true) }
+        return cardWindow(rows, from: from, height: form.drawnHeight)
+    }
     // A card whose kind says how it is drawn (`face`; a task): its fields
     // above, each a control pressed on the diagram, and below them its Markdown, drawn as a
     // writing card's body is — the card a document under its fields (`form.document`).
@@ -365,9 +372,11 @@ func cardRows(
         }
         emit(schema.steps, 0, "#p")
         // A flow's nodes, the way they go: what each is, and where it leads.
+        // Where each goes, to the flow's own nodes, is drawn between and beside the rows (`FlowWays`).
+        let drawnWays = FlowWays.drawn(schema)
         for node in schema.nodes {
             all.append(CardRow(path: SchemaNode.nodeRow(node.name), depth: 0, field: nil, value: nil, fromType: nil,
-                               step: StepRow(node)))
+                               step: StepRow(node, drawnWays: drawnWays)))
             // A process node's rows below it, each drawing its own lines.
             for (index, step) in node.steps.enumerated() where node.kind == "process" {
                 all.append(CardRow(path: SchemaNode.stepRow(node.name, index), depth: 1, field: nil, value: nil, fromType: nil,
@@ -604,6 +613,42 @@ enum FaceRows {
     }
 }
 
+/// How a spec is drawn as rows: its story, then a row a scenario with how many tests check it.
+enum SpecRows {
+    /// The rows of its story: As, I want and So that a row each, written or not — as many rows whatever the
+    /// words, as the core counts them (`grid.rs`).
+    static let story = ["#as", "#iWant", "#soThat"]
+
+    static func rows(_ schema: SchemaNode) -> [CardRow] {
+        let written = schema.specStory
+        var out: [CardRow] = zip(story, [("As", written.as), ("I want", written.iWant), ("So that", written.soThat)]).map {
+            CardRow(path: $0, depth: 0, field: nil, value: nil, fromType: nil,
+                    step: StepRow(label: $1.0, text: $1.1.trimmingCharacters(in: .whitespacesAndNewlines)
+                        .components(separatedBy: .newlines).joined(separator: " "), detail: nil))
+        }
+        for scenario in schema.scenarios {
+            out.append(CardRow(path: scenario.name, depth: 0, field: nil, value: nil, fromType: nil,
+                               step: {
+                                   let count = tests(schema, scenario.name)
+                                   var step = StepRow(label: "", text: scenario.shownHeading, detail: said(tests: count))
+                                   step.warns = count == 0
+                                   return step
+                               }()))
+        }
+        return out
+    }
+
+    /// How many lines to a test check the scenario `name`: its own, and the card's head's, which cover every one.
+    static func tests(_ schema: SchemaNode, _ name: String) -> Int {
+        schema.connections.filter { $0.line == Line.testedBy && ($0.from == name || $0.from.isEmpty) }.count
+    }
+
+    /// What a scenario's row says of its tests.
+    static func said(tests: Int) -> String {
+        tests == 0 ? L10n[.Diagram.specNoTest] : L10n[.Diagram.specTests(tests)]
+    }
+}
+
 /// A stackdoc's rows above the version it has open: what it is — its description's first line,
 /// when one is written — and the selector of its versions, the one open on its button and every
 /// one by its key in the menu it opens. Pressed, the version chosen is the one open (how it
@@ -641,6 +686,8 @@ func drawnAsDocument(_ schema: SchemaNode, docView: String) -> Bool {
     switch schema.kind {
     case .freedoc, .stackdoc, .table: return true
     case .formatdoc: return (schema.docView ?? docView) == "document"
+    // Its scenarios are what a spec is looked over by: rows unless the card itself says otherwise.
+    case .spec: return schema.docView == "document"
     default: return false
     }
 }
@@ -777,6 +824,8 @@ struct StepRow: Hashable {
     var label: String
     var text: String
     var detail: String?
+    /// Its detail says something wanting (a scenario no test checks): drawn in the warning colour.
+    var warns = false
 
     /// As a row shows it, looked at in `tree`: the paths into that tree without it
     /// (`main@Data:Order` → `Data:Order`), the others as they are.
@@ -793,7 +842,8 @@ struct StepRow: Hashable {
         self.detail = detail
     }
 
-    init(_ node: FlowNode) {
+    /// `drawnWays`: the nodes the card draws the ways to, left out of the row's end.
+    init(_ node: FlowNode, drawnWays: Set<String> = []) {
         label = FlowNode.Vocabulary.label(node.kind)
         let what: String
         switch node.kind {
@@ -814,7 +864,7 @@ struct StepRow: Hashable {
         text = "\(node.name): \(what)"
         // Where each way goes, and the short word for how: a branch's condition is
         // prose, and on the card it would run over the row.
-        let ways = node.exits.map { exit in
+        let ways = node.exits.filter { !drawnWays.contains($0.to) }.map { exit in
             (exit.kind == .branch ? "" : exit.label.map { "\($0) " } ?? "") + "→ \(exit.to)"
         }
         detail = ways.isEmpty ? nil : ways.joined(separator: " · ")

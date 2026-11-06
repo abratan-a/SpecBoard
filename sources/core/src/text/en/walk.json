@@ -12,6 +12,7 @@
   "walk.miss.pick": "\"{path}\" cannot be pointed to. {hint}",
   "walk.miss.rows": "\"{path}\" was not found. The rows in {at} are: {there}",
   "walk.miss.step": "\"{path}\" was not found. {at} has {count} steps: {there}",
+  "walk.miss.throughEmbed": "\"{path}\" goes through the embedded field {at}. What is read and written there is {there}, in the card it embeds",
   "walk.path.empty": "The path is empty. For example: Schemas:User or Schemas:User.profile",
   "walk.value.isArray": "\"{path}\" cannot be pointed to. {at} is an array, and what is inside is pointed to after picking an element ({at}[field=value,…] or {at}[0]. For an array of plain values: {at}[=value])",
   "walk.value.missing": "\"{path}\" was not found. The fields under {at} are: {there}",

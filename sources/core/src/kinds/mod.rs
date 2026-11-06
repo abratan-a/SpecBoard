@@ -103,6 +103,10 @@ pub fn named_only(kind: &str) -> bool {
 
 /// The kind of card that puts a ui section's mock into another's.
 pub const FRAME: &str = "frame";
+/// A whiteboard's shape (`specboard://SpecBoard/Docs/Design:CardKinds`「ホワイトボード（whiteboard）」).
+pub const SKETCH: &str = "sketch";
+/// A whiteboard's picture, kept once for the project by its contents (`tools::images`).
+pub const IMAGE: &str = "image";
 
 /// Whether a card of `kind` is one the app alone draws (`system_only`: a section ghost), never
 /// made by a person or an AI, nor held by a section that holds anything (`*`).
@@ -869,6 +873,9 @@ pub fn figure_mark(figure: Option<&str>) -> &'static str {
 /// 「データ（instance）」): MCP writes the line with the value's key `of`, not in `connections`.
 pub const INSTANCE: &str = "instance";
 pub const OF_LINE: &str = "shapeOf";
+
+/// The line from a spec's item or scenario to the test that checks it (`testedBy`).
+pub const TESTED_BY: &str = "testedBy";
 
 /// The built-in kinds of line named otherwise before (`name_move`), each by its name of before and
 /// of now: named now as the screen says them.

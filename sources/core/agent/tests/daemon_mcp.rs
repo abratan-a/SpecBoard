@@ -1275,3 +1275,92 @@ fn the_read_only_path_points_at_the_one_and_a_listen_says_what_it_honours() {
     drop(app);
     assert_eq!(run(&home, &["stop"]).0, 0);
 }
+
+#[test]
+fn healthz_takes_no_body_and_a_connection_with_no_key_is_closed_after_its_answer() {
+    let home = home(0);
+    let (_app, ready) = App::attach(&home);
+    let port = ready["mcp"]["port"].as_u64().unwrap() as u16;
+    // A body said to be coming to /healthz is not waited for: turned away at once, and closed.
+    let begun = Instant::now();
+    let said = raw(
+        port,
+        b"POST /healthz HTTP/1.1\r\nContent-Length: 8388608\r\n\r\n",
+    );
+    assert!(said.starts_with("HTTP/1.1 400"), "{said:?}");
+    assert!(
+        begun.elapsed() < Duration::from_secs(3),
+        "{:?}",
+        begun.elapsed()
+    );
+    // Answered with no key, the connection is not held for another request.
+    let mut stream = TcpStream::connect(("127.0.0.1", port)).unwrap();
+    stream
+        .set_read_timeout(Some(Duration::from_secs(5)))
+        .unwrap();
+    stream
+        .write_all(b"GET /healthz HTTP/1.1\r\nhost: 127.0.0.1\r\n\r\n")
+        .unwrap();
+    assert_eq!(read_answer(&mut stream).0, 200);
+    assert!(
+        matches!(stream.read(&mut [0u8; 1]), Ok(0)),
+        "the connection is still held"
+    );
+}
+
+#[test]
+fn an_app_that_stops_reading_does_not_hold_up_the_others_writes() {
+    let home = home(0);
+    let (mut app, _) = App::attach(&home);
+    app.core(json!({"op": "tool", "name": "project_create", "arguments": {"project": "書き手"}}));
+    // An app that said hello and reads nothing more: what it is told piles up until it cannot take more.
+    let mut stalled = Command::new(AGENT)
+        .arg("attach")
+        .env("SPECBOARD_AGENT_HOME", &*home)
+        .env("LC_ALL", LANGUAGE)
+        .env_remove("SPECBOARD_AGENT_BUILD")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut input = stalled.stdin.take().unwrap();
+    writeln!(input, "{}", json!({"t": "hello", "client": "Stalled"})).unwrap();
+    input.flush().unwrap();
+    let _held = stalled.stdout.take().unwrap();
+    // Far more than a pipe and a socket hold of what changed: each write is answered all the same.
+    let begun = Instant::now();
+    for n in 0..3000 {
+        let said = app.core(
+            json!({"op": "tool", "name": "project_update", "arguments": {
+            "project": "書き手", "value": {"description": format!("{n} 回目")}}}),
+        );
+        assert!(said.get("error").is_none(), "{said}");
+    }
+    assert!(
+        begun.elapsed() < Duration::from_secs(120),
+        "{:?}",
+        begun.elapsed()
+    );
+    let _ = stalled.kill();
+    let _ = stalled.wait();
+}
+
+#[test]
+fn a_body_sent_in_chunks_is_turned_away_saying_why() {
+    let home = home(0);
+    let (mut app, ready) = App::attach(&home);
+    let port = ready["mcp"]["port"].as_u64().unwrap() as u16;
+    let key = app.core(json!({"op": "access_key_create", "name": "AI"}))["result"]["value"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let said = raw(
+        port,
+        format!(
+            "POST /mcp HTTP/1.1\r\nAuthorization: Bearer {key}\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n\r\n2\r\n{{}}\r\n0\r\n\r\n"
+        )
+        .as_bytes(),
+    );
+    assert!(said.starts_with("HTTP/1.1 411"), "{said:?}");
+    assert!(said.contains("Content-Length"), "{said:?}");
+}

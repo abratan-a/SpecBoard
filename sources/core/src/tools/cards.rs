@@ -73,7 +73,7 @@ pub(crate) fn section_label(defs: &crate::kinds::Defs, kind: &str) -> String {
 
 /// The kinds a card may be made of (`SchemaKind.made`); a card ghost too, and a flow's nodes
 /// (cards inside it).
-pub(crate) const MADE_KINDS: [&str; 24] = [
+pub(crate) const MADE_KINDS: [&str; 27] = [
     "entity",
     "value",
     "enum",
@@ -83,9 +83,12 @@ pub(crate) const MADE_KINDS: [&str; 24] = [
     "freedoc",
     "formatdoc",
     "stackdoc",
+    "spec",
     "instance",
     "table",
     "svg",
+    "sketch",
+    "image",
     "html",
     "frame",
     "goal",

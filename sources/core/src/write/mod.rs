@@ -25,7 +25,10 @@ mod holds;
 mod merge;
 mod projectfile;
 
-pub use branches::{GROUP_BRANCH, is_branch_tree, parsed, valid_name, valid_section_name};
+pub use branches::{
+    GROUP_BRANCH, RESULT_PREFIX, RESULT_WORD, is_branch_tree, parsed, valid_name,
+    valid_section_name,
+};
 pub use bundle::{bundle, other_form};
 pub use history::{
     Around, Author, Commit, Line, UndoConflict, UndoOne, around as history_around, author_said,
@@ -163,8 +166,9 @@ pub(crate) fn guard(conn: &Connection) -> Result<(), String> {
     };
     let said = ARCHIVED_RAISED;
     type Project = fn(&str) -> String;
-    let tables: [(&str, Project); 8] = [
+    let tables: [(&str, Project); 9] = [
         ("card_docs", |row| format!("{row}.project_id")),
+        ("images", |row| format!("{row}.project_id")),
         ("inspection_marks", |row| format!("{row}.project_id")),
         ("code_marks", |row| format!("{row}.project_id")),
         ("section_docs", |row| format!("{row}.project_id")),
@@ -195,7 +199,7 @@ pub(crate) fn guard(conn: &Connection) -> Result<(), String> {
     conn.execute_batch(&sql).map_err(db)
 }
 
-/// Now, as every row of the store writes it (`Repository.timestamp`).
+/// Now, as every row of the store writes it.
 pub(crate) fn now(conn: &Connection) -> Result<String, String> {
     conn.query_row("SELECT strftime('%Y-%m-%dT%H:%M:%fZ', 'now')", [], |r| {
         r.get(0)
@@ -203,7 +207,7 @@ pub(crate) fn now(conn: &Connection) -> Result<String, String> {
     .map_err(db)
 }
 
-/// A new id: a random UUID, lowercased (`Repository.newId`).
+/// A new id: a random UUID, lowercased.
 pub fn new_id() -> String {
     let mut b = [0u8; 16];
     getrandom::fill(&mut b).expect("the system's random numbers");
@@ -635,6 +639,29 @@ impl<'s> Tx<'s> {
         Ok(())
     }
 
+    /// Refused when the tree is a merge's result the window shows (`create_result_branch`): only
+    /// looked at, what it holds written by its merge alone. How it looks is taken, as a locked
+    /// main's is, and goes with it.
+    pub(crate) fn refuse_result(&self, project: &str, tree: &str) -> Result<(), String> {
+        if tree.is_empty() || self.merging {
+            return Ok(());
+        }
+        let result = self
+            .tx
+            .query_row(
+                "SELECT 1 FROM branches WHERE project_id = ? AND id = ? AND name LIKE ?",
+                params![project, tree, format!("{}%", branches::RESULT_PREFIX)],
+                |_| Ok(()),
+            )
+            .optional()
+            .map_err(db)?
+            .is_some();
+        if result {
+            return Err(text!("write.resultOnlyLooked"));
+        }
+        Ok(())
+    }
+
     /// The tree's own row.
     fn own(
         &self,
@@ -716,22 +743,58 @@ impl<'s> Tx<'s> {
             .map_err(db)
     }
 
+    /// A moment the version of `id` the branch `tree` sees was main (`upsert`'s stamp): for main as
+    /// the branch froze it, when it was frozen (as old as the branch, for a copy frozen before the
+    /// time was kept); else `at`, now.
+    pub(crate) fn version_time(
+        &self,
+        table: Table,
+        project: &str,
+        tree: &str,
+        id: &str,
+        at: &str,
+    ) -> Result<String, String> {
+        let frozen: Option<Option<String>> = self
+            .tx
+            .query_row(
+                "SELECT f.at FROM branch_frozen f WHERE f.project_id = ? AND f.branch_id = ? AND f.tbl = ? AND f.id = ?",
+                params![project, tree, table.name(), id],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(db)?;
+        match frozen {
+            None => Ok(at.to_string()),
+            Some(Some(when)) => Ok(when),
+            Some(None) => self
+                .tx
+                .query_row(
+                    "SELECT created_at FROM branches WHERE project_id = ? AND id = ?",
+                    params![project, tree],
+                    |r| r.get(0),
+                )
+                .map_err(db),
+        }
+    }
+
     /// main's row as it is, kept for each branch that has not written it and keeps nothing of
     /// it yet, before main writes it: a branch sees main as it was made until it takes main
     /// in. Not for a branch set aside.
     pub(crate) fn freeze(&mut self, table: Table, project: &str, id: &str) -> Result<(), String> {
         let name = table.name();
+        let now = self.now()?;
         self.tx
             .execute(
                 &format!(
-                    "INSERT OR IGNORE INTO branch_frozen (project_id, branch_id, tbl, id, doc)
+                    "INSERT OR IGNORE INTO branch_frozen (project_id, branch_id, tbl, id, doc, at)
                      SELECT ?1, b.id, ?2, ?3,
-                            (SELECT d.doc FROM {name} d WHERE d.project_id = ?1 AND d.branch_id = '' AND d.id = ?3 AND d.removed = 0)
+                            (SELECT d.doc FROM {name} d WHERE d.project_id = ?1 AND d.branch_id = '' AND d.id = ?3 AND d.removed = 0),
+                            ?4
                      FROM branches b
                      WHERE b.project_id = ?1 AND b.archived_at IS NULL
                        AND NOT EXISTS (SELECT 1 FROM {name} o WHERE o.project_id = ?1 AND o.branch_id = b.id AND o.id = ?3)"
                 ),
-                params![project, name, id],
+                params![project, name, id, now],
             )
             .map_err(db)?;
         Ok(())
@@ -740,12 +803,71 @@ impl<'s> Tx<'s> {
     /// What a branch keeps of main let go of: it sees main as it is now (it took main in, or it
     /// went into main).
     pub(crate) fn thaw(&mut self, project: &str, branch: &str) -> Result<(), String> {
+        self.let_go_of_frozen(project, branch, None)
+    }
+
+    /// A branch's frozen copies of main let go of — all of them, or the one `only` names — each kept
+    /// in the branch's commit as it was, so that going back past it puts it back.
+    pub(crate) fn let_go_of_frozen(
+        &mut self,
+        project: &str,
+        branch: &str,
+        only: Option<(Table, &str)>,
+    ) -> Result<(), String> {
+        let rows: Vec<(String, String)> = {
+            let mut stmt = self
+                .tx
+                .prepare("SELECT tbl, id FROM branch_frozen WHERE project_id = ? AND branch_id = ?")
+                .map_err(db)?;
+            stmt.query_map(params![project, branch], |r| Ok((r.get(0)?, r.get(1)?)))
+                .map_err(db)?
+                .collect::<Result<Vec<_>, _>>()
+                .map_err(db)?
+        };
+        for (tbl, id) in rows {
+            if only.is_some_and(|(t, i)| t.name() != tbl || i != id) {
+                continue;
+            }
+            self.history
+                .frozen_before(&self.tx, project, branch, &tbl, &id)?;
+            self.tx
+                .execute(
+                    "DELETE FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = ? AND id = ?",
+                    params![project, branch, tbl, id],
+                )
+                .map_err(db)?;
+        }
+        Ok(())
+    }
+
+    /// A branch's frozen copy of main put as it was (`before`, as the history keeps it: its document
+    /// and when it was frozen; none, not there), what it is now kept in this commit.
+    pub(crate) fn put_frozen_back(
+        &mut self,
+        project: &str,
+        branch: &str,
+        tbl: &str,
+        id: &str,
+        before: Option<&str>,
+    ) -> Result<(), String> {
+        self.history
+            .frozen_before(&self.tx, project, branch, tbl, id)?;
         self.tx
             .execute(
-                "DELETE FROM branch_frozen WHERE project_id = ? AND branch_id = ?",
-                params![project, branch],
+                "DELETE FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = ? AND id = ?",
+                params![project, branch, tbl, id],
             )
             .map_err(db)?;
+        if let Some(Value::Object(kept)) = before.and_then(|b| serde_json::from_str(b).ok()) {
+            let text = |key: &str| kept.get(key).and_then(Value::as_str).map(str::to_string);
+            self.tx
+                .execute(
+                    "INSERT INTO branch_frozen (project_id, branch_id, tbl, id, doc, at) VALUES (?, ?, ?, ?, ?, ?)",
+                    params![project, branch, tbl, id, text("doc"), text("at")],
+                )
+                .map_err(db)?;
+        }
+        self.touch(project, branch);
         Ok(())
     }
 
@@ -787,6 +909,7 @@ impl<'s> Tx<'s> {
         if then.as_ref() == Some(doc) {
             return Ok(());
         }
+        self.refuse_result(project, tree)?;
         if self.under_lock(project, tree)? {
             // A card of main's moves among its section's cards and has its tags put on and
             // taken off under the lock too; nothing else of it, and nothing of a section.
@@ -911,6 +1034,7 @@ impl<'s> Tx<'s> {
         let Some(was) = self.seen(table, project, tree, id)?.filter(|w| !w.removed) else {
             return Ok(false);
         };
+        self.refuse_result(project, tree)?;
         self.refuse_locked(project, tree)?;
         if !is_branch(tree) || (was.own && was.base.is_none()) {
             if tree.is_empty() {
@@ -936,8 +1060,8 @@ impl<'s> Tx<'s> {
         Ok(true)
     }
 
-    /// A row written, with what it was kept for the commit first. A base is stamped with
-    /// when it was taken, once: the same base keeps its time (§6).
+    /// A row written, with what it was kept for the commit first. A base is stamped with a moment its
+    /// version was main (`version_time`), once: the same base keeps its time (§6).
     #[allow(clippy::too_many_arguments)]
     fn upsert(
         &mut self,
@@ -969,7 +1093,13 @@ impl<'s> Tx<'s> {
                 _ => rusqlite::types::Value::Null,
             });
         }
-        let based_at = base.as_ref().map(|_| at.clone());
+        // A moment the version of main the base is was main: when it is copied, for main as it is
+        // now; for main as the branch froze it, when main went on from it — so that the older of two
+        // bases is the older version of main whichever was copied first.
+        let based_at = match base {
+            Some(_) => Some(self.version_time(table, project, tree, id, &at)?),
+            None => None,
+        };
         binds.push((removed as i64).into());
         binds.push(doc.into());
         binds.push(base.into());

@@ -74,6 +74,10 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// newest on top, one read at a time by its selector (`versions`, `StackVersion`), each a
     /// path of its own. Written out whole, or one version alone.
     case stackdoc
+    /// A specification, in a document section (`specboard://SpecBoard/Docs/Design:CardKinds`「仕様（spec）」): its
+    /// story (As, I want, So that) and its scenarios, each steps of Given, When, Then and a path of its own
+    /// (`Docs:Lines.addRemove`), the test lines drawn from a scenario.
+    case spec
     /// A data card (`specboard://SpecBoard/Docs/Design:CardKinds`「データ（instance）と定義のセクション」): the values
     /// of a shape — an entity or a value, the line `of` goes to (`instanceOf`) — held as one JSON as
     /// nested as the shape (`data`). Drawn as its shape is, each field with its type's badge and its
@@ -93,6 +97,13 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// ui section's mock put into its box at 1:1, cut at the box. Its field `target` holds that section by
     /// id, so it follows a rename or a move; MCP reads and writes the section's path.
     case frame
+    /// A shape on a whiteboard (`specboard://SpecBoard/Docs/Design:CardKinds`「ホワイトボード（whiteboard）」): its
+    /// shape, its text in Markdown and its colours (`Sketch`), drawn there as the shape itself, as big as the
+    /// core says its text makes it until sized by hand.
+    case sketch
+    /// A picture on a whiteboard (screenshot, photo): the project keeps its contents once by their sha256, which
+    /// the card names with their form and size (`image`, `format`, `width`, `height`), drawn fitted in its box.
+    case image
     /// A card of a kind a person defines (`specboard://SpecBoard/Docs/Design:DesignBoard` §3): its fields, its
     /// rows and the lines its rows draw come from the kind's definition (`CustomKind`).
     /// Built in for now: the goal, a target and the tasks inside it, each its own card
@@ -132,11 +143,11 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// fields on one are shown nowhere.
     var holdsFields: Bool { self == .entity || self == .value }
     /// Kinds that are writing: a note and the documents.
-    var isWriting: Bool { self == .note || self == .freedoc || self == .formatdoc || self == .stackdoc }
+    var isWriting: Bool { self == .note || self == .freedoc || self == .formatdoc || self == .stackdoc || self == .spec }
     /// Kinds whose content is one body of Markdown.
     var hasBody: Bool { self == .note || self == .freedoc }
     /// The documents: what a document section is for.
-    var isDocument: Bool { self == .freedoc || self == .formatdoc || self == .stackdoc }
+    var isDocument: Bool { self == .freedoc || self == .formatdoc || self == .stackdoc || self == .spec }
     /// A kind a person defines: drawn and checked by its definition (`CustomKind`).
     var isCustom: Bool { self == .goal }
     /// A kind the project defines (`custom`): drawn and written by its definition (`CardKindDef`).
@@ -238,6 +249,10 @@ nonisolated enum Line {
     static let mentions = "mentions"
     /// A card of main's or a branch's carried out in a working directory's file.
     static let implementedBy = "implementedBy"
+    /// From a spec's item or card to the tests that check it.
+    static let testedBy = "testedBy"
+    /// Between a whiteboard's sketches, notes and SVGs: each drawn by its own fields (`ArrowLook`).
+    static let arrow = "arrow"
     // A flow's nodes, between them: the way on, a branch's condition, the way when none
     // holds, when it fails, when it runs out of time.
     static let next = "next"
@@ -589,6 +604,9 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     /// the project's card size. How it looks, kept with where it sits — out of the coding
     /// keys for the same reason as `uses`.
     var size: GridSize? = nil
+    /// Whether `size` is not its own but the one its text gives it (a whiteboard's sketch sized by
+    /// nobody): drawn at it, with nothing to reset.
+    var sizedByText = false
     /// How a formatdoc is drawn on the diagram: `rows`, `document`, or nil for
     /// the project's default.
     var docView: String? = nil
@@ -598,6 +616,10 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     /// keys for the same reason as `uses`.
     var versions: [StackVersion] = []
     var version: String? = nil
+    /// For a spec: its story (`form.fields`) and its scenarios in their order (`form.rows.scenarios`). Out of
+    /// the coding keys for the same reason as `uses`.
+    var specStory = SpecStory()
+    var scenarios: [SpecScenario] = []
     /// For a data card (`instance`): its values, as nested as its shape (`form.fields.data`), and its
     /// shape's name as its header says it (read with the project). Out of the coding keys for the
     /// same reason as `uses`.
@@ -886,6 +908,8 @@ nonisolated struct Relation: Codable, Hashable, Sendable {
     /// A board's card's line, or its text, reaching one of main's cards: the card is in main's detail
     /// (`AppModel.outsideDetail`), not this one.
     var outside: Bool = false
+    /// A whiteboard's arrow's own fields — its label, dash, ends and colour (`ArrowLook`); none for any other line.
+    var fields: [String: JSONValue] = [:]
 
     init(fromSchemaId: String, toSchemaId: String, line: String, from: String = "", at: String? = nil,
          viaGhostId: String? = nil, fieldId: String = "", isArray: Bool = false,
@@ -907,7 +931,7 @@ nonisolated struct Relation: Codable, Hashable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case fromSchemaId, toSchemaId, line, from, at, viaGhostId, fieldId, isArray, cardinality, connection, written,
-             outside
+             outside, fields
     }
 
     init(from decoder: Decoder) throws {
@@ -925,6 +949,7 @@ nonisolated struct Relation: Codable, Hashable, Sendable {
         connection = try c.decodeIfPresent(String.self, forKey: .connection)
         written = try c.decodeIfPresent(String.self, forKey: .written)
         outside = try c.decodeIfPresent(Bool.self, forKey: .outside) ?? false
+        fields = try c.decodeIfPresent([String: JSONValue].self, forKey: .fields) ?? [:]
     }
 }
 

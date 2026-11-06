@@ -209,13 +209,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There is %lld card in this project. Closest: %@. Search with card_list's query"
+                  "value" : "There is %lld card in this project. Closest: %@. Search for it in the nav panel"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There are %lld cards in this project. Closest: %@. Search with card_list's query"
+                  "value" : "There are %lld cards in this project. Closest: %@. Search for it in the nav panel"
                 }
               }
             }
@@ -224,7 +224,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "近いのは: %2$@（このプロジェクトには全 %1$lld 件。card_list の query で探せます）"
+            "value" : "近いのは: %2$@（このプロジェクトには全 %1$lld 件。ナビパネルの検索で探せます）"
           }
         }
       }
@@ -239,13 +239,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There is %lld card in section %@. Closest: %@. Search with card_list's query"
+                  "value" : "There is %lld card in section %@. Closest: %@. Search for it in the nav panel"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There are %lld cards in section %@. Closest: %@. Search with card_list's query"
+                  "value" : "There are %lld cards in section %@. Closest: %@. Search for it in the nav panel"
                 }
               }
             }
@@ -254,7 +254,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "近いのは: %3$@（セクション %2$@ には全 %1$lld 件。card_list の query で探せます）"
+            "value" : "近いのは: %3$@（セクション %2$@ には全 %1$lld 件。ナビパネルの検索で探せます）"
           }
         }
       }
@@ -287,13 +287,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There is %lld card in this project. Search with card_list's query"
+                  "value" : "There is %lld card in this project. Search for it in the nav panel"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There are %lld cards in this project. Search with card_list's query"
+                  "value" : "There are %lld cards in this project. Search for it in the nav panel"
                 }
               }
             }
@@ -302,7 +302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このプロジェクトには %lld 件あります。card_list の query で探してください"
+            "value" : "このプロジェクトには %lld 件あります。ナビパネルの検索で探してください"
           }
         }
       }
@@ -317,13 +317,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There is %lld card in section %@. Search with card_list's query"
+                  "value" : "There is %lld card in section %@. Search for it in the nav panel"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "There are %lld cards in section %@. Search with card_list's query"
+                  "value" : "There are %lld cards in section %@. Search for it in the nav panel"
                 }
               }
             }
@@ -332,7 +332,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セクション %2$@ には %1$lld 件あります。card_list の query で探してください"
+            "value" : "セクション %2$@ には %1$lld 件あります。ナビパネルの検索で探してください"
           }
         }
       }

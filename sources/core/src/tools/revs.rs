@@ -144,6 +144,16 @@ pub(crate) fn given(
 /// The arguments without the revs `given` reads (the tools write with what is left); none when
 /// there are none.
 pub(crate) fn without(tool: &str, arguments: &Map<String, Value>) -> Option<Map<String, Value>> {
+    if TAKES_META_REV.contains(&tool) {
+        let Some(Value::Object(value)) = arguments.get("value") else {
+            return None;
+        };
+        let mut value = value.clone();
+        value.shift_remove("rev")?;
+        let mut out = arguments.clone();
+        out.insert("value".into(), Value::Object(value));
+        return Some(out);
+    }
     if !TAKES_REV.contains(&tool) {
         return None;
     }
@@ -269,4 +279,240 @@ pub(crate) fn written(tx: &Tx, scope: &Scope) -> Result<Map<String, Value>, Stri
         }
     }
     Ok(out)
+}
+
+/// The tools whose value may give the rev of a section, the project's settings or a kind: what
+/// several sessions write side by side as they do cards, so a write made from what was read is
+/// held to it in the same way.
+const TAKES_META_REV: [&str; 5] = [
+    "section_update",
+    "section_delete",
+    "project_update",
+    "kind_update",
+    "kind_delete",
+];
+
+/// What a rev other than a card's is of.
+pub(crate) enum Meta {
+    /// A section, by its path as the call writes it.
+    Section(String),
+    /// The project's settings.
+    Project,
+    /// A kind, by its name.
+    Kind(String),
+}
+
+impl Meta {
+    fn said(&self) -> String {
+        match self {
+            Meta::Section(path) => text!("revs.what.section", path),
+            Meta::Project => text!("revs.what.project"),
+            Meta::Kind(name) => text!("revs.what.kind", name),
+        }
+    }
+}
+
+/// The revs of sections, the project or kinds a call of `tool` gives (`value.rev`), each with what it
+/// is of: for each target, or the project's. None for a tool that takes none.
+pub(crate) fn given_meta(
+    tool: &str,
+    arguments: &Map<String, Value>,
+) -> Result<Vec<(Meta, String)>, String> {
+    if !TAKES_META_REV.contains(&tool) {
+        return Ok(Vec::new());
+    }
+    let Some(Value::Object(value)) = arguments.get("value") else {
+        return Ok(Vec::new());
+    };
+    let Some(raw) = value.get("rev") else {
+        return Ok(Vec::new());
+    };
+    let rev = raw
+        .as_str()
+        .map(str::trim)
+        .filter(|r| !r.is_empty())
+        .map(str::to_string)
+        .ok_or_else(|| text!("revs.given.metaShape", tool))?;
+    if tool == "project_update" {
+        return Ok(vec![(Meta::Project, rev)]);
+    }
+    let targets = super::Args::new(arguments)
+        .targets()
+        .ok()
+        .flatten()
+        .unwrap_or_default();
+    Ok(targets
+        .into_iter()
+        .map(|t| {
+            let of = if tool.starts_with("section") {
+                Meta::Section(t)
+            } else {
+                Meta::Kind(t)
+            };
+            (of, rev.clone())
+        })
+        .collect())
+}
+
+/// A section's rev: its own record — name, description, parent, place among its siblings, kind,
+/// figure and mark — not the cards in it.
+pub(crate) fn section_rev(detail: &crate::model::Detail, id: &str) -> Option<String> {
+    let section = detail.sections.iter().find(|s| s.id == id)?;
+    let position = detail
+        .sections
+        .iter()
+        .filter(|s| s.parent_id == section.parent_id)
+        .position(|s| s.id == id);
+    let mut doc = Map::new();
+    doc.insert("name".into(), section.name.clone().into());
+    doc.insert("description".into(), section.description.clone().into());
+    doc.insert("parent".into(), section.parent_id.clone().into());
+    doc.insert("position".into(), position.into());
+    doc.insert("kind".into(), section.kind.clone().into());
+    doc.insert("figure".into(), section.figure.clone().into());
+    let icon = section.icon.as_ref();
+    doc.insert(
+        "icon".into(),
+        serde_json::json!([
+            icon.and_then(|i| i.name.clone()),
+            icon.and_then(|i| i.color.clone())
+        ]),
+    );
+    Some(rev_of(&doc))
+}
+
+/// The project's rev: its settings as `project_update` writes them — name, slug, description, card
+/// size, writing rules, the order of the sections under the root, export language — not its cards.
+pub(crate) fn project_rev(
+    conn: &rusqlite::Connection,
+    project: &str,
+    detail: &crate::model::Detail,
+) -> Result<String, String> {
+    let (name, slug, description, rules, language): (
+        String,
+        String,
+        String,
+        Option<String>,
+        String,
+    ) = conn
+        .query_row(
+            "SELECT name, slug, description, rules, export_language FROM projects WHERE id = ?",
+            [project],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
+        )
+        .map_err(crate::store::sql)?;
+    let root = detail.sections.iter().find(|s| s.parent_id.is_none());
+    let order: Vec<Value> = detail
+        .sections
+        .iter()
+        .filter(|s| root.is_some_and(|r| s.parent_id.as_deref() == Some(r.id.as_str())))
+        .map(|s| Value::from(s.id.clone()))
+        .collect();
+    let mut doc = Map::new();
+    doc.insert("name".into(), name.into());
+    doc.insert("slug".into(), slug.into());
+    doc.insert("description".into(), description.into());
+    doc.insert("rules".into(), rules.into());
+    doc.insert("exportLanguage".into(), language.into());
+    doc.insert(
+        "layout".into(),
+        super::grid::Layout::read(conn, project)?.view(),
+    );
+    doc.insert("order".into(), Value::Array(order));
+    Ok(rev_of(&doc))
+}
+
+/// The rev now of what `of` names, in `seen`; none when it is not there (the tool says so).
+fn meta_rev(tx: &Tx, seen: &Seen, of: &Meta) -> Option<String> {
+    match of {
+        Meta::Section(path) => {
+            let id = seen.project().directory.section_named(path.trim(), None)?;
+            section_rev(&seen.detail, &id)
+        }
+        Meta::Project => project_rev(tx.conn(), &seen.summary.id, &seen.detail).ok(),
+        Meta::Kind(name) => super::kind_tools::kind_rev(tx.conn(), &seen.summary.id, name),
+    }
+}
+
+/// The revs `given_meta` read, held to the tree before the call: what is not as it was read, said
+/// a line each.
+pub(crate) fn stale_meta(tx: &Tx, seen: &Seen, given: &[(Meta, String)]) -> Vec<String> {
+    let mut out = Vec::new();
+    for (of, rev) in given {
+        let Some(now) = meta_rev(tx, seen, of) else {
+            continue;
+        };
+        if now != *rev {
+            let said = text!("revs.stale.meta", what = of.said(), rev, now);
+            if !out.contains(&said) {
+                out.push(said);
+            }
+        }
+    }
+    out
+}
+
+/// A call's revs of sections, the project or kinds held to its tree before it writes: refused,
+/// nothing written, when one is not as it was read. Only MCP's.
+pub(crate) fn refuse_stale_meta(
+    tx: &Tx,
+    scope: &Scope,
+    given: &[(Meta, String)],
+) -> Result<(), String> {
+    if given.is_empty() || tx.who().side != crate::write::Side::Mcp {
+        return Ok(());
+    }
+    let seen = Seen::in_tx(tx, scope)?;
+    let lines = stale_meta(tx, &seen, given);
+    let mut refusals = super::args::Refusals::new(lines.len());
+    for line in &lines {
+        refusals.note(None, line);
+    }
+    refusals.check()
+}
+
+/// The rev of what a write of a section, the project or a kind leaves, put in its answer (MCP's
+/// only): the section or kind it names (by its new name when it renames it), the project's.
+pub(crate) fn stamp_meta(
+    tx: &Tx,
+    scope: &Scope,
+    tool: &str,
+    arguments: &Map<String, Value>,
+    mut answer: Value,
+) -> Result<Value, String> {
+    if tx.who().side != crate::write::Side::Mcp {
+        return Ok(answer);
+    }
+    let renamed = arguments
+        .get("value")
+        .and_then(|v| v.get("name"))
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let target = arguments
+        .get("target")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let of = match tool {
+        "project_update" => Meta::Project,
+        "section_create" | "section_update" => match (tool, renamed, target) {
+            // A section renamed keeps its parent: the new name in the place of the last part.
+            ("section_update", Some(name), Some(path)) => Meta::Section(
+                path.rsplit_once('/')
+                    .map(|(parent, _)| format!("{parent}/{name}"))
+                    .unwrap_or(name),
+            ),
+            (_, _, Some(path)) => Meta::Section(path),
+            _ => return Ok(answer),
+        },
+        "kind_create" | "kind_update" => match renamed.or(target) {
+            Some(name) => Meta::Kind(name),
+            None => return Ok(answer),
+        },
+        _ => return Ok(answer),
+    };
+    let seen = Seen::in_tx(tx, scope)?;
+    if let (Some(rev), Value::Object(out)) = (meta_rev(tx, &seen, &of), &mut answer) {
+        out.insert("rev".into(), rev.into());
+    }
+    Ok(answer)
 }

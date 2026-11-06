@@ -77,13 +77,15 @@ final class Language {
     nonisolated static let appleLanguages = "AppleLanguages"
 
     /// The menu bar, the open and save panels and a text field's menu are AppKit's, in the language the app
-    /// was launched in: the one chosen is set as the app's own (`AppleLanguages` of the app's defaults), so they
-    /// follow it from the next launch; following the system, none is set. Under tests only into defaults of
-    /// their own: the app's are those of whoever runs them.
-    nonisolated static func launchIn(_ choice: String, defaults: UserDefaults = .standard) {
+    /// was launched in: the one chosen is set first in the app's own (`AppleLanguages` of the app's defaults), so
+    /// they follow it from the next launch; following the system, none is set. The Mac's languages (`mac`) stay
+    /// after it, the same language's left out: a font falls back for what it has no letters for by the app's
+    /// languages, and with Japanese gone from them the kanji of a Mac in Japanese would be drawn in Chinese forms.
+    /// Under tests only into defaults of their own: the app's are those of whoever runs them.
+    nonisolated static func launchIn(_ choice: String, defaults: UserDefaults = .standard, mac: [String] = machine) {
         guard !underTests || defaults !== UserDefaults.standard else { return }
         if supported.contains(choice) {
-            defaults.set([choice], forKey: appleLanguages)
+            defaults.set([choice] + mac.filter { supported($0) != choice }, forKey: appleLanguages)
         } else {
             defaults.removeObject(forKey: appleLanguages)
         }

@@ -73,12 +73,17 @@ struct CardBar<Leading: View, Tools: View>: View {
                 leading.fixedSize().padding(.leading, titled ? Self.gap : 0)
             }
             Spacer(minLength: Self.gap * 2)
+            // The tools as every bar's are: a mark and words with no frame, all of one height
+            // (`specboard://SpecBoard/Docs/Design:UI`「帯とバーのボタン」); a switch between ways to look stays segmented.
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: Self.gap) { tools }
                 HStack(spacing: Self.gap) { tools }
                     .labelStyle(.iconOnly)
                     .environment(\.cardBarCompact, true)
             }
+            .buttonStyle(.borderless)
+            .menuStyle(.borderlessButton)
+            .controlSize(.small)
             .layoutPriority(3)
         }
         .measured(.bar)
@@ -126,6 +131,9 @@ struct CardFoot<Items: View>: View {
                 info
             }
         }
+        // The buttons as the bar's above (`specboard://SpecBoard/Docs/Design:UI`「帯とバーのボタン」).
+        .buttonStyle(.borderless)
+        .menuStyle(.borderlessButton)
         .measured(.foot)
     }
 
@@ -245,4 +253,40 @@ private extension View {
 /// rings stay whole.
 private struct SidesOnly: Shape {
     func path(in rect: CGRect) -> Path { Path(rect.insetBy(dx: 0, dy: -12)) }
+}
+
+/// A switch in a bar or a band, drawn as the bars' buttons are (`specboard://SpecBoard/Docs/Design:UI`「帯とバーのボタン」):
+/// its mark and words with no frame — its mark alone when the bar is narrow — and while on, its mark filled
+/// and its words in brass, as the filter's button says it is on.
+struct BarToggle: View {
+    var title: String
+    var systemImage: String
+    /// The mark while on; the same mark when left out.
+    var onImage: String? = nil
+    @Binding var isOn: Bool
+
+    @Environment(\.cardBarCompact) private var compact
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Button { isOn.toggle() } label: {
+            let label = Label(title, systemImage: Self.mark(systemImage, on: onImage, isOn: isOn))
+                .labelStyle(compact ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon))
+                .lineLimit(1)
+            // Off, in the ink the bar's other buttons take (dimmed with them while the window is not in front).
+            if isOn {
+                label.foregroundStyle(Color(nsColor: (colorScheme == .dark ? GraphTheme.dark : .light).brassInk))
+            } else {
+                label
+            }
+        }
+        .buttonStyle(.borderless)
+        .fixedSize()
+        .accessibilityAddTraits(isOn ? .isSelected : [])
+    }
+
+    /// The mark as it stands: the filled one while on, when there is one.
+    static func mark(_ systemImage: String, on onImage: String?, isOn: Bool) -> String {
+        isOn ? (onImage ?? systemImage) : systemImage
+    }
 }

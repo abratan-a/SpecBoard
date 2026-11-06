@@ -501,7 +501,7 @@ fn a_project_file_carries_the_records_of_the_lines_it_holds() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 33);
+    assert_eq!(file["version"], 34);
     let marks = file["codeMarks"].as_array().unwrap();
     assert_eq!(marks.len(), 1, "{marks:?}");
     assert_eq!(marks[0]["symbol"], "helper");

@@ -75,13 +75,35 @@ fn fields(rows: Option<&Value>, prefix: &str, out: &mut Vec<(String, FieldShape)
     }
 }
 
+/// An enum's value as compared: its row's id (its name where it has none), name, label and
+/// description.
+struct ValueShape {
+    id: String,
+    name: String,
+    label: String,
+    description: String,
+}
+
 /// An enum's values, in order.
-fn values(doc: &Value) -> Vec<String> {
+fn values(doc: &Value) -> Vec<ValueShape> {
     doc["rows"]["values"]
         .as_array()
         .into_iter()
         .flatten()
-        .filter_map(|r| r["fields"]["value"].as_str().map(str::to_string))
+        .filter_map(|r| {
+            let f = r["fields"].as_object()?;
+            let name = f.get("name").and_then(Value::as_str)?.to_string();
+            let id = r["id"]
+                .as_str()
+                .filter(|id| !id.is_empty())
+                .map_or_else(|| name.clone(), str::to_string);
+            Some(ValueShape {
+                id,
+                name,
+                label: text(f, "label").to_string(),
+                description: text(f, "description").to_string(),
+            })
+        })
         .collect()
 }
 
@@ -237,17 +259,35 @@ pub fn changes(
             ));
         }
     }
+    // An enum's values, by their rows' ids: made, gone (a value renamed is written as a new row),
+    // and what each kept one now says.
     let (then, values_now) = (values(before), values(after));
+    let kept = |id: &str, list: &[ValueShape]| list.iter().any(|v| v.id == id);
     let added: Vec<&str> = values_now
         .iter()
-        .filter(|v| !then.contains(v))
-        .map(String::as_str)
+        .filter(|v| !kept(&v.id, &then))
+        .map(|v| v.name.as_str())
         .collect();
     let removed: Vec<&str> = then
         .iter()
-        .filter(|v| !values_now.contains(v))
-        .map(String::as_str)
+        .filter(|v| !kept(&v.id, &values_now))
+        .map(|v| v.name.as_str())
         .collect();
+    let mut value_lines = Vec::new();
+    for was in &then {
+        let Some(now) = values_now.iter().find(|v| v.id == was.id) else {
+            continue;
+        };
+        if now.label != was.label {
+            value_lines.push(text!("diff.change.valueLabel", name = was.name.as_str()));
+        }
+        if now.description != was.description {
+            value_lines.push(text!(
+                "diff.change.valueDescription",
+                name = was.name.as_str()
+            ));
+        }
+    }
     if !added.is_empty() {
         out.push(text!("diff.change.valuesAdded", values = added.join(", ")));
     }
@@ -257,6 +297,7 @@ pub fn changes(
             values = removed.join(", ")
         ));
     }
+    out.extend(value_lines);
     // Its lines, by id.
     let lines = |d: &Value| -> Vec<(String, String, String)> {
         d["connections"]
@@ -474,7 +515,7 @@ mod tests {
         );
         let status = |values: &[&str]| {
             json!({ "name": "Status", "kind": "enum", "rows": { "values":
-                values.iter().map(|v| json!({ "id": v, "fields": { "value": v } })).collect::<Vec<_>>() } })
+                values.iter().map(|v| json!({ "id": v, "fields": { "name": v } })).collect::<Vec<_>>() } })
         };
         assert_eq!(
             changes(

@@ -273,7 +273,7 @@ impl Tx<'_> {
             return Err(text!("write.projectFile.noName"));
         }
         // This Mac's settings for the project are not the file's: in place of the project, they
-        // stay as they were (`Repository.replace`).
+        // stay as they were.
         let here = match landing {
             Landing::Replacing => Some(self.mac_settings(&project_id)?),
             Landing::Copy { .. } => None,
@@ -388,6 +388,36 @@ impl Tx<'_> {
                     said("digest"),
                     said("by"),
                     said("at")
+                ],
+            )
+            .map_err(db)?;
+        }
+        // The pictures the image cards name, each once by its contents' sha256: only one whose contents are a
+        // picture the core takes and are what its name says — its form and size read from them, not from the
+        // file — so a name never stands for other contents.
+        for image in list(body.get("images")).iter().filter_map(Value::as_object) {
+            let said = |key: &str| image.get(key).and_then(Value::as_str).unwrap_or("");
+            let Some(bytes) = crate::tools::images::unbase64(said("data")) else {
+                continue;
+            };
+            let Ok(head) = crate::tools::images::checked(&bytes) else {
+                continue;
+            };
+            let hash = crate::tools::images::sha256(&bytes);
+            if hash != said("hash") || bytes.len() > crate::tools::images::MOST_BYTES {
+                continue;
+            }
+            conn.execute(
+                "INSERT OR IGNORE INTO images (project_id, hash, format, width, height, bytes, data) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                params![
+                    project_id,
+                    hash,
+                    head.format,
+                    head.width,
+                    head.height,
+                    bytes.len() as i64,
+                    // Kept as the core writes base64, whatever way the file wrapped it: read back as it is.
+                    crate::export::mock::base64(&bytes)
                 ],
             )
             .map_err(db)?;

@@ -133,8 +133,13 @@ extension AppModel {
     @discardableResult
     func changeExports(_ name: String, target: Any?, value: [String: Any]? = nil) -> String? {
         defer { readExportSettings() }
+        exportWarnings = []
         do {
-            try exportTool(name, target: target, value: value)
+            let said = try exportTool(name, target: target, value: value)
+            // What went through but writes less than it may seem to: a row that leaves cards out, and why.
+            if case .object(let answer) = said, case .array(let lines)? = answer["warnings"] {
+                exportWarnings = lines.compactMap { if case .string(let line) = $0 { line } else { nil } }
+            }
             lastError = nil
             return nil
         } catch {
@@ -171,7 +176,7 @@ extension AppModel {
     /// the export that writes it, in its format.
     func writtenTo(_ id: String) -> [WrittenTo] {
         guard let path = try? cardPath(id),
-              case .object(let wrapped)? = try? tool("card_read", target: path, value: ["include": ["exports"]]),
+              case .object(let wrapped)? = answered({ try tool("card_read", target: path, value: ["include": ["exports"]]) }),
               case .object(let read)? = wrapped["json"], let files = read["writtenTo"] else { return [] }
         return (try? JSONDecoder().decode([WrittenTo].self, from: Data(files.compact().utf8))) ?? []
     }

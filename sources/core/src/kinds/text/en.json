@@ -1029,7 +1029,7 @@
  },
  "cards.goal.context.purpose": {
   "from": "まとめてやりたいことを、中の goal と task で進める入れ物。終わったら完了にする。進み具合は、中の task の done と、中の goal が完了かで数える",
-  "text": "A container for something to get done, worked through by the goals and tasks inside it. Set its status to 完了 when it is finished. Progress is counted from the done of the tasks inside and from whether the goals inside are 完了"
+  "text": "A container for something to get done, worked through by the goals and tasks inside it. Set its status to done when it is finished. Progress is counted from the done of the tasks inside and from whether the goals inside are done"
  },
  "cards.goal.context.use_when": {
   "from": "やることを束ねて進み具合を見たいとき。中の task の作業の順は goal の中の並び（card_update の position）",
@@ -1244,8 +1244,8 @@
   "text": "Document"
  },
  "sections.document.description": {
-  "from": "文書（freedoc・formatdoc・stackdoc）と、そのそばの付箋（note）・図（svg・html）を置く",
-  "text": "Holds documents (freedoc, formatdoc, stackdoc) and the sticky notes (note) and pictures (svg, html) beside them"
+  "from": "文書（freedoc・formatdoc・stackdoc・spec）と、そのそばの付箋（note）・図（svg・html）を置く",
+  "text": "Holds documents (freedoc, formatdoc, stackdoc, spec) and the sticky notes (note) and pictures (svg, html) beside them"
  },
  "sections.document.context.use_when": {
   "from": "仕様書・設計書・読み方の文書を書くとき",
@@ -1587,6 +1587,22 @@
   "from": "仕様・設計を実装しているファイルや関数を言うとき",
   "text": "When stating the file or the function that implements a specification or design"
  },
+ "lines.testedBy.label": {
+  "from": "確かめるテスト",
+  "text": "Tested by"
+ },
+ "lines.testedBy.description": {
+  "from": "仕様の項目やカードを、どのテストで確かめているか",
+  "text": "Which tests check a specification's item or card"
+ },
+ "lines.testedBy.context.purpose": {
+  "from": "仕様の項目やカードを、どのテストで確かめているか。仕様・設計のカード（とその行）から、それを確かめるテストのカード（とその行）か、作業ディレクトリのテストのファイルや関数へ。仕様の行からどのテストへも同じ名前で引くので、どのプロジェクトでもテストの無い項目を同じに探せる",
+  "text": "Which tests check a specification's item or card. From a specification or design card (and its rows) to a test card (and its rows) that checks it, or to a test file or function in a working directory. Every project draws it under the same name from a specification's rows to any test, so the items with no test are found the same way in any project"
+ },
+ "lines.testedBy.context.use_when": {
+  "from": "仕様の項目を確かめるテストを言うとき",
+  "text": "When stating the tests that check an item of a specification"
+ },
  "lines.mentions.label": {
   "from": "言及",
   "text": "Mentions"
@@ -1809,7 +1825,7 @@
  },
  "actions.start.description": {
   "from": "プロジェクトの branch を作り（名前は value の branch。省けばカードの名前から: UserSignup → user-signup）、workBranch にその名前、status に進行中を書く。未着手の goal と、進行中で workBranch の branch が無い goal で使える",
-  "text": "Makes the project's branch (named by value's branch; left out, made from the card's name: UserSignup → user-signup), and writes its name in workBranch and 進行中 (in progress) in status. For a goal not started, and one in progress whose workBranch names no branch"
+  "text": "Makes the project's branch (named by value's branch; left out, made from the card's name: UserSignup → user-signup), and writes its name in workBranch and inProgress in status. For a goal not started, and one in progress whose workBranch names no branch"
  },
  "actions.finish.label": {
   "from": "完了",
@@ -1817,7 +1833,7 @@
  },
  "actions.finish.description": {
   "from": "status を完了に、workBranch を空にし、ボードの完了のセクションへ移す（中のカードも）。workBranch の branch に main へ入っていない変更か出している MR があれば断る。変更の無い branch は消す",
-  "text": "Sets status to 完了 (complete), empties workBranch and moves the goal into the board's Complete section (the cards inside go with it). Refused while workBranch's branch has changes not in main or an open MR. A branch with no changes is deleted"
+  "text": "Sets status to done, empties workBranch and moves the goal into the board's Complete section (the cards inside go with it). Refused while workBranch's branch has changes not in main or an open MR. A branch with no changes is deleted"
  },
  "actions.cancel.label": {
   "from": "打ち切り",
@@ -1825,7 +1841,7 @@
  },
  "actions.cancel.description": {
   "from": "status を打ち切りに、workBranch を空にし、ボードの打ち切りのセクションへ移す。workBranch の branch は、変更が無ければ消し、変更が残れば value の discard: true のときだけ消す",
-  "text": "Sets status to 打ち切り (cancelled), empties workBranch and moves the goal into the board's Cancelled section. workBranch's branch is deleted when it has no changes, and with changes only when value has discard: true"
+  "text": "Sets status to cancelled, empties workBranch and moves the goal into the board's Cancelled section. workBranch's branch is deleted when it has no changes, and with changes only when value has discard: true"
  },
  "actions.done.label": {
   "from": "済みにする",
@@ -1850,5 +1866,337 @@
  "actions.reviewed.description": {
   "from": "部品（html・svg・frame）の reviewedAt に今の時刻を書き、部品を書いたことにして見直しの印を消す。作業ディレクトリのファイルへ引いた線（implementedBy など）を持つカードでは、変わった線と覚えていない線のコードを今の形で覚え直す（コミットにならない）。印のあるカードで使える",
   "text": "Writes the current time to the part's (html, svg, frame) reviewedAt, which counts as writing the part and clears its review mark; on a card with lines to working-directory files (implementedBy and the like), records the code of the changed and unrecorded lines as it is now (no commit). Usable on a card with a mark"
+ },
+ "cards.spec.label": {
+  "from": "仕様",
+  "text": "Specification"
+ },
+ "cards.spec.context.purpose": {
+  "from": "機能ごとの仕様を、ねらい（As・I want・So that）と Scenario（Given・When・Then の段）の決まった形で書く文書。Scenario ごとにパスがあり（<カード>.<Scenario の name>）、確かめるテストへ線を引く",
+  "text": "A document that writes a feature's specification in a fixed form: its story (As, I want, So that) and scenarios (the steps of Given, When, Then). Each scenario has a path (<card>.<scenario name>) and draws lines to the tests that check it"
+ },
+ "cards.spec.context.use_when": {
+  "from": "受け入れ条件を Scenario で書き、どの Scenario にも確かめるテストがあるかを見渡したいとき",
+  "text": "When writing acceptance criteria as scenarios and looking over whether every scenario has a test that checks it"
+ },
+ "cards.spec.context.not_for": {
+  "from": "形の決まっていない文書（freedoc）・決めた書式の設計書（formatdoc）・積み重なる文書（stackdoc）",
+  "text": "A document with no set form (freedoc), a design document of a set format (formatdoc) and a document that stacks up (stackdoc)"
+ },
+ "cards.spec.fields.as.description": {
+  "from": "誰の話か",
+  "text": "Whose story it is"
+ },
+ "cards.spec.fields.iWant.description": {
+  "from": "何をしたいか",
+  "text": "What they want to do"
+ },
+ "cards.spec.fields.soThat.description": {
+  "from": "なぜか",
+  "text": "Why"
+ },
+ "cards.spec.fields.about.label": {
+  "from": "補足",
+  "text": "Notes"
+ },
+ "cards.spec.fields.about.description": {
+  "from": "ねらいのあとに書く本文。[[path]]・{{path}}・![[path]] が使える",
+  "text": "The text written after the story. [[path]], {{path}} and ![[path]] can be used"
+ },
+ "cards.spec.fields.view.label": {
+  "from": "セクションマップでの見え方",
+  "text": "How it looks on the section map"
+ },
+ "cards.spec.rows.scenarios.fields.name.label": {
+  "from": "名前",
+  "text": "Name"
+ },
+ "cards.spec.rows.scenarios.fields.name.description": {
+  "from": "パスに使う名前（例 addRemove）",
+  "text": "The name used in paths (example: addRemove)"
+ },
+ "cards.spec.rows.scenarios.fields.heading.label": {
+  "from": "題",
+  "text": "Title"
+ },
+ "cards.spec.rows.scenarios.fields.note.label": {
+  "from": "補足",
+  "text": "Notes"
+ },
+ "cards.spec.rows.scenarios.fields.note.description": {
+  "from": "段のあとに書く本文",
+  "text": "The text written after the steps"
+ },
+ "cards.spec.rows.scenarios.rows.steps.label": {
+  "from": "段",
+  "text": "Step"
+ },
+ "cards.image.label": {
+  "from": "画像",
+  "text": "Image"
+ },
+ "cards.image.context.purpose": {
+  "from": "ホワイトボードに置く絵（スクリーンショット・写真）。PNG・JPEG・GIF で 1 枚 5MB まで。中身はカードに入れず、プロジェクトの画像の置き場に中身ごとに 1 つだけ持ち、カードは中身の名前（sha256）と形式・原寸を持つ。中身は imageData（base64）か imageFrom（作業ディレクトリのファイル）で渡し、card_read の as: image で絵そのものを読む",
+  "text": "A picture (a screenshot, a photo) placed on a whiteboard. A PNG, a JPEG or a GIF of 5MB at the most. Its contents are not in the card: the project keeps each picture once, and the card holds its name (sha256), its form and its size. Give the contents as imageData (base64) or imageFrom (a working directory's file), and read the picture itself with card_read's as: image"
+ },
+ "cards.image.context.use_when": {
+  "from": "今の画面や手描きの絵のように、図形では描けない見た目をホワイトボードで見せるとき",
+  "text": "When showing on a whiteboard a look that sketches cannot draw, such as the screen of now or a drawing by hand"
+ },
+ "cards.image.context.not_for": {
+  "from": "図形と矢印で描ける説明（sketch）・SVG で書ける図（svg）",
+  "text": "An explanation sketches and arrows can draw (sketch), a figure SVG can write (svg)"
+ },
+ "cards.image.fields.image.label": {
+  "from": "中身",
+  "text": "Contents"
+ },
+ "cards.image.fields.image.description": {
+  "from": "中身の sha256。コアが imageData か imageFrom から書く",
+  "text": "The sha256 of the contents. Written by the core from imageData or imageFrom"
+ },
+ "cards.image.fields.format.label": {
+  "from": "形式",
+  "text": "Format"
+ },
+ "cards.image.fields.format.description": {
+  "from": "png・jpeg・gif。コアが中身から書く",
+  "text": "png, jpeg or gif. Written by the core from the contents"
+ },
+ "cards.image.fields.width.label": {
+  "from": "原寸の幅",
+  "text": "Width"
+ },
+ "cards.image.fields.width.description": {
+  "from": "原寸の幅（ピクセル）。コアが中身から書く",
+  "text": "The width at full size (pixels). Written by the core from the contents"
+ },
+ "cards.image.fields.height.label": {
+  "from": "原寸の高さ",
+  "text": "Height"
+ },
+ "cards.image.fields.height.description": {
+  "from": "原寸の高さ（ピクセル）。コアが中身から書く",
+  "text": "The height at full size (pixels). Written by the core from the contents"
+ },
+ "cards.image.fields.bytes.label": {
+  "from": "バイト数",
+  "text": "Bytes"
+ },
+ "cards.image.fields.bytes.description": {
+  "from": "中身のバイト数。コアが中身から書く",
+  "text": "The size of the contents in bytes. Written by the core from the contents"
+ },
+ "cards.image.fields.alt.label": {
+  "from": "説明",
+  "text": "Description"
+ },
+ "cards.image.fields.alt.description": {
+  "from": "何の絵か",
+  "text": "What the picture shows"
+ },
+ "cards.sketch.label": {
+  "from": "図形",
+  "text": "Sketch"
+ },
+ "cards.sketch.context.purpose": {
+  "from": "ホワイトボードで考えを絵にする部品。形（四角・角丸・丸・ひし形・円柱・文字だけ）と中の字と色を持ち、カードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。位置を書かなければ、同じ呼び出しで作ったものは矢印をたどって左から右へ並ぶ。大きさは手で決めなければ字から決まる",
+  "text": "A piece of a picture of an idea on a whiteboard. It has a shape (rectangle, rounded, ellipse, diamond, cylinder, text only), the text inside it and its colours, and is drawn as the shape itself without a card's header. Joined by arrows (arrow). Made with no place, the ones made in one call go left to right along their arrows. Sized from its text unless sized by hand"
+ },
+ "cards.sketch.context.use_when": {
+  "from": "設計の考えを、図形と矢印の絵で人に説明するとき（ホワイトボードのセクションに置く）",
+  "text": "When explaining a design's ideas to a person as a picture of shapes and arrows (placed in a whiteboard section)"
+ },
+ "cards.sketch.context.not_for": {
+  "from": "データの形（entity）・処理の流れ（flow）のように、プロジェクトの中身そのものを書くとき",
+  "text": "Writing the project's own contents, such as the shape of data (entity) or the flow of work (flow)"
+ },
+ "cards.sketch.fields.shape.label": {
+  "from": "形",
+  "text": "Shape"
+ },
+ "cards.sketch.fields.shape.optionLabels.rect": {
+  "from": "四角",
+  "text": "Rectangle"
+ },
+ "cards.sketch.fields.shape.optionLabels.rounded": {
+  "from": "角丸",
+  "text": "Rounded"
+ },
+ "cards.sketch.fields.shape.optionLabels.ellipse": {
+  "from": "丸",
+  "text": "Ellipse"
+ },
+ "cards.sketch.fields.shape.optionLabels.diamond": {
+  "from": "ひし形",
+  "text": "Diamond"
+ },
+ "cards.sketch.fields.shape.optionLabels.cylinder": {
+  "from": "円柱",
+  "text": "Cylinder"
+ },
+ "cards.sketch.fields.shape.optionLabels.text": {
+  "from": "文字だけ",
+  "text": "Text only"
+ },
+ "cards.sketch.fields.text.label": {
+  "from": "字",
+  "text": "Text"
+ },
+ "cards.sketch.fields.text.description": {
+  "from": "図形の真ん中に書く字（Markdown。**太字** と [[パス]] のリンク）",
+  "text": "The text written in the middle of the shape (Markdown: **bold** and [[path]] links)"
+ },
+ "cards.sketch.fields.fill.label": {
+  "from": "塗り",
+  "text": "Fill"
+ },
+ "cards.sketch.fields.fill.optionLabels.blue": {
+  "from": "青",
+  "text": "Blue"
+ },
+ "cards.sketch.fields.fill.optionLabels.green": {
+  "from": "緑",
+  "text": "Green"
+ },
+ "cards.sketch.fields.fill.optionLabels.amber": {
+  "from": "黄",
+  "text": "Yellow"
+ },
+ "cards.sketch.fields.fill.optionLabels.red": {
+  "from": "赤",
+  "text": "Red"
+ },
+ "cards.sketch.fields.fill.optionLabels.violet": {
+  "from": "紫",
+  "text": "Violet"
+ },
+ "cards.sketch.fields.fill.optionLabels.grey": {
+  "from": "灰",
+  "text": "Grey"
+ },
+ "cards.sketch.fields.fill.optionLabels.none": {
+  "from": "なし",
+  "text": "None"
+ },
+ "cards.sketch.fields.stroke.label": {
+  "from": "縁",
+  "text": "Border"
+ },
+ "cards.sketch.fields.stroke.optionLabels.blue": {
+  "from": "青",
+  "text": "Blue"
+ },
+ "cards.sketch.fields.stroke.optionLabels.green": {
+  "from": "緑",
+  "text": "Green"
+ },
+ "cards.sketch.fields.stroke.optionLabels.amber": {
+  "from": "黄",
+  "text": "Yellow"
+ },
+ "cards.sketch.fields.stroke.optionLabels.red": {
+  "from": "赤",
+  "text": "Red"
+ },
+ "cards.sketch.fields.stroke.optionLabels.violet": {
+  "from": "紫",
+  "text": "Violet"
+ },
+ "cards.sketch.fields.stroke.optionLabels.grey": {
+  "from": "灰",
+  "text": "Grey"
+ },
+ "sections.whiteboard.label": {
+  "from": "ホワイトボード",
+  "text": "Whiteboard"
+ },
+ "sections.whiteboard.description": {
+  "from": "図形（sketch）と付箋（note）・svg・画像（image）を矢印（arrow）でつなぎ、設計の考えを絵で説明する。開くと図形を形そのもので描く。描いたら section_read の as: picture で絵を読んで確かめる",
+  "text": "Join sketches (sketch), notes (note), SVGs and images (image) with arrows (arrow) to explain a design's ideas as a picture. Opened, its sketches are drawn as the shapes themselves. After drawing, read it as a picture (section_read with as: picture) to check it"
+ },
+ "sections.whiteboard.context.use_when": {
+  "from": "AI が設計の考えを人に絵で説明するとき。人が考えを描いて AI に見せるとき",
+  "text": "When AI explains a design's ideas to a person as a picture, or a person draws an idea to show AI"
+ },
+ "sections.whiteboard.context.not_for": {
+  "from": "プロジェクトの中身（形・流れ・文書）そのもの",
+  "text": "The project's own contents (shapes, flows, documents)"
+ },
+ "lines.arrow.label": {
+  "from": "矢印",
+  "text": "Arrow"
+ },
+ "lines.arrow.description": {
+  "from": "ホワイトボードの図形・付箋・svg・画像のあいだの矢印。字・破線・向き・色を 1 本ごとに持つ",
+  "text": "An arrow between a whiteboard's sketches, notes, SVGs and images. Each has its own text, dash, ends and colour"
+ },
+ "lines.arrow.context.purpose": {
+  "from": "ホワイトボードで、図形どうしのつながりや流れを矢印で見せる。見え方は 1 本ごとの欄で決める",
+  "text": "On a whiteboard, show how sketches are joined or what flows between them with arrows. Each one's look is set by its own fields"
+ },
+ "lines.arrow.context.use_when": {
+  "from": "ホワイトボードで説明の絵を描くとき",
+  "text": "When drawing an explanation on a whiteboard"
+ },
+ "lines.arrow.context.not_for": {
+  "from": "プロジェクトの中身どうしの線（link・embed など）",
+  "text": "Lines between the project's contents (link, embed and the like)"
+ },
+ "lines.arrow.fields.label.label": {
+  "from": "字",
+  "text": "Text"
+ },
+ "lines.arrow.fields.label.description": {
+  "from": "線の真ん中に書く字",
+  "text": "The text written in the middle of the line"
+ },
+ "lines.arrow.fields.dashed.label": {
+  "from": "破線",
+  "text": "Dashed"
+ },
+ "lines.arrow.fields.ends.label": {
+  "from": "矢じり",
+  "text": "Arrowheads"
+ },
+ "lines.arrow.fields.ends.optionLabels.none": {
+  "from": "なし",
+  "text": "None"
+ },
+ "lines.arrow.fields.ends.optionLabels.end": {
+  "from": "先だけ",
+  "text": "At the end"
+ },
+ "lines.arrow.fields.ends.optionLabels.both": {
+  "from": "両方",
+  "text": "Both"
+ },
+ "lines.arrow.fields.color.label": {
+  "from": "色",
+  "text": "Colour"
+ },
+ "lines.arrow.fields.color.optionLabels.blue": {
+  "from": "青",
+  "text": "Blue"
+ },
+ "lines.arrow.fields.color.optionLabels.green": {
+  "from": "緑",
+  "text": "Green"
+ },
+ "lines.arrow.fields.color.optionLabels.amber": {
+  "from": "黄",
+  "text": "Yellow"
+ },
+ "lines.arrow.fields.color.optionLabels.red": {
+  "from": "赤",
+  "text": "Red"
+ },
+ "lines.arrow.fields.color.optionLabels.violet": {
+  "from": "紫",
+  "text": "Violet"
+ },
+ "lines.arrow.fields.color.optionLabels.grey": {
+  "from": "灰",
+  "text": "Grey"
  }
 }

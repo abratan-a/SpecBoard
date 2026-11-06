@@ -23,16 +23,18 @@ nonisolated enum RowMarks {
     static let edge: CGFloat = 8
 
     struct Mark: Equatable {
-        enum Kind: String { case item, row }
+        /// A spec's scenario: its heading with how many tests check it (in `heading`), `untested` in the
+        /// warning colour when none does.
+        enum Kind: String { case item, row, tested, untested }
 
         var kind: Kind
         /// 0 at the top, as `FormatRows.walk` counts it.
         var depth: Int
         /// In the document, as a path writes it: `auth.login`.
         var row: String
-        /// In full: `Docs:Spec.auth.login`.
+        /// In full: `Docs:Spec.auth.login`; a scenario's, its name.
         var path: String
-        /// An item's heading; empty for any other row.
+        /// An item's heading, or what a scenario's heading says of its tests; empty for any other row.
         var heading: String = ""
     }
 
@@ -113,6 +115,15 @@ nonisolated enum RowMarks {
                 open.append(mark.depth)
             case .row:
                 out += "<section class=\"sb-row\" data-row=\"\(row)\">" + render(block.markdown) + "</section>"
+            case .tested, .untested:
+                // Not a formatdoc's row: no bracket, no row menu.
+                let badge = "<span class=\"sb-tests\(mark.kind == .untested ? " sb-none" : "")\">"
+                    + attribute(mark.heading) + "</span>"
+                let said = render(block.markdown)
+                let heading = said.range(of: "</h").map {
+                    said.replacingCharacters(in: $0.lowerBound..<$0.lowerBound, with: badge)
+                } ?? badge + said
+                out += "<section class=\"sb-scenario\" data-row=\"\(row)\">" + heading + "</section>"
             }
         }
         return out + String(repeating: "</section>", count: open.count)

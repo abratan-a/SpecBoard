@@ -169,8 +169,10 @@ struct FormatDocEditor: View {
         } tools: {
             if !foldable.isEmpty && writing {
                 BarMenu(title: L10n[.Docs.formatdocFoldMenu], systemImage: "rectangle.expand.vertical") {
-                    Button(L10n[.Common.actionExpandAll]) { folded = [] }.disabled(folded.isEmpty)
-                    Button(L10n[.Common.actionCollapseAll]) { folded = foldable }.disabled(folded == foldable)
+                    Button { folded = [] } label: { Label(L10n[.Common.actionExpandAll], systemImage: "rectangle.expand.vertical") }
+                        .disabled(folded.isEmpty)
+                    Button { folded = foldable } label: { Label(L10n[.Common.actionCollapseAll], systemImage: "rectangle.compress.vertical") }
+                        .disabled(folded == foldable)
                 } items: {
                     Button(L10n[.Common.actionExpandAll]) { folded = [] }.disabled(folded.isEmpty)
                     Button(L10n[.Common.actionCollapseAll]) { folded = foldable }.disabled(folded == foldable)
@@ -342,7 +344,7 @@ struct FormatDocEditor: View {
                         Button(kind.label) { addHere(kind) }
                     }
                 } label: {
-                    BarLabel(title: L10n[.Docs.addRows], systemImage: "plus")
+                    BarLabel(title: L10n[.Docs.addRows], systemImage: "plus", markWhenWide: true)
                 }
                 .fixedSize()
                 .help(L10n[.Docs.addRows])

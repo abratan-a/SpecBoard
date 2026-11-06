@@ -170,13 +170,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What can be done to this card now. Each changes its fields, its branch and where it is kept in one step (card_action)."
+            "value" : "What can be done to this card now. Each changes its fields, its branch and where it is kept in one step."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このカードに今できること。押すと欄・branch・置き場をまとめて変えます（card_action）"
+            "value" : "このカードに今できること。押すと欄・branch・置き場をまとめて変えます"
           }
         }
       }
@@ -188,13 +188,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compare the card with the code its implementation lines point at, then record that code as it is now (card_action reviewed). The card itself is not changed."
+            "value" : "Compare the card with the code its implementation lines point at, then record that code as it is now. The card itself is not changed."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードと、実装の線の先のコードを見比べたあとで、そのコードを今の形で覚え直します（card_action の reviewed）。カードは書き換わりません"
+            "value" : "カードと、実装の線の先のコードを見比べたあとで、そのコードを今の形で覚え直します。カードは書き換わりません"
           }
         }
       }

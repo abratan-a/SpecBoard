@@ -37,5 +37,6 @@
   "exportDocs.rule.requiredIf": "When the condition in when holds, the field in then must be present",
   "exportDocs.rule.sortedBy": "The array must be in this order. If field is omitted, the elements themselves are compared",
   "exportDocs.rule.uniqueBy": "No duplicates in the array. If field is omitted, the elements themselves are compared",
-  "exportDocs.rule.unknown": "(unknown rule; recorded only)"
+  "exportDocs.rule.unknown": "(unknown rule; recorded only)",
+  "exportDocs.spec.story": "Story"
 }

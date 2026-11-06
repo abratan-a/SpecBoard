@@ -5,6 +5,7 @@
   "history.commit.none": "コミット {seq} はありません",
   "history.commit.noneAfter": "コミット {seq} より新しいものはありません",
   "history.commit.noneOrCut": "コミット {seq} はありません（無い番号か、足を切ったより前です）",
+  "history.cut.groupOn": "まとめて直している途中なので、始めのコミット #{began} より後ろは切り詰めません（やめると #{began} まで戻すため）",
   "history.migrate.builtinNames": "組み込みの線・列挙の値・goal の値を今の名前にした",
   "history.migrate.containers": "入れ物の中身を移した",
   "history.migrate.ghosts": "カードゴーストを移した",

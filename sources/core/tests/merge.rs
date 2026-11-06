@@ -71,7 +71,7 @@ fn units_changed_apart_both_go_in_and_alike_conflict_until_chosen() {
         [("Schemas:Customer".to_string(), "label".to_string())]
     );
     assert_eq!(preview["conflicts"][0]["source"], "branch の客");
-    assert_eq!(preview["conflicts"][0]["target"], "main の客");
+    assert_eq!(preview["conflicts"][0]["into"], "main の客");
     let said = refused(&core, "branch_merge", json!({"target": "work"}));
     assert!(said.contains("衝突が 1 あるので merge しません"), "{said}");
 
@@ -153,7 +153,7 @@ fn a_card_one_side_removed_and_the_other_changed_is_chosen_whole() {
     ok(
         &core,
         "branch_merge",
-        json!({"target": "work", "value": {"take": {"Schemas:Customer": {"(whole)": "target"}}}}),
+        json!({"target": "work", "value": {"take": {"Schemas:Customer": {"(whole)": "into"}}}}),
     );
     assert_eq!(
         read(&core, "main", "Schemas:Customer")["description"],
@@ -524,7 +524,7 @@ fn one_row_both_sides_changed_is_a_conflict_of_that_row_chosen_by_its_path() {
     );
     let said = &preview["conflicts"][0];
     assert_eq!(said["source"]["body"], "work の本文", "{said}");
-    assert_eq!(said["target"]["body"], "main の本文", "{said}");
+    assert_eq!(said["into"]["body"], "main の本文", "{said}");
     let refusal = refused(&core, "branch_merge", json!({"target": "work"}));
     assert!(
         refusal.contains("衝突が 1 あるので merge しません"),
@@ -617,7 +617,7 @@ fn a_row_added_inside_an_item_the_other_side_removed_is_a_conflict_of_the_item()
     ok(
         &core,
         "branch_merge",
-        json!({"target": "work", "value": {"take": {"Docs:Spec": {"rows.intro": "target"}}, "keep": true}}),
+        json!({"target": "work", "value": {"take": {"Docs:Spec": {"rows.intro": "into"}}, "keep": true}}),
     );
     let spec = read(&core, "main", "Docs:Spec");
     let rows: Vec<&str> = spec["rows"]
@@ -668,7 +668,7 @@ fn an_item_the_branch_removed_where_main_changed_a_row_inside_is_kept_whole_when
     ok(
         &core,
         "branch_merge",
-        json!({"target": "work", "value": {"take": {"Docs:Spec": {"rows.tables": "target"}}}}),
+        json!({"target": "work", "value": {"take": {"Docs:Spec": {"rows.tables": "into"}}}}),
     );
     let tables = read(&core, "main", "Docs:Spec.tables");
     assert_eq!(tables["rows"].as_array().unwrap().len(), 2, "{tables}");
@@ -716,7 +716,7 @@ fn versions_both_sides_changed_are_conflicts_named_one_by_one() {
     ok(
         &core,
         "branch_merge",
-        json!({"target": "work", "value": {"take": {"Docs:Log": {"versions.v1": "source", "versions.v2": "target"}}}}),
+        json!({"target": "work", "value": {"take": {"Docs:Log": {"versions.v1": "source", "versions.v2": "into"}}}}),
     );
     assert_eq!(read(&core, "main", "Docs:Log.v1")["body"], "work の v1");
     assert_eq!(read(&core, "main", "Docs:Log.v2")["body"], "main の v2");
@@ -1460,4 +1460,60 @@ fn the_window_says_a_conflicting_row_by_its_fields_and_merges_it_as_taken() {
         read(&core, "main", "Docs:Spec.intro.body")["body"],
         "work の本文"
     );
+}
+
+/// A section's id by its name.
+fn section_named(core: &Core, name: &str) -> String {
+    screen(core, json!({"op": "project_detail"}))["sections"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["name"] == name)
+        .unwrap()["id"]
+        .as_str()
+        .unwrap()
+        .to_string()
+}
+
+#[test]
+fn a_box_the_diagram_put_by_itself_on_a_branch_is_not_one_the_branch_moved() {
+    let core = with_branch("work");
+    ok(
+        &core,
+        "card_update",
+        json!({"branch": "work", "target": "Schemas:Customer", "value": {"description": "Who orders."}}),
+    );
+    let (schemas, charts) = (
+        section_named(&core, "Schemas"),
+        section_named(&core, "Charts"),
+    );
+    let work = branch_id(&core, "work");
+    // The branch's diagram keeps where it stacked a ghost main places nowhere yet: not a hand's move.
+    screen(
+        &core,
+        json!({"op": "places", "branch": work, "boxes": [
+            {"view": schemas, "kind": "section", "item": charts, "x": -14, "y": 0, "pinned": false}]}),
+    );
+    let preview = screen(
+        &core,
+        json!({"op": "merge_preview", "source": work, "target": ""}),
+    );
+    assert_eq!(preview["places"], 0, "{preview}");
+    let read = ok(
+        &core,
+        "branch_read",
+        json!({"target": "work", "value": {"against": "main"}}),
+    );
+    assert!(read.get("places").is_none(), "{read}");
+    // Put there by a hand, it is one the branch moved.
+    screen(
+        &core,
+        json!({"op": "places", "branch": work, "boxes": [
+            {"view": schemas, "kind": "section", "item": charts, "x": -14, "y": 0, "pinned": true}]}),
+    );
+    let preview = screen(
+        &core,
+        json!({"op": "merge_preview", "source": work, "target": ""}),
+    );
+    assert_eq!(preview["places"], 1, "{preview}");
 }

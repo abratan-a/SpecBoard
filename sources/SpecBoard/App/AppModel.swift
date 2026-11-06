@@ -22,16 +22,20 @@ final class AppModel {
             if detail?.project.id != oldValue?.project.id {
                 remember()
                 forgetOutlines()
+                // What was read beside another project is not shown while this one's is read.
+                asideKept = [:]
+                asideBefore = [:]
+                asideAsked = [:]
             }
         }
     }
     /// What the property panel reads of the core beside the project — the board's cards still to do
-    /// reaching what it shows (`boardReach`) — kept by what was asked, until the whole project is read
-    /// again (`putWhole`); what was kept before shows while it is read again.
+    /// reaching what it shows (`boardReach`) — kept by what was asked, until the project is read
+    /// again after any write (`letGoOfAsides`); what was kept before shows while it is read again.
     @ObservationIgnored var asideKept: [String: Any] = [:]
     @ObservationIgnored var asideBefore: [String: Any] = [:]
-    /// What of it is being read off the main thread now.
-    @ObservationIgnored var asideAsked: Set<String> = []
+    /// What of it is being read off the main thread now, each by the number it was sent as.
+    @ObservationIgnored var asideAsked: [String: Int] = [:]
     /// How many requests `aside` has sent to the core.
     @ObservationIgnored var asideSent = 0
     /// Bumped as what was read off the main thread comes in: what shows it is drawn again.
@@ -142,13 +146,11 @@ final class AppModel {
     /// (`sequenceChart`): a view drawn again asks once.
     @ObservationIgnored var sequenceCharts: [String: SequenceDiagram] = [:]
 
-    /// Open a section on the map tab, which comes forward. The selection goes if it was in another one:
+    /// Open a section on the map tab in front (`mapPlace`), which comes forward. The selection goes if it was in another one:
     /// it is not on this section's diagram.
     func selectSection(_ id: String) {
         guard let detail, detail.sections.contains(where: { $0.id == id }) else { return }
-        showSection(id)
-        activeTab = nil
-        saveTabs()
+        arrive(at: mapPlace(id))
     }
 
     /// The section on screen made `id`, whichever tab is in front: what the nav panel, the property panel
@@ -371,6 +373,8 @@ final class AppModel {
     @ObservationIgnored let documentTexts = DocumentTexts()
     /// The ui parts' faces, kept for the window as the documents' pages are (`PartFaces`).
     @ObservationIgnored let partFaces = PartFaces()
+    /// The pictures of the whiteboards' image cards, kept for the window (`WhiteboardPictures`).
+    @ObservationIgnored let whiteboardPictures = WhiteboardPictures()
 
     /// What the window is waiting for, said in the status bar (`StatusBar`): a write, or a reading.
     enum Activity: Equatable {
@@ -463,6 +467,16 @@ final class AppModel {
     /// The canvas of the card map shown (a flow's, a goal's, a container's of the project's own
     /// kind), for the menu bar's zoom and fit; nil with none shown (`DiagramFrame`).
     @ObservationIgnored weak var mapCanvas: CardCanvasController?
+    /// An actor's sequence shown on the map tab (`ActorSequence`): nil while its map, or no actor, is shown.
+    @ObservationIgnored weak var shownSequence: SequenceController?
+
+    /// What the menu bar's zoom and fit act on: the card map shown, else an actor's sequence shown, else
+    /// `fallback` (the section's map).
+    func diagramZoom(fallback: CardCanvasController) -> DiagramZoom {
+        if let mapCanvas { return mapCanvas }
+        if let shownSequence { return shownSequence }
+        return fallback
+    }
     /// The relation panel's canvas (`ContentView`'s): where a card a person puts in the section on
     /// screen is brought into view once it is drawn (`bringIntoView`).
     @ObservationIgnored weak var relationCanvas: CardCanvasController?
@@ -620,6 +634,12 @@ final class AppModel {
         isLockedGroupOpen ? Self.groupBranchName : openTreeArgument["branch"] as? String ?? SchemaDirectory.mainWord
     }
 
+    /// The tree the inspection page looks at when it opens: the one open, but main while the board is — the
+    /// board keeps what is to be done, and what is to be put right in the design is main's.
+    var inspectionStart: String {
+        isBoardOpen ? SchemaDirectory.mainWord : inspectionTree
+    }
+
     /// What the page has of `tree`'s inspection: maybe read for an earlier state of the project, while it
     /// is read again. Nil before it was first read.
     func inspection(of tree: String) -> InspectionRead? {
@@ -774,10 +794,26 @@ final class AppModel {
     /// which tab of them (nil: its projects) — what of a place the right of the home shows. The place
     /// is kept for the next launch.
     var homePlace: UUID? = AppModel.rememberedHomePlace() {
-        didSet { UserDefaults.standard.set(homePlace?.uuidString ?? "", forKey: Self.homePlaceKey) }
+        didSet {
+            UserDefaults.standard.set(homePlace?.uuidString ?? "", forKey: Self.homePlaceKey)
+            // A place chosen is that place's projects, not all of them.
+            homeAll = false
+        }
+    }
+    /// Whether the home shows every place's projects (「すべてのプロジェクト」) rather than `homePlace`'s; kept
+    /// for the next launch, as the place is.
+    var homeAll: Bool = AppModel.rememberedHomeAll(in: .standard) {
+        didSet { UserDefaults.standard.set(homeAll, forKey: Self.homeAllKey) }
     }
     var homeSettings: PlaceSettingsTab?
     private static let homePlaceKey = "home.place"
+    private static let homeAllKey = "home.all"
+
+    /// Whether the home starts on every place's projects: as last left, else when no place was ever chosen.
+    static func rememberedHomeAll(in defaults: UserDefaults) -> Bool {
+        (defaults.object(forKey: homeAllKey) as? Bool) ?? (defaults.string(forKey: homePlaceKey) == nil)
+    }
+
     private static func rememberedHomePlace() -> UUID? {
         UserDefaults.standard.string(forKey: homePlaceKey).flatMap(UUID.init(uuidString:))
     }
@@ -992,6 +1028,10 @@ final class AppModel {
             let anotherSet = set != tabsSet
             if anotherSet {
                 saveTabs()
+                // Another tab bar: its map tabs are looked at as they start.
+                relationCanvas?.forgetMaps()
+                shownMapKey = ""
+                lastMapKey = ""
                 tabs = []
                 activeTab = nil
                 mapHeld = nil
@@ -1003,7 +1043,7 @@ final class AppModel {
                 if let shown = resultView, let before = detail?.project.id {
                     resultView = nil
                     openTrees[before] = shown.back
-                    try? core.closeMergeResult(before)
+                    _ = answered { try self.core(of: before)?.closeMergeResult(before) }
                 }
                 shownSectionId = nil
                 backward = []
@@ -1153,9 +1193,7 @@ final class AppModel {
         holds = read.holds
         mergeRequests = read.mergeRequests
         // What the board reaches and what the files carry out are read again, as they are asked for.
-        asideBefore.merge(asideKept) { _, kept in kept }
-        asideKept = [:]
-        asideAsked = []
+        letGoOfAsides()
         staleOutlines()
         workDirs = read.workDirs
         writingRules = read.writingRules ?? [:]
@@ -1169,7 +1207,9 @@ final class AppModel {
     /// What a write changed put in the model, as it was read.
     private func putWritten(_ read: WrittenRead) {
         let started = ContinuousClock.now
-        letGoOfCardActions()
+        // What the board's cards reach is kept: they are written only while the board is open, and
+        // opening a tree reads the whole again.
+        letGoOfAsides { $0.hasPrefix(Self.reachKey) }
         detail = read.detail
         staleOutlines()
         workDirs = read.workDirs
@@ -1504,10 +1544,13 @@ final class AppModel {
     /// looked at for what was done in it, a branch for how it stands against main. PRs are main's:
     /// requests to merge into it (`specboard://SpecBoard/Docs/Design:DesignBranches` §8). The board has no
     /// main to differ from, nor PRs (`specboard://SpecBoard/Docs/Design:DesignBoard` §2).
-    var rootTabs: [RootTab] {
-        if isBoardOpen { return [.goals, .history, .tags] }
-        if openBranch != nil { return [.diff, .history, .tags] }
-        return [.history, .diff, .mr, .tags]
+    var rootTabs: [RootTab] { Self.rootTabs(boardOpen: isBoardOpen, branchOpen: openBranch != nil) }
+
+    /// The tabs of a root's dashboard by the tree open. The diff is a branch's against main: main has none.
+    static func rootTabs(boardOpen: Bool, branchOpen: Bool) -> [RootTab] {
+        if boardOpen { return [.goals, .history, .tags] }
+        if branchOpen { return [.diff, .history, .tags] }
+        return [.history, .mr, .tags]
     }
 
     /// A root opened, on the first of its tabs.
@@ -1534,8 +1577,11 @@ final class AppModel {
 
     /// Somewhere the window can be taken to, and taken back to.
     enum Place: Hashable {
-        /// A section's cards.
+        /// A section's cards, on the first map tab.
         case section(String)
+        /// A section's cards on a map tab opened more (its key, the section): a tab of its own, one of
+        /// several on one section too, each looked at its own way.
+        case map(String, String)
         /// One card, to read and write.
         case card(String)
         /// Main's or a branch's root, on one of its views.
@@ -1554,7 +1600,7 @@ final class AppModel {
             switch (self, other) {
             case (.section, .section), (.settings, .settings), (.inspection, .inspection): true
             case (.card(let one), .card(let two)), (.root(let one, _), .root(let two, _)),
-                 (.connections(let one, _), .connections(let two, _)): one == two
+                 (.connections(let one, _), .connections(let two, _)), (.map(let one, _), .map(let two, _)): one == two
             default: false
             }
         }
@@ -1563,6 +1609,7 @@ final class AppModel {
         var saved: SelectionMemory.SavedPlace {
             switch self {
             case .section(let id): .init(kind: "section", id: id)
+            case .map(let key, let id): .init(kind: "map", id: id, view: key)
             case .card(let id): .init(kind: "card", id: id)
             case .root(let id, let tab): .init(kind: "root", id: id, view: tab.rawValue)
             case .settings(let tab): .init(kind: "settings", view: tab.rawValue)
@@ -1575,6 +1622,9 @@ final class AppModel {
         init?(saved: SelectionMemory.SavedPlace) {
             switch (saved.kind, saved.id) {
             case ("section", let id?): self = .section(id)
+            case ("map", let id?):
+                guard let key = saved.view, !key.isEmpty else { return nil }
+                self = .map(key, id)
             case ("card", let id?): self = .card(id)
             case ("root", let id?):
                 guard let tab = saved.view.flatMap(RootTab.init(rawValue:)) else { return nil }
@@ -1599,12 +1649,129 @@ final class AppModel {
     /// it is turned off. The review dots stay either way — they are not notes.
     var partNotes = true
 
-    /// The tabs after the map tab, in the tab bar's order (`specboard://SpecBoard/Docs/Design:UI` §4): one
-    /// for each thing opened (`Place.sameTab`), never a section's map — that is the map tab's, always
-    /// first.
+    /// The whiteboard's tool chosen on the bar to place with: a sketch's shape, or `note` for a sticky; none while
+    /// the bar's 「選ぶ」 is (`placeSketch`), and on any other place than the whiteboard it was chosen on.
+    var sketchTool: String? {
+        get { toolBoard != nil && toolBoard == shownWhiteboard?.id ? chosenTool : nil }
+        set {
+            chosenTool = newValue
+            toolBoard = newValue == nil ? nil : shownWhiteboard?.id
+        }
+    }
+    private var chosenTool: String?
+    private var toolBoard: String?
+
+    /// The tabs after the first map tab, in the tab bar's order (`specboard://SpecBoard/Docs/Design:UI` §4): one
+    /// for each thing opened (`Place.sameTab`), the map tabs opened more among them — the first is always
+    /// first and is not one of these.
     private(set) var tabs: [Place] = []
-    /// The tab in front, by its index in `tabs`; nil: the map tab.
+    /// The tab in front, by its index in `tabs`; nil: the first map tab.
     private(set) var activeTab: Int?
+    /// The map tab in front by its key — "" for the first, a map tab's own for one opened more; nil while
+    /// another kind of tab is.
+    var frontMapKey: String? {
+        guard let at = activeTab else { return "" }
+        guard tabs.indices.contains(at), case .map(let key, _) = tabs[at] else { return nil }
+        return key
+    }
+    /// What the map on screen is looked at as when it comes back (`CardCanvasController.look`): the first map
+    /// tab's by its section; a map tab opened more by its own key and its section, so that two on one section
+    /// keep their own and a section shown there anew is not looked at where another was.
+    var mapLookKey: String { Self.lookKey(frontMapKey ?? shownMapKey, section: shownSectionKey) }
+    private static func lookKey(_ key: String, section: String) -> String {
+        key.isEmpty ? section : "tab:\(key)|\(section)"
+    }
+
+    /// The section a map on screen shows — the first map tab's or one opened more — or nil when another kind
+    /// of tab is in front.
+    var mapShownSection: String? {
+        switch here {
+        case .section(let id), .map(_, let id): id
+        default: nil
+        }
+    }
+    /// The map tab whose way of looking the canvas has now (`CardCanvasController.switchMap`), by its key.
+    @ObservationIgnored private var shownMapKey = ""
+    /// The map tab in front last: where a section picked goes while another kind of tab is in front.
+    @ObservationIgnored private var lastMapKey = ""
+
+    /// The canvas given the way of looking of the map tab come to the front: the lines switched and the
+    /// filters of each map tab kept apart, and where the one left looked kept by its `mapLookKey`. Run once the
+    /// tabs have settled (`saveTabs`), never in the middle of a change, when the index in front may name
+    /// another tab.
+    private func syncMapView() {
+        guard let now = frontMapKey else { return }
+        lastMapKey = now
+        guard now != shownMapKey else {
+            shownLookKey = mapLookKey
+            return
+        }
+        relationCanvas?.switchMap(from: shownMapKey, to: now, leavingLook: shownLookKey)
+        shownMapKey = now
+        shownLookKey = mapLookKey
+    }
+    /// Where the map tab whose way of looking the canvas has looks is kept (`mapLookKey` as it was).
+    @ObservationIgnored private var shownLookKey = ""
+
+    /// Where a section picked goes (the nav panel, an agent's select): the map tab in front — a map tab
+    /// opened more takes it in place — and while another kind of tab is in front, the map tab in front last.
+    private func mapPlace(_ id: String) -> Place {
+        if let key = frontMapKey ?? (hasMapTab(lastMapKey) ? lastMapKey : nil), !key.isEmpty {
+            return .map(key, id)
+        }
+        return .section(id)
+    }
+
+    private func hasMapTab(_ key: String) -> Bool {
+        !key.isEmpty && tabs.contains { if case .map(key, _) = $0 { true } else { false } }
+    }
+
+    private func mapIndex(_ key: String) -> Int? {
+        tabs.firstIndex { if case .map(key, _) = $0 { true } else { false } }
+    }
+
+    /// A map tab opened more on `section`, right of the tab at `index` in `tabs` (nil: the first map tab),
+    /// brought forward: looked at as a new one is — the whole map, the lines and filters as they start.
+    func openNewMapTab(_ section: String, rightOf index: Int?) {
+        guard exists(.section(section)) else { return }
+        let from = here
+        leaveMap()
+        let place = Place.map(String(UUID().uuidString.prefix(8)).lowercased(), section)
+        let at = index.map { min($0 + 1, tabs.count) } ?? 0
+        tabs.insert(place, at: at)
+        activeTab = at
+        lastFront = place
+        showSection(section)
+        saveTabs()
+        backward.append(from)
+        forward.removeAll()
+    }
+
+    /// The map tab at `index` in `tabs` (nil: the first) opened again right of it, looked at as it is: the
+    /// same view, zoom, lines switched and filters.
+    func duplicateMapTab(_ index: Int?) {
+        let source: (key: String, section: String)
+        if let index {
+            guard tabs.indices.contains(index), case .map(let key, let id) = tabs[index] else { return }
+            source = (key, id)
+        } else {
+            source = ("", mapSectionKey)
+        }
+        let canvas = relationCanvas
+        // The canvas has the way of looking of the map tab last in front, in front now or not.
+        let inFront = shownMapKey == source.key
+        let look = (inFront ? canvas?.lookNow : nil) ?? canvas?.look(for: Self.lookKey(source.key, section: source.section))
+        let filters = inFront ? canvas?.filters : canvas?.filters(of: source.key)
+        openNewMapTab(source.section, rightOf: index)
+        guard let canvas, let key = frontMapKey else { return }
+        if let filters { canvas.take(filters) }
+        canvas.remember(look, for: Self.lookKey(key, section: source.section))
+    }
+
+    /// The first map tab brought forward on what it holds (its tab pressed).
+    func showFirstMapTab() {
+        go(.section(mapSectionKey))
+    }
     /// The section the map tab holds while another tab is in front, shown again when it comes forward.
     /// In front, the map tab shows the section on screen.
     private var mapHeld: String?
@@ -1648,6 +1815,15 @@ final class AppModel {
     /// section it holds: where it points is all it has to show. A section opens on the map tab; anything
     /// else in its own tab, the one it already has or a new one right of the tab in front.
     func open(_ target: Place) {
+        if case .section(let id) = target {
+            go(mapPlace(id))
+        } else {
+            go(target)
+        }
+    }
+
+    /// `open`, a section on the very map tab it names (the first's, its tab pressed) rather than the one in front.
+    private func go(_ target: Place) {
         if case .card(let id) = target, let section = frameTarget(of: id) {
             open(.section(section))
             return
@@ -1662,15 +1838,15 @@ final class AppModel {
     /// nothing in it picked. A card left picked, the one its editor showed in the same
     /// section, would keep the nav panel's highlight on its own row.
     func pick(section id: String, root: Bool) {
-        open(root ? rootPlace(id) : .section(id))
+        open(root ? rootPlace(id) : mapPlace(id))
         deselect()
     }
 
     /// The tab at `index` in `tabs` closed — the one in front when none is named. One behind the front
     /// one goes alone. The front one gives way to the tab on its left, as a step to go back over (back
-    /// opens it again); when that is the map tab after a card or a card's connections, the map shows the
+    /// opens it again); when that is a map tab after a card or a card's connections, the map shows the
     /// card's section with the card picked — the view where it was, moved only when the card is not on
-    /// screen. The map tab never closes.
+    /// screen. The first map tab never closes.
     func closeTab(_ index: Int? = nil) {
         guard let at = index ?? activeTab, tabs.indices.contains(at) else { return }
         guard at == activeTab else {
@@ -1689,7 +1865,13 @@ final class AppModel {
         default: nil
         }
         let arrived: Place?
-        if let left = activeTab {
+        if let left = activeTab, let card, let detail, case .map(let key, _) = tabs[left] {
+            // A map tab on the left, as the first one is: the card's section with the card picked there.
+            tabs[left] = .map(key, detail.directory.sectionId(of: card))
+            arrived = arrive(at: tabs[left])
+            selectSchema(card.id, follow: false)
+            revealRequest = card.id
+        } else if let left = activeTab {
             arrived = arrive(at: tabs[left])
         } else if let card, let detail {
             arrived = arrive(at: .section(detail.directory.sectionId(of: card)))
@@ -1819,8 +2001,13 @@ final class AppModel {
     /// being a step to go back over: for the window moved from outside — an agent's select, which is
     /// about the diagram.
     func showCards() {
-        guard activeTab != nil else { return }
-        activeTab = nil
+        guard activeTab != nil, frontMapKey == nil else { return }
+        if let at = mapIndex(lastMapKey) {
+            tabs[at] = .map(lastMapKey, shownSectionKey)
+            activeTab = at
+        } else {
+            activeTab = nil
+        }
         saveTabs()
     }
 
@@ -1842,7 +2029,7 @@ final class AppModel {
     private func exists(_ place: Place) -> Bool {
         guard let detail else { return false }
         switch place {
-        case .section(let id): return id == detail.directory.home || detail.sections.contains { $0.id == id }
+        case .section(let id), .map(_, let id): return id == detail.directory.home || detail.sections.contains { $0.id == id }
         case .card(let id), .connections(let id, _): return schema(id) != nil
         case .root(let id, _): return detail.sections.contains { $0.id == id && $0.parentId == nil }
         case .settings, .inspection: return true
@@ -1858,6 +2045,10 @@ final class AppModel {
         case .section(let id):
             showSection(id)
             activeTab = nil
+        case .map(_, let id):
+            leaveMap()
+            showSection(id)
+            front(target)
         case .card(let id), .connections(let id, _):
             guard let card = schema(id) else { return nil }
             leaveMap()
@@ -1941,6 +2132,7 @@ final class AppModel {
     /// The tab bar as it is, kept for the project open: for this run, and on this Mac when the window
     /// has a memory (`SelectionMemory`).
     private func saveTabs() {
+        syncMapView()
         guard detail != nil, let set = tabsSet else { return }
         let saved = SelectionMemory.Tabs(tabs: tabs.map(\.saved), active: activeTab, map: mapSectionKey)
         guard savedTabs[set] != saved else { return }
@@ -2014,10 +2206,13 @@ final class AppModel {
         var out: [String: Any] = ["line": line.line]
         if !line.from.isEmpty { out["from"] = line.from }
         if let to = line.to {
-            let there = detail.map { project in
-                project.schemas.contains { $0.id == to } || project.ghosts.contains { $0.id == to }
-                    || project.inner.contains { $0.id == to }
-            } ?? false
+            // Main's cards, from the board, are outside the tree open: there too.
+            let there = [detail, outsideDetail].contains { read in
+                read.map { project in
+                    project.schemas.contains { $0.id == to } || project.ghosts.contains { $0.id == to }
+                        || project.inner.contains { $0.id == to }
+                } ?? false
+            }
             out["to"] = there ? to : NSNull()
         }
         if let at = line.at { out["at"] = at }
@@ -2027,9 +2222,11 @@ final class AppModel {
     }
 
     /// A card's lines of one kind from its head put in place of the ones it has, the rest
-    /// kept: what `card_update` writes (`connections`).
-    private func lines(_ card: SchemaNode, replacing kind: String, with paths: [String]) -> [[String: Any]] {
-        card.connections.filter { !($0.line == kind && $0.from.isEmpty) }.map(wire) + made(kind, paths, from: card)
+    /// kept: what `card_update` writes (`connections`) — those taken away and those added, not the
+    /// card's lines again, so a line written meanwhile stays.
+    private func lines(_ card: SchemaNode, replacing kind: String, with paths: [String]) -> [String: Any] {
+        ["remove": card.connections.filter { $0.line == kind && $0.from.isEmpty }.map(wire),
+         "add": made(kind, paths, from: card)]
     }
 
     /// Lines of one kind from a card's head to these paths, read from the card's section. The
@@ -2218,9 +2415,10 @@ final class AppModel {
     }
 
     /// Whether 「中身に合わせて幅を決める」 measures `schema`: a card drawn as rows, whose rows the
-    /// screen's fonts say the width of. Not a document, a page or a card its kind's face draws.
+    /// screen's fonts say the width of. Not a document, a page, a card its kind's face draws, nor a sketch or
+    /// an image, which their text and their picture size.
     func fitsWidth(_ schema: SchemaNode) -> Bool {
-        schema.sizable && schema.face == nil && !drawnAsDocument(schema, docView: defaultSettings.docView)
+        schema.sizable && schema.face == nil && schema.kind != .sketch && schema.kind != .image && !drawnAsDocument(schema, docView: defaultSettings.docView)
     }
 
     /// A card as wide as its header and every row it shows now, measured once in the screen's
@@ -2358,7 +2556,7 @@ final class AppModel {
 
     /// Whether the map on screen can be tidied or arranged now (`arrangeActions`).
     var canArrange: Bool {
-        guard !arranging, detail != nil, case .section(let key) = here, canWriteGroups else { return false }
+        guard !arranging, detail != nil, let key = mapShownSection, canWriteGroups else { return false }
         guard let section = detail?.directory.section(id: key) else { return true }
         return section.kind != .ui && section.kindName != WorkDirIds.workdirKind
             && section.kindName != WorkDirIds.directoryKind
@@ -2433,6 +2631,11 @@ final class AppModel {
     }
     /// A new version found or made ready, for the bubble (`AppModel+Update`): kept in the bell's list too.
     var updateNotice: UpdateNotice?
+    /// A goal still naming the branch the merge window put into main, for the bubble
+    /// (`AppModel+GoalNotice`): kept in the bell's list too.
+    var goalNotice: GoalNotice?
+    /// The goals finished from a merge notice, by `finishedKey`: the bell's list stops offering them.
+    var finishedGoals: Set<String> = []
     /// How the error or notice being told is said in another language (`tell(error:)`, `tell(notice:)`).
     @ObservationIgnored private var saying: (@MainActor (String) -> String)?
 
@@ -2460,10 +2663,53 @@ final class AppModel {
     /// that is in. Not private: the model's other parts write through it too (`AppModel+Lines`).
     func write(_ body: () throws -> Void, then: (() -> Void)? = nil) {
         guard let projectId = detail?.project.id else { return }
+        let before = undoManager == nil ? nil : newestCommit(projectId)
         do {
             try ownWrite(body)
             lastError = nil
+            // The commit it made, for ⌘Z to take back (a write that changed nothing made none).
+            if let before, let made = newestCommit(projectId), made != before { canTakeBack(made, projectId) }
             readWritten(projectId, then: then)
+        } catch {
+            lastError = ErrorText.said(error)
+        }
+    }
+
+    // MARK: - ⌘Z (`specboard://SpecBoard/Docs/Features/Change:History`「⌘Z で戻し」)
+
+    /// The window's undo: each commit the window writes is put on it, to be taken back by a commit of
+    /// its own where it is (main too), and that one again for ⌘⇧Z. Only what this window wrote: MCP's
+    /// and another window's writes are taken back from the history.
+    weak var undoManager: UndoManager?
+
+    /// The newest commit's number in the tree open of `projectId`.
+    private func newestCommit(_ projectId: String) -> Int? {
+        try? core?.commits(projectId, branch: openTrees[projectId], limit: 1).first?.seq
+    }
+
+    /// Commit `seq` put on the undo (or, while an undo runs, the redo) to be taken back — in the tree it
+    /// was written in alone: another tree open, it is not.
+    private func canTakeBack(_ seq: Int, _ projectId: String) {
+        let tree = openTrees[projectId]
+        undoManager?.registerUndo(withTarget: self) { model in
+            model.takeBack(seq, projectId, tree)
+        }
+    }
+
+    /// Commit `seq` taken back where it is, by a commit of its own; where a later commit changed the same
+    /// place, nothing is written and the window listing them opens (as the history's undo).
+    func takeBack(_ seq: Int, _ projectId: String, _ tree: String?) {
+        guard let core, detail?.project.id == projectId, openTrees[projectId] == tree else { return }
+        let before = newestCommit(projectId)
+        do {
+            switch try ownWrite({ try core.undoCommit(projectId, branch: tree, seq: seq, inPlace: true) }) {
+            case .done:
+                lastError = nil
+                if let made = newestCommit(projectId), made != before { canTakeBack(made, projectId) }
+                readWritten(projectId, then: nil)
+            case .clashed(let conflicts, let later):
+                undoRefusal = UndoRefusal(seq: seq, conflicts: conflicts, later: later)
+            }
         } catch {
             lastError = ErrorText.said(error)
         }
@@ -2490,6 +2736,18 @@ final class AppModel {
         try working(.writing) {
             settle()
             return try body()
+        }
+    }
+
+    /// What `body` answers; nil when it is refused, and why said in the window (`lastError`) rather
+    /// than shown as though nothing were there.
+    @discardableResult
+    func answered<T>(_ body: () throws -> T) -> T? {
+        do {
+            return try body()
+        } catch {
+            lastError = ErrorText.said(error)
+            return nil
         }
     }
 
@@ -3347,6 +3605,9 @@ final class AppModel {
     var revealRequest: String?
     /// A provided flow whose frame an actor's sequence is to bring under its heads, once it has drawn it.
     var sequenceFocus: String?
+    /// Counts an actor's map or sequence chosen from outside the window (`app_control`'s select), so that the
+    /// map tab reads the choice again.
+    var actorViewChosen = 0
 
     /// Asked for from a right-click menu (the diagram's, a section's in the nav panel,
     /// a chart or document section's list): the window asks for the name. `kind` is
@@ -3643,6 +3904,8 @@ final class AppModel {
         guard let projectId = detail?.project.id, let open = openTrees[projectId] else { return [:] }
         if open == Board.id { return ["branch": Board.word] }
         if open == groupBranches[projectId] { return ["branch": Self.groupBranchName] }
+        // What a merge would leave: no branch the list has, named by the window's word for it.
+        if open == resultView?.branch { return ["branch": Self.resultBranchName] }
         return branches.first { $0.id == open }.map { ["branch": $0.name] } ?? [:]
     }
 
@@ -3663,7 +3926,7 @@ final class AppModel {
         // Another tree opened: what a merge would leave, looked at, let go.
         if resultView != nil {
             resultView = nil
-            try? core?.closeMergeResult(projectId)
+            _ = answered { try core?.closeMergeResult(projectId) }
         }
         // main, while it is put right in one go under its lock: the branch it is put right in.
         if branchId == nil, let group = groupBranches[projectId] {
@@ -3733,6 +3996,9 @@ final class AppModel {
     /// (`file:<directory>/<path>`): which export, and how it stands.
     var exports = ExportsRead()
     var exportMarks: [String: ExportMark] = [:]
+    /// What the last change to the exports went through with but warned of: a row that leaves cards
+    /// out, and why (`changeExports`). Said where the change was made.
+    var exportWarnings: [String] = []
 
     /// How many are open and can be approved as they are.
     var openMergeRequests: Int { mergeRequests.filter { $0.state == .open || $0.state == .stale }.count }
@@ -3910,6 +4176,9 @@ final class AppModel {
 
     /// What the window calls that branch in the tools (`GROUP_BRANCH` of the core).
     static let groupBranchName = "~group"
+    /// What the tools are told the merge's result shown is (`ResultView`): one a project, its own name
+    /// made anew each time.
+    static let resultBranchName = "~result"
 
     /// Whether the project on screen is open in its locked main's group branch.
     var isLockedGroupOpen: Bool {
@@ -4073,6 +4342,7 @@ final class AppModel {
             }
             lastError = nil
             select(projectId)
+            tellStillNamed(result, in: projectId)
             return result
         } catch {
             lastError = ErrorText.said(error)
@@ -4217,7 +4487,7 @@ final class AppModel {
     /// Move a schema to another section, from the property panel or dropped on a section in the nav
     /// panel — into the section on screen, brought into view there once drawn.
     func moveSchema(_ id: String, toSection section: String) {
-        let onScreen = here == .section(section)
+        let onScreen = mapShownSection == section
         write { try tool("card_update", target: cardPath(id), value: ["section": sectionPath(section)]) } then: { [weak self] in
             guard let self, let schema = self.schema(id), let detail = self.detail else { return }
             self.selectSection(detail.directory.sectionId(of: schema))
@@ -4230,7 +4500,7 @@ final class AppModel {
     /// whole once it is drawn — while that panel is what is on screen; elsewhere (a card's editor, a
     /// dashboard) it would move a diagram no one is looking at.
     private func bringIntoView(_ id: String, in section: String) {
-        guard here == .section(section) else { return }
+        guard mapShownSection == section else { return }
         relationCanvas?.revealAfterNextShow(id)
     }
 
@@ -4247,7 +4517,7 @@ final class AppModel {
             if row == nil, focus == card, pickFrame(of: card) { return }
             // The relation panel of the section it is drawn on, the card picked there, and
             // the view brought to it once the panel has drawn it (`ContentView`).
-            open(.section(section))
+            open(mapPlace(section))
             selectSchema(card, follow: false)
             // A card inside a goal is the goal's row: picked as that row, as a press on it on the
             // diagram picks it — the property panel shows the card inside.
@@ -4289,6 +4559,16 @@ final class AppModel {
             write { try tool("card_update", target: ghostPath(id), value: ["section": sectionPath(section)]) }
         case .ghostAt(let id, let position):
             write { try tool("card_update", target: ghostPath(id), value: ["position": position]) }
+        case .cardIn(let id, let container, let section, let position):
+            guard let card = schema(id) else { return }
+            write {
+                var value: [String: Any] = ["in": try container.map { try cardPath($0) } ?? NSNull()]
+                if let section, section != detail?.directory.sectionId(of: card) { value["section"] = try sectionPath(section) }
+                if let position { value["position"] = position }
+                try tool("card_update", target: cardPath(id), value: value)
+            } then: {
+                self.selectSchema(id, follow: false)
+            }
         }
     }
 

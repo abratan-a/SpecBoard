@@ -45,8 +45,11 @@
   "inspection.group.unreferenced.label": "Not referenced from anywhere",
   "inspection.group.unresolvedPointers.fix": "Create a card the by value can choose as a candidate, or fix the line's target",
   "inspection.group.unresolvedPointers.label": "Pointers without candidates",
+  "inspection.group.untestedScenarios.fix": "Draw a testedBy line from the scenario, or from the card's head, to the test that checks it. Accept the ones left untested on purpose",
+  "inspection.group.untestedScenarios.label": "Scenarios with no test",
   "inspection.ids.needed": "Give item ids as target (the ids of inspection_list's items)",
   "inspection.ids.notFound": "{id} is not found (it was fixed, or is an item of another tree. Read inspection_list again)",
+  "inspection.ids.notFound.screen": "{id} is not found (it was fixed, or is an item of another tree. Open the inspection again to check)",
   "inspection.ids.notFoundHint": "An id not found was fixed, or is an item of another tree (read inspection_list again)",
   "inspection.list.groupShape": "group is a group's name, or a list of them",
   "inspection.list.inShape": "in is the path of a section or a card",
@@ -63,7 +66,7 @@
   "inspection.problem.missingStore": "No store keeps {shapes} ({op} {data})",
   "inspection.problem.missingStoreBoth": "No store keeps {none}, and which store keeps {shapes} is not written (one of {stores}; {op} {data})",
   "inspection.problem.missingStoreUndecided": "Which store keeps {shapes} is not written (one of {stores}; {op} {data})",
-  "inspection.problem.overlap": "It overlaps {over}",
+  "inspection.problem.overlap": "On the map of {section}, it overlaps {over}",
   "inspection.problem.planned": "{path} of {via} is not there yet (planned on the branch of goal {goal})",
   "inspection.problem.review": "{cards}, connected to it, changed after the part last did",
   "inspection.problem.storeActors": "Ghosts of the store {name} are in the actors {actors} (a sequence diagram takes the one nearer the flow)",
@@ -72,6 +75,8 @@
   "inspection.problem.unlinkedPartner": "The {op}'s partner {program} is text but has the name of {names}",
   "inspection.problem.unreferenced": "Nothing refers to it",
   "inspection.problem.unresolvedPointer": "No candidate can be chosen by {by}",
+  "inspection.problem.untestedScenarios": "No line to a test that checks it (testedBy)",
   "inspection.read.noValue": "\"{key}\" cannot be written in inspection_read's value (it takes no value)",
-  "inspection.unmark.none": "{id} has no mark (read the marked items with show: accepted in inspection_list's value)"
+  "inspection.unmark.none": "{id} has no mark (read the marked items with show: accepted in inspection_list's value)",
+  "inspection.unmark.none.screen": "{id} has no mark (someone else took it off, or it is fixed)"
 }

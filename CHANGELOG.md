@@ -4,6 +4,28 @@
 
 Changes in each public release of SpecBoard that people using it can see (newest first).
 
+## 0.3.53
+
+- Whiteboards: a new kind of section for explaining a design in pictures. Place shapes (rectangle, rounded, ellipse, diamond, cylinder, text only), sticky notes, SVG and images from the map band, join them with arrows that carry their own label, dashing, ends and color, and write in a shape or a note in place (Return keeps it, Shift+Return adds a line). Images can be chosen, pasted or dropped from Finder. An arrow's label that does not fit between the shapes wraps to two lines. MCP writes them as `kind: sketch` and `kind: image` cards and `arrow` lines, places shapes left to right along the arrows when no position is given, and reads a whiteboard as text in `as: diagram` and an image itself in `as: image`.
+- Specs: a new built-in kind for a feature's story (As, I want, So that) and its Scenarios (Given, When, Then, And, But), written in place in the card editor. Each Scenario can be linked to the tests that check it with the new `testedBy` line (to test cards, rows, or test functions in a working directory); the map and the document view show how many tests each has, and the inspection lists Scenarios with none. Specs export as Markdown, and a formatted document can be turned into a spec.
+- Map tabs: right-click a map tab for New Tab or Duplicate Tab, or right-click a section in the navigator for Open in New Tab. Each map tab keeps its own view, zoom, line switches and filters; a section picked in the navigator, a link or app_control goes to the map tab in front.
+- Merge: after the merge window merges a branch into main, a notice says which goal still has it as its work branch, with Finish goal. Merging one branch into another no longer quietly undoes changes made on main in between. MCP merges say the destination as `into` and take `source` or `into` per conflict, and show changed text as changed lines.
+- Undo: ⌘Z and ⌘⇧Z undo and redo what was edited in the window. Going back in a branch's history also restores the main it was made from.
+- Flow cards: the way to the node below is an arrow between the rows, and jumps are dashed arrows in a narrow strip on the left (grey for otherwise, orange for timeout, red for failure). A decision's new branch asks for its destination first.
+- Section maps: a chip says how many value objects and enums are folded inside other cards and lists them with the fields that hold them; another says when cards overlap and tidies them. Group frames grow to hold the cards inside them. Lines keep cards where they were placed when switched.
+- Navigator: drag tasks and goals into a goal, or right-click a card on a board map to put it into one. Search with `diff:` (and `diff:made`, `diff:changed`, `diff:removed`, `diff:main`) to see what a branch changed.
+- Project list: All Projects at the top lists the projects of every place, grouped by place.
+- Tabs: press × several times in a row to close tabs one after another without moving the pointer. ⌘+, ⌘− , ⌘0 and ⌘9 zoom the map; ⌥⌘+, ⌥⌘− and ⌥⌘0 change the text size.
+- Card editor: a refused field, value or tag is said in red under the field. The header's line count matches the property panel.
+- Settings: the sidebar looks like the navigator; buttons, pull-downs and bars are made consistent across the window.
+- Language: with the app in English, kanji and kana are still drawn in Japanese forms when the Mac prefers Japanese.
+- MCP: `card_read` `as: impact` lists every path a deletion would break, including table columns through embedded shapes; reading fields with `used_by` and `ref_by` gives the flows and lines they reach. Sections, project settings and kinds have a `rev` that refuses a write over a newer change. `card_list` with `include: []` returns only path, kind and label, and refuses unknown tags and fields. Writing a second tag of an exclusive group warns. Lines can be changed in place, and versions of a stacked document moved. Diagrams name lines by their kind.
+- Export: formatted documents get anchors for their items, so links land on the item. JSON Schema and Zod accept the same values as the examples check for alternative types, embedded shapes and constants.
+- Agent: one app that stops reading notifications no longer holds up writes from other sessions; health checks and SSH errors no longer stall.
+- Whiteboard images: an interlaced or 16-bit PNG or a GIF, which is decoded whole to be shown, may be up to 4096 pixels a side (larger ones took gigabytes of memory to draw); images in a project file are read even when their base64 is wrapped. MCP cannot write an image card's picture fields by hand when changing a card into an image.
+- Fixes: inspection rules follow renamed fields; the line beside a file's line numbers no longer runs up over the tab bar and header; a branch diff lists changes to enumeration values again; sequence diagrams with long step names, actor groups named after a color, or labels starting with a backquote are drawn correctly; edits made in the window no longer drop lines, versions or keys an AI added at the same time; links to a project that cannot be opened say why instead of opening the wrong one; importing a project file never writes into another project.
+- Projects are saved in a newer format (images), and older versions of the app cannot open them. Update the app and its agents together, and reconnect AI sessions to MCP to get the new tools.
+
 ## 0.3.29
 
 - Actors: a new kind of section for something that provides and uses things (a system, a person, or something external). It holds the flows it carries out and the actors inside it, and opens as a Map or a Sequence of the flows others use. Any section can have its own icon and color, shown in the navigator, tabs and section ghosts.
@@ -32,7 +54,7 @@ Changes in each public release of SpecBoard that people using it can see (newest
 ## 0.3.2
 
 - Update sources: when you have not chosen one (or the one you chose was removed), the app uses the first source you added, and this repository's releases only when you have added none. Adding a source no longer changes the one in use.
-- The Code of Conduct gives an e-mail address for reports: specboard@moapp-lab.org.
+- The Code of Conduct gives an e-mail address for reports: specboard@moapp.dev.
 
 ## 0.3.0
 

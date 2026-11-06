@@ -66,7 +66,7 @@ fn the_builtin_kinds_read() {
     // the stacked document `stackdoc`; 9 since the data card `instance` and its
     // section; and up by one with each
     // change since (builtin.json's history says which).
-    assert_eq!(kinds.version, 23);
+    assert_eq!(kinds.version, 27);
     let placeable: Vec<&str> = kinds.placeable().map(|k| k.name.as_str()).collect();
     assert_eq!(
         placeable,
@@ -88,8 +88,11 @@ fn the_builtin_kinds_read() {
             "formatdoc",
             "freedoc",
             "stackdoc",
+            "spec",
             "note",
             "svg",
+            "sketch",
+            "image",
             "html",
             "frame",
             "goal",
@@ -170,6 +173,7 @@ fn the_builtin_sections_and_lines_read() {
         sections,
         [
             "document",
+            "whiteboard",
             "ui",
             "schema",
             "definition",
@@ -261,6 +265,7 @@ fn the_builtin_sections_and_lines_read() {
             "shapeOf",
             "rules",
             "implementedBy",
+            "testedBy",
             "mentions",
             "next",
             "condition",
@@ -272,7 +277,8 @@ fn the_builtin_sections_and_lines_read() {
             "reads",
             "writes",
             "partner",
-            "key"
+            "key",
+            "arrow"
         ]
     );
     // The flow's lines: between its nodes, beside each other in it; from a row, by its place.
@@ -1336,7 +1342,7 @@ fn a_cards_lines_hold_what_their_kind_says() {
     for wanted in [
         "connections[0].fields.cardinality: \"many\" は選べません（1:1・1:N・N:1・N:N）",
         "connections[1]: 線の id「a」が重なっています",
-        "connections[1]: 「sideways」という線の種類はありません（あるのは embed・points・link・holds・rules・implementedBy・next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）",
+        "connections[1]: 「sideways」という線の種類はありません（あるのは embed・points・link・holds・rules・implementedBy・testedBy・next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key・arrow）",
         "connections[2]: 線の id がありません",
         "connections[2]: to（相手のカード）がありません",
         "connections[3]: mentions（言及）は本文の [[ ]] から拾う線なので、connections には書きません",

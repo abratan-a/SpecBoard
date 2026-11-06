@@ -24,12 +24,9 @@ struct MCPLight: Equatable {
     /// How many of the agents switched on the app is connected to now.
     var connected = 0
     /// The count as the status bar says it.
+    @MainActor
     var agents: String {
-        switch connected {
-        case 0: "No Agents Connected"
-        case 1: "1 Agent Connected"
-        default: "\(connected) Agents Connected"
-        }
+        connected == 0 ? L10n[.MCP.agentsNone] : L10n[.MCP.agentsCount(connected)]
     }
 
     /// The tooltip.

@@ -282,6 +282,12 @@ impl Mcp {
                     {
                         return;
                     }
+                    // Answered with no key of the store's (only /healthz is): nothing more to serve it,
+                    // so it holds no place among the connections.
+                    if !incoming.known {
+                        let _ = connection.shutdown(Shutdown::Both);
+                        return;
+                    }
                 }
                 Answer::Listen(events) => {
                     self.stream(connection, &events);

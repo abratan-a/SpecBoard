@@ -17,6 +17,8 @@ enum NoticeBubble {
         let told: Int
         /// The release tag of a new version the notice offers to download.
         var update: String? = nil
+        /// The goal still naming a branch merged into main, which the notice offers to finish.
+        var goal: String? = nil
     }
 
     /// Narrower than this the bubble says too little to be worth the header's room; the bell's badge
@@ -51,6 +53,11 @@ enum NoticeBubble {
             items.append(Item(kind: .notice, id: "notice|\(text)", text: entry?.text(in: code) ?? text, project: nil,
                               told: entry?.id ?? 0))
         }
+        if let told = model.goalNotice, shown(.notice) == .bubble {
+            let entry = entries.first { $0.id == told.told }
+            items.append(Item(kind: .notice, id: "goal|\(told.told)", text: entry?.text(in: code) ?? told.text,
+                              project: told.project, told: told.told, goal: told.goal))
+        }
         if shown(.aiMerge) == .bubble {
             for told in model.aiMergesByProject {
                 items.append(Item(kind: .aiMerge, id: "aiMerge|\(told.project)|\(told.merges.count)",
@@ -76,7 +83,9 @@ extension AppModel {
     func closeNotice(_ item: NoticeBubble.Item) {
         switch item.kind {
         case .error: if let lastError, item.id == "error|\(lastError)" { self.lastError = nil }
-        case .notice: if let notice, item.id == "notice|\(notice)" { self.notice = nil }
+        case .notice:
+            if let notice, item.id == "notice|\(notice)" { self.notice = nil }
+            if let told = goalNotice, item.id == "goal|\(told.told)" { goalNotice = nil }
         case .aiMerge: if let project = item.project { dismissAIMerges(of: project) }
         case .update: if let told = updateNotice, item.id == "update|\(told.told)" { updateNotice = nil }
         }
@@ -168,12 +177,26 @@ struct NoticeBubbleView: View {
                             .font(.app(10.5, weight: .medium))
                             .help(L10n[.Update.noticeDownloadHelp])
                     }
-                    Button { model.closeNotice(item) } label: {
-                        Image(systemName: "xmark").font(.app(9, weight: .semibold)).contentShape(Rectangle())
+                    if let goal = item.goal, let project = item.project, model.offersFinish(goal: goal, in: project) {
+                        Button(L10n[.Branches.mergeFinishGoal]) { model.finishGoal(goal, in: project) }
+                            .buttonStyle(.plain)
+                            .font(.app(10.5, weight: .medium))
+                            .help(L10n[.Branches.mergeFinishGoalHelp])
+                        // Said as a choice beside the finish rather than a bare close: leaving the goal as it
+                        // is is an answer too, and the bell's list still offers the finish.
+                        Button(L10n[.Branches.mergeFinishLater]) { model.closeNotice(item) }
+                            .buttonStyle(.plain)
+                            .font(.app(10.5))
+                            .foregroundStyle(.secondary)
+                            .help(L10n[.Branches.mergeFinishLaterHelp])
+                    } else {
+                        Button { model.closeNotice(item) } label: {
+                            Image(systemName: "xmark").font(.app(9, weight: .semibold)).contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .help(L10n[.Common.actionClose])
+                        .accessibilityLabel(L10n[.Common.actionClose])
                     }
-                    .buttonStyle(.plain)
-                    .help(L10n[.Common.actionClose])
-                    .accessibilityLabel(L10n[.Common.actionClose])
                 }
                 if more > 0 {
                     Text(L10n[.Root.noticeBubbleMore(more)]).font(.app(9.5)).foregroundStyle(.secondary).lineLimit(1)

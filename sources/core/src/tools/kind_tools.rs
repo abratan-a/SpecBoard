@@ -359,12 +359,28 @@ pub(crate) fn kind_read(
     }
     if matches!(args.raw.get("target"), Some(Value::String(_))) {
         if let Some(Value::Object(one)) = read.pop() {
+            // Through MCP, its rev (`revs`): a write made from what was read is held to it.
+            if args.paged
+                && let Some(rev) = kind_rev(conn, project, &names[0])
+            {
+                out.insert("rev".into(), rev.into());
+            }
             out.extend(one);
         }
     } else {
         out.insert("kinds".into(), Value::Array(read));
     }
     Ok(Value::Object(out))
+}
+
+/// A kind's rev (`revs`): its definition as `kind_read` gives it, hashed; none for a kind not there.
+pub(crate) fn kind_rev(conn: &Connection, project: &str, name: &str) -> Option<String> {
+    let own = own_text(conn, project).ok()?;
+    let view = kinds_view("", own.as_deref(), None).ok()?;
+    let Value::Object(d) = definition(&view, name)? else {
+        return None;
+    };
+    Some(super::revs::rev_of(&d))
 }
 
 /// One kind read again after a write, as `kind_read` gives it.

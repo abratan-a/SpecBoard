@@ -10,6 +10,9 @@ use serde_json::Value;
 /// none other: a person's or an AI's may not begin with `~`.
 pub const RESULT_PREFIX: &str = "~result-";
 
+/// What the window names the merge's result it shows by, in its calls (`tools::named`).
+pub const RESULT_WORD: &str = "~result";
+
 /// The name of the branch the window puts a locked main right in, in one go (`create_group_branch`).
 pub const GROUP_BRANCH: &str = "~group";
 
@@ -416,6 +419,12 @@ impl Tx<'_> {
         let ids: Vec<String> = listed
             .and_then(|t| serde_json::from_str(&t).ok())
             .unwrap_or_default();
+        self.restore_asides(project, &ids)
+    }
+
+    /// The branches `ids` set aside, each under its name again — another's now, with a number after
+    /// it; one no longer set aside is left as it is.
+    pub(crate) fn restore_asides(&mut self, project: &str, ids: &[String]) -> Result<(), String> {
         for id in ids {
             let aside: Option<String> = self
                 .conn()
@@ -429,9 +438,10 @@ impl Tx<'_> {
             let Some(aside) = aside else {
                 continue;
             };
+            // Named `ASIDE`, the head of its id (up to 8), `-` and its name (`set_aside`).
+            let head: String = id.chars().take(8).collect();
             let name = aside
-                .strip_prefix(ASIDE)
-                .and_then(|rest| rest.get(9..))
+                .strip_prefix(&format!("{ASIDE}{head}-"))
                 .unwrap_or(&aside)
                 .to_string();
             let mut free = name.clone();
@@ -446,7 +456,7 @@ impl Tx<'_> {
                     params![free, project, id],
                 )
                 .map_err(db)?;
-            self.touch(project, &id);
+            self.touch(project, id);
         }
         Ok(())
     }
@@ -470,8 +480,9 @@ impl Tx<'_> {
                 .collect::<Result<_, _>>()
                 .map_err(db)?
         };
+        // Housekeeping, not a person's doing: main's history says nothing of it.
         for id in &gone {
-            self.delete_branch(project, id)?;
+            self.drop_own_branch(project, id)?;
         }
         Ok(gone.len())
     }

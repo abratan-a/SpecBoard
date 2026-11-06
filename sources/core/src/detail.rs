@@ -1,7 +1,5 @@
 //! A project read whole, as the core's typed reading takes it (`model::typed`: the exports, the
-//! checks and the tools; the screen reads `screen_detail`, made from this) —
-//! (`Repository.getProjectDetail` over what
-//! `WorkingCopy` spreads out, in the Swift app): the project, its cards, the relations
+//! checks and the tools; the screen reads `screen_detail`, made from this): the project, its cards, the relations
 //! between them, and its sections — everything a `ProjectDetail` holds. A part that is
 //! absent is left out; every other is written, empty or not.
 
@@ -1097,7 +1095,7 @@ struct Ghost {
 pub(crate) const GHOST: &str = "ghost";
 
 /// The kinds a card may be. One a document names that is not known reads as an entity.
-const CARD_KINDS: [&str; 17] = [
+const CARD_KINDS: [&str; 20] = [
     "entity",
     "value",
     "enum",
@@ -1109,7 +1107,10 @@ const CARD_KINDS: [&str; 17] = [
     "freedoc",
     "formatdoc",
     "stackdoc",
+    "spec",
     "svg",
+    "sketch",
+    "image",
     "html",
     "frame",
     "goal",
@@ -1125,8 +1126,9 @@ fn card_kind(raw: Option<String>, kinds: &crate::kinds::Kinds) -> String {
 }
 
 /// The kinds the screen reads in the definitions' form (`form`), not in SP's keys.
-const DEFINED: [&str; 9] = [
-    "goal", "task", "file", "stackdoc", "instance", "table", "svg", "html", "frame",
+const DEFINED: [&str; 12] = [
+    "goal", "task", "file", "stackdoc", "spec", "instance", "table", "svg", "html", "frame",
+    "sketch", "image",
 ];
 
 /// A document's fields (`fields`), and the rows of one kind (`rows`).
@@ -1638,8 +1640,19 @@ fn node_before(
                             let Some(path) = landing_path(line, named) else {
                                 continue;
                             };
-                            match line.get("line").and_then(Value::as_str).unwrap_or_default() {
-                                "reads" | "writes" => paths.push(path.into()),
+                            let kind = line.get("line").and_then(Value::as_str).unwrap_or_default();
+                            match kind {
+                                // What a read or a write row reads or writes; a reads or writes line from a
+                                // row of another kind, or of the other one, is said by the check, not read
+                                // here. A partner or a key the row does not take is read, for the write to
+                                // be refused with it.
+                                "reads" | "writes"
+                                    if crate::tools::check::step_lines(&op).contains(&kind) =>
+                                {
+                                    if !paths.iter().any(|p| p.as_str() == Some(path.as_str())) {
+                                        paths.push(path.into());
+                                    }
+                                }
                                 "partner" => push_to(&mut step, "peers", path),
                                 "key" if op == "sign" || op == "verify" => {
                                     step.insert("key".into(), path.into());
@@ -2093,7 +2106,7 @@ fn legacy_lines(card: &mut Card, defs: &crate::kinds::Defs, named: &HashMap<Stri
     }
 }
 
-/// The field tree (`Repository.buildTree`): each level by order, then name; a field whose
+/// The field tree: each level by order, then name; a field whose
 /// parent is not there at the top.
 fn build_fields(
     rows: &[FieldRow],

@@ -20,7 +20,7 @@ pub mod settings;
 mod typescript;
 mod zod;
 
-pub(crate) use documents::rows_markdown;
+pub(crate) use documents::{RowNames, rows_markdown};
 pub(crate) use mermaid::find_embed;
 
 use crate::model::{Card, Detail, ExportSetting, Field, Ghost, Rule};
@@ -786,6 +786,52 @@ pub fn note_comment(note: &Card, mounts: &[String]) -> String {
     }
     lines.push(" */".to_string());
     lines.join("\n")
+}
+
+/// Rule params that name a field of what holds the rule (the card's fields for a card's rule, the
+/// fields of its elements for a field's): a name, or a list of names — not a path, so a rename
+/// writes them as names (`specboard://SpecBoard/Docs/Design:DesignSections` §4).
+pub fn rule_field_params(kind: &str) -> &'static [&'static str] {
+    match kind {
+        "requiredIf" | "absentIf" => &["then", "field"],
+        "sortedBy" | "uniqueBy" => &["by", "keys", "field"],
+        "monotonicPerKey" => &["keys", "field"],
+        _ => &["field"],
+    }
+}
+
+/// Whether the names a rule on `field` gives are of the fields inside it — an object's, or what
+/// a reference's elements are — rather than of the fields beside it, as a value field's rule names
+/// what its value goes with (`field`: "this field or the element itself").
+pub fn rule_names_inside(field: &crate::model::Field) -> bool {
+    field.kind == "object" || field.kind == "ref"
+}
+
+/// The fields the names of a rule on `field` are looked for in, `siblings` the fields beside it.
+pub fn rule_names_under<'a>(
+    field: &'a crate::model::Field,
+    siblings: &'a [crate::model::Field],
+) -> &'a [crate::model::Field] {
+    if rule_names_inside(field) {
+        &field.children
+    } else {
+        siblings
+    }
+}
+
+/// The names a rule's field params give (`rule_field_params`), each with the param it is in.
+pub fn rule_field_names(rule: &Rule) -> Vec<(&'static str, &str)> {
+    let mut out = Vec::new();
+    for key in rule_field_params(rule_kind(rule)) {
+        match rule.get(*key) {
+            Some(Value::String(s)) => out.push((*key, s.as_str())),
+            Some(Value::Array(list)) => {
+                out.extend(list.iter().filter_map(Value::as_str).map(|s| (*key, s)))
+            }
+            _ => {}
+        }
+    }
+    out
 }
 
 /// Rule params that name a path.

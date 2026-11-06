@@ -55,8 +55,8 @@ fn room(family: &str, name: &str) -> usize {
         // and as a picture among them, a ui section's mock with its parts' faces, and the functions
         // and types in a file, the implementation lines whose code changed, and what a goal or task
         // needs gathered in one read, and a box drawn apart from the size written for it, and the actors
-        // a flow's sequence diagram draws as lifelines.
-        ("tools", "card_read") => 6_400,
+        // a flow's sequence diagram draws as lifelines, and an image's picture itself.
+        ("tools", "card_read") => 6_500,
         // A working directory's section says how and from where it is read, and is set too (how its
         // files map to languages among it).
         // And a map's groups, with what is in each, and an actor's chart in both its forms.
@@ -64,18 +64,23 @@ fn room(family: &str, name: &str) -> usize {
         // A map's groups are written there too: made (made only, refused over a name already there),
         // moved with what they hold, and how they look. Tidying says what it keeps and how far it moves,
         // and arranging its two ways: along the lines (the whole map or one group) and in order. A
-        // section's kind, what an actor is and the section's own mark are changed there too.
-        ("tools", "section_update") => 6_300,
+        // section's kind, what an actor is and the section's own mark are changed there too, held to the
+        // section's rev as it was read.
+        ("tools", "section_update") => 6_400,
         // The card tools write every kind's keys, a body read from a file (`bodyFrom`) among them,
         // and a size of a width alone or of both; the update's answer says how a body and a table's
-        // cells changed in part are answered. Making an element of a data card's array has its own form.
-        ("tools", "card_create") => 4_800,
-        // And the groups on a container's card map.
-        ("tools", "card_update") => 4_600,
+        // cells changed in part are answered. Making an element of a data card's array has its own form,
+        // and a spec's story and scenarios theirs, a scenario by its path too, and an image's contents.
+        ("tools", "card_create") => 5_900,
+        // And the groups on a container's card map, and a card's lines changed in place and a
+        // stackdoc's version moved among the others, and a spec's story and scenarios, a scenario by
+        // its path too, and an image's contents.
+        ("tools", "card_update") => 5_800,
         // The list narrows by every kind of card, and by a list of them, lists the functions and
         // types in files by what they are and their names, can leave the bodies out, and finds
-        // what is not linked to code and whose code changed, a data card's values left out with the bodies.
-        ("tools", "card_list") => 4_350,
+        // what is not linked to code and whose code changed, a data card's values left out with the bodies,
+        // and what nothing included gives.
+        ("tools", "card_list") => 4_400,
         // The batch says which steps may point at which, and takes its steps from a file.
         ("tools", "batch") => 3_650,
         // A tree is read four ways, and one commit of its history and a branch's changes by what
@@ -84,6 +89,8 @@ fn room(family: &str, name: &str) -> usize {
         // The check names every group, the code lines reach that changed, the gaps the sequence
         // charts draw among them and the partners written as text that is a flow's or an actor's name.
         ("tools", "inspection_list") => 3_600,
+        // A select chooses an actor's map or its sequence.
+        ("tools", "app_control") => 3_200,
         ("tools", _) => 3_000,
         ("kinds", "ghost") => 3_500,
         // A record's shape says how data of it is drawn as a list (`face`), key by key.
@@ -100,7 +107,8 @@ fn room(family: &str, name: &str) -> usize {
         // Where boxes go says how groups are put, made only and moved too, and the two ways of arranging.
         ("keys", "layout") => 2_600,
         // Every built-in kind of line named, with where it goes.
-        ("keys", "connections") => 2_100,
+        // A card's lines are added, taken away and changed in place, each its own shape.
+        ("keys", "connections") => 2_500,
         ("keys", _) => 2_000,
         // The branches' guide says how one commit is read and undone alone too.
         ("guides", "branch") => 3_700,
@@ -116,7 +124,8 @@ fn room(family: &str, name: &str) -> usize {
 /// The room of each tool's value in the list: the card tools take the most kinds of target.
 fn value_room(tool: &str) -> usize {
     match tool {
-        "card_create" | "card_update" | "card_read" => 700,
+        // A card's value names every kind's keys, a spec's among them.
+        "card_create" | "card_update" | "card_read" => 760,
         "card_list" | "batch" | "branch_merge" | "section_update" => 300,
         _ => 150,
     }

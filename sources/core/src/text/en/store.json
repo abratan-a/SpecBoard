@@ -13,5 +13,6 @@
   "store.error.notCoreForm": "This is not a database of the core's form",
   "store.error.open": "Cannot open the database: {e}",
   "store.error.read": "Cannot read the database: {e}",
-  "store.error.tableMissing": "The database of the core's form has no {table}"
+  "store.error.tableMissing": "The database of the core's form has no {table}",
+  "store.reader.fallback": "Cannot open a connection to read on, so reads wait under the writes' lock: {error}"
 }

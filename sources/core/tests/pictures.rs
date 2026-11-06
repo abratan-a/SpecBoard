@@ -296,14 +296,15 @@ fn the_kinds_of_line_are_read_as_as_diagram_reads_them() {
         json!({"target": "Schemas/Ordering", "value": {"as": "diagram", "kinds": ["nothing"]}}),
     ));
     assert_eq!(message, diagram);
-    // One that is there, by the name MCP says it (the drawing keeps `points` as `lookup`).
+    // One that is there, by the name of its kind of line (the drawing keeps `points` as `lookup`), and
+    // the app asked by that name too.
     assert!(diagram.contains("points"), "{diagram}");
     note_of(&read(
         &core,
         "section_read",
-        json!({"target": "Schemas/Ordering", "value": {"as": "picture", "kinds": ["next", "points"]}}),
+        json!({"target": "Schemas/Ordering", "value": {"as": "picture", "kinds": ["partner", "points"]}}),
     ));
-    assert_eq!(last(&painter)["kinds"], json!(["points", "next"]));
+    assert_eq!(last(&painter)["kinds"], json!(["points", "partner"]));
 }
 
 #[test]

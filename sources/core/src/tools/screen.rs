@@ -19,7 +19,7 @@ use serde_json::{Map, Value, json};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 /// The requests of this module.
-const KNOWN: [&str; 26] = [
+const KNOWN: [&str; 27] = [
     "projects",
     "embed_diagram",
     "sequence_chart",
@@ -46,6 +46,7 @@ const KNOWN: [&str; 26] = [
     "file_text",
     "file_outline",
     "kind_preview",
+    "image_bytes",
 ];
 
 /// The widest a place reaches from the origin, in cells (`Grid.reach`).
@@ -68,6 +69,16 @@ impl Core {
                 Ok(json!({}))
             }),
             "tool" => self.screen_tool(request),
+            // An image card's picture, by its name, drawn on the whiteboard: its form and contents in base64.
+            "image_bytes" => {
+                let store = self.reading()?;
+                let project = project_of(&store, request, op)?;
+                let hash = text(request, "hash", op, "hash")?;
+                match super::images::picture(&store.conn, project, hash)? {
+                    Some((format, data)) => Ok(json!({"format": format, "data": data})),
+                    None => Ok(json!({})),
+                }
+            }
             // A working directory's file shown: read, never written.
             "file_text" => {
                 let store = self.reading()?;

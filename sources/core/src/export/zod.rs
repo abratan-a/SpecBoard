@@ -9,6 +9,7 @@ use super::{
 use crate::model::{Card, Field};
 use crate::notetext::plain_note;
 use crate::ojson;
+use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 
 /// A text of several lines as `// ` comment lines: the text decides where its lines break, as a
@@ -47,10 +48,34 @@ struct Writer<'p, 'a> {
     lines: super::CardLines,
 }
 
+/// A fixed value as Zod takes only it: `z.literal` holds a string, a number or a boolean alone, so
+/// a list is a tuple of its values and an object one of its keys, nothing else.
+fn constant(value: &Value) -> String {
+    match value {
+        Value::Null => "z.null()".to_string(),
+        Value::Array(items) => format!(
+            "z.tuple([{}])",
+            items.iter().map(constant).collect::<Vec<_>>().join(", ")
+        ),
+        Value::Object(keys) => format!(
+            "z.strictObject({{{}}})",
+            keys.iter()
+                .map(|(k, v)| format!(
+                    "{}: {}",
+                    ojson::compact(&Value::String(k.clone())),
+                    constant(v)
+                ))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+        other => format!("z.literal({})", ojson::compact(other)),
+    }
+}
+
 impl Writer<'_, '_> {
     fn expr(&mut self, field: &Field, indent: &str) -> (String, bool) {
         if let Some(fixed) = field.fixed() {
-            let mut literal = format!("z.literal({})", ojson::compact(&sorted(fixed)));
+            let mut literal = constant(&sorted(fixed));
             if field.is_array {
                 literal = format!("z.array({literal})");
             }

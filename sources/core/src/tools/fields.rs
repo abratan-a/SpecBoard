@@ -301,6 +301,7 @@ pub(crate) fn update_field(
     value: &Map<String, Value>,
 ) -> Result<Value, Vec<Reason>> {
     let fail = |e: String| reason(None, e);
+    let unresolved_before = super::update::unresolved_keys(tx, scope).map_err(fail)?;
     let before = Seen::in_tx(tx, scope).map_err(fail)?;
     let project = before.project();
     let Target::Field(card, field, walked) =
@@ -472,6 +473,9 @@ pub(crate) fn update_field(
         crate::pathtext::join_names(names.iter().map(String::as_str))
     );
     let row = field_row(tx, scope, &now_path).map_err(fail)?;
+    warnings.extend(
+        super::update::path_warnings(tx, scope, &card_id, &unresolved_before).map_err(fail)?,
+    );
     Ok(super::warned(row, &warnings))
 }
 

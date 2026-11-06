@@ -602,8 +602,18 @@ impl Seen {
                 .expect("the refs are made before the lift");
             let mut gone_with: HashSet<String> =
                 ids.iter().chain(repathed.iter()).cloned().collect();
-            for id in ids.iter().chain(repathed.iter()) {
-                gone_with.extend(refs.named_by(id).cloned());
+            // A card that embeds a changed one holds its fields: a path through it (a table's column
+            // `price.amount`) reads the changed card too, so the cards naming it are let go of with it,
+            // up the chain of cards embedding one another.
+            let mut through: Vec<String> = gone_with.iter().cloned().collect();
+            let mut followed: HashSet<String> = gone_with.clone();
+            while let Some(id) = through.pop() {
+                for by in refs.named_by(&id) {
+                    gone_with.insert(by.clone());
+                    if embeds(self.docs.get(by), &id) && followed.insert(by.clone()) {
+                        through.push(by.clone());
+                    }
+                }
             }
             let mut names: Vec<String> = names;
             names.extend(
@@ -637,4 +647,15 @@ impl Seen {
         }
         true
     }
+}
+
+/// Whether a card's document has a line embedding the card `id`.
+fn embeds(doc: Option<&Map<String, Value>>, id: &str) -> bool {
+    doc.and_then(|d| d.get("connections"))
+        .and_then(Value::as_array)
+        .is_some_and(|lines| {
+            lines
+                .iter()
+                .any(|l| l["line"] == "embed" && l["to"].as_str() == Some(id))
+        })
 }

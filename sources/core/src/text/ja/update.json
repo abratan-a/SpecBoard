@@ -12,7 +12,7 @@
   "update.doc.rowsNotObject": "文書の rows がオブジェクトではありません",
   "update.error.cardExists": "カード「{name}」は既にあります",
   "update.error.containerHolds": "{card} は中に {held}（{heldKind}）を持っているので {next} にできません。先に移すか消してください",
-  "update.error.docViewKind": "行で見るか文書で見るかを選べるのは formatdoc のカードだけです（{kind} ではなく）",
+  "update.error.docViewKind": "行で見るか文書で見るかを選べるのは formatdoc と spec のカードだけです（{kind} ではなく）",
   "update.error.enumNeeded": "enum スキーマを指定してください",
   "update.error.ghostPointsHere": "{card} をセクション {section} へ移すと、それを指すカードゴースト {ghost} が自分のセクションのものを指すことになります。カードゴーストを消すか付け替えてから移してください",
   "update.error.keyOnlyOn": "{key} は {holders} にだけ書けます（{card} は {kind}）",

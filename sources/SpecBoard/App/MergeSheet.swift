@@ -177,9 +177,10 @@ struct MergeSheet: View {
             set: { take[conflict.path, default: [:]][conflict.conflict.label] = $0 })
         return VStack(alignment: .leading, spacing: 3) {
             Text(L10n[.Branches.mergeConflictOf(conflict.path, Merge3.shown(conflict.conflict.label))]).font(.app(11.5, weight: .semibold, design: .monospaced))
-            value(L10n[.Branches.mergeBase], conflict.conflict.base)
-            value(L10n[.Branches.mergeSource], conflict.conflict.source)
-            value(L10n[.Branches.mergeTarget], conflict.conflict.target)
+            let order = ConflictText.order(of: conflict.path, in: model.detail?.directory)
+            value(L10n[.Branches.mergeBase], conflict.conflict.base, order: order)
+            value(L10n[.Branches.mergeSource], conflict.conflict.source, order: order)
+            value(L10n[.Branches.mergeTarget], conflict.conflict.target, order: order)
             Picker("", selection: choice) {
                 Text(L10n[.Branches.mergeTakeSource]).tag(Optional(Merge3.Side.source))
                 Text(L10n[.Branches.mergeKeepTarget]).tag(Optional(Merge3.Side.target))
@@ -188,16 +189,17 @@ struct MergeSheet: View {
             .labelsHidden()
             .fixedSize()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(8)
         .background(RoundedRectangle(cornerRadius: 6).fill(Color.secondary.opacity(0.08)))
     }
 
-    private func value(_ title: String, _ value: OJSON?) -> some View {
-        let text = value.map { $0.compact() } ?? L10n[.Branches.mergeNoValue]
+    private func value(_ title: String, _ value: OJSON?, order: [String]) -> some View {
+        let text = ConflictText.said(value, order: order) ?? L10n[.Branches.mergeNoValue]
         return HStack(alignment: .top, spacing: 6) {
             Text(title).font(.app(10.5)).foregroundStyle(.secondary).frame(width: 56, alignment: .leading)
-            Text(text.count > 160 ? String(text.prefix(160)) + "…" : text)
-                .font(.app(10.5, design: .monospaced)).lineLimit(3).textSelection(.enabled)
+            Text(ConflictText.cut(text))
+                .font(.app(10.5, design: .monospaced)).lineLimit(ConflictText.lines).textSelection(.enabled)
         }
     }
 
@@ -223,5 +225,45 @@ struct MergeSheet: View {
         } else {
             refused = model.lastError
         }
+    }
+}
+
+/// A conflict's value as the merge window and the undo sheet show it (`specboard://SpecBoard/Docs/Design:UI`
+/// §6「シート」): a whole — a card's, a row's — a field to a line in its kind's order, so the three values of
+/// one conflict line up and read alike whatever order each came in; one value as it is.
+enum ConflictText {
+    /// How many lines a value is shown in before it is cut.
+    static let lines = 10
+
+    static func said(_ value: OJSON?, order: [String]) -> String? {
+        guard let value else { return nil }
+        guard case .object(let object) = value else { return value.compact() }
+        let keys = object.entries.map(\.0)
+        let ordered = order.filter { keys.contains($0) } + keys.filter { !order.contains($0) }
+        return ordered.compactMap { key in object[key].map { "\(key): \($0.compact())" } }.joined(separator: "\n")
+    }
+
+    /// Long enough for every field of a card on a line of its own; a body or a long value cut with "…".
+    static func cut(_ text: String) -> String {
+        text.count > 600 ? String(text.prefix(600)) + "…" : text
+    }
+
+    /// The order the fields of the card at `path` are defined in: its kind's fields, then its rows' fields.
+    static func order(of path: String, in directory: SchemaDirectory?) -> [String] {
+        guard let directory, let card = directory.find(cardPath(path), from: nil).schema else { return [] }
+        let def = card.kindDef ?? BuiltinWords.definition(card.kind.rawValue)
+        guard let def else { return [] }
+        var out: [String] = []
+        for name in def.fields.map(\.name) + def.rows.flatMap({ $0.fields.map(\.name) }) where !out.contains(name) {
+            out.append(name)
+        }
+        return out
+    }
+
+    /// The card's part of a path: up to the first name after its section.
+    private static func cardPath(_ path: String) -> String {
+        let section = path.firstIndex(of: ":").map { path.index(after: $0) } ?? path.startIndex
+        guard let dot = path[section...].firstIndex(of: ".") else { return path }
+        return String(path[..<dot])
     }
 }

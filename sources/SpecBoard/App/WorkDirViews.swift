@@ -51,11 +51,10 @@ struct WorkDirProperties: View {
                     }
                 }
                 PropertyRow("readType", help: L10n[.Export.dirsReadHelp]) {
-                    Picker("", selection: Binding(get: { dir.readType },
-                                                  set: { model.setWorkDir(section.id, ["readType": $0]) })) {
-                        ForEach(WorkDir.readTypes, id: \.id) { Text($0.label).tag($0.id) }
-                    }
-                    .labelsHidden().pickerStyle(.menu).fixedSize()
+                    ChoiceMenu(options: WorkDir.readTypes.map { ($0.id, $0.label) },
+                               selection: Binding(get: { dir.readType },
+                                                  set: { model.setWorkDir(section.id, ["readType": $0]) }))
+                        .fixedSize()
                     .disabled(!editable)
                 }
                 PropertyRow("exclude", help: L10n[.Properties.workDirExcludeHelp]) {

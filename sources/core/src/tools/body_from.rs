@@ -317,9 +317,7 @@ pub(crate) fn folder_of(
     Ok((dir.name.clone(), folder.clone()))
 }
 
-/// The text of the file at `path` in `folder`, when it is a file inside it — the folder itself
-/// and the path through it with every link followed — and UTF-8, and not past `limit` bytes
-/// (`too_big` says it) nor past what the call may read in all (`budget`).
+/// The text of the file at `path` in `folder` (`read_bytes`), when it is UTF-8.
 pub(crate) fn read(
     folder: &str,
     path: &str,
@@ -328,6 +326,21 @@ pub(crate) fn read(
     too_big: &dyn Fn(u64) -> String,
     budget: &mut Budget,
 ) -> Result<String, String> {
+    let bytes = read_bytes(folder, path, key, limit, too_big, budget)?;
+    String::from_utf8(bytes).map_err(|_| text!("writes.bodyFrom.notUtf8", key, path))
+}
+
+/// What the file at `path` in `folder` holds, when it is a file inside it — the folder itself and
+/// the path through it with every link followed — and not past `limit` bytes (`too_big` says it)
+/// nor past what the call may read in all (`budget`).
+pub(crate) fn read_bytes(
+    folder: &str,
+    path: &str,
+    key: &str,
+    limit: u64,
+    too_big: &dyn Fn(u64) -> String,
+    budget: &mut Budget,
+) -> Result<Vec<u8>, String> {
     let parts: Vec<&str> = path
         .split('/')
         .filter(|p| !p.is_empty() && *p != ".")
@@ -364,8 +377,7 @@ pub(crate) fn read(
         return Err(too_big(meta.len()));
     }
     budget.take(meta.len())?;
-    let bytes = std::fs::read(&real).map_err(|_| text!("writes.bodyFrom.missing", key, path))?;
-    String::from_utf8(bytes).map_err(|_| text!("writes.bodyFrom.notUtf8", key, path))
+    std::fs::read(&real).map_err(|_| text!("writes.bodyFrom.missing", key, path))
 }
 
 /// Whether `path` is a link (one that leads nowhere among them).

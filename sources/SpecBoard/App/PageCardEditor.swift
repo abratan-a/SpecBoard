@@ -77,7 +77,7 @@ struct PageCardEditor: View {
             .disabled(!editable)
             .help(L10n[.CardEditor.pageReadFileHelp])
             Button { save() } label: {
-                BarLabel(title: L10n[.CardEditor.pageSave], systemImage: "square.and.arrow.down")
+                BarLabel(title: L10n[.CardEditor.pageSave], systemImage: "square.and.arrow.down", markWhenWide: true)
             }
             .keyboardShortcut("s", modifiers: .command)
             .disabled(!editable || draft == text)

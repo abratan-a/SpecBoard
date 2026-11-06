@@ -12,7 +12,7 @@
   "update.doc.rowsNotObject": "The document's rows is not an object",
   "update.error.cardExists": "The card \"{name}\" already exists",
   "update.error.containerHolds": "{card} holds {held} ({heldKind}), so it cannot become {next}. Move or delete it first",
-  "update.error.docViewKind": "Only formatdoc cards can choose between a rows view and a document view (not {kind})",
+  "update.error.docViewKind": "Only formatdoc and spec cards can choose between a rows view and a document view (not {kind})",
   "update.error.enumNeeded": "Specify an enum card",
   "update.error.ghostPointsHere": "Moving {card} to section {section} would make the card ghost {ghost}, which points to it, point to something in its own section. Delete or re-point the card ghost before moving",
   "update.error.keyOnlyOn": "{key} can only be written on {holders} ({card} is {kind})",

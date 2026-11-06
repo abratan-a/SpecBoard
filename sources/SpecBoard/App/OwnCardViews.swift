@@ -129,8 +129,9 @@ struct OwnCardProperties: View {
                 }
             }
             if !def.rows.isEmpty {
-                let placed = OwnRows.walk(def, card.ownRows)
-                PropertyCategory(title: L10n[.Common.wordRow], count: placed.count) {
+                // Each kind of row says how many it holds: a count beside the heading read as one of
+                // them (「行 1 steps」).
+                PropertyCategory(title: L10n[.Common.wordRow]) {
                     ForEach(def.rows, id: \.name) { kind in
                         PropertyRow(kind.name, help: kind.label == kind.name ? "" : kind.label) {
                             Text(L10n[.Board.rowsCount(card.ownRows[kind.name]?.arrayValue?.count ?? 0)])
@@ -348,10 +349,8 @@ struct OwnCardEditor: View {
         return VStack(alignment: .leading, spacing: 10) {
             Text(L10n[.Board.cardAdd]).font(.app(13, weight: .semibold))
             Text(L10n[.Board.addWhereTo(detail.directory.full(card))]).font(.app(11)).foregroundStyle(.secondary)
-            Picker("", selection: $newKind) {
-                ForEach(kinds, id: \.self) { name in Text(detail.cardKinds[name]?.badge ?? name).tag(name) }
-            }
-            .labelsHidden().pickerStyle(.menu).fixedSize()
+            ChoiceMenu(options: kinds.map { ($0, detail.cardKinds[$0]?.badge ?? $0) }, selection: $newKind)
+                .fixedSize()
             TextField(L10n[.Board.cardNamePlaceholder], text: $newName)
                 .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced)).frame(width: 280)
             TextField(L10n[.Board.fieldDisplayName], text: $newLabel)
@@ -484,7 +483,6 @@ struct OwnCardEditor: View {
                     model.setOwnRows(card.id, kind.name, OwnRows.adding(card.ownRows, kind: kind, title: newRows[kind.name] ?? ""))
                     if model.lastError == nil { newRows[kind.name] = "" }
                 }
-                .controlSize(.small)
             }
         }
     }

@@ -134,7 +134,7 @@ fn a_kind_of_the_projects_own_is_checked_without_writing_and_then_written() {
             "{said}"
         );
     }
-    let kinds = ok(&core, "kind_read", json!({}));
+    let kinds = common::kinds_whole(&core);
     assert!(
         kinds["cards"]
             .as_array()
@@ -153,7 +153,7 @@ fn a_kind_of_the_projects_own_is_checked_without_writing_and_then_written() {
         .contains("dryRun: true で確かめるのは project_tree と renames だけです")
     );
     defined(&core);
-    let kinds = ok(&core, "kind_read", json!({}));
+    let kinds = common::kinds_whole(&core);
     let own: Vec<&Value> = kinds["cards"]
         .as_array()
         .unwrap()
@@ -672,7 +672,7 @@ fn a_line_of_the_projects_own_keeps_to_the_kinds_of_row_it_names() {
         "from": [{ "kinds": ["risk"], "at": "row", "rows": ["causes"] }],
         "to": { "kinds": ["*"], "at": ["card"] } });
     // The project's lines kept beside them (the script's moved signatures).
-    let kept: Vec<Value> = ok(&core, "kind_read", json!({}))["lines"]
+    let kept: Vec<Value> = common::kinds_whole(&core)["lines"]
         .as_array()
         .unwrap()
         .iter()
@@ -955,7 +955,7 @@ fn a_project_file_carries_the_projects_own_kinds_and_their_cards() {
 #[test]
 fn a_line_hidden_from_the_start_is_left_out_of_a_diagram_unless_asked_for() {
     let core = Core::open(script_store()).unwrap();
-    let kept: Vec<Value> = ok(&core, "kind_read", json!({}))["lines"]
+    let kept: Vec<Value> = common::kinds_whole(&core)["lines"]
         .as_array()
         .unwrap()
         .iter()
@@ -987,11 +987,29 @@ fn a_line_hidden_from_the_start_is_left_out_of_a_diagram_unless_asked_for() {
     // project's says otherwise.
     let before = drawn(&core, None);
     assert!(
-        !before.is_empty()
-            && !before.contains(&"mentions".to_string())
-            && before.contains(&"signedBy".to_string()),
+        !before.contains(&"mentions".to_string()) && before.contains(&"signedBy".to_string()),
         "{before:?}"
     );
+    // Every kind the project has, as a diagram asked for one it has not says them: all of them
+    // but mentions are drawn.
+    let refused = common::mcp(
+        &core,
+        "branch_read",
+        json!({"target": "main", "value": {"as": "diagram", "revisionOnly": true, "kinds": ["nothing"]}}),
+    )
+    .unwrap_err();
+    let mut has: Vec<String> = refused
+        .split("このプロジェクトにあるのは ")
+        .nth(1)
+        .unwrap_or_else(|| panic!("{refused}"))
+        .split(" / ")
+        .map(|k| k.trim().to_string())
+        .filter(|k| k != "mentions")
+        .collect();
+    has.sort();
+    let mut sorted = before.clone();
+    sorted.sort();
+    assert_eq!(sorted, has, "隠す前は mentions のほかは全部描く");
 
     let mut wrong = kept.clone();
     wrong[signed]["visible"] = json!("no");
@@ -1001,7 +1019,7 @@ fn a_line_hidden_from_the_start_is_left_out_of_a_diagram_unless_asked_for() {
     let mut hidden = kept.clone();
     hidden[signed]["visible"] = json!(false);
     common::set_kinds(&core, PROJECT, json!({"lines": hidden})).unwrap();
-    let read = ok(&core, "kind_read", json!({}));
+    let read = common::kinds_whole(&core);
     let line = read["lines"]
         .as_array()
         .unwrap()
@@ -1037,7 +1055,7 @@ fn a_kind_of_section_says_its_mark_and_its_colour() {
         json!({"cards": [risk("severity")], "sections": [section.clone()]}),
     )
     .unwrap();
-    let read = ok(&core, "kind_read", json!({}));
+    let read = common::kinds_whole(&core);
     let mine = read["sections"]
         .as_array()
         .unwrap()
@@ -1260,7 +1278,7 @@ fn a_kind_of_the_projects_own_opens_as_a_note_with_a_body_to_write() {
         read(&core, &format!("{free}:Intro"))["body"],
         "# はじめに\n\n書いた"
     );
-    let kinds = ok(&core, "kind_read", json!({}));
+    let kinds = common::kinds_whole(&core);
     let read_back = kinds["cards"]
         .as_array()
         .unwrap()

@@ -57,26 +57,21 @@ enum WindowRestore {
     }
 }
 
-/// Text size, where macOS keeps it: the View menu, with the shortcuts every other
-/// app on the machine uses.
-///
-/// It began as a toolbar button, which was the wrong place twice over — it is not a
-/// property of the document, and it put a setting somebody may want to reach often
-/// behind a click. Somebody adjusting this for their eyesight should be able to
-/// press ⌘+ and watch it move.
+/// Text size, where macOS keeps it: the View menu. ⌥⌘＋ and ⌥⌘−, as ⌘＋ and ⌘− zoom the diagram in front
+/// (`MenuKeys`): text size is set for one's eyes and kept, the diagram's zoom changes all the time.
 struct TextSizeCommands: Commands {
     private var typography: Typography { Typography.shared }
 
     var body: some Commands {
         CommandGroup(after: .toolbar) {
             Button(L10n[.Root.menuTextBigger]) { typography.enlarge() }
-                .keyboardShortcut("+", modifiers: .command)
+                .keyboardShortcut(MenuKeys.textLarger)
                 .disabled(!typography.canEnlarge)
             Button(L10n[.Root.menuTextSmaller]) { typography.reduce() }
-                .keyboardShortcut("-", modifiers: .command)
+                .keyboardShortcut(MenuKeys.textSmaller)
                 .disabled(!typography.canReduce)
             Button(L10n[.Root.menuTextActual(typography.label)]) { typography.reset() }
-                .keyboardShortcut("0", modifiers: .command)
+                .keyboardShortcut(MenuKeys.textActual)
                 .disabled(typography.scale == 1)
             Divider()
         }

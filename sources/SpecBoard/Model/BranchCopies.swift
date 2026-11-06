@@ -1,8 +1,7 @@
 import Foundation
 
 /// A branch against main (`specboard://SpecBoard/Docs/Design:DesignBranches` §3・§11): what it changed, made
-/// and removed, and what main did since it was made — worked out from the documents
-/// (`Repository.branchDiff`).
+/// and removed, and what main did since it was made — worked out from the documents.
 struct BranchDiff {
     struct Card: Hashable {
         var path: String

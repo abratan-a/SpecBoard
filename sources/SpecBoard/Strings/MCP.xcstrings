@@ -1,6 +1,54 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "agents.count" : {
+      "comment" : "The status bar: how many agents are connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Agent Connected"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Agents Connected"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント %lld 件と接続中"
+          }
+        }
+      }
+    },
+    "agents.none" : {
+      "comment" : "The status bar while no agent is connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Agents Connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント未接続"
+          }
+        }
+      }
+    },
     "ask.always" : {
       "comment" : "Sentence in the permission request; the argument is the list of what they change.",
       "extractionState" : "manual",

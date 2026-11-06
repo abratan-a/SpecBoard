@@ -469,6 +469,24 @@
         }
       }
     },
+    "commandCloseSettings" : {
+      "comment" : "The File menu's ⌘W item while the app's settings cover the window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を閉じる"
+          }
+        }
+      }
+    },
     "flow.branches" : {
       "comment" : "Detail of a node's row that leads to several nodes.",
       "extractionState" : "manual",
@@ -501,6 +519,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%2$@ の %1$@"
+          }
+        }
+      }
+    },
+    "flow.wayInTime" : {
+      "comment" : "Beside the down arrow on a flow card, from a wait with a time limit to the node below it: the way taken in time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in time"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間に合う"
+          }
+        }
+      }
+    },
+    "flow.wayMatched" : {
+      "comment" : "Beside the down arrow on a flow card, from a decision to the node below it: the way taken when a condition holds.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "matched"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当たる"
           }
         }
       }
@@ -1245,6 +1299,132 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 行"
+          }
+        }
+      }
+    },
+    "spec.addScenario" : {
+      "comment" : "Button in a spec's editor that adds a scenario at the end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add scenario"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scenario を足す"
+          }
+        }
+      }
+    },
+    "spec.addStep" : {
+      "comment" : "Button under a scenario's steps in a spec's editor that adds a step.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ Step"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ 段を足す"
+          }
+        }
+      }
+    },
+    "spec.noTest" : {
+      "comment" : "Badge of a spec's scenario that no test line (testedBy) reaches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト無し"
+          }
+        }
+      }
+    },
+    "spec.scenarios" : {
+      "comment" : "Heading of the scenarios in a spec's editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SCENARIOS"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SCENARIOS"
+          }
+        }
+      }
+    },
+    "spec.story" : {
+      "comment" : "Heading of a spec's story (As, I want, So that) in its editor, its document and its card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Story"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ねらい"
+          }
+        }
+      }
+    },
+    "spec.tests" : {
+      "comment" : "Badge of a spec's scenario: how many test lines (testedBy) reach it. The argument is the count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tests"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト %lld"
+          }
+        }
+      }
+    },
+    "spec.about" : {
+      "comment" : "Label of the field written after a spec's story (Markdown).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "補足"
           }
         }
       }

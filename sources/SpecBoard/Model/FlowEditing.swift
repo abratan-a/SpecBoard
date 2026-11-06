@@ -105,3 +105,21 @@ nonisolated enum FlowEditing {
         FlowNode.check(nodes).unfinished.filter { $0.node == node.name }.map(\.text)
     }
 }
+
+/// A decision's branch is a condition line from it to where it goes, so one is added only once where it goes
+/// is picked: there is no branch going nowhere to hold until then.
+@MainActor
+enum FlowBranches {
+    /// Where a branch of `node` may go: every node of the flow but itself, in the flow's order.
+    static func targets(of node: FlowNode, among names: [String]) -> [String] {
+        names.filter { $0 != node.name }
+    }
+
+    /// `node` with a branch to `next` under the default condition; as it is when nothing was picked.
+    static func adding(to node: FlowNode, next: String?) -> FlowNode {
+        guard let next else { return node }
+        var out = node
+        out.branches.append(FlowBranch(when: L10n[.Nodes.defaultCondition], next: next))
+        return out
+    }
+}

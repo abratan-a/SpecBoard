@@ -21,6 +21,8 @@ struct CustomFieldControl: View {
         let chosen = Binding(get: { chosenValue }, set: { set($0) })
         Group {
             switch field.fieldtype {
+            case "radio" where ColorChoice.offers(field.options):
+                ColorChoice(options: field.options, labels: field.optionLabels, selection: chosen)
             case "radio":
                 FittingChoice(options: .words(field.options, labels: field.optionLabels, none: field.defaultValue == nil), selection: chosen,
                               segmented: true)
@@ -41,6 +43,21 @@ struct CustomFieldControl: View {
             case "longtext":
                 CommitTextEditor(text: value, minHeight: 52) { set($0) }
                     .id("\(card.id)|\(field.name)")
+            case "markdown":
+                // A sketch's text: written on lines of its own, the links in it a press away.
+                VStack(alignment: .leading, spacing: 4) {
+                    CommitTextEditor(text: value, minHeight: 52) { set($0) }
+                        .id("\(card.id)|\(field.name)")
+                    FlowRow(spacing: 6, lineSpacing: 4) {
+                        ForEach(Self.links(in: value), id: \.self) { path in
+                            Button(path) {
+                                model.open(path: path, from: model.detail?.directory.sectionId(of: card))
+                            }
+                            .buttonStyle(.link)
+                            .font(.app(11))
+                        }
+                    }
+                }
             default:
                 CommitField(field.fieldtype == "date" ? "YYYY-MM-DD" : field.name, text: value) { set($0) }
                     .id("\(card.id)|\(field.name)")
@@ -49,6 +66,18 @@ struct CustomFieldControl: View {
         }
         .disabled(!editable)
         .help(field.description)
+    }
+
+    /// The paths `[[…]]` in `text` names, each once in the order written.
+    static func links(in text: String) -> [String] {
+        var out: [String] = []
+        var rest = Substring(text)
+        while let open = rest.range(of: "[["), let close = rest[open.upperBound...].range(of: "]]") {
+            let path = String(rest[open.upperBound..<close.lowerBound])
+            if !path.isEmpty, !out.contains(path) { out.append(path) }
+            rest = rest[close.upperBound...]
+        }
+        return out
     }
 
     private func set(_ next: String) {
@@ -155,5 +184,43 @@ struct CustomRowPane: View {
 
     private func change(_ body: ([CustomRow]) -> [CustomRow]) {
         model.setCustomRows(card.id, body(card.customRows))
+    }
+}
+
+/// A choice of colours (a sketch's fill and outline, an arrow's colour): a swatch for each, 「なし」 an empty one
+/// struck through, the one chosen ringed.
+struct ColorChoice: View {
+    var options: [String]
+    var labels: [String: String] = [:]
+    @Binding var selection: String
+
+    @Environment(\.colorScheme) private var scheme
+
+    /// Whether `options` are colours the screen draws: each a line's ink, or none.
+    static func offers(_ options: [String]) -> Bool {
+        !options.isEmpty && options.allSatisfy { $0 == "none" || EdgeInk(rawValue: $0) != nil }
+    }
+
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(options, id: \.self) { option in
+                Button { selection = option } label: { swatch(option) }
+                    .buttonStyle(.plain)
+                    .help(labels[option] ?? option)
+                    .accessibilityLabel(labels[option] ?? option)
+            }
+        }
+    }
+
+    private func swatch(_ option: String) -> some View {
+        let ink = EdgeInk(rawValue: option).map { Color(nsColor: $0.color(dark: scheme == .dark)) }
+        return ZStack {
+            Circle().fill(ink ?? .clear)
+            Circle().strokeBorder(ink == nil ? Color.secondary : .clear, lineWidth: 1)
+            if ink == nil { Rectangle().fill(Color.secondary).frame(width: 1, height: 14).rotationEffect(.degrees(45)) }
+        }
+        .frame(width: 16, height: 16)
+        .padding(2)
+        .overlay(Circle().strokeBorder(selection == option ? Color.accentColor : .clear, lineWidth: 2))
     }
 }

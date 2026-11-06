@@ -137,13 +137,12 @@ struct KindForm: View {
                 KindFormLine(label: L10n[.Common.wordDisplayName]) { text("label", L10n[.Common.wordDisplayName], width: 160) }
                 KindFormLine(label: L10n[.Kinds.formExtends]) {
                     let parents = ["base"] + ownCardKinds.map(\.name).filter { $0 != draft.name && $0 != entry?.name }
-                    Picker("", selection: Binding(get: { draft.string("extends") ?? "base" },
-                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "extends") } })) {
-                        ForEach(Array(Set(parents + [draft.string("extends") ?? "base"])).sorted { a, b in
-                            (parents.firstIndex(of: a) ?? .max, a) < (parents.firstIndex(of: b) ?? .max, b)
-                        }, id: \.self) { Text($0).tag($0) }
-                    }
-                    .labelsHidden().fixedSize().disabled(readOnly)
+                    ChoiceMenu(options: Array(Set(parents + [draft.string("extends") ?? "base"])).sorted { a, b in
+                                   (parents.firstIndex(of: a) ?? .max, a) < (parents.firstIndex(of: b) ?? .max, b)
+                               }.map { ($0, $0) },
+                               selection: Binding(get: { draft.string("extends") ?? "base" },
+                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "extends") } }))
+                        .fixedSize().disabled(readOnly)
                     Text(L10n[.Kinds.formExtendsHelp]).font(.app(10.5)).foregroundStyle(.secondary)
                 }
                 KindFormLine(label: L10n[.Kinds.formConnectable]) {
@@ -243,13 +242,11 @@ struct KindForm: View {
             asRowLines
             opensLine
             KindFormLine(label: L10n[.Kinds.formDoubleClick]) {
-                Picker("", selection: Binding(get: { draft.string("on_double_click") ?? "" },
-                                              set: { said in context.edit { $0.set(.string(said), at: .kind, "on_double_click") } })) {
-                    Text(L10n[.Kinds.formOpenCard]).tag("")
-                    Text(L10n[.Kinds.formEditInPlace]).tag("edit_in_place")
-                    if let other = draft.string("on_double_click"), other != "edit_in_place" { Text(other).tag(other) }
-                }
-                .labelsHidden().fixedSize().disabled(readOnly)
+                ChoiceMenu(options: [("", L10n[.Kinds.formOpenCard]), ("edit_in_place", L10n[.Kinds.formEditInPlace])]
+                               + (draft.string("on_double_click").flatMap { $0.isEmpty || $0 == "edit_in_place" ? nil : [($0, $0)] } ?? []),
+                           selection: Binding(get: { draft.string("on_double_click") ?? "" },
+                                              set: { said in context.edit { $0.set(.string(said), at: .kind, "on_double_click") } }))
+                    .fixedSize().disabled(readOnly)
             }
         }
     }
@@ -293,12 +290,11 @@ struct KindForm: View {
                 }
                 KindFormLine(label: L10n[.Kinds.formMarkdownBelow]) {
                     let texts = fields { $0 == "longtext" || $0 == "markdown" }
-                    Picker("", selection: Binding(get: { draft.string("face", "markdown") ?? "" },
-                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "face", "markdown") } })) {
-                        Text(L10n[.Common.wordNone]).tag("")
-                        ForEach(Array(Set(texts + [draft.string("face", "markdown")].compactMap { $0 })).sorted(), id: \.self) { Text($0).tag($0) }
-                    }
-                    .labelsHidden().fixedSize().disabled(readOnly)
+                    ChoiceMenu(options: [("", L10n[.Common.wordNone])]
+                                   + Array(Set(texts + [draft.string("face", "markdown")].compactMap { $0 })).filter { !$0.isEmpty }.sorted().map { ($0, $0) },
+                               selection: Binding(get: { draft.string("face", "markdown") ?? "" },
+                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "face", "markdown") } }))
+                        .fixedSize().disabled(readOnly)
                     Text(L10n[.Kinds.formMarkdownBelowHelp]).font(.app(10.5)).foregroundStyle(.secondary)
                 }
             }
@@ -609,12 +605,10 @@ struct KindForm: View {
               summary: L10n[.Kinds.formSummaryExportAs(draft.string("export", "as") ?? "none")]) {
             VStack(alignment: .leading, spacing: 6) {
                 KindFormLine(label: L10n[.Kinds.formExportAs]) {
-                    Picker("", selection: Binding(get: { draft.string("export", "as") ?? "" },
-                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "export", "as") } })) {
-                        Text(L10n[.Common.wordNone]).tag("")
-                        ForEach(["none", "comment", "annotation", "schema"], id: \.self) { Text($0).tag($0) }
-                    }
-                    .labelsHidden().fixedSize().disabled(readOnly)
+                    ChoiceMenu(options: [("", L10n[.Common.wordNone])] + ["none", "comment", "annotation", "schema"].map { ($0, $0) },
+                               selection: Binding(get: { draft.string("export", "as") ?? "" },
+                                                  set: { said in context.edit { $0.set(.string(said), at: .kind, "export", "as") } }))
+                        .fixedSize().disabled(readOnly)
                 }
                 KindFormLine(label: L10n[.Kinds.formExportKey]) {
                     CommitField("x-…", text: draft.string("export", "key") ?? "", monospaced: true) { written in
@@ -701,12 +695,11 @@ struct KindForm: View {
     private func capMenu(_ word: String, _ cap: EdgeCap, key: String) -> some View {
         HStack(spacing: 4) {
             Text(word).font(.app(11)).foregroundStyle(.secondary)
-            Picker("", selection: Binding(get: { cap }, set: { next in
-                context.edit { $0.set(.string(next.rawValue), at: .kind, "look", key) }
-            })) {
-                ForEach([EdgeCap.none, .arrow, .triangle, .openDiamond, .filledDiamond], id: \.self) { Text(Self.capWord($0)).tag($0) }
-            }
-            .labelsHidden().fixedSize().disabled(readOnly)
+            ChoiceMenu(options: [EdgeCap.none, .arrow, .triangle, .openDiamond, .filledDiamond].map { ($0, Self.capWord($0)) },
+                       selection: Binding(get: { cap }, set: { next in
+                           context.edit { $0.set(.string(next.rawValue), at: .kind, "look", key) }
+                       }))
+                .fixedSize().disabled(readOnly)
         }
     }
 
@@ -743,7 +736,7 @@ struct KindForm: View {
                     let made = OrderedObject([("kinds", OJSON.string(["*"])), ("at", .string("card"))])
                     context.edit { $0.set(.array((froms + [made]).map(OJSON.object)), at: .kind, "from") }
                 } label: { Label(L10n[.Kinds.formAddStart], systemImage: "plus") }
-                    .buttonStyle(.link).font(.app(11)).padding(.leading, 114)
+                    .buttonStyle(.borderless).font(.app(11)).padding(.leading, 114)
             }
             endBox(L10n[.Kinds.formTo], to ?? OrderedObject(), remove: nil) { changed in
                 context.edit { $0.set(.object(changed), at: .kind, "to") }

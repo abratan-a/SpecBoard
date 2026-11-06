@@ -2,6 +2,7 @@
   "tags.cardsMissing": "スキーマがありません: {listed}。このプロジェクトには {count} 件あります。find で探せます",
   "tags.cardsNeeded": "value の add か remove に、カードのパスを 1 つ以上渡してください",
   "tags.comma": "タグにカンマは使えません: {value}",
+  "tags.exclusive.twice": "{at}: 排他のタググループ {group} のタグが {count} 個付いています（1 つにします）",
   "tags.field.groupName": "グループ名",
   "tags.field.tags": "タグ",
   "tags.field.tagsOf": "{full} のタグ",

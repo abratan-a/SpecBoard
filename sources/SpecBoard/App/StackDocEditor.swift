@@ -93,32 +93,31 @@ struct StackDocEditor: View {
             if doc.versions.isEmpty {
                 Text(L10n[.Docs.versionNone]).font(.app(11.5)).foregroundStyle(.secondary)
             } else {
-                Picker("", selection: Binding(get: { open?.name ?? "" },
+                ChoiceMenu(options: doc.versions.map { ($0.name, $0.key) },
+                           selection: Binding(get: { open?.name ?? "" },
                                               set: { name in
                                                   guard name != open?.name else { return }
                                                   model.openVersion(doc.id, name)
-                                              })) {
-                    ForEach(doc.versions, id: \.name) { version in Text(version.key).tag(version.name) }
-                }
-                .labelsHidden().pickerStyle(.menu).fixedSize()
+                                              }))
+                    .fixedSize()
                 .disabled(!model.canSetLooks)
                 .help(L10n[.Docs.versionSelectHelp])
             }
             Spacer(minLength: 8)
             if editable {
-                Button { newKey = ""; adding = true } label: { BarLabel(title: L10n[.Docs.versionAdd], systemImage: "plus") }
+                Button { newKey = ""; adding = true } label: { BarLabel(title: L10n[.Docs.versionAdd], systemImage: "plus", markWhenWide: true) }
                     .help(L10n[.Docs.versionAddHelp])
                 Button { if let open { save(); model.moveVersion(doc.id, open.name, by: -1) } } label: {
-                    BarLabel(title: L10n[.Common.actionMoveUp], systemImage: "arrow.up")
+                    BarLabel(title: L10n[.Common.actionMoveUp], systemImage: "arrow.up", markWhenWide: true)
                 }
                 .disabled((openIndex ?? 0) == 0)
                 .help(L10n[.Docs.versionMoveUpHelp])
                 Button { if let open { save(); model.moveVersion(doc.id, open.name, by: 1) } } label: {
-                    BarLabel(title: L10n[.Common.actionMoveDown], systemImage: "arrow.down")
+                    BarLabel(title: L10n[.Common.actionMoveDown], systemImage: "arrow.down", markWhenWide: true)
                 }
                 .disabled(openIndex.map { $0 >= doc.versions.count - 1 } ?? true)
                 .help(L10n[.Docs.versionMoveDownHelp])
-                Button(role: .destructive) { deleting = true } label: { BarLabel(title: L10n[.Common.actionDelete], systemImage: "trash") }
+                Button(role: .destructive) { deleting = true } label: { BarLabel(title: L10n[.Common.actionDelete], systemImage: "trash", markWhenWide: true) }
                     .disabled(open == nil)
                     .help(L10n[.Docs.versionDeleteHelp])
             }

@@ -279,7 +279,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 33);
+    assert_eq!(file["version"], 34);
     // As 13 wrote it.
     file["version"] = 13.into();
     let ship = file["board"]["cards"]
@@ -332,7 +332,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
             .unwrap(),
     )
     .unwrap();
-    assert_eq!(again["version"], 33);
+    assert_eq!(again["version"], 34);
     let ship = again["board"]["cards"]
         .as_array()
         .unwrap()
@@ -614,4 +614,19 @@ fn a_goals_working_branch_is_its_work_branch() {
         "{work}"
     );
     assert!(work.get("strayFields").is_none(), "{work}");
+}
+
+#[test]
+fn the_board_guides_example_of_a_filter_is_taken_as_it_is_written() {
+    let core = Core::open(script_store()).unwrap();
+    let (failed, guide) = call(&core, "guide", json!({"about": "board"}));
+    assert!(!failed, "{guide}");
+    let start = guide
+        .find(r#"{"status": ""#)
+        .expect("the guide's example of a status");
+    let example = &guide[start..];
+    let end = example.find('}').unwrap() + 1;
+    let filter: Value = serde_json::from_str(&example[..end]).unwrap();
+    let listed = list(&core, json!({"kind": "goal", "fields": filter}));
+    assert!(listed.is_ok(), "{filter}: {listed:?}");
 }

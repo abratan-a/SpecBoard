@@ -11,11 +11,14 @@
     "freedoc": 1,
     "formatdoc": 1,
     "stackdoc": 0,
+    "spec": 0,
     "instance": 0,
     "table": 0,
     "svg": 0,
     "html": 0,
-    "frame": 0
+    "frame": 0,
+    "sketch": 0,
+    "image": 0
   },
   "tags": [
     {

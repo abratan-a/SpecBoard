@@ -2,6 +2,7 @@
   "tags.cardsMissing": "There are no such cards: {listed}. This project has {count} cards. find can search for them",
   "tags.cardsNeeded": "Give one or more card paths in value's add or remove",
   "tags.comma": "A tag cannot contain a comma: {value}",
+  "tags.exclusive.twice": "{at}: it holds {count} tags of the exclusive tag group {group} (keep one)",
   "tags.field.groupName": "Group name",
   "tags.field.tags": "Tags",
   "tags.field.tagsOf": "Tags of {full}",

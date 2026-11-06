@@ -227,22 +227,36 @@ fn refuse_stale(
         return Ok(());
     }
     let mut given: Vec<(usize, Vec<(String, String)>)> = Vec::new();
+    let mut given_meta: Vec<(usize, Vec<(super::revs::Meta, String)>)> = Vec::new();
     for (index, (tool, arguments)) in steps.iter().enumerate() {
         match super::revs::given(tool, arguments) {
             Ok(revs) if revs.is_empty() => {}
             Ok(revs) => given.push((index, revs)),
             Err(e) => return Err(failure(index, tool, &e)),
         }
+        match super::revs::given_meta(tool, arguments) {
+            Ok(revs) if revs.is_empty() => {}
+            Ok(revs) => given_meta.push((index, revs)),
+            Err(e) => return Err(failure(index, tool, &e)),
+        }
     }
-    if given.is_empty() {
+    if given.is_empty() && given_meta.is_empty() {
         return Ok(());
     }
     let seen = seen_now(tx, batch, named)?;
     let mut first: Option<usize> = None;
     let mut lines: Vec<String> = Vec::new();
-    for (index, revs) in &given {
-        for line in super::revs::stale(tx, &seen, revs) {
-            first.get_or_insert(*index);
+    let found = given
+        .iter()
+        .map(|(index, revs)| (*index, super::revs::stale(tx, &seen, revs)))
+        .chain(
+            given_meta
+                .iter()
+                .map(|(index, revs)| (*index, super::revs::stale_meta(tx, &seen, revs))),
+        );
+    for (index, said) in found {
+        for line in said {
+            first = Some(first.map_or(index, |f| f.min(index)));
             if !lines.contains(&line) {
                 lines.push(line);
             }
@@ -986,7 +1000,7 @@ fn tried(
                     let mut row = Map::new();
                     row.insert("step".into(), i.into());
                     row.insert("tool".into(), steps[i].0.clone().into());
-                    row.insert("changes".into(), strings(&result.changes[i]));
+                    row.insert("changes".into(), strings(&shortened(&result.changes[i])));
                     let said = step_warnings(result, i);
                     if !said.is_empty() {
                         row.insert("warnings".into(), strings(&said));
@@ -1213,3 +1227,17 @@ fn checked_steps(
     }
     Ok((out, reads))
 }
+
+/// A step's changes as a dry run says them: up to `SAID_CHANGES` as they are, past that the first five and
+/// how many more — a card made with its thirty fields is one line a field otherwise.
+fn shortened(changes: &[String]) -> Vec<String> {
+    if changes.len() <= SAID_CHANGES {
+        return changes.to_vec();
+    }
+    let mut out: Vec<String> = changes[..5].to_vec();
+    out.push(text!("batch.changes.more", count = changes.len() - 5));
+    out
+}
+
+/// How many of a step's changes a dry run says one by one.
+const SAID_CHANGES: usize = 8;

@@ -422,7 +422,7 @@ fn allowed_inside(defs: &Defs, parent_kind: Option<&str>, wanted: &str) -> Resul
 }
 
 /// A section made inside `parent`, last among its siblings, of its parent's kind
-/// (`create_section`, `Repository.createSection`): nothing is made directly under a root,
+/// (`create_section`): nothing is made directly under a root,
 /// whose sections are the project's (`project_tree`).
 fn create_section(
     tx: &mut Tx,
@@ -543,7 +543,7 @@ fn create_section(
 
 // MARK: - section_update
 
-/// What a call changes of a section (`Repository.SectionEdit`).
+/// What a call changes of a section.
 #[derive(Default)]
 struct Edit {
     name: Option<String>,
@@ -562,7 +562,8 @@ struct Edit {
 
 pub(crate) fn section_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Value, String> {
     let pairs = args.pairs()?;
-    each_pair(tx, scope, &pairs, |tx, scope, path, given| {
+    let before = super::update::description_keys(tx, scope)?;
+    let out = each_pair(tx, scope, &pairs, |tx, scope, path, given| {
         if given.get("type").is_some_and(|t| !t.is_string()) {
             return Err(no_section_type());
         }
@@ -612,7 +613,9 @@ pub(crate) fn section_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
         checked.shift_remove("icon");
         super::check(&checked, "section_update", "section")?;
         update_one(tx, scope, path, given)
-    })
+    })?;
+    let warnings = super::update::description_warnings(tx, scope, &before)?;
+    Ok(super::warned(out, &warnings))
 }
 
 /// One section changed as `update_section` reads the call.
@@ -814,7 +817,7 @@ fn kinds_inside(defs: &Defs, before: &[Section], id: &str, kind: &str) -> Vec<(S
     out
 }
 
-/// A section changed (`Repository.updateSection`): moved, renamed, described, put
+/// A section changed: moved, renamed, described, put
 /// elsewhere among its siblings, made its new parent's kind, its export default replaced;
 /// the paths that named it follow. Returns how many paths were rewritten.
 fn update_section(tx: &mut Tx, scope: &Scope, id: &str, edit: &Edit) -> Result<usize, String> {
@@ -1125,8 +1128,8 @@ pub(crate) fn section_delete(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
     })
 }
 
-/// Only an empty one — no cards, no sections inside — and none of the root's own
-/// (`Repository.deleteSection`): what is in a section is the project's substance. Its
+/// Only an empty one — no cards, no sections inside — and none of the root's own:
+/// what is in a section is the project's substance. Its
 /// siblings close up.
 fn delete_section(tx: &mut Tx, scope: &Scope, id: &str) -> Result<(), String> {
     let seen = Seen::in_tx(tx, scope)?;
@@ -1382,7 +1385,7 @@ pub(super) mod tests {
         let before = update(json!({"ghosts": ["Schemas:Customer"]})).unwrap_err();
         assert_eq!(
             before,
-            "value に使えないキーです: ghosts。使えるのは: name / parent / description / position / places / move / arrange / tidy / readType / exclude / folder / parsers / groups / type / figure / icon（形は guide の about: section_update）"
+            "value に使えないキーです: ghosts。使えるのは: name / parent / description / position / places / move / arrange / tidy / readType / exclude / folder / parsers / groups / type / figure / icon / rev（形は guide の about: section_update）"
         );
     }
 

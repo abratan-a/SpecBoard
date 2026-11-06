@@ -24,7 +24,8 @@ struct ConnectionsView: View {
                                        shows: { filters.shows($0, kinds: kinds) },
                                        moved: moved, settings: model.defaultSettings)
         VStack(spacing: 0) {
-            bar(joined: max((made?.columns.count ?? 1) - 1, 0))
+            bar(joined: max((made?.columns.count ?? 1) - 1, 0),
+                folded: made.map { max($0.columns.count - $0.detail.schemas.count, 0) } ?? 0)
             Divider()
             if let made {
                 // In the frame every diagram has (`DiagramFrame`); where a card is dropped is held
@@ -57,7 +58,13 @@ struct ConnectionsView: View {
         .onChange(of: depth) { DispatchQueue.main.async { controller.fit() } }
     }
 
-    private func bar(joined: Int) -> some View {
+    /// How many cards it is connected to, and — where some are drawn inside the cards that hold them,
+    /// as a value or an enum is — how many of those, so the number and the boxes drawn agree.
+    static func joinedText(joined: Int, folded: Int) -> String {
+        folded > 0 ? L10n[.Lines.barJoinedFolded(joined, folded)] : L10n[.Lines.barJoined(joined)]
+    }
+
+    private func bar(joined: Int, folded: Int) -> some View {
         HStack(spacing: 10) {
             Image(systemName: "point.3.filled.connected.trianglepath.dotted")
                 .foregroundStyle(.secondary)
@@ -67,7 +74,7 @@ struct ConnectionsView: View {
             if !card.label.isEmpty {
                 Text(card.label).font(.app(12)).foregroundStyle(.secondary).lineLimit(1)
             }
-            Text(L10n[.Lines.barJoined(joined)]).font(.app(11)).foregroundStyle(.tertiary).fixedSize()
+            Text(Self.joinedText(joined: joined, folded: folded)).font(.app(11)).foregroundStyle(.tertiary).fixedSize()
             Spacer(minLength: 8)
             Text(L10n[.Lines.barDirection]).font(.app(10.5)).foregroundStyle(.tertiary).fixedSize()
             Picker("", selection: Binding(get: { depth }, set: { model.showConnections($0) })) {

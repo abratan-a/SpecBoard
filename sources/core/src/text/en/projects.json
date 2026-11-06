@@ -40,5 +40,6 @@
   "projects.update.nameShape": "name is the new project name (a string)",
   "projects.update.nothingToChange": "There is nothing to change (name, description, layout, rules, project_tree, renames, slug)",
   "projects.update.renamesShape": "renames[{i}]: the renames of project_update take only the names of sections directly under the root ({top_section, to}) (rename kinds, fields and rows with name and renames of kind_update)",
-  "projects.update.slugShape": "slug is the new slug (a string)"
+  "projects.update.slugShape": "slug is the new slug (a string)",
+  "projects.update.treeInvalid": "The sections directly under the roots (project_tree) are not changed, as they have errors:\n{problems}"
 }

@@ -18,6 +18,7 @@
   "export.data.pathNeeded": "欄か要素のパスが要ります",
   "export.embed.flowShape": "flow の図は |flowchart か |sequence です（|{option} ではなく）",
   "export.embed.kindOption": "{kind} の図に |{option} は付きません",
+  "export.embed.noCard": "カード「{path}」がありません",
   "export.embed.noSection": "セクション「{name}」が見つかりません",
   "export.embed.notAField": "図にできるのはカードかセクションです（欄を指すのは [[…]]）",
   "export.embed.notDiagram": "{kind} は図になりません（{kind} へのリンクは [[…]]）",

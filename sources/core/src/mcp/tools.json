@@ -257,6 +257,10 @@
                 "en"
               ],
               "description": "書き出し・mermaid・flow の文書でアプリが作る文の言語。プロジェクトに 1 つ（書いた文は訳さない）"
+            },
+            "rev": {
+              "type": "string",
+              "description": "読んだときの版（変わっていれば断る）"
             }
           }
         }
@@ -271,7 +275,7 @@
         },
         "value": {
           "type": "object",
-          "description": "{name, slug, description, layout:{cardRows, cardWidth, margin, docView}, rules, project_tree, renames, exportLanguage, dryRun}"
+          "description": "{name, slug, description, layout:{cardRows, cardWidth, margin, docView}, rules, project_tree, renames, exportLanguage, dryRun, rev}"
         },
         "request": {
           "type": "boolean",
@@ -530,6 +534,10 @@
                 "type": "string"
               },
               "description": "flow だけ: ノードの via に足す値の名前（並びで入れ替え、{add, remove} で足す・外す）。null で組み込みの値だけに戻す"
+            },
+            "rev": {
+              "type": "string",
+              "description": "読んだときの版（変わっていれば断る）"
             }
           }
         }
@@ -548,7 +556,7 @@
         },
         "value": {
           "type": "object",
-          "description": "{変える定義のキー（null で消す）, name, renames, context, vias, dryRun}。書き方は guide の about: kinds"
+          "description": "{変える定義のキー（null で消す）, name, renames, context, vias, dryRun, rev}。書き方は guide の about: kinds"
         },
         "request": {
           "type": "boolean",
@@ -581,6 +589,10 @@
             "dryRun": {
               "type": "boolean",
               "description": "true で書かずに確かめる"
+            },
+            "rev": {
+              "type": "string",
+              "description": "読んだときの版（変わっていれば断る）"
             }
           }
         }
@@ -605,7 +617,7 @@
         },
         "value": {
           "type": "object",
-          "description": "{dryRun}"
+          "description": "{dryRun, rev}。rev は読んだときの版（変わっていれば断る）"
         },
         "request": {
           "type": "boolean",
@@ -1333,6 +1345,10 @@
                   "description": "#RRGGBB（null で外す）"
                 }
               }
+            },
+            "rev": {
+              "type": "string",
+              "description": "読んだときの版（変わっていれば断る）"
             }
           }
         }
@@ -1361,7 +1377,7 @@
         },
         "value": {
           "type": "object",
-          "description": "渡したキーだけ変わる: {name, parent, description, position, type, figure, icon, places:{<カードのパス>: {topLeft}}, move:{cards か region, by か to}, arrange:{by: lines（group, at）か order（cards か region, columns, at）}, tidy: true}。作業ディレクトリは {readType, exclude, parsers, folder} も"
+          "description": "渡したキーだけ変わる: {name, parent, description, position, type, figure, icon, places:{<カードのパス>: {topLeft}}, move:{cards か region, by か to}, arrange:{by: lines（group, at）か order（cards か region, columns, at）}, tidy: true, rev}。作業ディレクトリは {readType, exclude, parsers, folder} も"
         },
         "request": {
           "type": "boolean",
@@ -1407,6 +1423,10 @@
         "request": {
           "type": "boolean",
           "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+        },
+        "value": {
+          "type": "object",
+          "description": "{rev}（読んだときの版。変わっていれば断る）"
         }
       },
       "required": [
@@ -1507,6 +1527,9 @@
                 "freedoc",
                 "formatdoc",
                 "stackdoc",
+                "spec",
+                "sketch",
+                "image",
                 "instance",
                 "table",
                 "svg",
@@ -1537,6 +1560,9 @@
                   "freedoc",
                   "formatdoc",
                   "stackdoc",
+                  "spec",
+                  "sketch",
+                  "image",
                   "instance",
                   "table",
                   "svg",
@@ -1560,7 +1586,7 @@
             },
             "fields": {
               "type": "object",
-              "description": "欄の値で絞る: {欄の名前: 値}（全部が合うもの。値を並びにするとそのどれか）。例: goal の {\"status\": \"進行中\"}、task の {\"done\": false}"
+              "description": "欄の値で絞る: {欄の名前: 値}（全部が合うもの。値を並びにするとそのどれか）。例: goal の {\"status\": \"inProgress\"}、task の {\"done\": false}"
             },
             "in": {
               "type": "string",
@@ -1597,7 +1623,7 @@
                   "used_by"
                 ]
               },
-              "description": "返す項目（省略でカードが自分で持つもの。at・ref_by・used_by は名指したときだけ）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy、used_by は響く flow と言及しているノート、at は場所（マス）、actions は goal・task のアクション"
+              "description": "返す項目（省略でカードが自分で持つもの。at・ref_by・used_by は名指したときだけ。[] でパス・種類・表示名だけ）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy、used_by は響く flow と言及しているノート、at は場所（マス）、actions は goal・task のアクション"
             },
             "limit": {
               "type": "integer",
@@ -1702,7 +1728,8 @@
                 "impact",
                 "diagram",
                 "exists",
-                "picture"
+                "picture",
+                "image"
               ],
               "description": "読み方（下の形）"
             },
@@ -1924,7 +1951,7 @@
               "enum": [
                 "markdown"
               ],
-              "description": "文書（版・項目のパスならその版・項目）・note・flow（ノードまで）・表を、書き出しと同じ Markdown 1 本で返す"
+              "description": "文書（版・項目のパスならその版・項目）・note・flow（ノードまで）・表を Markdown 1 本で返す（本文の [[ ]] と図の ![[ ]] は書いたまま、表の ![[ ]] だけ表に開く）"
             },
             "lines": {
               "type": "object",
@@ -2107,6 +2134,9 @@
                 "freedoc",
                 "formatdoc",
                 "stackdoc",
+                "spec",
+                "sketch",
+                "image",
                 "instance",
                 "table",
                 "svg",
@@ -2601,7 +2631,7 @@
             },
             "face": {
               "type": "object",
-              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（[[Docs/Design:CardKinds.dataFace]]）",
+              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（キーごとの書き方は guide の about: entity）",
               "properties": {
                 "list": {
                   "type": "string",
@@ -2647,6 +2677,98 @@
                   "description": "› で開くと下に出す要素の欄"
                 }
               }
+            },
+            "as": {
+              "type": "string",
+              "description": "spec のねらいの As（誰の話か。500 字まで）"
+            },
+            "iWant": {
+              "type": "string",
+              "description": "spec のねらいの I want（何をしたいか）"
+            },
+            "soThat": {
+              "type": "string",
+              "description": "spec のねらいの So that（なぜか）"
+            },
+            "about": {
+              "type": "string",
+              "description": "spec のねらいのあとの本文（Markdown）"
+            },
+            "scenarios": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Scenario の名前（パスに使う。例 addRemove）"
+                  },
+                  "heading": {
+                    "type": "string",
+                    "description": "題（200 字まで）"
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "given": {
+                          "type": "string"
+                        },
+                        "when": {
+                          "type": "string"
+                        },
+                        "then": {
+                          "type": "string"
+                        },
+                        "and": {
+                          "type": "string"
+                        },
+                        "but": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "段の並び。1 つの段は given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "段のあとの本文（Markdown）"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "description": "spec の Scenario（丸ごと置き換え）。1 つだけなら target を Scenario のパス（Docs:Lines.addRemove）にする"
+            },
+            "shape": {
+              "type": "string",
+              "description": "sketch の形: rect・rounded・ellipse・diamond・cylinder・text（既定は rounded）"
+            },
+            "text": {
+              "type": "string",
+              "description": "sketch の字（Markdown）"
+            },
+            "fill": {
+              "type": "string",
+              "description": "sketch の塗り: blue・green・amber・red・violet・grey・none（既定は blue）"
+            },
+            "stroke": {
+              "type": "string",
+              "description": "sketch の縁: blue・green・amber・red・violet・grey（既定は blue）"
+            },
+            "imageData": {
+              "type": "string",
+              "description": "image の中身（PNG・JPEG・GIF。5MB まで）の base64。imageFrom とどちらか"
+            },
+            "imageFrom": {
+              "type": "object",
+              "description": "image の中身を、登録した作業ディレクトリ（directory）の中のファイル（path）から読む。imageData とどちらか"
+            },
+            "alt": {
+              "type": "string",
+              "description": "image が何の絵か"
             }
           }
         }
@@ -3195,6 +3317,54 @@
             "do"
           ]
         }
+      },
+      {
+        "label": "scenario",
+        "spec": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "type": "string",
+              "description": "題（200 字まで）"
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "given": {
+                    "type": "string"
+                  },
+                  "when": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "type": "string"
+                  },
+                  "and": {
+                    "type": "string"
+                  },
+                  "but": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "段の並び（丸ごと置き換え）。1 つの段は given・when・then・and・but のどれか 1 つのキーと字"
+            },
+            "note": {
+              "type": "string",
+              "description": "段のあとの本文（Markdown）"
+            },
+            "before": {
+              "type": "string",
+              "description": "この名前の Scenario の前へ動かす"
+            },
+            "after": {
+              "type": "string",
+              "description": "この名前の Scenario の後ろへ動かす"
+            }
+          }
+        }
       }
     ],
     "inputSchema": {
@@ -3220,7 +3390,7 @@
         },
         "value": {
           "type": "object",
-          "description": "target ごとに。カード（Docs:Spec）: {kind, label, description, tags, metadata, connections:[{line, from, to, at, description, fields}], topLeft} と種類のキー（entity・value: fields・rules、enum: values、instance: of・data、table: of・where・columns、note・freedoc・svg・html・goal・task: body、formatdoc: rows、stackdoc: versions、ghost: target。guide の about: <種類>）。フィールド（Core:User.email）: {type, required, label, …}。formatdoc の行: {kind, heading, body, rows, cells, …}。版: {key, heading, body}。ノード: {kind, label, …}。enum の値（Schemas:Status.cancelled）: {label, description, position}。process の手（Charts:Pay.save.steps[1]。そこに入り、後ろの手と線は 1 つずれる）: {do, description, …}。target を省くと、value をパスごとにしていくつも作る"
+          "description": "target ごとに。カード（Docs:Spec）: {kind, label, description, tags, metadata, connections:[{line, from, to, at, description, fields}], topLeft} と種類のキー（entity・value: fields・rules、enum: values、instance: of・data、table: of・where・columns、note・freedoc・svg・html・goal・task: body、formatdoc: rows、stackdoc: versions、spec: as・iWant・soThat・about・scenarios、ghost: target。guide の about: <種類>）。フィールド（Core:User.email）: {type, required, label, …}。formatdoc の行: {kind, heading, body, rows, cells, …}。版: {key, heading, body}。ノード: {kind, label, …}。enum の値（Schemas:Status.cancelled）: {label, description, position}。process の手（Charts:Pay.save.steps[1]。そこに入り、後ろの手と線は 1 つずれる）: {do, description, …}。target を省くと、value をパスごとにしていくつも作る"
         },
         "request": {
           "type": "boolean",
@@ -3264,6 +3434,9 @@
                 "freedoc",
                 "formatdoc",
                 "stackdoc",
+                "spec",
+                "sketch",
+                "image",
                 "instance",
                 "table",
                 "svg",
@@ -3364,7 +3537,7 @@
             },
             "connections": {
               "type": "object",
-              "description": "カードの線を足す・外す: add に足す線、remove に外す線（書いたキーの合う 1 本）。remove が先",
+              "description": "カードの線を足す・外す・その場で変える: add に足す線、remove に外す線（書いたキーの合う 1 本）、change に変える線（remove と同じ選び方と set）。remove、change、add の順",
               "properties": {
                 "add": {
                   "type": "array",
@@ -3440,6 +3613,62 @@
                     }
                   },
                   "description": "外す線（書いたキーが合う 1 本）"
+                },
+                "change": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "line": {
+                        "type": "string",
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "from": {
+                        "type": "string",
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "to": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "at": {
+                        "type": "string",
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "fields": {
+                        "type": "object",
+                        "description": "remove と同じ（選ぶ鍵）"
+                      },
+                      "set": {
+                        "type": "object",
+                        "description": "変える中身: description と fields だけ",
+                        "properties": {
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "新しい説明（空か null で外す）"
+                          },
+                          "fields": {
+                            "type": "object",
+                            "description": "変える線の欄（書いた欄だけを変え、null で外す）"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "set"
+                    ]
+                  },
+                  "description": "その場で変える線（書いたキーが合う 1 本。並びの場所と線の id はそのまま）"
                 }
               }
             },
@@ -3821,7 +4050,7 @@
                 "object",
                 "null"
               ],
-              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（[[Docs/Design:CardKinds.dataFace]]）",
+              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（キーごとの書き方は guide の about: entity）",
               "properties": {
                 "list": {
                   "type": "string",
@@ -3867,6 +4096,98 @@
                   "description": "› で開くと下に出す要素の欄"
                 }
               }
+            },
+            "as": {
+              "type": "string",
+              "description": "spec のねらいの As（誰の話か。500 字まで）"
+            },
+            "iWant": {
+              "type": "string",
+              "description": "spec のねらいの I want（何をしたいか）"
+            },
+            "soThat": {
+              "type": "string",
+              "description": "spec のねらいの So that（なぜか）"
+            },
+            "about": {
+              "type": "string",
+              "description": "spec のねらいのあとの本文（Markdown）"
+            },
+            "scenarios": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Scenario の名前（パスに使う。例 addRemove）"
+                  },
+                  "heading": {
+                    "type": "string",
+                    "description": "題（200 字まで）"
+                  },
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "given": {
+                          "type": "string"
+                        },
+                        "when": {
+                          "type": "string"
+                        },
+                        "then": {
+                          "type": "string"
+                        },
+                        "and": {
+                          "type": "string"
+                        },
+                        "but": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "段の並び。1 つの段は given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "段のあとの本文（Markdown）"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "description": "spec の Scenario（丸ごと置き換え）。1 つだけなら target を Scenario のパス（Docs:Lines.addRemove）にする"
+            },
+            "shape": {
+              "type": "string",
+              "description": "sketch の形: rect・rounded・ellipse・diamond・cylinder・text（既定は rounded）"
+            },
+            "text": {
+              "type": "string",
+              "description": "sketch の字（Markdown）"
+            },
+            "fill": {
+              "type": "string",
+              "description": "sketch の塗り: blue・green・amber・red・violet・grey・none（既定は blue）"
+            },
+            "stroke": {
+              "type": "string",
+              "description": "sketch の縁: blue・green・amber・red・violet・grey（既定は blue）"
+            },
+            "imageData": {
+              "type": "string",
+              "description": "image の中身（PNG・JPEG・GIF。5MB まで）の base64。imageFrom とどちらか"
+            },
+            "imageFrom": {
+              "type": "object",
+              "description": "image の中身を、登録した作業ディレクトリ（directory）の中のファイル（path）から読む。imageData とどちらか"
+            },
+            "alt": {
+              "type": "string",
+              "description": "image が何の絵か"
             }
           }
         }
@@ -4305,6 +4626,14 @@
                   "description": "頭に足す行（間に改行を入れる）"
                 }
               }
+            },
+            "before": {
+              "type": "string",
+              "description": "この名前の版の前へ動かす（並びの上が新しい）"
+            },
+            "after": {
+              "type": "string",
+              "description": "この名前の版の後ろへ動かす"
             }
           }
         }
@@ -4753,6 +5082,58 @@
             }
           }
         }
+      },
+      {
+        "label": "scenario",
+        "spec": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "新しい名前（Scenario から出る線のパスも付いて行く）"
+            },
+            "heading": {
+              "type": "string",
+              "description": "題（200 字まで）"
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "given": {
+                    "type": "string"
+                  },
+                  "when": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "type": "string"
+                  },
+                  "and": {
+                    "type": "string"
+                  },
+                  "but": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "段の並び（丸ごと置き換え）。1 つの段は given・when・then・and・but のどれか 1 つのキーと字"
+            },
+            "note": {
+              "type": "string",
+              "description": "段のあとの本文（Markdown）"
+            },
+            "before": {
+              "type": "string",
+              "description": "この名前の Scenario の前へ動かす"
+            },
+            "after": {
+              "type": "string",
+              "description": "この名前の Scenario の後ろへ動かす"
+            }
+          }
+        }
       }
     ],
     "inputSchema": {
@@ -4855,7 +5236,7 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "{from（カードかセクションのパス）, to（書き出し先の中のファイル。/ で終わればフォルダで、文書・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。文書（freedoc・formatdoc・stackdoc）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）}"
+                "description": "{from（カードかセクションのパス）, to（書き出し先の中のファイル。/ で終わればフォルダで、文書・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。文書（freedoc・formatdoc・stackdoc・spec）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）}"
               },
               "description": "何をどこへ。{from, to, format, kinds}"
             },
@@ -5615,7 +5996,7 @@
             },
             "take": {
               "type": "object",
-              "description": "衝突ごとの選び。{\"<パス>\": {\"<単位>\": \"source\" | \"target\"}}（branch_read の against が返す一覧のとおり）"
+              "description": "衝突ごとの選び。{\"<パス>\": {\"<単位>\": \"source\" | \"into\"}}（branch_read の against が返す一覧のとおり。target は使えない）"
             },
             "places": {
               "type": "boolean",
@@ -5650,7 +6031,7 @@
         },
         "value": {
           "type": "object",
-          "description": "target が入れる元。{into（省くと main）, take:{<パス>: {<単位>: \"source\"|\"target\"}}（衝突の選び）, places: true（位置も入れる）, keep: true（branch を残す）, title, description（ロック中の main への MR）}"
+          "description": "target が入れる元。{into（省くと main）, take:{<パス>: {<単位>: \"source\"|\"into\"}}（衝突の選び。merge 元を取るのが source、merge 先を取るのが into）, places: true（位置も入れる）, keep: true（branch を残す）, title, description（ロック中の main への MR）}"
         },
         "request": {
           "type": "boolean",
@@ -5939,6 +6320,14 @@
             "window": {
               "type": "string",
               "description": "窓（op: windows の window。省くと一番前の窓）"
+            },
+            "view": {
+              "type": "string",
+              "enum": [
+                "map",
+                "sequence"
+              ],
+              "description": "アクターのセクションを開くとき、map（マップ）か sequence（シーケンス）か。省けばこの Mac で最後に選んだ方。答えの view にどちらで開いたかが出る"
             }
           }
         }

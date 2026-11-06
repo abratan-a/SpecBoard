@@ -1,6 +1,5 @@
 //! A card changed as a whole (`update_schema`, `set_enum_values`, `move_schemas`,
-//! `delete_schema`; `Repository.updateSchema`, `moveSchemas` and `deleteSchema` in the
-//! Swift app), in the kinds' form: what the value says is read from MCP's shape over the
+//! `delete_schema`), in the kinds' form: what the value says is read from MCP's shape over the
 //! document as it is, checked by the kind's definition and written whole; the paths that
 //! named what moved are written again, and what that leaves broken is said.
 
@@ -129,8 +128,8 @@ fn holders(key: &str) -> String {
 
 // MARK: - Paths that stop resolving
 
-/// Every declared path that does not resolve, by the card that holds it and its place
-/// (`Repository.broken`): the name of what moved is not the same before and after.
+/// Every declared path that does not resolve, by the card that holds it and its place: the
+/// name of what moved is not the same before and after.
 pub(crate) fn broken(project: &Project) -> Vec<(String, DeclaredPath)> {
     project
         .detail
@@ -226,7 +225,7 @@ pub(crate) fn is_broken_warning(warning: &str) -> bool {
         || crate::text::is_said("update.broken.byMove", warning)
 }
 
-/// How a path a card declares is said not to resolve (`Repository.unresolved`).
+/// How a path a card declares is said not to resolve.
 pub(crate) fn unresolved(bare: &DeclaredPath, named: &DeclaredPath) -> String {
     text!(
         "update.unresolved",
@@ -262,6 +261,31 @@ pub(crate) fn path_warnings(
                 .collect()
         })
         .unwrap_or_default())
+}
+
+/// The paths the sections' descriptions and the project's say that do not resolve now, by where,
+/// what and the path: what a write is not to say again.
+pub(crate) fn description_keys(tx: &Tx, scope: &Scope) -> Result<HashSet<String>, String> {
+    let now = Seen::in_tx(tx, scope)?;
+    Ok(super::check::description_problems(&now.project())
+        .iter()
+        .map(|d| format!("{}|{}|{}", d.at, d.via, d.path))
+        .collect())
+}
+
+/// The paths the sections' descriptions and the project's say that do not resolve now and did not
+/// before: each said as a card's own are.
+pub(crate) fn description_warnings(
+    tx: &Tx,
+    scope: &Scope,
+    before: &HashSet<String>,
+) -> Result<Vec<String>, String> {
+    let now = Seen::in_tx(tx, scope)?;
+    Ok(super::check::description_problems(&now.project())
+        .iter()
+        .filter(|d| !before.contains(&format!("{}|{}|{}", d.at, d.via, d.path)))
+        .map(|d| unresolved(d, d))
+        .collect())
 }
 
 /// A path a card declares that does not resolve, told apart from the others: the card,
@@ -446,7 +470,7 @@ pub(crate) fn flow_wrong(project: &crate::export::Project, id: &str) -> Option<S
 }
 
 /// A change to a card's document by what MCP writes: the kind's keys of `value`, a new
-/// name or kind, and where its rows or nodes moved to (`Repository.updateSchema`).
+/// name or kind, and where its rows or nodes moved to.
 /// Returns what was said.
 pub(crate) fn edit_card(
     tx: &mut Tx,
@@ -632,20 +656,23 @@ pub(crate) fn edit_card(
             continue;
         }
         if def.field(key).is_none() && def.row(key).is_none() {
-            if empty(given) {
+            let held = holders(key);
+            // Empty, a key another kind holds is let go of (a kind changed under it); one no kind holds
+            // is a word written wrong, said as any other.
+            if empty(given) && !held.is_empty() {
                 continue;
             }
             // A goal's field by its name of before, one the board's kinds no longer have.
             if let Some(before) = crate::kinds::board_key_before(&next_kind, key) {
                 return Err(before);
             }
-            if !def.builtin {
+            if !def.builtin || held.is_empty() {
                 return Err(own_kind_lacks(def, key, &card.name));
             }
             return Err(text!(
                 "update.error.keyOnlyOn",
                 key,
-                holders = holders(key),
+                holders = held,
                 card = card.name,
                 kind = next_kind
             ));
@@ -815,8 +842,17 @@ pub(crate) fn edit_card(
         }
     }
 
-    // What it holds that the new kind cannot show would be seen nowhere.
+    // What it holds that the new kind cannot show would be seen nowhere — unless this write empties
+    // it (a formatdoc made a spec in one write: `rows: []` with the spec's scenarios).
     if reworked {
+        if let Some(rows) = doc.get_mut("rows").and_then(Value::as_object_mut) {
+            rows.retain(|key, _| {
+                !value
+                    .get(key.as_str())
+                    .and_then(Value::as_array)
+                    .is_some_and(Vec::is_empty)
+            });
+        }
         let mut stranded: Vec<String> = Vec::new();
         for (part, holds) in [("fields", false), ("rows", true)] {
             for key in doc
@@ -1185,7 +1221,7 @@ fn set_size(
     })
 }
 
-/// How a formatdoc is drawn, or none for the project's default (`setDocView`).
+/// How a formatdoc or a spec is drawn, or none for the project's default (`setDocView`).
 fn set_doc_view(
     tx: &mut Tx,
     scope: &Scope,
@@ -1193,7 +1229,7 @@ fn set_doc_view(
     kind: &str,
     raw: &Value,
 ) -> Result<(), String> {
-    if kind != "formatdoc" {
+    if kind != "formatdoc" && kind != "spec" {
         return Err(text!("update.error.docViewKind", kind));
     }
     match raw {
@@ -1419,6 +1455,11 @@ pub(crate) fn place_unplaced(tx: &mut Tx, scope: &Scope) -> Result<(), String> {
         let mut out = Vec::new();
         for section in sections {
             let boxes = super::grid::own_boxes(&project, &layout, &section);
+            // A whiteboard's: along their arrows, right of what is there.
+            if project.section_kind(&section) == Some(super::grid::WHITEBOARD) {
+                out.extend(super::grid::along_arrows(&project, &boxes, layout.margin));
+                continue;
+            }
             // What is drawn takes room; a value object or an enum folded into the cards
             // holding it is given a spot, but takes none.
             let mut taken: Vec<(i64, i64, i64, i64)> = boxes

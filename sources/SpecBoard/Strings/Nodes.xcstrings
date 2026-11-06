@@ -836,13 +836,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add a partner flow (e.g. Payments:Charge)"
+            "value" : "Add a partner (e.g. Shop:Pay)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "相手の flow を足す（例: Payments:Charge）"
+            "value" : "相手を足す（例: Shop:Pay）"
           }
         }
       }
@@ -854,13 +854,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add a path (e.g. Core:Order.total)"
+            "value" : "Add a path (e.g. Order.id)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "パスを足す（例: Core:Order.total）"
+            "value" : "パスを足す（例: Order.id）"
           }
         }
       }

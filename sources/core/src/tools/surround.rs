@@ -239,12 +239,19 @@ impl<'p> Map<'p> {
         })
     }
 
-    /// The project's lines the map draws: put on it, about the section, and not among a field's
-    /// lines that fan out wide.
+    /// The project's lines the map draws: of a kind drawn from the start (one hidden at first is
+    /// drawn only when switched on, which is the screen's), put on it, about the section, and not
+    /// among a field's lines that fan out wide.
     fn drawn_lines(&self, lines: &Lines) -> Vec<Placed> {
         let placed: Vec<Placed> = lines
             .of(self.project)
             .iter()
+            .filter(|relation| {
+                relation["line"]
+                    .as_str()
+                    .and_then(|kind| self.project.defs.line(kind))
+                    .is_none_or(|def| def.visible)
+            })
             .filter_map(|relation| self.place(relation))
             .collect();
         let mut fans: HashMap<(String, String), usize> = HashMap::new();

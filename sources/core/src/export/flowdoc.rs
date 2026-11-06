@@ -60,6 +60,8 @@ fn step_cells(index: usize, step: &Step) -> Vec<String> {
             }
             said
         }
+        // A row that passes nothing to anyone says no one it deals with.
+        "compute" => String::new(),
         _ => other(&step.peers, step.program.as_deref(), start_partner),
     };
     let mut about = Vec::new();

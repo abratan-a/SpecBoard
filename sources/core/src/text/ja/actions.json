@@ -26,9 +26,11 @@
   "actions.why.done": "もう済んでいます",
   "actions.why.noReview": "見直しの印がありません（線でつないだ先は部品を最後に直したあとで変わっておらず、実装の線の先のコードも変わっていないか覚えてあります）",
   "actions.why.notMerged": "workBranch の branch {name} に main へ入っていない変更が {changes} 件あります。branch_merge で main へ入れてから終えます",
+  "actions.why.notMerged.screen": "workBranch の branch {name} に main へ入っていない変更が {changes} 件あります。branch を main へ merge してから終えます",
   "actions.why.onlyBroken": "実装の線の先がコードにありません（{count} 本）。覚え直すものはありません。今の名前へ引き直すか、線を外してください",
   "actions.why.requestOpen": "workBranch の branch {name} の MR #{number} が出ています。承認されて main に入ってから終えます",
   "actions.why.requestOpenCancel": "workBranch の branch {name} の MR #{number} が出ています。mr_delete で取り下げてから打ち切ります",
+  "actions.why.requestOpenCancel.screen": "workBranch の branch {name} の MR #{number} が出ています。MR を取り下げてから打ち切ります",
   "actions.why.status": "状態が{status}なので{label}は使えません",
   "actions.why.unknown": "{op} というアクションはありません",
   "actions.why.working": "workBranch の branch {name} で作業中です（進行中）"

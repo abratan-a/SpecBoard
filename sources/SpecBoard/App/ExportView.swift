@@ -147,13 +147,10 @@ struct ExportView: View {
 
     private var treePicker: some View {
         HStack(spacing: 4) {
-            Text(L10n[.Export.treeLabel]).font(.app(11)).foregroundStyle(.secondary)
-            Picker("", selection: Binding(get: { Self.writeTree(chosenTree, of: model) }, set: { chosenTree = $0 })) {
-                ForEach(Self.writeTrees(of: model), id: \.self) { tree in
-                    Text(tree.isEmpty ? SchemaDirectory.mainWord : tree).tag(tree)
-                }
-            }
-            .labelsHidden().pickerStyle(.menu).fixedSize()
+            Text(L10n[.Export.treeLabel]).font(.app(11)).foregroundStyle(.secondary).lineLimit(1).fixedSize()
+            ChoiceMenu(options: Self.writeTrees(of: model).map { ($0, $0.isEmpty ? SchemaDirectory.mainWord : $0) },
+                       selection: Binding(get: { Self.writeTree(chosenTree, of: model) }, set: { chosenTree = $0 }))
+                .fixedSize()
         }
         .help(L10n[.Export.treeHelp])
     }
@@ -226,7 +223,8 @@ struct ExportView: View {
             section(L10n[.Export.sectionEntries]) {
                 ForEach(export.entries, id: \.self) { entry in entryRow(export, entry, detail) }
                 if editable {
-                    Button(L10n[.Export.entryAdd]) { adding = export.name }.controlSize(.small)
+                    Button { adding = export.name } label: { Label(L10n[.Export.entryAdd], systemImage: "plus") }
+                        .buttonStyle(.borderless)
                 }
             }
             if !export.exclude.isEmpty || editable {
@@ -280,6 +278,18 @@ struct ExportView: View {
     }
 
     private func entryRow(_ export: ExportRead, _ entry: ExportRead.Entry, _ detail: ProjectDetail) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            entryLine(export, entry, detail)
+            // What it leaves out, and why: a row that writes no card says so where it is listed.
+            ForEach(entry.unwritten, id: \.self) { line in
+                Text(line).font(.app(10.5)).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 12)
+            }
+        }
+    }
+
+    private func entryLine(_ export: ExportRead, _ entry: ExportRead.Entry, _ detail: ProjectDetail) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 6) {
             pathLink(entry.from, detail)
             Text("→").foregroundStyle(.tertiary)
@@ -426,40 +436,44 @@ private struct EntrySheet: View {
     var export: String
     var done: () -> Void
 
-    @State private var from = ""
-    @State private var to = ""
-    @State private var format = ""
-    @State private var kinds = ""
-    @State private var problem: String?
+    @State private var draft = ExportEntryDraft()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(L10n[.Export.entryTitle(export)]).font(.app(14, weight: .semibold))
-            TextField(L10n[.Export.entryFromPlaceholder], text: $from)
+            TextField(L10n[.Export.entryFromPlaceholder], text: $draft.from)
                 .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced))
-            TextField(L10n[.Export.entryToPlaceholder], text: $to)
+            TextField(L10n[.Export.entryToPlaceholder], text: $draft.to)
                 .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced))
-            Picker(L10n[.Export.entryFormat], selection: $format) {
+            Picker(L10n[.Export.entryFormat], selection: $draft.format) {
                 Text(L10n[.Export.entryFormatFromExtension]).tag("")
                 ForEach(ExportWords.codeFormats, id: \.self) { Text(ExportWords.formatLabel($0)).tag($0) }
             }
-            TextField(L10n[.Export.entryKindsPlaceholder], text: $kinds)
+            TextField(L10n[.Export.entryKindsPlaceholder], text: $draft.kinds)
                 .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced))
-            if let problem { Text(problem).font(.app(11)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
+            if let problem = draft.problem { Text(problem).font(.app(11)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
             HStack {
                 Spacer()
-                Button(L10n[.Common.actionCancel], role: .cancel, action: done).keyboardShortcut(.cancelAction)
+                Button(draft.added ? L10n[.Common.actionClose] : L10n[.Common.actionCancel], role: .cancel, action: done)
+                    .keyboardShortcut(.cancelAction)
                 Button(L10n[.Common.actionAdd]) {
-                    var entry: [String: Any] = ["from": from.trimmingCharacters(in: .whitespaces),
-                                                "to": to.trimmingCharacters(in: .whitespaces)]
-                    if !format.isEmpty { entry["format"] = format }
-                    let named = kinds.split(whereSeparator: { $0 == "," || $0 == "、" || $0 == " " })
+                    var entry: [String: Any] = ["from": draft.from.trimmingCharacters(in: .whitespaces),
+                                                "to": draft.to.trimmingCharacters(in: .whitespaces)]
+                    if !draft.format.isEmpty { entry["format"] = draft.format }
+                    let named = draft.kinds.split(whereSeparator: { $0 == "," || $0 == "、" || $0 == " " })
                         .map { String($0) }.filter { !$0.isEmpty }
                     if !named.isEmpty { entry["kinds"] = named }
-                    if let said = model.updateExport(export, ["entries": ["add": [entry]]]) { problem = said } else { done() }
+                    if let said = model.updateExport(export, ["entries": ["add": [entry]]]) {
+                        draft.problem = said
+                    } else if !model.exportWarnings.isEmpty {
+                        draft.problem = model.exportWarnings.joined(separator: "\n")
+                        draft.added = true
+                    } else {
+                        done()
+                    }
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(from.isEmpty || to.isEmpty)
+                .disabled(draft.from.isEmpty || draft.to.isEmpty || draft.added)
             }
         }
         .padding(20).frame(width: 520)

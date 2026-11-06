@@ -4,27 +4,34 @@ import SwiftUI
 /// The tab bar (`specboard://SpecBoard/Docs/Design:UI` §4): under the top bar and the banners, across the
 /// middle and the property panel. First the map tab — the section open, drawn as its map, never closed
 /// (the nav panel changes what it shows) — then a tab for each thing opened (`AppModel.tabs`): a card's
-/// editor, a card's connections map, the project's settings, the inspection, a tree's dashboard. Pressed,
-/// a tab comes forward; its × (⌘W for the one in front) closes it.
+/// editor, a card's connections map, the project's settings, the inspection, a tree's dashboard, and the map
+/// tabs opened more from a map tab's right-click or a section's row. Pressed, a tab comes forward; its × (⌘W
+/// for the one in front) closes it.
 ///
 /// Where the tabs do not fit, they shrink from what they say to a least width — a card's badge goes
 /// first, then the name is cut at its end — the map tab and the one in front keeping theirs; what does
-/// not fit even so is listed under 「» N」 at the right end, with 「ほかのタブを閉じる」.
+/// not fit even so is listed under 「» N」 at the right end, with 「ほかのタブを閉じる」. A tab closed by its ×
+/// leaves the tabs after it as wide as it was, the next × under the pointer, until the pointer leaves there.
 struct TabBar: View {
     var model: AppModel
 
     @State private var width: CGFloat = 0
     @State private var moreOpen = false
+    /// The bar as the last × left it (`TabBarLayout.Held`), with the tabs it left: the tabs changed any
+    /// other way (⌘W, a card opened), the hold goes.
+    @State private var held: (layout: TabBarLayout.Held, tabs: [AppModel.Place])?
 
     var body: some View {
         let items = TabItem.all(model)
         let front = model.activeTab.map { $0 + 1 } ?? 0
         let natural = items.map(\.natural)
-        let laid = TabBarLayout.lay(natural: natural, front: front, room: width,
-                                    least: TabBarLayout.least, more: TabBarLayout.more)
+        let holding = held.flatMap { $0.tabs == model.tabs && $0.layout.at < items.count ? $0.layout : nil }
+        let laid = holding?.lay(count: items.count, room: width, more: TabBarLayout.more)
+            ?? TabBarLayout.lay(natural: natural, front: front, room: width,
+                                least: TabBarLayout.least, more: TabBarLayout.more)
         HStack(spacing: 0) {
             ForEach(items.indices.filter { !laid.hidden.contains($0) }, id: \.self) { at in
-                tab(items[at], width: laid.widths[at], front: at == front)
+                tab(items[at], at: at, laid: laid.widths, front: at == front)
             }
             Spacer(minLength: 0)
             if !laid.hidden.isEmpty {
@@ -41,10 +48,12 @@ struct TabBar: View {
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
 
-    /// One tab, `width` wide: pressed it comes forward, its × closes it.
-    private func tab(_ item: TabItem, width: CGFloat, front: Bool) -> some View {
-        ZStack(alignment: .trailing) {
-            Button { model.open(item.place) } label: {
+    /// One tab, as `laid` has it at `at`: pressed it comes forward, its × closes it and holds the bar so the
+    /// next × comes under the pointer, until the pointer leaves the tab there.
+    private func tab(_ item: TabItem, at: Int, laid: [CGFloat], front: Bool) -> some View {
+        let width = laid[at]
+        return ZStack(alignment: .trailing) {
+            Button { if item.index == nil { model.showFirstMapTab() } else { model.open(item.place) } } label: {
                 HStack(spacing: 0) {
                     if let symbol = item.symbol {
                         Image(systemName: symbol).font(.app(11))
@@ -71,7 +80,11 @@ struct TabBar: View {
             .buttonStyle(.plain)
             .help(item.help)
             if let index = item.index {
-                Button { model.closeTab(index) } label: {
+                Button {
+                    let holding = TabBarLayout.Held(closing: at, laid: laid)
+                    model.closeTab(index)
+                    held = holding.map { ($0, model.tabs) }
+                } label: {
                     Image(systemName: "xmark").font(.app(8.5, weight: .semibold))
                         .frame(width: TabItem.closeWidth, height: TabItem.closeWidth)
                         .contentShape(Rectangle())
@@ -83,12 +96,30 @@ struct TabBar: View {
             }
         }
         .frame(width: width, height: TabBarLayout.height)
+        .contextMenu { mapMenu(item) }
         .background(front ? Color.primary.opacity(0.07) : .clear)
         .overlay(alignment: .top) {
             if front { Rectangle().fill(Color.accentColor).frame(height: 2) }
         }
         .overlay(alignment: .trailing) {
             Rectangle().fill(Color(nsColor: .separatorColor)).frame(width: 1, height: 14)
+        }
+        .onHover { inside in
+            // Out of the tab the closed one left, or onto another: the bar as the names say.
+            if let held, inside ? at != held.layout.at : at == held.layout.at { self.held = nil }
+        }
+    }
+
+    /// A map tab's own: another map tab of its section, as a new one or looked at as it is, right of it.
+    @ViewBuilder
+    private func mapMenu(_ item: TabItem) -> some View {
+        let section: String? = switch item.place {
+        case .section(let id), .map(_, let id): id
+        default: nil
+        }
+        if let section {
+            Button(L10n[.Sections.tabNewMapTab]) { model.openNewMapTab(section, rightOf: item.index) }
+            Button(L10n[.Sections.tabDuplicateMapTab]) { model.duplicateMapTab(item.index) }
         }
     }
 
@@ -193,13 +224,11 @@ struct TabItem: Identifiable {
         .app(12, weight: front ? .semibold : .regular, design: mono ? .monospaced : .default)
     }
 
-    /// As wide as it is with all of it said (the name as it is in front, the wider way).
+    /// As wide as it is with all of it said (the name the wider way it is drawn, `nameWidth`).
     @MainActor
     var natural: CGFloat {
         let scale = Typography.shared.scale
-        let size = 12 * scale
-        let nameFont = mono ? Typeface.mono(size, .semibold) : Typeface.system(size, .semibold)
-        var name = Self.measure(self.name, nameFont)
+        var name = Self.nameWidth(self.name, mono: mono, size: 12 * scale)
         if index == nil { name = min(name, Self.mapNameMost * scale) }
         var lead: CGFloat = 0
         if symbol != nil { lead = Self.symbolWidth + Self.symbolGap }
@@ -208,6 +237,14 @@ struct TabItem: Identifiable {
         }
         let close = closes ? Self.closeGap + Self.closeWidth : 0
         return ceil(2 * Self.padding + lead + name + close)
+    }
+
+    /// A name's width in the wider of the two ways a tab draws it, behind and in front. Semibold is not always the
+    /// wider: a font takes the fonts it draws kana and kanji with from the languages when it first needs them, so
+    /// after the screen's language is switched the regular weight may still draw them wider.
+    static func nameWidth(_ name: String, mono: Bool, size: CGFloat) -> CGFloat {
+        let font = { (weight: NSFont.Weight) in mono ? Typeface.mono(size, weight) : Typeface.system(size, weight) }
+        return max(measure(name, font(.regular)), measure(name, font(.semibold)))
     }
 
     private static func measure(_ text: String, _ font: NSFont) -> CGFloat {
@@ -220,20 +257,29 @@ struct TabItem: Identifiable {
         guard let detail = model.detail else { return [] }
         let directory = detail.directory
         let key = model.mapSectionKey
-        let section = directory.section(id: key)
-        let mark = section.map(detail.mark(of:)) ?? SectionMark()
-        let map = TabItem(index: nil, place: .section(key), symbol: mark.symbol,
-                          tint: mark.color.flatMap(HexColor.color(hex:)), name: section?.name ?? "",
-                          help: directory.full(section: key))
+        let map = mapItem(nil, .section(key), key, detail)
         return [map] + model.tabs.enumerated().map { at, place in
             item(at, place, model, directory)
         }
+    }
+
+    /// A map tab: its section's mark and name, the first's without a ×.
+    @MainActor
+    private static func mapItem(_ at: Int?, _ place: AppModel.Place, _ key: String, _ detail: ProjectDetail) -> TabItem {
+        let directory = detail.directory
+        let section = directory.section(id: key)
+        let mark = section.map(detail.mark(of:)) ?? SectionMark()
+        return TabItem(index: at, place: place, symbol: mark.symbol, tint: mark.color.flatMap(HexColor.color(hex:)),
+                       name: section?.name ?? "", help: directory.full(section: key))
     }
 
     @MainActor
     private static func item(_ at: Int, _ place: AppModel.Place, _ model: AppModel,
                              _ directory: SchemaDirectory) -> TabItem {
         switch place {
+        case .map(_, let id):
+            guard let detail = model.detail else { return TabItem(index: at, place: place, name: "", help: "") }
+            return mapItem(at, place, id, detail)
         case .card(let id):
             let card = model.schema(id)
             let path = card.map { directory.full($0) } ?? ""
@@ -269,6 +315,41 @@ enum TabBarLayout {
     @MainActor static var least: CGFloat { 104 * Typography.shared.scale }
     /// The room 「» N」 takes at the right end.
     @MainActor static var more: CGFloat { 44 * Typography.shared.scale }
+
+    /// The bar held as a × left it, so the next × comes where the pointer is: the tabs before the one closed
+    /// as wide as they were drawn, those after it as wide as it was. Until the pointer leaves the tab now
+    /// there; not when the rightmost one is closed, there being none to come in.
+    struct Held: Equatable {
+        /// Where the one closed was, in the bar's order (the map tab 0).
+        var at: Int
+        /// How wide the tabs before it were drawn.
+        var before: [CGFloat]
+        /// How wide it was drawn.
+        var width: CGFloat
+
+        init?(closing at: Int, laid widths: [CGFloat]) {
+            guard widths.indices.contains(at), at < widths.count - 1 else { return nil }
+            self.at = at
+            before = Array(widths[..<at])
+            width = widths[at]
+        }
+
+        /// The `count` tabs left, held: those before it as they were drawn (one under 「» N」 stays there), the
+        /// rest as wide as the one closed, from the left while they fit — never shrunk again, which would move
+        /// the next × — the others under 「» N」.
+        func lay(count: Int, room: CGFloat, more: CGFloat) -> Laid {
+            let held = (0..<count).map { $0 < at ? before[$0] : width }
+            guard held.reduce(0, +) > room else {
+                return Laid(widths: held, hidden: held.indices.filter { held[$0] == 0 })
+            }
+            var widths = held
+            var used: CGFloat = 0
+            for i in held.indices where held[i] > 0 {
+                if used + held[i] + more > room && i >= at { widths[i] = 0 } else { used += held[i] }
+            }
+            return Laid(widths: widths, hidden: widths.indices.filter { widths[$0] == 0 })
+        }
+    }
 
     struct Laid: Equatable {
         /// By tab, the map tab first: how wide it is drawn (0 for one under 「» N」).

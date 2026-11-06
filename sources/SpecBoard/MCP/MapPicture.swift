@@ -230,7 +230,7 @@ enum MapPicture {
 
     /// What is drawn, ready to be taken: a canvas framed on what is asked, or a sequence diagram.
     private enum Made {
-        case canvas(CardCanvasView, Frame, texts: DocumentTexts, faces: PartFaces)
+        case canvas(CardCanvasView, Frame, texts: DocumentTexts, faces: PartFaces, pictures: WhiteboardPictures)
         case sequence(SequenceView, scale: CGFloat, cards: Int)
     }
 
@@ -257,9 +257,10 @@ enum MapPicture {
                               documentsUntil: ContinuousClock.Instant) async throws -> Drawn {
         let made = try make(request, read, core)
         defer { letGo(made) }
-        if case .canvas(let canvas, let frame, let texts, let faces) = made {
+        if case .canvas(let canvas, let frame, let texts, let faces, let pictures) = made {
             let clock = ContinuousClock()
-            while canvas.documentsPending(in: frame.rect) > 0 || texts.busy || faces.busy, clock.now < documentsUntil {
+            while canvas.documentsPending(in: frame.rect) > 0 || texts.busy || faces.busy || pictures.busy,
+                  clock.now < documentsUntil {
                 try? await Task.sleep(for: .milliseconds(50))
             }
         }
@@ -269,7 +270,7 @@ enum MapPicture {
     /// The pages still asked for this picture's canvas are not drawn for it once it is taken.
     @MainActor
     private static func letGo(_ made: Made) {
-        if case .canvas(let canvas, _, _, _) = made {
+        if case .canvas(let canvas, _, _, _, _) = made {
             DocSnapshots.shared.withdraw(owner: canvas, keeping: [])
         }
     }
@@ -303,6 +304,8 @@ enum MapPicture {
         var framed: [String]?
         /// A ui section's map: its parts drawn as their faces.
         var drawsParts = false
+        /// A whiteboard: its sketches drawn as their shapes.
+        var drawsSketches = false
     }
 
     @MainActor
@@ -318,7 +321,8 @@ enum MapPicture {
                                                      outside: read.outside, gone: read.marks.gone.cards, forNow: [])
             if AppModel.holdsGroups(section: key, in: detail) { surroundings.groups = read.positions.groups[key] ?? [] }
             content = Content(detail: detail.only(section: key), surroundings: surroundings, marks: read.marks,
-                              framed: request.cards, drawsParts: detail.directory.section(id: key)?.kind == .ui)
+                              framed: request.cards, drawsParts: detail.directory.section(id: key)?.kind == .ui,
+                              drawsSketches: detail.directory.section(id: key)?.kind == .whiteboard)
         case .connectionsMap:
             let whole = read.outside.map { detail.joined(with: $0) } ?? detail
             let filters = filters(request, read)
@@ -392,8 +396,15 @@ enum MapPicture {
         // A ui part's face, read for its section in the tree asked for.
         let faces = PartFaces()
         canvas.drawsParts = content.drawsParts
+        canvas.drawsSketches = content.drawsSketches
         canvas.partFace = { [read] shown, ready in
             faces.face(of: shown, in: read.detail, tree: read.faceTree, core: core, ready: ready)
+        }
+        // An image card's picture, read by the name its card gives it.
+        let pictures = WhiteboardPictures()
+        canvas.imagePicture = { [project = read.detail.project.id] shown, ready in
+            guard let hash = shown.customFields["image"] else { return nil }
+            return pictures.picture(project: project, hash: hash, core: core, ready: ready)
         }
         // Drawing sets the rows a card shows for the whole app: the window's are put back.
         let rows = CardGeometry.maxRows
@@ -436,7 +447,7 @@ enum MapPicture {
             let x = down(rect.minX / unit.width), y = down(rect.minY / unit.height)
             area = GridRect(x: x, y: y, w: up(rect.maxX / unit.width) - x, h: up(rect.maxY / unit.height) - y)
         }
-        return .canvas(canvas, Frame(rect: rect, scale: scale, area: area), texts: texts, faces: faces)
+        return .canvas(canvas, Frame(rect: rect, scale: scale, area: area), texts: texts, faces: faces, pictures: pictures)
     }
 
     /// A flow kept as a sequence diagram (`card`), or an actor's chart (`section`), drawn from the core's chart
@@ -465,7 +476,7 @@ enum MapPicture {
         let image: CGImage
         let scale: CGFloat
         switch made {
-        case .canvas(let canvas, let frame, _, _):
+        case .canvas(let canvas, let frame, _, _, _):
             guard let shot = canvas.snapshot() else { throw refused(.AppControl.pictureNotDrawn, request) }
             let width = max(1, Int((frame.rect.width * frame.scale).rounded()))
             let height = max(1, Int((frame.rect.height * frame.scale).rounded()))

@@ -132,6 +132,11 @@ struct NoticeList: View {
                             .font(.app(10.5))
                             .help(L10n[.Update.noticeDownloadHelp])
                     }
+                    if let goal = entry.goal, let project = entry.project, model.offersFinish(goal: goal, in: project) {
+                        Button(L10n[.Branches.mergeFinishGoal]) { model.finishGoal(goal, in: project) }
+                            .font(.app(10.5))
+                            .help(L10n[.Branches.mergeFinishGoalHelp])
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

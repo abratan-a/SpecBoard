@@ -5,5 +5,6 @@
   "merges.take.noConflictNone": "ありません",
   "merges.take.shape": "take の「{path}」は {\"<単位>\": \"source\" | \"target\"} です",
   "merges.take.side": "take の「{path}」の「{unit}」は source か target です",
+  "merges.take.targetIsInto": "take の {path} の {unit}: merge 先を取るのは into、merge 元を取るのは source です（target は使えません。呼び出しの target は merge 元のことです）",
   "merges.take.unitOf": "{path} の {unit}"
 }

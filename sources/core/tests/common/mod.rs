@@ -400,7 +400,7 @@ pub fn set_kinds(
         ("sections", "section", "section"),
         ("lines", "line", "line"),
     ];
-    let now = run("kind_read", json!({}))?;
+    let now = kinds_whole(core);
     let own = |list: &str| -> Vec<Map<String, Value>> {
         now[list]
             .as_array()
@@ -489,4 +489,28 @@ pub fn text_in(said: &serde_json::Value, key: &str) -> String {
         .as_str()
         .unwrap_or_else(|| panic!("{key} がありません: {said}"))
         .to_string()
+}
+
+/// Every kind `kind_read` says with no target, its pages followed to the end (an answer is cut by
+/// count and by size): its cards, sections and lines.
+pub fn kinds_whole(core: &specboard_core::Core) -> serde_json::Value {
+    use serde_json::{Value, json};
+    let mut whole = json!({"cards": [], "sections": [], "lines": []});
+    let mut after: Option<Value> = None;
+    loop {
+        let mut value = json!({"limit": 1000});
+        if let Some(next) = &after {
+            value["after"] = next.clone();
+        }
+        let page = ok(core, "kind_read", json!({"value": value}));
+        for key in ["cards", "sections", "lines"] {
+            if let (Some(all), Some(more)) = (whole[key].as_array_mut(), page[key].as_array()) {
+                all.extend(more.iter().cloned());
+            }
+        }
+        after = page.get("next").filter(|n| !n.is_null()).cloned();
+        if after.is_none() {
+            return whole;
+        }
+    }
 }

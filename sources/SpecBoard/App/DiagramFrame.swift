@@ -10,6 +10,8 @@ struct DiagramDefinition {
     var surroundings = Surroundings()
     /// Which diagram it is, for where it was last looked at (`CardCanvasController.look`).
     var key: String
+    /// What where it looks is kept by, when not the diagram's key (a map tab's own: `AppModel.mapLookKey`).
+    var lookKey: String? = nil
     var controller: CardCanvasController
     /// Changes when what it draws was read again (`AppModel.dataGeneration`).
     var dataGeneration: Int
@@ -23,6 +25,14 @@ struct DiagramDefinition {
     var keepsPlaces = false
     /// Whether it is a ui section's map, its parts drawn as the mock draws them (`CardCanvasView.drawsParts`).
     var drawsParts = false
+    /// Whether it is a whiteboard, its sketches drawn as their shapes (`CardCanvasView.drawsSketches`), and where a
+    /// sketch goes while one of its tools is chosen.
+    var drawsSketches = false
+    var onPlaceAt: ((GridPoint) -> Void)? = nil
+    /// Whether the whiteboard's arrow tool is chosen (`CardCanvasView.drawsArrow`).
+    var drawsArrow = false
+    /// A picture pasted or dropped on a whiteboard.
+    var onPicture: ((Data, GridPoint) -> Void)? = nil
     /// A card sized by its corner.
     var onResize: (String, GridSize) -> Void = { _, _ in }
     /// A card's switch or choice pressed on the diagram.
@@ -70,16 +80,16 @@ struct WorkDirCaption: Equatable {
 
 extension DiagramDefinition {
     /// Whether the box `id` is written where it is when pressed twice: its card's kind says so
-    /// (`on_double_click: edit_in_place`, a note) — on every diagram, the same card wherever it
+    /// (`on_double_click: edit_in_place`, a note, a sketch) — on every diagram, the same card wherever it
     /// is drawn.
     func writesInPlace(_ id: String, _ model: AppModel) -> Bool { model.canEditInPlace(card(id)) }
 
-    /// The body written in place, as its card keeps it.
-    func inPlaceText(_ id: String, _ model: AppModel) -> String { model.schema(card(id))?.body ?? "" }
+    /// What is written in place, as its card keeps it (a sketch's text, any other's body).
+    func inPlaceText(_ id: String, _ model: AppModel) -> String { model.inPlaceText(card(id)) }
 
-    /// What was written in place, kept as its card's body.
+    /// What was written in place, kept where it was read from.
     func writeInPlace(_ id: String, _ text: String, _ model: AppModel) {
-        model.updateSchema(card(id), .init(body: text))
+        model.writeInPlace(card(id), text)
     }
 }
 
@@ -118,6 +128,7 @@ struct DiagramFrame: View {
                 dataGeneration: d.dataGeneration,
                 surroundings: d.surroundings,
                 section: d.key,
+                lookKey: d.lookKey,
                 controller: d.controller,
                 // A card or row picked, followed, right-clicked: the same rule on every diagram
                 // (`DiagramPresses`, overview §13).
@@ -137,6 +148,12 @@ struct DiagramFrame: View {
                 drawsParts: d.drawsParts,
                 partFace: { model.partFace($0, ready: $1) },
                 partLook: CardCanvasView.PartLook(tags: model.partTags, notes: model.partNotes),
+                drawsSketches: d.drawsSketches,
+                onPlaceAt: d.onPlaceAt,
+                drawsArrow: d.drawsArrow,
+                // An image card's picture: read once for the window.
+                imagePicture: { model.imagePicture($0, ready: $1) },
+                onPicture: d.onPicture,
                 onClickEmpty: d.onClickEmpty,
                 settings: model.defaultSettings,
                 cardWidth: model.cardWidth,
@@ -165,7 +182,8 @@ extension DiagramFrame {
     @ViewBuilder
     private func band(_ d: DiagramDefinition, drawn: [String], kinds: LineKinds, shown: [String],
                       compact: Bool) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        // Centred on the band; only a band whose kinds of line wrap hangs them from its top.
+        HStack(alignment: compact ? .top : .center, spacing: 12) {
             if d.controller.isSelecting {
                 // The selection mode, said where it is seen, and the way out (Esc too).
                 HStack(spacing: 6) {
@@ -197,13 +215,16 @@ extension DiagramFrame {
             HStack(spacing: 10) {
                 if let tools = d.bandTools { tools }
                 if let mermaid = d.mermaid {
-                    Toggle(isOn: $asMermaid) { BarLabel(title: "mermaid", systemImage: "chevron.left.forwardslash.chevron.right") }
-                        .toggleStyle(.button).controlSize(.small).font(.app(10.5))
+                    BarToggle(title: "mermaid", systemImage: "chevron.left.forwardslash.chevron.right", isOn: $asMermaid)
+                        .font(.app(10.5))
                         .help(L10n[.Diagram.mermaidHelp])
                     Button { if let text = mermaid(shown) { copyToPasteboard(text) } } label: {
-                        BarLabel(title: L10n[.Diagram.mermaidCopy], systemImage: "doc.on.doc")
+                        BarLabel(title: L10n[.Diagram.mermaidCopy], systemImage: "doc.on.doc", markWhenWide: true)
+                            .lineLimit(1)
                     }
-                    .controlSize(.small).font(.app(10.5))
+                    .buttonStyle(.borderless)
+                    .font(.app(10.5))
+                    .fixedSize()
                     .help(L10n[.Diagram.mermaidCopy])
                 }
                 if let end = d.bandEnd { end }

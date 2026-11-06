@@ -97,6 +97,12 @@ const MAP_GROUPS: &str = "core_0025_map_groups";
 /// The built-in names of now (`tests/name_move.rs`).
 const BUILTIN_NAMES: &str = "core_0026_builtin_names";
 
+/// When each frozen copy of main was frozen: `branch_frozen.at`.
+const FROZEN_TIMES: &str = "core_0027_frozen_times";
+
+/// The pictures of the image cards (below): `images`.
+const IMAGES: &str = "core_0028_images";
+
 /// A store of the form now named as before `core_0014_projects`: `plans`, every `plan_id`, and the
 /// mark let go. What turns a store back into one before an older mark does this too: a store of
 /// before was named so.
@@ -136,7 +142,7 @@ const REQUESTS_BEFORE: &str = "ALTER TABLE merge_requests DROP COLUMN keep;
              ALTER TABLE projects DROP COLUMN ai_merge;";
 
 /// Every mark a store of the form has now.
-const EVERY: [&str; 26] = [
+const EVERY: [&str; 28] = [
     "core_0001_kinds",
     MARK,
     GHOSTS,
@@ -163,6 +169,8 @@ const EVERY: [&str; 26] = [
     CODE_MARKS,
     MAP_GROUPS,
     BUILTIN_NAMES,
+    FROZEN_TIMES,
+    IMAGES,
 ];
 
 /// Where the copy of the store at `place`, as it was before it was brought up from `mark`
@@ -322,7 +330,9 @@ fn a_new_store_is_of_the_form_now() {
             WORKDIR_SECTIONS,
             CODE_MARKS,
             MAP_GROUPS,
-            BUILTIN_NAMES
+            BUILTIN_NAMES,
+            FROZEN_TIMES,
+            IMAGES
         ]
     );
     assert!(columns(&conn, "projects").ends_with(&[
@@ -511,7 +521,9 @@ fn a_store_made_before_is_brought_up_once() {
                 WORKDIR_SECTIONS,
                 CODE_MARKS,
                 MAP_GROUPS,
-                BUILTIN_NAMES
+                BUILTIN_NAMES,
+                FROZEN_TIMES,
+                IMAGES
             ]
         );
         assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -694,7 +706,9 @@ fn a_store_made_before_is_brought_up_once() {
             WORKDIR_SECTIONS,
             CODE_MARKS,
             MAP_GROUPS,
-            BUILTIN_NAMES
+            BUILTIN_NAMES,
+            FROZEN_TIMES,
+            IMAGES
         ]
     );
     assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -1471,6 +1485,39 @@ fn a_store_before_the_code_marks_has_their_table_made_once() {
     drop(core);
     Core::open(&place).unwrap().close();
     assert_eq!(copies(&place), [CODE_MARKS]);
+}
+
+/// A store of before the frozen times has the column added once, a copy frozen before it left
+/// without a time (it reads as frozen when its branch was made).
+#[test]
+fn a_store_before_the_frozen_times_has_the_column_added_once() {
+    let place = common::place("frozen-times.sqlite");
+    let core = Core::create(&place).unwrap();
+    let (refused, said) = common::call(&core, "project_create", json!({"project": "前からの"}));
+    assert!(!refused, "{said}");
+    core.close();
+    drop(core);
+    Connection::open(&place)
+        .unwrap()
+        .execute_batch(&format!(
+            "ALTER TABLE branch_frozen DROP COLUMN at;
+             DELETE FROM _migrations WHERE name = '{FROZEN_TIMES}';"
+        ))
+        .unwrap();
+
+    let core = Core::open(&place).unwrap();
+    assert_eq!(copies(&place), [FROZEN_TIMES]);
+    let conn = Connection::open(&place).unwrap();
+    assert_eq!(marks(&conn), EVERY);
+    assert_eq!(
+        columns(&conn, "branch_frozen"),
+        ["project_id", "branch_id", "tbl", "id", "doc", "at"]
+    );
+    // Opened again: nothing more.
+    core.close();
+    drop(core);
+    Core::open(&place).unwrap().close();
+    assert_eq!(copies(&place), [FROZEN_TIMES]);
 }
 
 /// A store of before the groups has `places` made anew: every box it had kept as it was, a group's row

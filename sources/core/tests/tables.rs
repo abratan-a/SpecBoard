@@ -590,3 +590,33 @@ fn a_tables_section_follows_its_rename() {
     assert_eq!(read["within"], "Data/Store", "{read}");
     assert_eq!(table(&core, "Data:inShop").1.len(), 1, "{read}");
 }
+
+#[test]
+fn a_tables_picture_inside_a_line_is_set_apart_from_the_text_around_it() {
+    // In the middle of a sentence the table still reads as a table, and the text after it is not
+    // taken for one of its rows; on a line of its own it is as before.
+    let core = orders();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Data:paid", "value": {"kind": "table", "of": "Schemas/Ordering:Order",
+            "where": [{"path": "status", "op": "eq", "value": "paid"}],
+            "columns": [{"path": "@name"}, {"path": "total"}]}}),
+    );
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Paid", "value": {"kind": "freedoc",
+            "body": "Paid table: ![[Data:paid]] and more.\n\nOwn line:\n\n![[Data:paid]]\n\nnext line"}}),
+    );
+    let md = ok(
+        &core,
+        "card_read",
+        json!({"target": "Docs:Paid", "value": {"as": "markdown"}}),
+    );
+    let md = md["markdown"].as_str().unwrap();
+    assert!(md.contains("Paid table: \n\n| "), "{md}");
+    assert!(md.contains("| third | 40.00 |\n\n and more."), "{md}");
+    assert!(md.contains("Own line:\n\n| "), "{md}");
+    assert!(md.contains("| third | 40.00 |\n\nnext line"), "{md}");
+}

@@ -62,10 +62,11 @@ struct MarkdownRefs {
             switch ref.kind {
             case .place:
                 return place(ref)
+            // What is put in is someone's data: it brings no row's mark into the page (`RowMarks.clean`).
             case .value:
-                return DocumentParts.value(put[ref.path], for: ref)
+                return RowMarks.clean(DocumentParts.value(put[ref.path], for: ref))
             case .embed:
-                return embed.map { places($0(ref)) } ?? Self.code(ref.written(ref.path))
+                return RowMarks.clean(embed.map { places($0(ref)) } ?? Self.code(ref.written(ref.path)))
             }
         }
     }
@@ -136,13 +137,15 @@ enum MarkdownPage {
     /// the left margin; on the card editor's page (not `card`), a row right-clicked is told to the app.
     static func html(_ markdown: String, size: CGFloat, refs: MarkdownRefs? = nil, card: Bool = false) -> String {
         let resolved = refs?.resolve(markdown) ?? markdown
-        let rows = RowMarks.parse(resolved)
-        let body = rows.map { RowMarks.html($0) } ?? Markdown.html(resolved)
+        let marked = RowMarks.parse(resolved)
+        let body = marked.map { RowMarks.html($0) } ?? Markdown.html(resolved)
         let diagram = Markdown.hasDiagram(body)
         let px = String(format: "%.1f", size)
+        // A formatdoc's rows: their page's room and menu. A spec's scenarios alone take neither.
+        let rows = marked.flatMap { $0.blocks.contains { [.item, .row].contains($0.mark.kind) } ? $0 : nil }
         let classes = rows == nil ? [] : ["sb-rows"] + (rows?.outlined == true ? ["sb-outline"] : [])
         let look = css(px) + (card ? cardCSS : "")
-            + (rows == nil ? "" : outlineCSS + (card ? cardOutlineCSS : editorOutlineCSS))
+            + (marked == nil ? "" : outlineCSS + (rows == nil ? "" : card ? cardOutlineCSS : editorOutlineCSS))
         let menu = rows != nil && !card
         return """
         <!doctype html>
@@ -203,6 +206,7 @@ enum MarkdownPage {
         a { color: -webkit-link; }
         a[href^="sb-broken:"] { color: inherit; text-decoration: none; cursor: help; }
         input[type=checkbox] { margin: 0 0.35em 0 0; }
+        li:has(> input[type=checkbox]), li:has(> p:first-child > input[type=checkbox]) { list-style: none; margin-left: -1.1em; }
         .mermaid { overflow-x: auto; overflow-y: hidden; }
         .mermaid svg { display: block; max-width: none; }
         .mermaid::-webkit-scrollbar, pre::-webkit-scrollbar, table::-webkit-scrollbar { height: 8px; }
@@ -249,6 +253,14 @@ enum MarkdownPage {
         section[data-depth="3"] > .sb-bracket { --sb-c: var(--sb-c3); }
         section[data-depth="4"] > .sb-bracket { --sb-c: var(--sb-c4); }
         .sb-tag { display: none; }
+        .sb-tests { display: inline-block; margin-left: 0.6em; padding: 0 0.4em; border: 1px solid; border-radius: 3px;
+            font: 400 0.62em ui-monospace, Menlo, monospace; line-height: 1.5; vertical-align: 0.2em;
+            color: #0E6469; border-color: rgba(14, 100, 105, 0.6); }
+        .sb-tests.sb-none { color: #C76A00; border-color: rgba(199, 106, 0, 0.7); }
+        @media (prefers-color-scheme: dark) {
+            .sb-tests { color: #57BEBE; border-color: rgba(87, 190, 190, 0.6); }
+            .sb-tests.sb-none { color: #FF9F0A; border-color: rgba(255, 159, 10, 0.7); }
+        }
         """
 
     /// On the card editor's page: brackets 7pt apart, each 7pt wide to rest the pointer on; one rested on

@@ -27,6 +27,7 @@ fn the_project_is_read_apart_from_what_is_wrong_in_a_tree() {
         keys,
         [
             "project",
+            "rev",
             "description",
             "access",
             "mcpAsk",

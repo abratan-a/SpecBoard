@@ -46,5 +46,32 @@
       "note": "Docs:Overview",
       "mentions": "Schemas/Ordering:Order.total"
     }
+  ],
+  "paths": [
+    {
+      "at": "Schemas:Rule",
+      "via": "body",
+      "path": "Schemas/Ordering:Order.total"
+    },
+    {
+      "at": "Docs:Overview",
+      "via": "body",
+      "path": "Schemas/Ordering:Order.total"
+    },
+    {
+      "at": "Charts/Shop:Refund.start",
+      "via": "carries[0]",
+      "path": "Schemas/Ordering:Order.total"
+    },
+    {
+      "at": "Charts/Shop:Refund.ask",
+      "via": "steps[0].carries[0]",
+      "path": "Schemas/Ordering:Order.total"
+    },
+    {
+      "at": "Charts/Shop:Checkout.save.steps[0]",
+      "via": "connections.reads.at",
+      "path": "Schemas/Ordering:Order.total"
+    }
   ]
 }

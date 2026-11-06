@@ -16,6 +16,7 @@ struct SectionScreen<Map: View>: View {
 
     var body: some View {
         let _ = switched
+        let _ = model.actorViewChosen
         if let actor, ActorView.showsSequence(project: detail.project.id, actor: actor.id) {
             ActorSequence(model: model, actor: actor, detail: detail, switcher: AnyView(switcher(actor)))
         } else {
@@ -79,6 +80,9 @@ struct ActorSequence: View {
                                pressed &+= 1
                            })
         }
+        // The View menu's zoom and fit and app_control's view reach the sequence while it is shown.
+        .onAppear { model.shownSequence = controller }
+        .onDisappear { if model.shownSequence === controller { model.shownSequence = nil } }
         // A flow pressed in the nav panel: its frame, opened, brought under the heads once drawn.
         .onChange(of: model.sequenceFocus) { _, flow in
             guard let flow else { return }

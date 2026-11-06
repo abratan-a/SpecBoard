@@ -29,14 +29,18 @@ extension AppModel {
         }
     }
 
-    /// A version moved up (toward the top, the newer) or down: the versions written whole in
-    /// their new order, each keeping what it is.
+    /// A version moved up (toward the top, the newer) or down: put before the one above it or after
+    /// the one below, by that one's name, each keeping what it is — the versions are not written
+    /// again, so one added meanwhile stays.
     func moveVersion(_ id: String, _ name: String, by offset: Int) {
         guard let card = schema(id), let at = card.versions.firstIndex(where: { $0.name == name }),
               card.versions.indices.contains(at + offset) else { return }
-        var versions = card.versions
-        versions.swapAt(at, at + offset)
-        write { try tool("card_update", target: cardPath(id), value: ["versions": versions.map(\.wire)]) }
+        let beside = card.versions[at + offset].name
+        write {
+            let path = try cardPath(id)
+            _ = try tool("card_update", target: PathText.member(path, name),
+                         value: [offset < 0 ? "before" : "after": beside])
+        }
     }
 
     /// A version's name, key, heading or body changed: `value` as `card_update` of the version's

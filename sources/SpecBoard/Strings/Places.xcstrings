@@ -745,6 +745,42 @@
         }
       }
     },
+    "row.all" : {
+      "comment" : "The top row of the projects home's places: every place's projects together.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのプロジェクト"
+          }
+        }
+      }
+    },
+    "row.allHelp" : {
+      "comment" : "Tooltip of the places' 「すべてのプロジェクト」 row.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lists the projects of this Mac and every connected agent, by place"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac とつながっているエージェントの、全部のプロジェクトを置き場ごとに並べます"
+          }
+        }
+      }
+    },
     "row.settingsHelp" : {
       "comment" : "Tooltip of the gear button of a place's row.",
       "extractionState" : "manual",

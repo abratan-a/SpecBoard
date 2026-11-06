@@ -27,10 +27,15 @@
   "reads.hint.formatdocBody": "Read the body with as: markdown in value (this shows only the headings and counts of the items. For one item, extend target to its path)",
   "reads.hint.itemBody": "Read the body of the items inside by reading this item {item} with as: markdown in value (the whole document: {doc})",
   "reads.hint.stackdocBody": "Read the body of a version with as: markdown in value (for one version, extend target to its path)",
+  "reads.image.empty": "{target} holds no picture (give it as imageData or imageFrom)",
+  "reads.image.gone": "The picture of {target} is not in the project",
+  "reads.image.notImage": "{target} is not an image card",
+  "reads.image.oneTarget": "as: image reads one card at a time ({count} were given)",
   "reads.implementation.shape": "implementation is none, changed or unrecorded, or a list of them ({other} was given)",
   "reads.in.container": "in is the path of a container (goal, flow)",
   "reads.include.placesOnly": "include cannot take {other}. The values are places and groups",
   "reads.include.unknown": "include cannot take {unknown}. The values you can use are {known}",
+  "reads.include.usedByEnumValue": "used_by cannot be read for an enum value (it is not followed into the flows). Find where the value {name} is used with card_list's query \"{name}\"",
   "reads.kind.noOwn": ". The project has no kinds of its own",
   "reads.kind.orOwn": " or the project's kinds {kinds}",
   "reads.kind.unknown": "There is no kind \"{kind}\" for kind (built-in kinds{own})",
@@ -56,5 +61,7 @@
   "reads.section.unreadable": "Cannot read the section \"{path}\"",
   "reads.sectionList.sectionPath": "section is the path of the section to list (a string: that section and the sections inside it)",
   "reads.settingsNotSection": "Rules are not a section but the project's settings. Read them with as: rules in the value of project_read (a person edits them in Project Settings in the app). A working directory is a section directly under the root (of the kind workdir), read with section_read",
+  "reads.tags.none": "(no card has a tag)",
+  "reads.tags.unknown": "No card has the tag \"{tag}\", and no tag group is named so. The tags there are: {tags}",
   "reads.target.needed": "target is required"
 }

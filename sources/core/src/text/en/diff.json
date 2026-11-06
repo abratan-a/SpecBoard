@@ -20,6 +20,8 @@
   "diff.change.rowsReordered": "Change the order of rows",
   "diff.change.section": "Section {from} → {to}",
   "diff.change.target": "Target {from} → {to}",
+  "diff.change.valueDescription": "Change the description of value {name}",
+  "diff.change.valueLabel": "Change the display name of value {name}",
   "diff.change.valuesAdded": "Add values {values}",
   "diff.change.valuesRemoved": "Remove values {values}",
   "diff.part.empty": "(empty)",

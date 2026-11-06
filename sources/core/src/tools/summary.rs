@@ -75,7 +75,7 @@ fn tag_rows(tags: &[(String, usize)]) -> Value {
 
 /// The kinds `counts` lists: the built-in kinds of main's cards (`action`
 /// and `custom_goal` were the Swift app's, and are no longer).
-const COUNTED: [&str; 14] = [
+const COUNTED: [&str; 17] = [
     "entity",
     "value",
     "enum",
@@ -85,11 +85,14 @@ const COUNTED: [&str; 14] = [
     "freedoc",
     "formatdoc",
     "stackdoc",
+    "spec",
     "instance",
     "table",
     "svg",
     "html",
     "frame",
+    "sketch",
+    "image",
 ];
 
 /// The project itself, as `project_read` answers it before the settings are put beside:
@@ -260,6 +263,7 @@ pub(crate) fn check_rows(
             .flat_map(|c| {
                 super::lines::misfits(&project, c)
                     .into_iter()
+                    .chain(super::lines::step_misfits(&project, c))
                     .map(|problem| said(project.full(c), problem))
             })
             .collect(),
@@ -608,6 +612,11 @@ pub(crate) fn impact_view(seen: &Seen, path: &str, base: Option<&str>) -> Result
             ),
         );
     }
+    // Every path that would point nowhere were it gone: lines pointing at it by ID, a table's columns, a
+    // text's references — said as the check would say them (`update::broken`).
+    if let Some(gone) = gone_paths(seen, &project, path, base) {
+        out.insert("paths".into(), Value::Array(gone));
+    }
     // The files to change with it: its
     // own — where its lines of the kind that reaches files go — those of the cards that embed it,
     // and those of the flows that read or write it.
@@ -741,6 +750,7 @@ pub(crate) fn exists_view(
         .collect();
     let unresolved = results.iter().filter(|(_, h)| !h.ok).count();
     let mut out = Map::new();
+    out.insert("project".into(), seen.summary.name.clone().into());
     out.insert("checked".into(), results.len().into());
     out.insert("unresolved".into(), unresolved.into());
     out.insert(
@@ -881,6 +891,80 @@ fn own_kind_problems(project: &crate::export::Project) -> (Vec<Row>, Vec<Row>) {
         }
     }
     (misfit, strays)
+}
+
+/// The paths that resolve now and would not once the card or field at `path` were gone, each where it is
+/// written (`{at, via, path}`): the project read again without it, and what is broken there and not now. None
+/// for any other target, or when nothing would break.
+fn gone_paths(
+    seen: &Seen,
+    project: &crate::export::Project,
+    path: &str,
+    base: Option<&str>,
+) -> Option<Vec<Value>> {
+    let (card, names) = match locate(project, path, base).ok()? {
+        Target::Card(card) => (card.id.clone(), Vec::new()),
+        Target::Field(card, _, names) => (card.id.clone(), names),
+        _ => return None,
+    };
+    let mut without = seen.detail.clone();
+    if names.is_empty() {
+        // The card let go of, and what is inside it, however deep: as a deletion takes them.
+        let mut gone: std::collections::HashSet<String> = [card].into();
+        loop {
+            let more: Vec<String> = without
+                .inner
+                .iter()
+                .filter(|c| {
+                    c.inside.as_ref().is_some_and(|i| gone.contains(i)) && !gone.contains(&c.id)
+                })
+                .map(|c| c.id.clone())
+                .collect();
+            if more.is_empty() {
+                break;
+            }
+            gone.extend(more);
+        }
+        without.schemas.retain(|c| !gone.contains(&c.id));
+        without.inner.retain(|c| !gone.contains(&c.id));
+    } else if let Some(held) = without
+        .schemas
+        .iter_mut()
+        .chain(without.inner.iter_mut())
+        .find(|c| c.id == card)
+    {
+        fn drop_field(fields: &mut Vec<crate::model::Field>, names: &[String]) {
+            let Some((first, rest)) = names.split_first() else {
+                return;
+            };
+            if rest.is_empty() {
+                fields.retain(|f| &f.name != first);
+            } else if let Some(f) = fields.iter_mut().find(|f| &f.name == first) {
+                drop_field(&mut f.children, rest);
+            }
+        }
+        drop_field(&mut std::rc::Rc::make_mut(held).fields, &names);
+    }
+    let after = crate::export::Project::indexed(
+        &without,
+        std::rc::Rc::new(crate::export::Index::of(&without)),
+    );
+    // What is broken now is the one the reads keep (`Seen::broken`); only the project without it is
+    // worked out here.
+    let now: std::collections::HashSet<&str> =
+        seen.broken().iter().map(|(k, _)| k.as_str()).collect();
+    let gone: Vec<Value> = super::update::broken(&after)
+        .into_iter()
+        .filter(|(k, _)| !now.contains(k.as_str()))
+        .map(|(_, d)| {
+            let mut row = Map::new();
+            row.insert("at".into(), d.at.clone().into());
+            row.insert("via".into(), d.via.clone().into());
+            row.insert("path".into(), d.path.clone().into());
+            Value::Object(row)
+        })
+        .collect();
+    (!gone.is_empty()).then_some(gone)
 }
 
 #[cfg(test)]

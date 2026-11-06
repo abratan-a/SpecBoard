@@ -77,6 +77,24 @@ thread_local! {
     /// The language the call running on this thread answers in (an index into `LANGUAGES`);
     /// none when nothing was bound.
     static CURRENT: Cell<Option<usize>> = const { Cell::new(None) };
+    /// Whether the call running on this thread is the window's: its texts that say what to do next with an
+    /// MCP tool are said in the screen's words instead (`<key>.screen`, where there is one).
+    static SCREEN: Cell<bool> = const { Cell::new(false) };
+}
+
+/// What was bound before for the window's words (`bind_screen`), put back when the call is over.
+#[must_use = "the window's words are bound only while this is held"]
+pub struct ScreenBound(bool);
+
+impl Drop for ScreenBound {
+    fn drop(&mut self) {
+        SCREEN.with(|c| c.set(self.0));
+    }
+}
+
+/// Binds whether the call is the window's to this thread until what is returned is dropped.
+pub fn bind_screen(on: bool) -> ScreenBound {
+    ScreenBound(SCREEN.with(|c| c.replace(on)))
 }
 
 /// The language of what no call binds, for the whole process: none set (`usize::MAX`), `UNBOUND`.
@@ -188,9 +206,17 @@ pub fn has(key: &str) -> bool {
 
 /// The template of `key` in the language of the call, else in `FALLBACK`.
 fn template(key: &str) -> Option<&'static String> {
-    table(current_index())
-        .get(key)
-        .or_else(|| table(index_of(FALLBACK)).get(key))
+    let find = |key: &str| {
+        table(current_index())
+            .get(key)
+            .or_else(|| table(index_of(FALLBACK)).get(key))
+    };
+    if SCREEN.with(Cell::get)
+        && let Some(screen) = find(&format!("{key}.screen"))
+    {
+        return Some(screen);
+    }
+    find(key)
 }
 
 /// The text of `key` in the language of the call, with `values` put into its `{name}`s.

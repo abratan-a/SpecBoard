@@ -122,7 +122,7 @@ pub(crate) const NODE_KINDS: [&str; 7] = ["begin", "process", "run", "eval", "wa
 
 /// The built-in kinds of card `guide` tells of by their names, in the order the topic list gives
 /// them (the nodes after them).
-pub(crate) const CARD_KINDS: [&str; 17] = [
+pub(crate) const CARD_KINDS: [&str; 20] = [
     "entity",
     "value",
     "enum",
@@ -134,7 +134,10 @@ pub(crate) const CARD_KINDS: [&str; 17] = [
     "freedoc",
     "formatdoc",
     "stackdoc",
+    "spec",
     "svg",
+    "sketch",
+    "image",
     "html",
     "frame",
     "goal",
@@ -145,7 +148,7 @@ pub(crate) const CARD_KINDS: [&str; 17] = [
 /// The keys of a card's value that only some kinds take, each with those kinds. Every other key of
 /// the card's form is every kind's (where it sits and its size are every boxed card's): the topics
 /// of `card_create` and `card_update` say those, and a kind's topic its own.
-const KIND_KEYS: [(&str, &[&str]); 26] = [
+const KIND_KEYS: [(&str, &[&str]); 38] = [
     ("fields", &["entity", "value"]),
     ("rules", &["entity", "value"]),
     ("absentFields", &["entity", "value"]),
@@ -172,6 +175,18 @@ const KIND_KEYS: [(&str, &[&str]); 26] = [
     ("headerPlace", &["svg", "html", "frame"]),
     ("note", &["svg", "html", "frame"]),
     ("notePlace", &["svg", "html", "frame"]),
+    ("shape", &["sketch"]),
+    ("text", &["sketch"]),
+    ("fill", &["sketch"]),
+    ("stroke", &["sketch"]),
+    ("as", &["spec"]),
+    ("iWant", &["spec"]),
+    ("soThat", &["spec"]),
+    ("about", &["spec"]),
+    ("scenarios", &["spec"]),
+    ("imageData", &["image"]),
+    ("imageFrom", &["image"]),
+    ("alt", &["image"]),
 ];
 
 /// The forms beside the card's that only some kinds take: a field's (a target written down to a

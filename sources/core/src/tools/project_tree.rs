@@ -166,13 +166,17 @@ fn tree_id(tree: Tree) -> &'static str {
     }
 }
 
-/// The branches of a project, by id.
+/// The branches of a project, by id: not a merge's result the window shows, which is only looked
+/// at and goes when it is closed (`Tx::create_result_branch`).
 fn branches(conn: &Connection, project: &str) -> Result<Vec<String>, String> {
     let mut stmt = conn
-        .prepare("SELECT id FROM branches WHERE project_id = ? ORDER BY id")
+        .prepare("SELECT id FROM branches WHERE project_id = ? AND name NOT LIKE ? ORDER BY id")
         .map_err(sql)?;
     let rows = stmt
-        .query_map([project], |r| r.get::<_, String>(0))
+        .query_map(
+            [project, &format!("{}%", crate::write::RESULT_PREFIX)],
+            |r| r.get::<_, String>(0),
+        )
         .map_err(sql)?
         .collect::<Result<Vec<_>, _>>()
         .map_err(sql)?;

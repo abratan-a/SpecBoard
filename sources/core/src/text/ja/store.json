@@ -13,5 +13,6 @@
   "store.error.notCoreForm": "コアの形のデータベースではありません",
   "store.error.open": "データベースを開けません: {e}",
   "store.error.read": "データベースを読めません: {e}",
-  "store.error.tableMissing": "コアの形のデータベースに {table} がありません"
+  "store.error.tableMissing": "コアの形のデータベースに {table} がありません",
+  "store.reader.fallback": "読みの接続を開けないので、書き込みの鍵の下で読みます（読みが書き込みを待ちます）: {error}"
 }

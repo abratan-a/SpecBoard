@@ -9,9 +9,10 @@
     "signedBy",
     "reads",
     "writes",
-    "next",
-    "run"
+    "partner",
+    "holds",
+    "runs"
   ],
   "fields": false,
-  "rev": "6db67c48e7dc"
+  "rev": "64c7fedef5ae"
 }

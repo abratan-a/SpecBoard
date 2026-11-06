@@ -62,10 +62,9 @@ struct StepEditor: View {
     private func stepEditor(_ step: Step) -> some View {
         block("do", help: StepEditor.help(step.op, L10n[.Nodes.helpRow])) {
             if editable {
-                Picker("", selection: Binding(get: { step.op }, set: { op in set { $0 = StepEditor.retyped($0, to: op) } })) {
-                    ForEach(FlowNode.Vocabulary.processOps, id: \.self) { Text($0).tag($0) }
-                }
-                .labelsHidden().fixedSize()
+                ChoiceMenu(options: FlowNode.Vocabulary.processOps.map { ($0, $0) },
+                           selection: Binding(get: { step.op }, set: { op in set { $0 = StepEditor.retyped($0, to: op) } }))
+                    .fixedSize()
             } else {
                 Text(step.op).font(.app(12, design: .monospaced))
             }
@@ -136,11 +135,9 @@ struct StepEditor: View {
     private func choice(_ value: String?, _ options: [String], none: String,
                         _ commit: @escaping (String?) -> Void) -> some View {
         if editable {
-            Picker("", selection: Binding(get: { value ?? "" }, set: { commit($0.isEmpty ? nil : $0) })) {
-                Text(none).tag("")
-                ForEach(options, id: \.self) { Text($0).tag($0) }
-            }
-            .labelsHidden().fixedSize()
+            ChoiceMenu(options: [("", none)] + options.map { ($0, $0) },
+                       selection: Binding(get: { value ?? "" }, set: { commit($0.isEmpty ? nil : $0) }))
+                .fixedSize()
         } else {
             Text(value ?? none).font(.app(12, design: .monospaced))
         }

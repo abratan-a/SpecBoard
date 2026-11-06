@@ -64,6 +64,9 @@ nonisolated enum BuiltinWords {
     /// What a kind of line is called — a flow's way out too (`next`, `onError`, `else`…).
     static func line(_ name: String) -> String { kept.withLock { $0.lines[name]?.label } ?? name }
 
+    /// A built-in card kind's definition, as the project read says it.
+    static func definition(_ kind: String) -> CardKindDef? { kept.withLock { $0.cards[kind] } }
+
     private static func kindField(_ kind: String, _ name: String) -> KindField? {
         kept.withLock { $0.cards[kind]?.field(name) }
     }

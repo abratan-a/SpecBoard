@@ -9,7 +9,74 @@ use crate::write::{MergeChange, MergePreview, MergeSide, MergeTake, Tx};
 use serde_json::{Map, Value};
 use std::collections::HashMap;
 
-/// Conflicts chosen, as `branch_merge` takes them (`take`), into a locked main for a merge request too.
+/// MCP's choices for conflicts (`branch_merge`'s `take`): each side said `source` (the merge's source) or `into`
+/// (where it goes), not `target` — the call's own `target` names the source, so the word would read as the
+/// other side.
+pub(crate) fn mcp_take(given: Option<&Value>) -> Result<MergeTake, String> {
+    let Some(Value::Object(by_path)) = given else {
+        return take(given);
+    };
+    let mut worded = Map::new();
+    for (path, units) in by_path {
+        let Some(chosen) = units.as_object() else {
+            return Err(text!("merges.take.shape", path));
+        };
+        let mut sides = Map::new();
+        for (unit, side) in chosen {
+            let word = match side.as_str() {
+                Some("into") => "target",
+                Some("source") => "source",
+                Some("target") => return Err(text!("merges.take.targetIsInto", path, unit)),
+                _ => return Err(text!("merges.take.side", path, unit)),
+            };
+            sides.insert(unit.clone(), word.into());
+        }
+        worded.insert(path.clone(), Value::Object(sides));
+    }
+    take(Some(&Value::Object(worded)))
+}
+
+/// A preview of a merge as MCP says it (`preview_view`): each conflict's sides `source` and `into`, and a
+/// text's sides each only the lines it changed from the base — the base said once, not three times whole.
+pub(crate) fn mcp_preview(mut view: Map<String, Value>) -> Map<String, Value> {
+    if let Some(Value::Array(rows)) = view.get_mut("conflicts") {
+        for row in rows.iter_mut().filter_map(Value::as_object_mut) {
+            if let Some(target) = row.shift_remove("target") {
+                row.insert("into".into(), target);
+            }
+            let Some(base) = row.get("base").and_then(Value::as_str).map(str::to_string) else {
+                continue;
+            };
+            for side in ["source", "into"] {
+                if let Some(text) = row.get(side).and_then(Value::as_str).map(str::to_string) {
+                    row.insert(side.into(), changed_lines(&base, &text).into());
+                }
+            }
+        }
+    }
+    view
+}
+
+/// The lines `now` changed from `base`, each said `- ` taken away or `+ ` put in, in order.
+fn changed_lines(base: &str, now: &str) -> String {
+    let (was, is): (Vec<&str>, Vec<&str>) = (base.lines().collect(), now.lines().collect());
+    let head = was.iter().zip(&is).take_while(|(a, b)| a == b).count();
+    let tail = was[head..]
+        .iter()
+        .rev()
+        .zip(is[head..].iter().rev())
+        .take_while(|(a, b)| a == b)
+        .count();
+    let gone = &was[head..was.len() - tail];
+    let put = &is[head..is.len() - tail];
+    gone.iter()
+        .map(|l| format!("- {l}"))
+        .chain(put.iter().map(|l| format!("+ {l}")))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// Conflicts chosen, as the window takes them (`take`), into a locked main for a merge request too.
 pub(crate) fn take(given: Option<&Value>) -> Result<MergeTake, String> {
     let mut out = MergeTake::new();
     let Some(Value::Object(by_path)) = given else {

@@ -20,9 +20,9 @@ struct CardEditor: View {
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
 
     @State private var collapsed: Set<String> = []
-    @State private var newFieldName = ""
-    @State private var newValueName = ""
-    @State private var newHold = ""
+    @State private var newFieldName = AdderDraft()
+    @State private var newValueName = AdderDraft()
+    @State private var newHold = AdderDraft()
 
     /// Every name this card goes by, worked out once.
     ///
@@ -129,14 +129,13 @@ struct CardEditor: View {
                 Spacer()
                 if !foldable.isEmpty {
                     HStack(spacing: 8) {
-                        Button(L10n[.Common.actionExpandAll]) { collapsed = [] }
+                        Button { collapsed = [] } label: { Label(L10n[.Common.actionExpandAll], systemImage: "rectangle.expand.vertical") }
                             .disabled(collapsed.isEmpty)
-                        Button(L10n[.Common.actionCollapseAll]) { collapsed = foldable }
+                        Button { collapsed = foldable } label: { Label(L10n[.Common.actionCollapseAll], systemImage: "rectangle.compress.vertical") }
                             .disabled(collapsed == foldable)
                     }
                     .font(.app(10.5))
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
+                    .buttonStyle(.borderless)
                 }
             }
         }
@@ -170,7 +169,7 @@ struct CardEditor: View {
                 (L10n[.CardEditor.factFields], "\(countFields(schema.fields))"),
                 (L10n[.CardEditor.factNested], "\(nested)"),
                 (L10n[.CardEditor.factMaxDepth], "\(maxDepth(schema.fields))"),
-                (L10n[.CardEditor.factOutgoing], "\(references.outgoing.count)"),
+                (L10n[.CardEditor.factOutgoing], "\(model.outgoingLineCount(of: schema.id))"),
                 (L10n[.CardEditor.factIncoming], "\(incoming)"),
             ]
         }
@@ -318,37 +317,34 @@ struct CardEditor: View {
         }
     }
 
-    private func adding(_ prompt: String, text: Binding<String>, commit: @escaping () -> Void) -> some View {
-        HStack(spacing: 6) {
-            TextField(prompt, text: text)
-                .textFieldStyle(.roundedBorder)
-                .font(.app(11.5, design: .monospaced))
-                .onSubmit(commit)
-            Button(L10n[.Common.actionAddItem], action: commit)
-                .disabled(text.wrappedValue.trimmingCharacters(in: .whitespaces).isEmpty)
+    private func adding(_ prompt: String, text draft: Binding<AdderDraft>, commit: @escaping () -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                TextField(prompt, text: draft.text)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.app(11.5, design: .monospaced))
+                    .onSubmit(commit)
+                Button(L10n[.Common.actionAddItem], action: commit)
+                    .disabled(draft.wrappedValue.typed == nil)
+            }
+            if let refused = draft.wrappedValue.refused {
+                Text(refused).font(.app(11)).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
+            }
         }
         .padding(10)
     }
 
     private func commitField() {
-        let name = newFieldName.trimmingCharacters(in: .whitespaces)
-        guard !name.isEmpty else { return }
-        model.addField(to: schema.id, name: name)
-        if model.lastError == nil { newFieldName = "" }
+        newFieldName.add(in: model) { model.addField(to: schema.id, name: $0) }
     }
 
     private func commitValue() {
-        let value = newValueName.trimmingCharacters(in: .whitespaces)
-        guard !value.isEmpty else { return }
-        model.addValue(to: schema.id, value: value)
-        if model.lastError == nil { newValueName = "" }
+        newValueName.add(in: model) { model.addValue(to: schema.id, value: $0) }
     }
 
     private func commitHold() {
-        let path = newHold.trimmingCharacters(in: .whitespaces)
-        guard !path.isEmpty else { return }
-        model.setHolds(schema.id, holds + [path])
-        if model.lastError == nil { newHold = "" }
+        newHold.add(in: model) { model.setHolds(schema.id, holds + [$0]) }
     }
 }
 

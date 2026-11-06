@@ -1,5 +1,6 @@
 {
   "create.card.exists": "カード「{name}」は既にあります（中を変えるのは card_update。作り直すなら先に card_delete）",
+  "create.card.exists.screen": "カード「{name}」は既にあります",
   "create.duplicate.name": "同じ名前のカードが 2 回指定されています",
   "create.kind.cannotMake": "{kind} は作れない種類です",
   "create.label.cardName": "スキーマ名",

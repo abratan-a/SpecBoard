@@ -302,7 +302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フィールドも一緒に消えます。このカードを参照しているフィールドは、行としては残り、参照先が未解決になります。"
+            "value" : "フィールドも一緒に消えます。このカードを指しているフィールドは、行としては残り、指す先が未解決になります。"
           }
         }
       }
@@ -386,13 +386,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No action reads or writes this."
+            "value" : "No flow reads or writes this."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "どの action も読み書きしていません"
+            "value" : "どの flow も読み書きしていません"
           }
         }
       }
@@ -512,13 +512,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incoming refs"
+            "value" : "Incoming lines"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "被参照"
+            "value" : "入ってくる線"
           }
         }
       }
@@ -530,13 +530,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Max nesting"
+            "value" : "Nesting depth"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最大ネスト"
+            "value" : "入れ子の深さ"
           }
         }
       }
@@ -566,13 +566,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Outgoing refs"
+            "value" : "Outgoing lines"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "外向き参照"
+            "value" : "出ていく線"
           }
         }
       }
@@ -818,13 +818,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connections (cards it refers to and is referred by, places that mention it) and history"
+            "value" : "Connections (the cards its outgoing and incoming lines reach, places that mention it) and history"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "つながり（参照している・されているカード、言及している所）と履歴"
+            "value" : "つながり（出ていく線・入ってくる線の先のカード、言及している所）と履歴"
           }
         }
       }
@@ -836,13 +836,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cards it refers to and is referred by, actions that use it, notes that mention it"
+            "value" : "The cards its outgoing and incoming lines reach, actions that use it, notes that mention it"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "参照している・されているカード、使っている action、言及している note"
+            "value" : "出ていく線・入ってくる線の先のカード、使っている action、言及している note"
           }
         }
       }
@@ -2258,13 +2258,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Referenced by"
+            "value" : "Incoming lines"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "参照されている"
+            "value" : "入ってくる線"
           }
         }
       }
@@ -2276,13 +2276,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Refers to"
+            "value" : "Outgoing lines"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "参照している"
+            "value" : "出ていく線"
           }
         }
       }
@@ -2294,13 +2294,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actions that use it"
+            "value" : "Flows that use it"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使っている action"
+            "value" : "使っている flow"
           }
         }
       }

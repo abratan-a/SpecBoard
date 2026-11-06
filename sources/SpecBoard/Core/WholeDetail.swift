@@ -201,7 +201,7 @@ nonisolated struct WholeCard: Decodable {
         case id, projectId, name, label, kind, description, tags, metadata, rules, absentFields,
              discriminator, enumOpen, posX, posY, pinned, sortOrder, fields, values, uses, signedBy,
              verifiedBy, next, body, rows, trigger, steps, cell, diagram,
-             size, docView, version, sectionId, customFields, customRows, form, itemPlaces, standalone,
+             size, autoSize, docView, version, sectionId, customFields, customRows, form, itemPlaces, standalone,
              connections, strayFields, faceRows, tableMarkdown, review, codeReview, face, listFace, container = "in"
     }
 
@@ -408,6 +408,7 @@ nonisolated struct WholeCard: Decodable {
         card.cell = try c.decodeIfPresent(FlowCell.self, forKey: .cell)
         card.diagram = try c.decodeIfPresent(String.self, forKey: .diagram)
         card.size = try c.decodeIfPresent(GridSize.self, forKey: .size)
+        card.sizedByText = try c.decodeIfPresent(Bool.self, forKey: .autoSize) ?? false
         card.docView = try c.decodeIfPresent(String.self, forKey: .docView)
         card.version = try c.decodeIfPresent(String.self, forKey: .version)
         card.sectionId = try c.decodeIfPresent(String.self, forKey: .sectionId)
@@ -439,6 +440,10 @@ nonisolated struct WholeCard: Decodable {
         formRows = form?.rows ?? [:]
         if self.card.kind == .stackdoc {
             self.card.versions = StackVersion.read(formRows["versions"])
+        }
+        if self.card.kind == .spec {
+            self.card.specStory = SpecStory.read(self.form)
+            self.card.scenarios = SpecScenario.read(formRows["scenarios"])
         }
         if self.card.kind == .instance {
             self.card.data = self.form["data"]

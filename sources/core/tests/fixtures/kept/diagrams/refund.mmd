@@ -2,7 +2,7 @@ flowchart LR
     n_start(["開始: Charts/Shop:Checkout から受ける（Schemas/Ordering:Order.total）"])
     n_ask["問い合わせ<br/>処理<br/>call payment-gateway: Schemas/Ordering:Order.total<br/>send Charts/Shop:Checkout: Schemas/Ordering:Order.id<br/>write Schemas:Orders"]
     n_a["処理<br/>read Schemas:Customer.name"]
-    n_b{{"待つ: approval（1日 まで）"}}
+    n_b{{"待つ: approval（期限 1日）"}}
     n_meet[["合流（all）"]]
     n_again["実行: Charts/Shop:Checkout"]
     n_check{"判断: Schemas/Ordering:Order.status"}

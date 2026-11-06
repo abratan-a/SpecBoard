@@ -202,6 +202,73 @@ fn takes(card: &Card, entry: &Entry, export: &str, project: &super::Project) -> 
     }
 }
 
+/// What a section's entry with no kinds leaves out of the cards under it, and why — each reason once,
+/// with the kinds it leaves out: a kind that may not be written where the entry writes (said always:
+/// a schema's cards go to one file, not a folder), and, when the entry takes no card at all, a flow
+/// (taken by its own entries) and a note outside a schema section. None for an entry of a card or
+/// with kinds.
+pub fn left_out(
+    entry: &Entry,
+    export: &str,
+    project: &super::Project,
+) -> Vec<(Vec<String>, String)> {
+    let detail = project.detail;
+    if !entry.kinds.is_empty() || detail.schemas.iter().any(|c| c.id == entry.from) {
+        return Vec::new();
+    }
+    let parent: HashMap<&str, Option<&str>> = detail
+        .sections
+        .iter()
+        .map(|s| (s.id.as_str(), s.parent_id.as_deref()))
+        .collect();
+    let under = |section: &str| -> bool {
+        let mut at = Some(section);
+        let mut steps = 0;
+        while let Some(id) = at {
+            if id == entry.from {
+                return true;
+            }
+            steps += 1;
+            if steps > detail.sections.len() {
+                return false;
+            }
+            at = parent.get(id).copied().flatten();
+        }
+        false
+    };
+    let mut kept: Vec<(Vec<String>, String)> = Vec::new();
+    let mut usual: Vec<(Vec<String>, String)> = Vec::new();
+    let mut took = false;
+    let note = |list: &mut Vec<(Vec<String>, String)>, kind: &str, why: String| match list
+        .iter_mut()
+        .find(|(_, w)| *w == why)
+    {
+        Some((kinds, _)) if !kinds.iter().any(|k| k == kind) => kinds.push(kind.to_string()),
+        Some(_) => {}
+        None => list.push((vec![kind.to_string()], why)),
+    };
+    for card in &detail.schemas {
+        if !under(&project.section_of(card)) {
+            continue;
+        }
+        if takes(card, entry, export, project) {
+            took = true;
+            continue;
+        }
+        if let Some(problem) = entry.setting(export).problem_for(&card.kind) {
+            note(&mut kept, &card.kind, problem.to_string());
+        } else if matches!(card.kind.as_str(), "action" | "flow") {
+            note(&mut usual, &card.kind, text!("exports.leftOut.flow"));
+        } else if card.kind == "note" {
+            note(&mut usual, &card.kind, text!("exports.leftOut.note"));
+        }
+    }
+    if !took {
+        kept.extend(usual);
+    }
+    kept
+}
+
 /// Where each card of the project's tree goes by the exports, and what is wrong with them: an entry
 /// whose card or section is not there, a card written where it may not be.
 pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {

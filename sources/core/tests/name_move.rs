@@ -40,7 +40,7 @@ fn lines_of(read: &Value) -> Vec<String> {
 #[test]
 fn the_builtin_lines_are_named_as_they_are_shown() {
     let core = Core::open(script_store()).unwrap();
-    let read = ok(&core, "kind_read", json!({}));
+    let read = common::kinds_whole(&core);
     let lines = read["lines"].as_array().unwrap();
     let label = |name: &str| {
         lines

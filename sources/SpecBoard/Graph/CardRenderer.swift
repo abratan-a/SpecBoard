@@ -251,13 +251,18 @@ enum CardRenderer {
                  color: theme.ink3, centeredVertically: true)
         }
 
+        // A flow's ways between its rows, its jumps in a strip on the left the rows move over for.
+        let ways = schema.nodes.isEmpty || content.document ? FlowWays() : FlowWays.of(schema, rows: content.all)
         var y = listTop(content)
         for row in content.rows {
-            let rect = CGRect(x: body.minX + 1, y: y,
-                              width: body.width - 2, height: CardGeometry.rowHeight)
+            let rect = CGRect(x: body.minX + 1 + ways.gutter, y: y,
+                              width: body.width - 2 - ways.gutter, height: CardGeometry.rowHeight)
             drawRow(row, schema: schema, rect: rect, theme: theme,
                     drawn: drawn, in: ctx)
             y += CardGeometry.rowHeight
+        }
+        if !ways.downs.isEmpty || !ways.jumps.isEmpty {
+            drawWays(ways, content: content, left: body.minX + 1, theme: theme, accent: theme.accent(for: schema.kind), ctx: ctx)
         }
         // The rows an implementation line whose code changed leaves: a dot at the left of each.
         for drawnRow in codeRows(schema, content).keys.sorted() {
@@ -442,7 +447,76 @@ enum CardRenderer {
                 widest = max(widest, indent + width(value.value, field) + width(value.label, Typeface.system(11)) + 32)
             }
         }
+        if !schema.nodes.isEmpty { widest += FlowWays.of(schema, rows: content.all).gutter }
         return min(640, max(220, widest.rounded(.up)))
+    }
+
+    /// A flow's ways (`FlowWays`) over the rows on show: a ↓ above the node below, in the kind words' column,
+    /// with its way's word beside it; a jump as a dashed line in its lane of the strip, from the row it
+    /// leaves to the one it lands on with a head there, its way's word along it. A jump to a row out of
+    /// sight runs to the edge of the rows on show.
+    private static func drawWays(_ ways: FlowWays, content: CardContent, left: CGFloat, theme: GraphTheme,
+                                 accent: NSColor, ctx: CGContext) {
+        let top = listTop(content)
+        let bottom = top + CGFloat(content.rows.count) * CardGeometry.rowHeight
+        func boundary(_ row: Int) -> CGFloat { top + CGFloat(row - content.above) * CardGeometry.rowHeight }
+        func middle(_ row: Int) -> CGFloat { boundary(row) + CardGeometry.rowHeight / 2 }
+        let shown = content.above..<(content.above + content.rows.count)
+        let rows = left + ways.gutter
+        let small = Typeface.system(8.5)
+        for down in ways.downs where shown.contains(down.above) && shown.contains(down.above - 1) {
+            let at = boundary(down.above)
+            let arrow = CGRect(x: rows + 12, y: at - 6, width: 10, height: 12)
+            text("↓", in: arrow, font: Typeface.mono(9, .semibold), color: accent.withAlphaComponent(0.7), centeredVertically: true)
+            if let word = down.word {
+                text(word, in: CGRect(x: arrow.maxX + 1, y: at - 6, width: 60, height: 12), font: small,
+                     color: theme.ink3, centeredVertically: true)
+            }
+        }
+        for jump in ways.jumps {
+            let color: NSColor = switch jump.way {
+            case .error: .systemRed
+            case .timeout: theme.brass
+            case .otherwise: theme.ink3
+            case .next, .branch: theme.ink2
+            }
+            let x = rows - 2 - (CGFloat(jump.lane) + 0.5) * FlowWays.laneWidth
+            let from = min(max(middle(jump.from), top), bottom)
+            let to = min(max(middle(jump.to), top), bottom)
+            let lands = shown.contains(jump.to)
+            ctx.saveGState()
+            ctx.setStrokeColor(color.cgColor)
+            ctx.setLineWidth(1)
+            ctx.setLineDash(phase: 0, lengths: [3, 2])
+            if shown.contains(jump.from) { ctx.move(to: CGPoint(x: rows, y: from)); ctx.addLine(to: CGPoint(x: x, y: from)) }
+            else { ctx.move(to: CGPoint(x: x, y: from)) }
+            ctx.addLine(to: CGPoint(x: x, y: to))
+            if lands { ctx.addLine(to: CGPoint(x: rows - 1, y: to)) }
+            ctx.strokePath()
+            ctx.setLineDash(phase: 0, lengths: [])
+            if lands {
+                ctx.setFillColor(color.cgColor)
+                ctx.move(to: CGPoint(x: rows + 2, y: to))
+                ctx.addLine(to: CGPoint(x: rows - 3, y: to - 3))
+                ctx.addLine(to: CGPoint(x: rows - 3, y: to + 3))
+                ctx.closePath()
+                ctx.fillPath()
+            }
+            // Its word up along its run, on the line with the card's ground under it, where the run is long
+            // enough to hold it.
+            if let word = jump.word {
+                let length = (word as NSString).size(withAttributes: [.font: small]).width
+                if abs(to - from) > length + 12 {
+                    ctx.translateBy(x: x, y: (from + to) / 2)
+                    ctx.rotate(by: -.pi / 2)
+                    let room = CGRect(x: -length / 2 - 2, y: -5.5, width: length + 4, height: 11)
+                    ctx.setFillColor(theme.panel.cgColor)
+                    ctx.fill(room)
+                    text(word, in: room.insetBy(dx: 2, dy: 0), font: small, color: color, centeredVertically: true)
+                }
+            }
+            ctx.restoreGState()
+        }
     }
 
     /// A card of a kind the project defines, as its header says it: the kind's label and the
@@ -662,7 +736,7 @@ enum CardRenderer {
         var right = inset.maxX - kindWidth - 8
         var label = schema.label
         if ghost == nil, let face = schema.listFace {
-            right = drawListHead(face, right: right, in: inset, theme: theme)
+            right = drawListHead(face, right: right, in: inset, after: inset.minX + nameWidth + 8, theme: theme)
             // Its head's other fields after its name, as its label is.
             label = ([schema.label] + face.header.filter { !$0.chip }.map(\.text)).filter { !$0.isEmpty }
                 .joined(separator: " · ")
@@ -729,16 +803,25 @@ enum CardRenderer {
 
     /// Where a list's head draws its counts, in a header whose text area is `inset` and whose kind's word takes
     /// `kindWidth` at its right: left of its chips. None for a head with no marks counted.
-    static func countsRect(_ face: ListFace, in inset: CGRect, kindWidth: CGFloat) -> CGRect? {
+    /// None, too, where they would reach the card's `name` — not drawn then, as the label is not.
+    static func countsRect(_ face: ListFace, in inset: CGRect, kindWidth: CGFloat, name: String) -> CGRect? {
         guard !face.counts.isEmpty else { return nil }
         let right = inset.maxX - kindWidth - 8 - face.header.filter(\.chip).map { chipWidth($0.text) + 8 }.reduce(0, +)
         let width = ceil(countsText(face, theme: .dark).size().width)
+        guard right - width >= inset.minX + nameWidth(name) + 8 else { return nil }
         return CGRect(x: right - width, y: inset.minY, width: width, height: inset.height)
+    }
+
+    /// How wide a card's name is drawn in its header.
+    static func nameWidth(_ name: String) -> CGFloat {
+        (name as NSString).size(withAttributes: [.font: Typeface.mono(13, .semibold)]).width
     }
 
     /// A list's head, from `right` leftward: an enum's value as a chip, as a data row's type is, then the marks
     /// counted. How far left it reaches, less a gap.
-    private static func drawListHead(_ face: ListFace, right start: CGFloat, in inset: CGRect, theme: GraphTheme) -> CGFloat {
+    /// The counts are left out where they would reach `after`, the end of the card's name.
+    private static func drawListHead(_ face: ListFace, right start: CGFloat, in inset: CGRect, after: CGFloat,
+                                     theme: GraphTheme) -> CGFloat {
         var right = start
         for head in face.header.reversed() where head.chip {
             let width = chipWidth(head.text)
@@ -752,8 +835,8 @@ enum CardRenderer {
             text(head.text, in: chip.insetBy(dx: 4, dy: 0), font: badgeFont, color: theme.ink2, centeredVertically: true)
             right = chip.minX - 8
         }
-        if !face.counts.isEmpty {
-            let counts = countsText(face, theme: theme)
+        let counts = countsText(face, theme: theme)
+        if !face.counts.isEmpty, right - ceil(counts.size().width) >= after {
             let size = counts.size()
             let width = ceil(size.width)
             counts.draw(in: CGRect(x: right - width, y: inset.midY - size.height / 2, width: width + 1, height: size.height))
@@ -836,7 +919,7 @@ enum CardRenderer {
             ctx.setStrokeColor(theme.teal.withAlphaComponent(0.22).cgColor)
             ctx.setLineWidth(1)
             for d in 1...row.depth {
-                let x = 12 + CGFloat(d - 1) * 13 + 4.5
+                let x = rect.minX - 1.5 + 12 + CGFloat(d - 1) * 13 + 4.5
                 ctx.move(to: CGPoint(x: x, y: rect.minY))
                 ctx.addLine(to: CGPoint(x: x, y: rect.maxY))
             }
@@ -881,6 +964,11 @@ enum CardRenderer {
                                     accent: theme.accent(for: schema.kind), ctx: ctx) + 6 - rect.minX
             }
             drawForm(form, step: step, schema: schema, rect: rect, indent: indent, theme: theme, ctx: ctx)
+            return
+        }
+
+        if schema.kind == .spec, let step = row.step {
+            drawSpecRow(row, step: step, schema: schema, rect: rect, indent: indent, theme: theme, ctx: ctx)
             return
         }
 
@@ -1154,6 +1242,41 @@ enum CardRenderer {
         guard let image = NSImage(systemSymbolName: "key.fill", accessibilityDescription: BuiltinWords.recordField("primaryKey"))?
             .withSymbolConfiguration(config) else { return }
         image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true, hints: nil)
+    }
+
+    /// A spec's row: a part of its story, its word in bold and what is written; or a scenario — a dot in the card's colour, its
+    /// title, and how many tests check it in a box on the right, in the warning colour when none does.
+    private static func drawSpecRow(_ row: CardRow, step: StepRow, schema: SchemaNode, rect: CGRect, indent: CGFloat,
+                                    theme: GraphTheme, ctx: CGContext) {
+        let left = rect.minX + indent
+        if SpecRows.story.contains(row.path) {
+            // Its word in bold, then what is written; a part not written its word alone, faint.
+            let word: CGFloat = 52
+            text(step.label, in: CGRect(x: left, y: rect.minY, width: word, height: rect.height),
+                 font: Typeface.system(11, step.text.isEmpty ? .regular : .semibold),
+                 color: step.text.isEmpty ? theme.ink3 : theme.ink, centeredVertically: true)
+            text(step.text, in: CGRect(x: left + word, y: rect.minY, width: max(10, rect.maxX - 12 - left - word), height: rect.height),
+                 font: Typeface.system(11), color: theme.ink2, centeredVertically: true)
+            return
+        }
+        let accent = theme.accent(for: schema.kind)
+        let dot: CGFloat = 6
+        ctx.setFillColor(accent.cgColor)
+        ctx.fillEllipse(in: CGRect(x: left, y: rect.midY - dot / 2, width: dot, height: dot))
+        let detail = step.detail ?? ""
+        let badgeFont = Typeface.mono(10, .regular)
+        let badgeWidth = detail.isEmpty ? 0 : (detail as NSString).size(withAttributes: [.font: badgeFont]).width + 10
+        let badge = CGRect(x: rect.maxX - 12 - badgeWidth, y: rect.midY - 8, width: badgeWidth, height: 16)
+        text(step.text,
+             in: CGRect(x: left + dot + 8, y: rect.minY, width: max(10, badge.minX - 8 - (left + dot + 8)), height: rect.height),
+             font: Typeface.system(11.5), color: theme.ink, centeredVertically: true)
+        guard !detail.isEmpty else { return }
+        let ink = step.warns ? NSColor.systemOrange : theme.teal
+        ctx.addPath(CGPath(roundedRect: badge, cornerWidth: 3, cornerHeight: 3, transform: nil))
+        ctx.setStrokeColor(ink.cgColor)
+        ctx.setLineWidth(1)
+        ctx.strokePath()
+        text(detail, in: badge.insetBy(dx: 5, dy: 0), font: badgeFont, color: ink, centeredVertically: true)
     }
 
     private static func text(

@@ -197,10 +197,15 @@ pub(crate) fn walk<'a>(
             out.row = builtin_row(&head.kind);
             return Ok(out);
         }
-        // A stackdoc's version by its name (`Docs:Changelog.v0_2_21`), and nothing inside it.
-        "stackdoc" => {
-            let versions = head.versions();
-            let there = versions.iter().any(|v| v.name == names[0]);
+        // A stackdoc's version by its name (`Docs:Changelog.v0_2_21`), a spec's scenario by its
+        // (`Docs:Lines.addRemove`), and nothing inside either.
+        "stackdoc" | "spec" => {
+            let versions: Vec<String> = if head.kind == "spec" {
+                head.scenarios().into_iter().map(|s| s.name).collect()
+            } else {
+                head.versions().into_iter().map(|v| v.name).collect()
+            };
+            let there = versions.iter().any(|v| *v == names[0]);
             if !there || names.len() > 1 {
                 let walked: Vec<String> = if there {
                     vec![names[0].clone()]
@@ -212,11 +217,7 @@ pub(crate) fn walk<'a>(
                     holder: head,
                     walked: walked.clone(),
                     from_head: walked,
-                    there: if there {
-                        Vec::new()
-                    } else {
-                        versions.into_iter().map(|v| v.name).collect()
-                    },
+                    there: if there { Vec::new() } else { versions },
                 });
             }
             out.within = names.to_vec();
@@ -756,6 +757,20 @@ pub(crate) fn locate<'a>(
         }),
         Err(miss) => {
             let at = full(miss.holder, &miss.walked);
+            // Through an embedded field the names go on in the card it embeds: that card is what
+            // is read and written there, so its path is said rather than the embedded field's
+            // (it has no fields of its own).
+            if matches!(miss.kind, MissKind::Field)
+                && let Ok(through) = walk(card, &written.names, project, true)
+                && through.holder.id != card.id
+            {
+                return Err(text!(
+                    "walk.miss.throughEmbed",
+                    path,
+                    at,
+                    there = full(through.holder, &through.within)
+                ));
+            }
             let there = |none: String| {
                 if miss.there.is_empty() {
                     none

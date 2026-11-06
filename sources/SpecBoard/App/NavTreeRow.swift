@@ -276,6 +276,8 @@ final class NavTreeMemo {
         var source: NavPanelTree.Source
         var expanded: Set<String>
         var query: String
+        /// The branch's marks `diff:` reads, only while it is asked for.
+        var diffMarks: BranchMarks?
         var gone: BranchMarks.Gone
         var outlines: [String: FileOutline]
     }
@@ -313,7 +315,10 @@ final class NavTreeMemo {
         // What a row reads of the project is read from the newest reading, alike as it is.
         self.detail = detail
         guard let source else { return }
-        let now = Shape(source: source, expanded: expanded, query: filter.query, gone: shown.gone, outlines: inputs.outlines)
+        var filter = filter
+        filter.marks = inputs.root.branch ? shown : nil
+        let now = Shape(source: source, expanded: expanded, query: filter.query,
+                        diffMarks: filter.asked.diff == nil ? nil : filter.marks, gone: shown.gone, outlines: inputs.outlines)
         if now != shape {
             shape = now
             rows = NavPanelTree.rows(detail, expanded: expanded, filter: filter, gone: shown.gone, outlines: inputs.outlines)
@@ -426,6 +431,8 @@ struct NavTreeRow: View, Equatable {
         .modifier(NavDropTarget(enabled: !pinned, delegate: NavPanelDrop(
             target: node,
             height: { hands.heights[key] ?? 20 },
+            detail: { hands.tree?.model.detail },
+            hover: { [opens = face.opens] over in hands.tree?.springOpen(key, over: over, opens: opens) },
             dragged: { hands.tree?.draggingNow },
             decide: { dragged, spot in hands.tree?.decide(dragged, on: node, at: spot) },
             mark: { spot in hands.tree?.markDrop(key, spot) },
@@ -738,13 +745,16 @@ struct NavDropTarget: ViewModifier {
 struct NavPanelDrop: DropDelegate {
     var target: NavPanelTree.Node
     var height: () -> CGFloat
+    var detail: () -> ProjectDetail?
+    /// A drag come over the row, or gone from it: a closed row opens when it stays (`springOpen`).
+    var hover: (Bool) -> Void
     var dragged: () -> NavPanelTree.Node?
     var decide: (NavPanelTree.Node, NavPanelTree.Spot) -> NavPanelTree.Drop?
     var mark: (NavPanelTree.Spot?) -> Void
     var perform: (NavPanelTree.Node, NavPanelTree.Drop, [NSItemProvider]) -> Void
 
     private func spot(_ info: DropInfo, _ dragging: NavPanelTree.Node) -> NavPanelTree.Spot {
-        NavPanelTree.spot(info.location.y, height: height(), dragging: dragging, over: target)
+        NavPanelTree.spot(info.location.y, height: height(), dragging: dragging, over: target, in: detail())
     }
 
     func validateDrop(info: DropInfo) -> Bool {
@@ -764,10 +774,16 @@ struct NavPanelDrop: DropDelegate {
         return DropProposal(operation: .move)
     }
 
-    func dropExited(info: DropInfo) { mark(nil) }
+    func dropEntered(info: DropInfo) { hover(true) }
+
+    func dropExited(info: DropInfo) {
+        mark(nil)
+        hover(false)
+    }
 
     func performDrop(info: DropInfo) -> Bool {
         mark(nil)
+        hover(false)
         guard let dragging = dragged(), let drop = decide(dragging, spot(info, dragging)) else { return false }
         perform(dragging, drop, info.itemProviders(for: [.text]))
         return true

@@ -83,7 +83,7 @@ extension AppModel {
     /// and the chart is asked to bring the frame under its heads (`sequenceFocus`). False for any other press — a
     /// flow with no frame there, another actor's flow, a section on show — which opens the card's own section.
     func pickFrame(of card: String) -> Bool {
-        guard case .section(let id) = here, let detail, detail.sections.first(where: { $0.id == id })?.isActor == true,
+        guard let id = mapShownSection, let detail, detail.sections.first(where: { $0.id == id })?.isActor == true,
               ActorView.showsSequence(project: detail.project.id, actor: id),
               ActorSequence.frames(ActorSequence.drawn(model: self, actor: id)).contains(card) else { return false }
         ActorView.setOpen(true, flow: card, project: detail.project.id, actor: id)

@@ -338,9 +338,11 @@ pub fn declared_edges(project: &Project) -> Vec<Relation> {
             let Some(def) = project.defs.line(&line.line) else {
                 continue;
             };
+            // A store's holds line is drawn here too: no other way draws it; and a whiteboard's arrow, by
+            // its own words.
             let drawn_before = def.base == crate::kinds::Base::Embed
                 || matches!(def.annotation(), Some("x-pointsAt") | Some("x-payloads"))
-                || (def.builtin && def.name != "link");
+                || (def.builtin && !matches!(def.name.as_str(), "link" | "holds" | "arrow"));
             if drawn_before {
                 continue;
             }
@@ -353,11 +355,21 @@ pub fn declared_edges(project: &Project) -> Vec<Relation> {
             let field = (!line.from.is_empty())
                 .then(|| super::field_at(&card.fields, &line.from))
                 .flatten();
+            // An arrow is said by its own label, where another line says the field it leaves.
+            let said = if line.line == "arrow" {
+                line.fields
+                    .get("label")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_string()
+            } else {
+                line.from.clone()
+            };
             out.push(relation(
                 &card.id,
                 &target.id,
                 field.map(|f| f.id.as_str()).unwrap_or_default(),
-                line.from.clone(),
+                said,
                 &line.line,
                 line.at.clone(),
                 field.is_some_and(|f| f.is_array),
@@ -772,15 +784,41 @@ pub fn available_kinds(project: &Project) -> Vec<String> {
     line_kinds(project, &declared_edges(project))
 }
 
-/// A kind of line as MCP says it: the line's own name, `points` for what the drawing calls
-/// `lookup` (the line is `points` everywhere else).
-pub fn said_kind(kind: &str) -> &str {
-    if kind == "lookup" { "points" } else { kind }
+/// What the drawing calls a kind of line it draws, and the name of the kind of line it is drawn for
+/// (`kind_list`): a key line is drawn as what it signs and what it checks with.
+const DRAWN_AS: [(&str, &str); 8] = [
+    ("lookup", "points"),
+    ("note", "rules"),
+    ("connect", "link"),
+    ("run", "runs"),
+    ("event", "awaits"),
+    ("next", "partner"),
+    ("signedBy", "key"),
+    ("verifiedBy", "key"),
+];
+
+/// A kind of line as MCP says it: the name of the kind of line it is drawn for. A project's own kind
+/// of line that has the drawing's name keeps it.
+pub fn said_kind<'a>(project: &Project, kind: &'a str) -> &'a str {
+    if project.defs.line(kind).is_some_and(|d| !d.builtin) {
+        return kind;
+    }
+    DRAWN_AS
+        .iter()
+        .find(|(drawn, _)| *drawn == kind)
+        .map_or(kind, |(_, said)| said)
 }
 
-/// A kind of line MCP named, as the drawing keeps it.
-pub fn kept_kind(kind: &str) -> &str {
-    if kind == "points" { "lookup" } else { kind }
+/// The kinds the drawing keeps for a kind of line MCP named: its own name too, which the drawing may
+/// already use.
+pub fn kept_kinds(project: &Project, name: &str) -> Vec<String> {
+    let mut out: Vec<String> = DRAWN_AS
+        .iter()
+        .filter(|(drawn, said)| *said == name && project.defs.line(drawn).is_none_or(|d| d.builtin))
+        .map(|(drawn, _)| drawn.to_string())
+        .collect();
+    out.push(name.to_string());
+    out
 }
 
 /// The tags names stand for, groups followed to the tags in them (`expandTags`).
@@ -938,6 +976,9 @@ fn collect_edges(
 fn members(card: &Card, project: &Project, plain: bool) -> Vec<String> {
     if card.kind == "enum" {
         return card.values.iter().map(|v| v.value.clone()).collect();
+    }
+    if card.kind == crate::kinds::SKETCH {
+        return sketch_words(card);
     }
     let here = project.section_of(card);
     card.fields
@@ -1247,7 +1288,8 @@ pub fn select(project: &Project, spec: &Spec) -> Subgraph {
         .map(|c| Node {
             name: name(&c.id),
             kind: c.kind.clone(),
-            members: if spec.fields {
+            // A sketch's words are what it says: drawn whether fields are asked for or not.
+            members: if spec.fields || c.kind == crate::kinds::SKETCH {
                 members(c, project, false)
             } else {
                 Vec::new()
@@ -1368,7 +1410,7 @@ fn head(project: &Project, spec: &Spec, kinds: &[String], rev: &str, cut: Option
             "kinds={}",
             kinds
                 .iter()
-                .map(|k| said_kind(k))
+                .map(|k| said_kind(project, k))
                 .collect::<Vec<_>>()
                 .join(",")
         ),
@@ -1444,6 +1486,9 @@ fn plainly(graph: Subgraph, project: &Project, spec: &Spec) -> Subgraph {
             .map(|node| Node {
                 members: match (spec.fields, by_name.get(&node.name)) {
                     (true, Some(card)) => members(card, project, true),
+                    (false, Some(card)) if card.kind == crate::kinds::SKETCH => {
+                        members(card, project, true)
+                    }
                     _ => node.members,
                 },
                 label: by_name
@@ -1621,6 +1666,9 @@ fn arrow(kind: &str) -> &'static str {
 fn word(kind: &str) -> &str {
     match kind {
         "run" => "runs",
+        "event" => "awaits",
+        "next" => "partner",
+        "connect" => "link",
         "flow.next" => "next",
         "flow.when" => "condition",
         "flow.else" => "else",
@@ -1633,6 +1681,14 @@ fn word(kind: &str) -> &str {
 
 /// What goes after the colon on an edge. `plain`: the landing as it is written out.
 fn label(edge: &Edge, plain: bool) -> String {
+    // An arrow carries its own label (or none), not a field's path.
+    if edge.kind == "arrow" {
+        return if edge.path.is_empty() {
+            word(&edge.kind).to_string()
+        } else {
+            edge.path.clone()
+        };
+    }
     let path = edge.path.clone() + if edge.array { "[]" } else { "" };
     if matches!(edge.kind.as_str(), "embed" | "digest" | "lookup") {
         return path;
@@ -1739,7 +1795,7 @@ pub fn render_sections(
             from + 1,
             arrow(kind),
             to + 1,
-            said_kind(kind)
+            said_kind(project, kind)
         )
     };
     let size = |text: &str| text.chars().count() + 1;
@@ -1906,4 +1962,21 @@ fn state_word(project: &Project, card: &Card) -> String {
         }
     }
     String::new()
+}
+
+/// A whiteboard's sketch as a class's members: the lines of its text as they are read, bold without its marks
+/// and a link by the words it is shown by.
+fn sketch_words(card: &Card) -> Vec<String> {
+    let text = card
+        .form
+        .as_ref()
+        .and_then(|f| f["fields"]["text"].as_str())
+        .unwrap_or_default();
+    crate::notetext::plain_note(text, &[])
+        .replace("**", "")
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .map(ident::member_text)
+        .collect()
 }

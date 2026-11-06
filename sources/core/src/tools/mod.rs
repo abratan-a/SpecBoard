@@ -21,7 +21,7 @@ mod brought;
 mod card_map;
 mod cards;
 mod cells;
-mod check;
+pub(crate) mod check;
 pub(crate) mod code;
 pub(crate) mod code_review;
 mod commit_view;
@@ -43,6 +43,7 @@ pub(crate) mod frames;
 mod ghosts;
 pub(crate) mod grid;
 mod groups;
+pub(crate) mod images;
 mod impact;
 mod in_part;
 mod inner;
@@ -742,7 +743,16 @@ pub(crate) use args::action_gone;
 
 /// The value against one of the tool's forms (its `label`), every complaint at once
 /// (`Surface.check`).
+/// What an image's contents told (`images::READ_KEYS`) is no key of a card write's form: the core put it in the
+/// value in place of the contents, having refused it written by anyone else (`images::take`).
 pub(crate) fn check(value: &Map<String, Value>, tool: &str, label: &str) -> Result<(), String> {
+    if matches!(tool, "card_create" | "card_update")
+        && images::READ_KEYS.iter().any(|k| value.contains_key(*k))
+    {
+        let mut asked = value.clone();
+        asked.retain(|k, _| !images::READ_KEYS.contains(&k.as_str()));
+        return args::check(&asked, args::form(tool, label), tool, label);
+    }
     args::check(value, args::form(tool, label), tool, label)
 }
 
@@ -1100,6 +1110,24 @@ pub(crate) fn named_in(
             name: name.to_string(),
         });
     }
+    // The merge's result the window shows (`create_result_branch`): one a project, named by the
+    // window by a word of its own, as its name changes each time it is made.
+    if name == crate::write::RESULT_WORD
+        && let Some((id, found)) = conn
+            .query_row(
+                "SELECT id, name FROM branches WHERE project_id = ? AND name LIKE ?",
+                [project, &format!("{}%", crate::write::RESULT_PREFIX)],
+                |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
+            )
+            .optional()
+            .map_err(crate::store::sql)?
+    {
+        return Ok(Named {
+            project: project.to_string(),
+            tree: id,
+            name: found,
+        });
+    }
     no_branch(conn, project, name)
 }
 
@@ -1263,14 +1291,20 @@ impl Core {
     /// a card it gives the rev of is not as it was read (`revs`), held to the tree before it writes.
     fn write_tool(&self, who: &Who, name: &str, args: &Args) -> Result<Output, String> {
         // The window's writes give none, and any it gives is not read.
-        let given = if who.side == crate::write::Side::Mcp {
-            revs::given(name, args.raw)?
+        let (given, given_meta) = if who.side == crate::write::Side::Mcp {
+            (
+                revs::given(name, args.raw)?,
+                revs::given_meta(name, args.raw)?,
+            )
         } else {
-            Vec::new()
+            (Vec::new(), Vec::new())
         };
         self.plain_writing(who.clone(), |tx| {
             if !given.is_empty() {
                 revs::refuse_stale(tx, &scope_of(tx, args, None)?, &given)?;
+            }
+            if !given_meta.is_empty() {
+                revs::refuse_stale_meta(tx, &scope_of(tx, args, None)?, &given_meta)?;
             }
             write_in(tx, name, args, None)
         })
@@ -1357,6 +1391,8 @@ pub(crate) fn write_in(
                 return Err(text!("tools.notYet", name = name));
             }
         };
+    // Through MCP, the rev of the section, the project or the kind written (`revs`).
+    let out = revs::stamp_meta(tx, &scope, name, args.raw, out)?;
     // The project's own settings take no tree, and their answer no heading.
     if !BRANCHED.contains(&name) {
         return Ok(out);

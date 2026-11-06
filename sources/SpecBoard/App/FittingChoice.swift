@@ -91,3 +91,31 @@ extension Array where Element == FittingChoice.Option {
         return out
     }
 }
+
+/// A choice among values of any kind, drawn as `FittingChoice` draws one (`specboard://SpecBoard/Docs/Design:UI`
+/// 「値を選ぶ欄」): a pull-down whose button says the value chosen, on one line cut short with … where it is long,
+/// and whose menu says each option, the one chosen checked. A value no option has is said as it is.
+struct ChoiceMenu<Value: Hashable>: View {
+    var options: [(value: Value, text: String)]
+    @Binding var selection: Value
+    /// What the button says of a value no option has.
+    var unknown: (Value) -> String = { "\($0)" }
+
+    var body: some View {
+        Menu {
+            Picker("", selection: $selection) {
+                ForEach(options.indices, id: \.self) { Text(options[$0].text).tag(options[$0].value) }
+            }
+            .labelsHidden().pickerStyle(.inline)
+        } label: {
+            Text(Self.said(options, selection, unknown: unknown))
+                .lineLimit(1).truncationMode(.tail)
+        }
+    }
+
+    /// What the button says: the option chosen's words, or the value itself when no option has it.
+    static func said(_ options: [(value: Value, text: String)], _ selection: Value,
+                     unknown: (Value) -> String) -> String {
+        options.first { $0.value == selection }?.text ?? unknown(selection)
+    }
+}

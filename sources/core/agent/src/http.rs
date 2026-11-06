@@ -144,6 +144,23 @@ pub fn read_request(
                 }
                 incoming.known |= known;
             }
+            // A body in chunks is not read: one that is not where its length says would be read as
+            // the next request.
+            if headers.contains_key("transfer-encoding") {
+                return Err((
+                    411,
+                    "Transfer-Encoding is not read: send the body with Content-Length".into(),
+                ));
+            }
+            // /healthz takes no body: one said to be coming is not waited for, from whoever sends it.
+            if request_line[1] == "/healthz"
+                && headers
+                    .get("content-length")
+                    .and_then(Value::as_str)
+                    .is_some_and(|declared| declared.trim() != "0")
+            {
+                return Err((400, "/healthz takes no body".into()));
+            }
             let length = match headers.get("content-length").and_then(Value::as_str) {
                 None => 0,
                 Some(declared) => match declared.parse::<usize>() {

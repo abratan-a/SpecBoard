@@ -144,6 +144,28 @@ nonisolated struct ExportRead: Decodable, Equatable, Sendable, Identifiable {
         var to: String
         var format: String?
         var kinds: [String]?
+        /// What the row leaves out of what it reaches, and why, a line each: a row that writes no
+        /// card says so where its files are listed.
+        var unwritten: [String] = []
+
+        enum CodingKeys: String, CodingKey { case from, to, format, kinds, unwritten }
+
+        init(from: String, to: String, format: String?, kinds: [String]?, unwritten: [String] = []) {
+            self.from = from
+            self.to = to
+            self.format = format
+            self.kinds = kinds
+            self.unwritten = unwritten
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            from = try c.decode(String.self, forKey: .from)
+            to = try c.decode(String.self, forKey: .to)
+            format = try c.decodeIfPresent(String.self, forKey: .format)
+            kinds = try c.decodeIfPresent([String].self, forKey: .kinds)
+            unwritten = try c.decodeIfPresent([String].self, forKey: .unwritten) ?? []
+        }
     }
 
     /// One file it writes: what it holds (a format, `chart` or `document`), its cards by path, and how

@@ -761,7 +761,7 @@ fn the_marks_go_with_the_project_file_and_a_file_of_before_has_none() {
     let peer = first_of(&core, "peerMismatches");
     accept(&core, json!([peer, broken]), "見本のまま");
     let written = file(&core);
-    assert_eq!(written["version"], 33);
+    assert_eq!(written["version"], 34);
     let marks = written["inspectionMarks"].as_array().unwrap();
     // In the order of their ids.
     let mut order = vec![broken.clone(), peer.clone()];
@@ -876,7 +876,12 @@ fn a_project_that_denies_the_marks_to_mcp_reads_them_still() {
         json!({"target": broken, "value": {"accept": "理由"}}),
     );
     assert!(said.contains("点検の件に印を付ける"), "{said}");
-    assert_eq!(list(&core, json!({}))["counts"]["fix"], 6);
+    // Read as before: listed, counted, and read one by one.
+    let listed = list(&core, json!({}));
+    assert_eq!(listed["counts"]["fix"], 6);
+    assert!(listed.to_string().contains(broken.as_str()), "{listed}");
+    let read = ok(&core, "inspection_read", json!({"target": broken}));
+    assert_eq!(read["items"][0]["id"], broken, "{read}");
 }
 
 /// The items of `group` in main, whole.
@@ -900,6 +905,12 @@ fn a_begin_naming_no_one_is_a_missing_partner() {
         ]),
         "{items:?}"
     );
+    // Both to fix, under the group's label.
+    for item in &items {
+        let read = ok(&core, "inspection_read", json!({"target": item["id"]}))["items"][0].clone();
+        assert_eq!(read["kind"], "fix", "{read}");
+        assert_eq!(read["label"], "相手が書かれていない", "{read}");
+    }
     let reserve = items
         .iter()
         .find(|i| i["at"] == "Charts/注文サーバ/在庫:Reserve.start")

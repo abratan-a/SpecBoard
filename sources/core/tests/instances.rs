@@ -1399,3 +1399,146 @@ fn a_value_put_in_from_data_is_written_out_and_one_not_found_is_said_why() {
         "Data:vault.ports[number=8200]: 2 つに当たります（ports[0]・ports[2]）"
     );
 }
+
+#[test]
+fn a_form_put_into_the_data_json_says_a_card_by_its_name_not_its_path() {
+    let core = with_data();
+    ok(
+        &core,
+        "kind_create",
+        json!({"target": "schemaOf", "value": {"of": "line", "label": "形の JSON Schema", "base": "link",
+            "from": [{"kinds": ["instance"], "at": "row"}],
+            "to": {"kinds": ["entity", "value"], "at": ["card"]},
+            "max": 1, "visible": false, "export": {"as": "schema"}}}),
+    );
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Schemas:CmdArgs": {"kind": "entity", "description": "呼ぶのは [[Schemas:Customer]]",
+                "fields": [{"name": "path", "type": "string", "description": "[[Schemas:Customer]] の家"}]},
+            "Schemas:Cmd": {"kind": "entity", "fields": [
+                {"name": "name", "type": "string"}, {"name": "args", "type": "object"}]}
+        }}),
+    );
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Data:ls", "value": {"kind": "instance", "of": "Schemas:Cmd",
+            "data": {"name": "ls"},
+            "connections": [{"line": "schemaOf", "from": "args", "to": "Schemas:CmdArgs"}]}}),
+    );
+    let made = common::op(
+        &core,
+        json!({"op": "tool", "name": "export_create", "arguments": {"project": PROJECT,
+            "target": "cmds", "value": {"entries": [
+                {"from": "Data", "to": "cmds.json", "format": "json-data"}]}}}),
+    );
+    assert!(made.get("error").is_none(), "{made}");
+    let written = ok(
+        &core,
+        "export_read",
+        json!({"targetdir": "[default]", "target": "cmds", "value": {"files": ["cmds.json"]}}),
+    );
+    let got: Value = serde_json::from_str(written["files"][0]["text"].as_str().unwrap()).unwrap();
+    let args = &got[0]["args"];
+    assert_eq!(args["description"], "呼ぶのは Customer", "{got}");
+    assert_eq!(
+        args["properties"]["path"]["description"], "Customer の家",
+        "{got}"
+    );
+}
+
+fn written(core: &Core, target: &str, file: &str) -> String {
+    let read = ok(
+        core,
+        "export_read",
+        json!({"targetdir": "[default]", "target": target, "value": {"files": [file]}}),
+    );
+    read["files"][0]["text"].as_str().unwrap().to_string()
+}
+
+#[test]
+fn an_array_or_an_embedded_shape_with_other_types_is_written_so_in_every_export() {
+    let core = with_data();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Schemas:Call", "value": {"kind": "entity", "fields": [
+            {"name": "args", "type": "string", "array": true, "also": ["string"]},
+            {"name": "who", "type": "string", "also": ["string"]}],
+            "connections": [{"line": "embed", "from": "who", "to": "Schemas:Customer"}]}}),
+    );
+    let schema: Value =
+        serde_json::from_str(&written(&core, "schema", "types.schema.json")).unwrap();
+    let properties = &schema["$defs"]["Call"]["properties"];
+    assert_eq!(
+        properties["args"]["type"],
+        json!(["string", "array"]),
+        "{properties}"
+    );
+    assert_eq!(
+        properties["args"]["items"]["type"], "string",
+        "{properties}"
+    );
+    let any = properties["who"]["anyOf"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{properties}"));
+    assert!(any[0]["$ref"].is_string(), "{properties}");
+    assert_eq!(any[1], json!({"type": "string"}), "{properties}");
+
+    let ts = written(&core, "ts", "types.ts");
+    assert!(ts.contains("args?: string[] | string;"), "{ts}");
+    assert!(ts.contains("who?: Customer | string;"), "{ts}");
+}
+
+#[test]
+fn a_constant_list_or_object_is_written_as_zod_takes_it() {
+    let core = with_data();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Schemas:Fixed", "value": {"kind": "entity", "fields": [
+            {"name": "pair", "type": "json", "const": [1, "a"]},
+            {"name": "shape", "type": "json", "const": {"n": 2, "k": "v"}}]}}),
+    );
+    let zod = written(&core, "zod", "types.zod.ts");
+    for wanted in [
+        r#"pair: z.tuple([z.literal(1), z.literal("a")])"#,
+        r#"shape: z.strictObject({"k": z.literal("v"), "n": z.literal(2)})"#,
+    ] {
+        assert!(zod.contains(wanted), "wanted「{wanted}」: {zod}");
+    }
+}
+
+#[test]
+fn an_embedded_shape_takes_a_list_of_itself_and_no_other_object() {
+    let core = with_data();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Schemas:Pick", "value": {"kind": "entity", "fields": [
+            {"name": "who", "type": "string", "also": ["array", "object"], "nullable": true},
+            {"name": "many", "type": "string", "array": true, "also": ["object"]}],
+            "connections": [
+                {"line": "embed", "from": "who", "to": "Schemas:Customer"},
+                {"line": "embed", "from": "many", "to": "Schemas:Customer"}]}}),
+    );
+    let schema: Value =
+        serde_json::from_str(&written(&core, "schema", "types.schema.json")).unwrap();
+    let properties = &schema["$defs"]["Pick"]["properties"];
+    let any = properties["who"]["anyOf"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{properties}"));
+    let customer = any[0]["$ref"].clone();
+    assert!(customer.is_string(), "{properties}");
+    assert_eq!(
+        any[1..],
+        [
+            json!({"type": "null"}),
+            json!({"type": "array", "items": {"$ref": customer}})
+        ],
+        "{properties}"
+    );
+    assert_eq!(properties["many"]["type"], "array", "{properties}");
+}

@@ -43,7 +43,7 @@ struct CardDetails: View {
     @Environment(\.colorScheme) private var colorScheme
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
 
-    @State private var newTag = ""
+    @State private var newTag = AdderDraft()
     /// Sections that start folded. Rules and metadata can run to a dozen entries
     /// each, and burying the rest under them hides the thing most often looked for.
     @State private var folded: Set<String> = ["rules", "listFace", "payloads", "absent", "metadata", "history"]
@@ -124,14 +124,11 @@ struct CardDetails: View {
                 if schema.kind == .custom {
                     Text(schema.kindDef?.badge ?? schema.kindName).font(.app(11.5, design: .monospaced))
                 } else if editable {
-                    Picker("", selection: Binding(
-                        get: { schema.kind },
-                        set: { model.updateSchema(schema.id, .init(kind: $0)) })) {
-                        ForEach(SchemaKind.made, id: \.self) { Text($0.rawValue).tag($0) }
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .fixedSize()
+                    ChoiceMenu(options: SchemaKind.made.map { ($0, $0.rawValue) },
+                               selection: Binding(get: { schema.kind },
+                                                  set: { model.updateSchema(schema.id, .init(kind: $0)) }),
+                               unknown: { $0.rawValue })
+                        .fixedSize()
                 } else {
                     Text(schema.kind.rawValue).font(.app(11.5, design: .monospaced))
                 }
@@ -145,10 +142,9 @@ struct CardDetails: View {
             if schema.kind == .flow {
                 PropertyRow("diagram", help: L10n[.CardEditor.helpFlowDiagram]) {
                     if editable {
-                        Picker("", selection: Binding(get: { schema.diagramShape }, set: { model.setDiagram(schema.id, $0) })) {
-                            ForEach(SchemaNode.diagramShapes, id: \.self) { Text(FlowEditor.shapeWord($0)).tag($0) }
-                        }
-                        .labelsHidden().pickerStyle(.menu).fixedSize()
+                        ChoiceMenu(options: SchemaNode.diagramShapes.map { ($0, FlowEditor.shapeWord($0)) },
+                                   selection: Binding(get: { schema.diagramShape }, set: { model.setDiagram(schema.id, $0) }))
+                            .fixedSize()
                     } else {
                         Text(FlowEditor.shapeWord(schema.diagramShape)).font(.app(11.5))
                     }
@@ -167,20 +163,23 @@ struct CardDetails: View {
                 PropertyRow("size", help: L10n[.CardEditor.helpCardSize]) {
                     HStack(spacing: 8) {
                         Text(Self.sizeWord(schema.size)).font(.app(11.5))
-                        if schema.size != nil, !model.isArchived {
+                        if schema.size != nil, !schema.sizedByText, !model.isArchived {
                             Button(L10n[.CardEditor.buttonResetSize]) { model.setCardSize(schema.id, nil) }
                                 .controlSize(.small)
                         }
                     }
                 }
             }
-            if schema.kind == .formatdoc {
+            if schema.kind == .formatdoc || schema.kind == .spec {
                 PropertyRow("view", help: L10n[.CardEditor.helpDocView]) {
                     if !model.isArchived {
                         // The default's words are long ("Project default (View as document)"): the button
-                        // cuts them short with … where the panel is narrow, the menu says them in full.
-                        let options: [FittingChoice.Option] = [.init("", L10n[.CardEditor.docViewProjectDefault(Self.viewWord(model.defaultSettings.docView))])]
-                            + SchemaNode.docViews.map { .init($0, Self.viewWord($0)) }
+                        // cuts them short with … where the panel is narrow, the menu says them in full. A spec
+                        // is drawn as rows unless it says otherwise, whatever the project's default.
+                        let options: [FittingChoice.Option] = schema.kind == .spec
+                            ? [.init("", Self.viewWord("rows")), .init("document", Self.viewWord("document"))]
+                            : [.init("", L10n[.CardEditor.docViewProjectDefault(Self.viewWord(model.defaultSettings.docView))])]
+                                + SchemaNode.docViews.map { .init($0, Self.viewWord($0)) }
                         FittingChoice(options: options,
                                       selection: Binding(get: { schema.docView ?? "" },
                                                          set: { model.setDocView(schema.id, $0.isEmpty ? nil : $0) }))
@@ -244,6 +243,12 @@ struct CardDetails: View {
         // the goal's card editor is its card map (`GoalEditor`) and a task's its body — read from
         // the kinds' definitions the project has (`kinds.cards`), the built-in ones until it is read.
         // Each by its name, as MCP writes it, its label (状態) said in its (i).
+        // An image: its picture, what it is, and the ways to put another in its place and to size it as it is.
+        if schema.kind == .image {
+            PropertyCategory(title: L10n[.Root.whiteboardImageContents]) {
+                ImagePanel(model: model, card: schema, editable: editable)
+            }
+        }
         let ownFields = CustomKind.fields(of: schema.kind, in: model.detail?.cardKinds)
         if !ownFields.isEmpty {
             PropertyCategory(title: L10n[.Common.wordField]) {
@@ -519,15 +524,12 @@ struct CardDetails: View {
                     Text(field.embeds.flatMap { model.card(through: $0) }.map { L10n[.CardEditor.fieldEmbeds($0.name)] } ?? L10n[.CardEditor.fieldEmbedsNothing])
                         .font(.app(11.5, design: .monospaced))
                 } else if editable {
-                    Picker("", selection: Binding(
-                        get: { field.type.rawValue },
-                        set: { model.updateField(field.id, .init(type: FieldType(rawValue: $0))) })) {
-                        ForEach(ScalarType.allCases, id: \.rawValue) { Text($0.rawValue).tag($0.rawValue) }
-                        Divider()
-                        Text(L10n[.CardEditor.fieldObjectNested]).tag("object")
-                    }
-                    .labelsHidden()
-                    .fixedSize()
+                    ChoiceMenu(options: ScalarType.allCases.map { ($0.rawValue, $0.rawValue) }
+                                   + [("object", L10n[.CardEditor.fieldObjectNested])],
+                               selection: Binding(
+                                   get: { field.type.rawValue },
+                                   set: { model.updateField(field.id, .init(type: FieldType(rawValue: $0))) }))
+                        .fixedSize()
                 } else {
                     Text(field.type.rawValue).font(.app(11.5, design: .monospaced))
                 }
@@ -880,7 +882,7 @@ struct CardDetails: View {
         if let detail = model.detail, detail.schemas.contains(where: { !$0.kind.isShape }),
            let all = Impact.of(path, in: detail, base: detail.directory.sectionId(of: holder)) {
             hitsSection(L10n[.CardEditor.sectionUsedByActions], L10n[.CardEditor.emptyNoActionUses],
-                        all.filter { $0.action.kind == .action }, detail, holder)
+                        all.filter { $0.action.kind == .flow || $0.action.kind == .action }, detail, holder)
             let notes = all.filter { $0.action.kind.isWriting }
             if !notes.isEmpty {
                 hitsSection(L10n[.CardEditor.sectionMentionedBy], "", notes, detail, holder)
@@ -1025,10 +1027,10 @@ struct CardDetails: View {
 
             if tagsEditable {
                 HStack(spacing: 6) {
-                    TextField(L10n[.CardEditor.placeholderAddTag], text: $newTag)
+                    TextField(L10n[.CardEditor.placeholderAddTag], text: $newTag.text)
                         .textFieldStyle(.roundedBorder)
                         .font(.app(11))
-                        .onSubmit { addTag(schema, newTag) }
+                        .onSubmit { addTag(schema, newTag.text) }
 
                     if !unused.isEmpty {
                         Menu {
@@ -1043,15 +1045,20 @@ struct CardDetails: View {
                         .help(L10n[.CardEditor.helpPickTag])
                     }
                 }
+                if let refused = newTag.refused {
+                    Text(refused).font(.app(11)).foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
+                }
             }
         }
     }
 
     private func addTag(_ schema: SchemaNode, _ raw: String) {
         let tag = raw.trimmingCharacters(in: .whitespaces)
-        guard !tag.isEmpty, !schema.tags.contains(tag) else { newTag = ""; return }
-        model.updateSchema(schema.id, .init(tags: schema.tags + [tag]))
-        if model.lastError == nil { newTag = "" }
+        guard !tag.isEmpty, !schema.tags.contains(tag) else { newTag.text = ""; return }
+        // One picked from the menu is said as typed, so that a refusal is said under the field too.
+        newTag.text = tag
+        newTag.add(in: model) { model.updateSchema(schema.id, .init(tags: schema.tags + [$0])) }
     }
 
     @ViewBuilder
@@ -1266,3 +1273,60 @@ enum CardDeletion {
         return alert.runModal() == .alertFirstButtonReturn
     }
 }
+
+/// An image card's picture in the property panel (`specboard://SpecBoard/Docs/Design:CardKinds`「ホワイトボード（whiteboard）」):
+/// the picture small, its form, size and bytes, 「差し替え…」 to put another picture in its place and 「原寸に戻す」 to
+/// size the card as its picture is again.
+struct ImagePanel: View {
+    var model: AppModel
+    var card: SchemaNode
+    var editable: Bool
+
+    @State private var picture: CGImage?
+
+    private var hash: String { card.customFields["image"] ?? "" }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Group {
+                if let picture {
+                    Image(decorative: picture, scale: 1).resizable().aspectRatio(contentMode: .fit)
+                } else {
+                    Color.secondary.opacity(0.12)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: 140)
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+            Text(Self.said(card)).font(.app(11)).foregroundStyle(.secondary).textSelection(.enabled)
+            if editable {
+                HStack(spacing: 6) {
+                    Button(L10n[.Root.whiteboardImageReplace]) {
+                        ContentView.choosePicture { model.replaceImage(card.id, with: $0) }
+                    }
+                    Button(L10n[.Root.whiteboardImageFullSize]) { model.setCardSize(card.id, nil) }
+                        .disabled(card.sizedByText)
+                }
+                .controlSize(.small)
+            }
+        }
+        .task(id: hash) { read() }
+    }
+
+    private func read() {
+        picture = model.imagePicture(card) { [card] in picture = model.imagePicture(card, ready: nil) }
+    }
+
+    /// A size in bytes as KB, or as MB to one place from a megabyte on: the same words in every language.
+    static func bytesWord(_ bytes: Int) -> String {
+        bytes >= 1_048_576 ? String(format: "%.1f MB", Double(bytes) / 1_048_576) : "\(max(1, (bytes + 1023) / 1024)) KB"
+    }
+
+    /// What the picture is: its form, its size in pixels and its bytes (「PNG · 1280 × 820 · 240 KB」).
+    static func said(_ card: SchemaNode) -> String {
+        let field = { (name: String) in card.customFields[name] ?? "" }
+        let bytes = Int(field("bytes")).map(Self.bytesWord) ?? ""
+        return [field("format").uppercased(), "\(field("width")) × \(field("height"))", bytes]
+            .filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+}
+

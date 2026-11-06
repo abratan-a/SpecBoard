@@ -3,6 +3,7 @@
   "batch.asks.more": "ほか {count} 手",
   "batch.broken.targetGone": "{at} の {via} の指す先がありません",
   "batch.broken.unresolved": "{at} の {via}「{path}」が解決できません。{hint}",
+  "batch.changes.more": "ほか {count} 件",
   "batch.failed.added": "steps[{step}]（{tool}）は通りません: {error}。積んでいません",
   "batch.failed.earlier": "それまでに積んだ {step} が、今のプロジェクトでは通りません: {error}。積んでいません",
   "batch.failed.later": "。「{path}」はあとの steps[{later}]（{tool}）で作ります。手は前から順に流れるので、作る手を前に置いてください（flow のノードは、1 つの card_create で target を省き value をパスごとに書けば、順不同に指せます）",

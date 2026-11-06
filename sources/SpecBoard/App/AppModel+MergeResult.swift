@@ -91,9 +91,11 @@ extension AppModel {
         guard let projectId = detail?.project.id, let shown = resultView else { return }
         resultView = nil
         openTrees[projectId] = shown.back
-        try? core?.closeMergeResult(projectId)
         lastError = nil
+        _ = answered { try core?.closeMergeResult(projectId) }
+        let refused = lastError
         select(projectId)
+        if let refused { lastError = refused }
     }
 
     /// The merge request shown, approved: into main as it was tried, then back.

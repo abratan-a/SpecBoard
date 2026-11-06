@@ -715,33 +715,38 @@ fn spec(project: &Project, args: &Map<String, Value>) -> Result<Spec, String> {
 /// "draw nothing".
 pub(crate) fn kinds_asked(project: &Project, kinds: &[String]) -> Result<Vec<String>, String> {
     let available = mermaid::available_kinds(project);
-    let kinds: Vec<String> = kinds
+    // Each name as the drawing keeps it: a key line is what it signs and what it checks with.
+    let kept: Vec<String> = kinds
         .iter()
-        .map(|k| mermaid::kept_kind(k).to_string())
+        .flat_map(|k| mermaid::kept_kinds(project, k))
         .collect();
     let unknown: Vec<&str> = kinds
         .iter()
-        .filter(|k| !available.contains(k))
-        .map(|k| mermaid::said_kind(k))
+        .filter(|k| {
+            !mermaid::kept_kinds(project, k)
+                .iter()
+                .any(|kept| available.contains(kept))
+        })
+        .map(String::as_str)
         .collect();
     if !unknown.is_empty() {
+        let mut said: Vec<&str> = Vec::new();
+        for k in &available {
+            let name = mermaid::said_kind(project, k);
+            if !said.contains(&name) {
+                said.push(name);
+            }
+        }
         return Err(text!(
             "diagram.spec.kinds",
             unknown = unknown.join(", "),
-            available = available
-                .iter()
-                .map(|k| mermaid::said_kind(k))
-                .collect::<Vec<_>>()
-                .join(" / ")
+            available = said.join(" / ")
         ));
     }
     if kinds.is_empty() {
         return Ok(Vec::new());
     }
-    Ok(available
-        .into_iter()
-        .filter(|k| kinds.contains(k))
-        .collect())
+    Ok(available.into_iter().filter(|k| kept.contains(k)).collect())
 }
 
 /// Roots that are not there, or that the tags took out: refused, not drawn as an empty
@@ -792,7 +797,13 @@ fn revision_view(project: &Project, spec: &Spec, graph: &mermaid::Subgraph) -> V
     }
     asked.insert("roots".into(), json!(spec.roots));
     asked.insert("depth".into(), json!(spec.depth));
-    let kinds: Vec<&str> = spec.kinds.iter().map(|k| mermaid::said_kind(k)).collect();
+    let mut kinds: Vec<&str> = Vec::new();
+    for k in &spec.kinds {
+        let name = mermaid::said_kind(project, k);
+        if !kinds.contains(&name) {
+            kinds.push(name);
+        }
+    }
     asked.insert("kinds".into(), json!(kinds));
     asked.insert("tags".into(), json!(spec.tags));
     asked.insert("fields".into(), json!(spec.fields));
@@ -891,7 +902,7 @@ mod tests {
         );
         assert_eq!(
             refused(json!({ "as": "diagram", "kinds": ["nope"] }), At::Project),
-            "kinds に使えない値です: nope。このプロジェクトにあるのは embed / points / signedBy / reads / writes / next / mentions / run"
+            "kinds に使えない値です: nope。このプロジェクトにあるのは embed / points / signedBy / reads / writes / partner / mentions / holds / runs"
         );
         assert_eq!(
             refused(
@@ -952,7 +963,7 @@ mod tests {
         assert!(one.ends_with("    note \"…ほか 3 セクション\"\n"), "{one}");
         assert!(!one.contains(" : "), "{one}");
         assert!(one.starts_with(
-            "%% specboard project=見本 roots=* depth=1 kinds=embed,points,signedBy,reads,writes,next,mentions,run fields=false truncated=true chars=50000 cards=8 rev=abc\n%% hint=ヒント\nclassDiagram\n"
+            "%% specboard project=見本 roots=* depth=1 kinds=embed,points,signedBy,reads,writes,partner,mentions,runs fields=false truncated=true chars=50000 cards=8 rev=abc\n%% hint=ヒント\nclassDiagram\n"
         ), "{one}");
     }
 

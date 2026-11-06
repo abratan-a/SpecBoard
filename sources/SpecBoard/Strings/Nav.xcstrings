@@ -391,6 +391,24 @@
         }
       }
     },
+    "menu.openInNewTab" : {
+      "comment" : "Context menu item of a section row: opens the section in a new map tab right of the tab in front.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in New Tab"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいタブで表示"
+          }
+        }
+      }
+    },
     "menu.openReal" : {
       "comment" : "Context menu item on a card ghost: open the card it points at.",
       "extractionState" : "manual",
@@ -459,6 +477,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードゴーストを置く…"
+          }
+        }
+      }
+    },
+    "menu.putInGoal" : {
+      "comment" : "Nav panel card menu: put this goal or task into a goal (a submenu of the goals).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put in Goal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal へ入れる"
           }
         }
       }
@@ -877,6 +913,42 @@
         }
       }
     },
+    "search.diff" : {
+      "comment" : "The heading over the search box's difference words.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Differences"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差分"
+          }
+        }
+      }
+    },
+    "search.diffOnBranch" : {
+      "comment" : "Under the search box when diff: is written on main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Differences show when a branch is open"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差分は branch を開いたときに出ます"
+          }
+        }
+      }
+    },
     "search.noKindsOrTags" : {
       "comment" : "Shown under the navigator search field when no kind or tag suggestion matches.",
       "extractionState" : "manual",
@@ -902,7 +974,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Name, display name, tag (kind:flow tag:payment)"
+            "value" : "Name or tag (kind:flow tag:pay)"
           }
         },
         "ja" : {
@@ -963,6 +1035,96 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@（%@）"
+          }
+        }
+      }
+    },
+    "suggest.diffAll" : {
+      "comment" : "Help on diff: in the search box's suggestions.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What this branch made, changed or removed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で足した・変えた・消したもの"
+          }
+        }
+      }
+    },
+    "suggest.diffChanged" : {
+      "comment" : "Help on diff:changed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What this branch changed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で変えたもの"
+          }
+        }
+      }
+    },
+    "suggest.diffMade" : {
+      "comment" : "Help on diff:made.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What this branch made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で足したもの"
+          }
+        }
+      }
+    },
+    "suggest.diffMain" : {
+      "comment" : "Help on diff:main.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What main changed since the branch was made"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "branch を切ったあとに main が変えたもの"
+          }
+        }
+      }
+    },
+    "suggest.diffRemoved" : {
+      "comment" : "Help on diff:removed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What this branch removed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この branch で消したもの"
           }
         }
       }

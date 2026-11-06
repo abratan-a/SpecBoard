@@ -77,6 +77,34 @@ fn create_holds(
     }
 }
 
+/// The picture an image card's value gives, kept in the project's store and named in the value
+/// (`images::take`): only on a card of the kind `image` — another kind's value refuses the keys as any
+/// key it does not take. `imageFrom` read as `bodyFrom` is, from a working directory's folder.
+fn take_image(
+    conn: &rusqlite::Connection,
+    project: &str,
+    kind: Option<&str>,
+    value: &mut Map<String, Value>,
+    budget: &mut super::body_from::Budget,
+) -> Result<(), String> {
+    if kind != Some(crate::kinds::IMAGE) || !super::images::wanted(value) {
+        return Ok(());
+    }
+    super::images::take(conn, project, value, &mut |from| {
+        let (directory, path) = super::body_from::shape(from, "imageFrom")?;
+        let (_, folder) = super::body_from::folder_of(conn, project, &directory)?;
+        let most = super::images::MOST_BYTES;
+        super::body_from::read_bytes(
+            &folder,
+            &path,
+            "imageFrom",
+            most as u64,
+            &|bytes| text!("writes.image.tooBig", bytes, most),
+            budget,
+        )
+    })
+}
+
 /// Where a `bodyFrom` may stand in the value of a target `card_update` writes, and the target's
 /// full path; none when the path names nothing (the write says so).
 fn update_holds(
@@ -207,6 +235,8 @@ enum Named {
     Row(String, Vec<String>),
     /// A stackdoc's version: the card's id and the version's name.
     Version(String, String),
+    /// A spec's scenario: the card's id and the scenario's name.
+    Scenario(String, String),
     /// A data card's value: the card's id and the names to it.
     Value(String, Vec<String>),
     /// An enum's value: the enum's id and the value's name.
@@ -241,6 +271,9 @@ fn named(tx: &Tx, scope: &Scope, path: &str) -> Result<Named, String> {
         Target::Step(node, index) => Named::Step(node.id.clone(), index),
         Target::CustomRow(card, names) if card.kind == "stackdoc" => {
             Named::Version(card.id.clone(), names[0].clone())
+        }
+        Target::CustomRow(card, names) if card.kind == "spec" => {
+            Named::Scenario(card.id.clone(), names[0].clone())
         }
         Target::CustomRow(card, names) if card.kind == crate::kinds::INSTANCE => {
             Named::Value(card.id.clone(), names)
@@ -296,6 +329,7 @@ enum Makes {
     Field,
     Row,
     Version,
+    Scenario,
     EnumValue,
     Step,
     /// An element of a data card's array.
@@ -383,6 +417,10 @@ fn makes(
                 "stackdoc" => {
                     super::check(value, "card_create", "version")?;
                     return Ok(Makes::Version);
+                }
+                "spec" => {
+                    super::check(value, "card_create", "scenario")?;
+                    return Ok(Makes::Scenario);
                 }
                 "enum" => {
                     super::check(value, "card_create", "enumValue")?;
@@ -530,6 +568,7 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut unmade: HashSet<String> = HashSet::new();
     let (mut fields, mut rows, mut placements) = (Vec::new(), Vec::new(), Vec::new());
     let mut versions: Vec<(String, Map<String, Value>)> = Vec::new();
+    let mut scenarios: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut values: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut steps: Vec<(String, Map<String, Value>)> = Vec::new();
     let mut elements: Vec<(String, Map<String, Value>)> = Vec::new();
@@ -539,8 +578,25 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut read_from: HashMap<String, Vec<Value>> = HashMap::new();
     let mut budget = super::body_from::Budget::default();
     let mut files = super::body_from::Files::new(tx.conn(), &scope.project, &mut budget);
+    let mut image_budget = super::body_from::Budget::default();
     for (path, value) in &given {
         let mut value = value.clone();
+        let kind = value
+            .get("kind")
+            .and_then(Value::as_str)
+            .map(str::to_string);
+        if let Err(e) = take_image(
+            tx.conn(),
+            &scope.project,
+            kind.as_deref(),
+            &mut value,
+            &mut image_budget,
+        ) {
+            refusals.note(Some(path), &e);
+            refused_cards.insert(card_of(path));
+            unmade.insert(path.clone());
+            continue;
+        }
         if super::body_from::wanted(&value) {
             match files.take(path, create_holds(&project, path, &value), &mut value) {
                 Ok(reads) => {
@@ -607,11 +663,20 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             }
             Ok(Makes::Row) => rows.push((path.clone(), value.clone())),
             Ok(Makes::Version) => versions.push((path.clone(), value.clone())),
+            Ok(Makes::Scenario) => scenarios.push((path.clone(), value.clone())),
             Ok(Makes::EnumValue) => values.push((path.clone(), value.clone())),
             Ok(Makes::Step) => steps.push((path.clone(), value.clone())),
             Ok(Makes::Element) => elements.push((path.clone(), value.clone())),
             Ok(Makes::Field) => fields.push((path.clone(), value.clone())),
             Ok(Makes::Card(inside)) => {
+                let problems = inner::scenarios_problems(value.get("scenarios"));
+                if !problems.is_empty() {
+                    for p in &problems {
+                        refusals.note(Some(path), p);
+                    }
+                    refused_cards.insert(path.clone());
+                    continue;
+                }
                 let Some(section) = section.map(str::to_string) else {
                     let sections: Vec<String> = seen
                         .detail
@@ -757,6 +822,18 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
             Err(e) => refusals.note(Some(path), &e),
         }
     }
+    for (path, value) in &scenarios {
+        if refused_cards.contains(&card_of(path)) {
+            continue;
+        }
+        match tx.alone(|tx| inner::create_scenario(tx, scope, path, value))? {
+            Ok(answer) => {
+                out.push((answer, Some(path.clone())));
+                written.push(path.clone());
+            }
+            Err(e) => refusals.note(Some(path), &e),
+        }
+    }
     for (path, value) in &values {
         if refused_cards.contains(&card_of(path)) {
             continue;
@@ -839,6 +916,19 @@ pub(crate) fn card_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                 if !left.contains(&warning) {
                     left.push(warning);
                 }
+            }
+        }
+    }
+    // Made with two tags of an exclusive group: said now, as a write that puts them on says it. Only a
+    // call that puts tags on looks: the check reads the whole project.
+    if given.iter().any(|(_, v)| v.contains_key("tags")) {
+        let mut said = Value::Object(Map::new());
+        super::tags::warn_exclusive(tx, scope, &ids, &mut said)?;
+        for warning in said["warnings"].as_array().into_iter().flatten() {
+            if let Some(warning) = warning.as_str()
+                && !left.iter().any(|w| w == warning)
+            {
+                left.push(warning.to_string());
             }
         }
     }
@@ -965,6 +1055,32 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
     let mut unread: HashSet<String> = HashSet::new();
     let mut budget = super::body_from::Budget::default();
     {
+        let seen = Seen::in_tx(tx, scope)?;
+        let project = seen.project();
+        let mut image_budget = super::body_from::Budget::default();
+        for (path, value) in &mut given {
+            // The kind the card is made into, when the write changes it: what it takes then.
+            let kind = match (
+                value.get("kind").and_then(Value::as_str),
+                locate(&project, path, None),
+            ) {
+                (Some(asked), Ok(Target::Card(_))) => Some(asked.to_string()),
+                (None, Ok(Target::Card(card))) => Some(card.kind.clone()),
+                _ => None,
+            };
+            if let Err(e) = take_image(
+                tx.conn(),
+                &scope.project,
+                kind.as_deref(),
+                value,
+                &mut image_budget,
+            ) {
+                refusals.note(Some(path), &e);
+                unread.insert(path.clone());
+            }
+        }
+    }
+    {
         let mut files = super::body_from::Files::new(tx.conn(), &scope.project, &mut budget);
         for (path, value) in &mut given {
             if !super::body_from::wanted(value) {
@@ -1001,6 +1117,12 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                     touched.push(id.clone());
                     super::check(value, "card_update", "version")?;
                     let out = inner::update_version(tx, scope, &id, &name, value)?;
+                    done.push((path.clone(), Done::Json(id, out)));
+                }
+                Named::Scenario(id, name) => {
+                    touched.push(id.clone());
+                    super::check(value, "card_update", "scenario")?;
+                    let out = inner::update_scenario(tx, scope, &id, &name, value)?;
                     done.push((path.clone(), Done::Json(id, out)));
                 }
                 Named::Value(id, names) => {
@@ -1069,6 +1191,10 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
                 }
                 Named::Card(id) => {
                     touched.push(id.clone());
+                    let problems = inner::scenarios_problems(value.get("scenarios"));
+                    if !problems.is_empty() {
+                        return Err(problems.join("\n"));
+                    }
                     let (kind, inside, checked, card_mapped, in_part) = {
                         let seen = Seen::in_tx(tx, scope)?;
                         let project = seen.project();
@@ -1302,6 +1428,14 @@ pub(crate) fn card_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Val
         if let Some(rev) = written_revs.get(what.owner()) {
             super::revs::stamp(&mut result, rev);
         }
+        // Tags put on: a second of an exclusive group is said now, not first by the check.
+        if let Done::Card(id, _) = what
+            && given
+                .iter()
+                .any(|(p, v)| p == path && v.contains_key("tags"))
+        {
+            super::tags::warn_exclusive(tx, scope, std::slice::from_ref(id), &mut result)?;
+        }
         said_read_from(&mut result, Some(path), &read_from);
         results.push(result);
     }
@@ -1399,6 +1533,7 @@ fn delete_one(tx: &mut Tx, scope: &Scope, path: &str) -> Result<Value, String> {
         Named::Field(_) => super::fields::delete_field(tx, scope, path).map_err(|r| said(&r)),
         Named::Row(id, names) => inner::delete_row(tx, scope, &id, &names),
         Named::Version(id, name) => inner::delete_version(tx, scope, &id, &name),
+        Named::Scenario(id, name) => inner::delete_scenario(tx, scope, &id, &name),
         Named::Value(id, names) => super::instances::write_value(tx, scope, &id, &names, None),
         Named::EnumValue(id, name) => super::enum_values::delete(tx, scope, &id, &name),
         Named::Step(id, index) => super::steps::delete(tx, scope, &id, index),

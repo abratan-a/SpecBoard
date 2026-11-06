@@ -55,7 +55,7 @@ struct KindFieldsTable: View {
                     context.edit { $0.addField(name, fieldtype: "text", at: parent) }
                     selection = parent.field(name)
                 } label: { Label(L10n[.Kinds.formAddField], systemImage: "plus") }
-                    .buttonStyle(.link).font(.app(11.5))
+                    .buttonStyle(.borderless).font(.app(11.5))
                     .padding(.top, 5)
                     .overlay(alignment: .top) { if target == names.count { dropLine } }
                     .dropDestination(for: String.self) { items, _ in
@@ -171,13 +171,11 @@ struct KindFieldSettings: View {
                     }
                     .fixedSize()
                     KindFormLine(label: L10n[.Kinds.formValues], width: 80) {
-                        Picker("", selection: Binding(get: { draft.many(at: place) },
-                                                      set: { many in context.edit { $0.setMany(many, at: place) } })) {
-                            Text(L10n[.Kinds.formValuesOne]).tag(0)
-                            Text(L10n[.Kinds.formValuesList]).tag(1)
-                            Text(L10n[.Kinds.formValuesListOfLists]).tag(2)
-                        }
-                        .labelsHidden().fixedSize()
+                        ChoiceMenu(options: [(0, L10n[.Kinds.formValuesOne]), (1, L10n[.Kinds.formValuesList]),
+                                             (2, L10n[.Kinds.formValuesListOfLists])],
+                                   selection: Binding(get: { draft.many(at: place) },
+                                                      set: { many in context.edit { $0.setMany(many, at: place) } }))
+                            .fixedSize()
                     }
                     .fixedSize()
                 }
@@ -311,12 +309,10 @@ struct KindFieldSettings: View {
             }
             if KindDraft.holds(type, key: "pattern", from: type) {
                 KindFormLine(label: L10n[.Kinds.formPattern], width: 110) {
-                    Picker("", selection: Binding(get: { draft.string(at: place, "pattern") ?? "" },
-                                                  set: { said in context.edit { $0.set(.string(said), at: place, "pattern") } })) {
-                        Text(L10n[.Common.wordNone]).tag("")
-                        Text(L10n[.Kinds.formPatternIdentifier]).tag("identifier")
-                    }
-                    .labelsHidden().fixedSize()
+                    ChoiceMenu(options: [("", L10n[.Common.wordNone]), ("identifier", L10n[.Kinds.formPatternIdentifier])],
+                               selection: Binding(get: { draft.string(at: place, "pattern") ?? "" },
+                                                  set: { said in context.edit { $0.set(.string(said), at: place, "pattern") } }))
+                        .fixedSize()
                 }
                 KindFormLine(label: L10n[.Kinds.formForbid], width: 110) {
                     CommitField(L10n[.Kinds.formForbid], text: draft.string(at: place, "forbid") ?? "", monospaced: true) { text in
@@ -596,11 +592,10 @@ struct KindRowsTable: View {
                 }
                 if let problem { Text(problem).font(.app(10.5)).foregroundStyle(.red).padding(.leading, 90) }
                 KindFormLine(label: L10n[.Kinds.formNamedBy], width: 80) {
-                    Picker("", selection: Binding(get: { draft.string(at: place, "address") ?? "name" },
-                                                  set: { said in context.edit { $0.set(.string(said), at: place, "address") } })) {
-                        ForEach(["name", "value", "index"], id: \.self) { Text(Self.address($0)).tag($0) }
-                    }
-                    .labelsHidden().fixedSize()
+                    ChoiceMenu(options: ["name", "value", "index"].map { ($0, Self.address($0)) },
+                               selection: Binding(get: { draft.string(at: place, "address") ?? "name" },
+                                                  set: { said in context.edit { $0.set(.string(said), at: place, "address") } }))
+                        .fixedSize()
                     Text(L10n[.Kinds.formPathExample(example(place))]).font(.app(10.5, design: .monospaced)).foregroundStyle(.secondary)
                 }
                 KindFormLine(label: L10n[.Kinds.formAtMost], width: 80) {

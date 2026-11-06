@@ -15,13 +15,11 @@ struct FrameTargetPicker: View {
     var body: some View {
         let targets = model.frameTargets(at: at)
         let known = targets.contains { $0.id == chosen }
-        Picker("", selection: Binding(get: { known ? chosen : Self.none }, set: { if $0 != Self.none { choose($0) } })) {
-            if !known {
-                Text(chosen.isEmpty ? L10n[.Properties.frameTargetNone] : L10n[.Properties.frameTargetGone]).tag(Self.none)
-            }
-            ForEach(targets, id: \.id) { Text($0.path).tag($0.id) }
-        }
-        .labelsHidden().pickerStyle(.menu).fixedSize()
+        let missing: [(value: String, text: String)] = known ? []
+            : [(Self.none, chosen.isEmpty ? L10n[.Properties.frameTargetNone] : L10n[.Properties.frameTargetGone])]
+        ChoiceMenu(options: missing + targets.map { ($0.id, $0.path) },
+                   selection: Binding(get: { known ? chosen : Self.none }, set: { if $0 != Self.none { choose($0) } }))
+            .fixedSize()
         .disabled(targets.isEmpty)
         .help(targets.isEmpty ? L10n[.Properties.frameTargetNoUi] : L10n[.Properties.frameTargetHelp])
     }

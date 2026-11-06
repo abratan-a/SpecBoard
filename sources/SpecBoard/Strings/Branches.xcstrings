@@ -673,6 +673,96 @@
         }
       }
     },
+    "merge.finishGoal" : {
+      "comment" : "Button of the merge notice that finishes the goal still naming the merged branch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish goal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal を終える"
+          }
+        }
+      }
+    },
+    "merge.finishGoalHelp" : {
+      "comment" : "Tooltip of the Finish goal button of the merge notice.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets the goal done, clears its work branch and moves it to the board's completed section"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goal を完了にし、作業の branch を空にして、ボードの完了のセクションへ移します"
+          }
+        }
+      }
+    },
+    "merge.finishLater" : {
+      "comment" : "Button of the merge notice that closes it; the goal can still be finished from the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あとで"
+          }
+        }
+      }
+    },
+    "merge.finishLaterHelp" : {
+      "comment" : "Tooltip of the Later button of the merge notice.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close this notice. The bell's list still offers to finish the goal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この知らせを閉じます。ベルの一覧からも goal を終えられます"
+          }
+        }
+      }
+    },
+    "merge.goalStillNamed" : {
+      "comment" : "Notice after a merge into main set the branch aside while goals still name it; 1: the branch, 2: the goals' names.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merged %1$@ into main. Goal %2$@ still has it as its work branch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ を main へ入れました。goal %2$@ は、まだこの branch を作業の branch に持っています"
+          }
+        }
+      }
+    },
     "merge.itemSection" : {
       "comment" : "A path in the merge window's list that is a section.",
       "extractionState" : "manual",

@@ -85,7 +85,10 @@ fn lifelines_are_the_actors_seen_from_the_flow() {
         );
     }
     let lines: Vec<&str> = chart.lines().map(str::trim).collect();
-    let at = lines.iter().position(|l| *l == "box 注文サーバ").unwrap();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent 注文サーバ")
+        .unwrap();
     assert_eq!(
         lines[at + 1..at + 4],
         ["participant P2 as 受付", "participant P3 as 在庫", "end"],
@@ -843,7 +846,10 @@ fn mermaid_writes_persons_as_actor_and_sibling_actors_in_a_box() {
     assert!(page.contains("actor P1 as 利用者"), "{page}");
     let chart = sequence(&core, TAKE_ORDER, None);
     let lines: Vec<&str> = chart.lines().map(str::trim).collect();
-    let at = lines.iter().position(|l| *l == "box 注文サーバ").unwrap();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent 注文サーバ")
+        .unwrap();
     assert!(lines[at + 1].starts_with("participant "), "{chart}");
     assert!(lines[at + 2].starts_with("participant "), "{chart}");
     assert_eq!(lines[at + 3], "end", "{chart}");
@@ -929,7 +935,10 @@ fn an_actors_chart_frames_each_flow_it_provides() {
         "{chart}"
     );
     let lines: Vec<&str> = chart.lines().map(str::trim).collect();
-    let at = lines.iter().position(|l| *l == "box 注文サーバ").unwrap();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent 注文サーバ")
+        .unwrap();
     assert_eq!(
         lines[at + 1..at + 4],
         ["participant P2 as 受付", "participant P3 as 在庫", "end"],
@@ -1283,7 +1292,10 @@ fn an_actor_with_flows_of_its_own_draws_its_own_lifeline_first_in_its_box() {
         "{chart}"
     );
     let lines: Vec<&str> = chart.lines().map(str::trim).collect();
-    let at = lines.iter().position(|l| *l == "box 注文サーバ").unwrap();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent 注文サーバ")
+        .unwrap();
     assert_eq!(
         lines[at + 1..at + 5],
         [
@@ -1452,4 +1464,236 @@ fn open_is_only_where_opening_draws_an_actor_not_drawn_now() {
     let pay = named(&opened, "決済サービス");
     assert_eq!(pay["group"], payment.as_str(), "{pay}");
     assert!(pay.get("open").is_none(), "{pay}");
+}
+
+/// A flow of the ordering desk taking calls from two pages of the browser and from the stock, that
+/// signs a receipt and waits for an approval within a time said as a sentence.
+fn signing_desk() -> Core {
+    let core = shop_core();
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Charts/ブラウザ:OtherPage": {"kind": "flow", "label": "別の画面"},
+            "Charts/注文サーバ/受付:Sign": {"kind": "flow", "label": "署名する"},
+            "Charts/ブラウザ:OtherPage.start": {"kind": "begin", "trigger": "manual",
+                "connections": [{"line": "next", "to": "done"}]},
+            "Charts/ブラウザ:OtherPage.done": {"kind": "end", "outcome": "success"},
+            "Charts/注文サーバ/受付:Sign.start": {"kind": "begin", "trigger": "receive",
+                "connections": [
+                    {"line": "partner", "to": "Charts/ブラウザ:CheckoutPage"},
+                    {"line": "partner", "to": "Charts/ブラウザ:OtherPage"},
+                    {"line": "partner", "to": "Charts/注文サーバ/在庫:Reserve"},
+                    {"line": "next", "to": "sig"}]},
+            "Charts/注文サーバ/受付:Sign.sig": {"kind": "process", "label": "署名",
+                "steps": [{"do": "sign", "paths": ["Schemas/Shop:Order"]}],
+                "connections": [
+                    {"line": "key", "from": "steps[0]", "to": "Schemas/Shop:Receipt", "at": "number", "fields": {"use": "sign"}},
+                    {"line": "writes", "from": "steps[0]", "to": "Schemas/Shop:Order"},
+                    {"line": "next", "to": "w"}]},
+            "Charts/注文サーバ/受付:Sign.w": {"kind": "wait", "for": "approval", "timeout": "数秒（再送が来るまで）",
+                "connections": [{"line": "next", "to": "ok"}, {"line": "onTimeout", "to": "ng"}]},
+            "Charts/注文サーバ/受付:Sign.ok": {"kind": "end", "outcome": "success"},
+            "Charts/注文サーバ/受付:Sign.ng": {"kind": "end", "outcome": "failure"}
+        }}),
+    );
+    core
+}
+
+#[test]
+fn a_failure_mark_names_each_lifeline_once() {
+    let core = signing_desk();
+    let chart = sequence(&core, "Charts/注文サーバ/受付:Sign", None);
+    assert!(
+        body(&chart)
+            .iter()
+            .any(|l| l.ends_with("✕ 期限切れ → failure（→ ブラウザ・在庫）")),
+        "{chart}"
+    );
+}
+
+#[test]
+fn a_sign_row_says_what_it_signs_once_and_a_line_it_does_not_take_is_said() {
+    let core = signing_desk();
+    let chart = sequence(&core, "Charts/注文サーバ/受付:Sign", None);
+    assert!(
+        body(&chart).contains(&"Note over P2: sign Receipt.number Order".to_string()),
+        "{chart}"
+    );
+    let list = ok(
+        &core,
+        "inspection_list",
+        json!({"value": {"group": "lineProblems"}}),
+    );
+    let items = list["items"].as_array().cloned().unwrap_or_default();
+    assert!(
+        items
+            .iter()
+            .any(|i| i["at"] == "Charts/注文サーバ/受付:Sign.sig"
+                && i["problem"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .contains("steps[0]")),
+        "{list}"
+    );
+}
+
+#[test]
+fn a_wait_says_its_time_once_however_it_is_written() {
+    let core = signing_desk();
+    let chart = sequence(&core, "Charts/注文サーバ/受付:Sign", None);
+    assert!(
+        body(&chart)
+            .contains(&"Note over P2: wait approval（期限 数秒（再送が来るまで））".to_string()),
+        "{chart}"
+    );
+}
+
+#[test]
+fn a_line_a_row_does_not_take_is_neither_drawn_nor_counted() {
+    let core = signing_desk();
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Charts/注文サーバ/受付:Sign.sig", "value": {"connections": {"add": [
+            {"line": "writes", "from": "steps[0]", "to": "Schemas/Shop:Line", "at": "qty"}
+        ]}}}),
+    );
+    let chart = sequence(&core, "Charts/注文サーバ/受付:Sign", None);
+    assert!(
+        body(&chart).contains(&"Note over P2: sign Receipt.number Order".to_string()),
+        "{chart}"
+    );
+    let impact = ok(
+        &core,
+        "card_read",
+        json!({"target": "Schemas/Shop:Line.qty", "value": {"as": "impact"}}),
+    );
+    let writes_it = impact["flows"].as_array().unwrap().iter().any(|f| {
+        f["flow"] == "Charts/注文サーバ/受付:Sign" && f["uses"] == "Schemas/Shop:Line.qty"
+    });
+    assert!(!writes_it, "{impact}");
+    let found = ok(
+        &core,
+        "card_list",
+        json!({"value": {"query": "Schemas/Shop:Line.qty"}}),
+    );
+    let in_sign = found["cards"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|c| c["path"] == "Charts/注文サーバ/受付:Sign");
+    assert!(!in_sign, "{found}");
+}
+
+#[test]
+fn a_box_is_titled_whatever_its_actor_is_called() {
+    let core = shop_core();
+    ok(
+        &core,
+        "section_update",
+        json!({"target": "Charts/注文サーバ", "value": {"name": "Gray Server"}}),
+    );
+    let chart = sequence(&core, "Charts/Gray Server/受付:TakeOrder", None);
+    let lines: Vec<&str> = chart.lines().map(str::trim).collect();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent Gray Server")
+        .unwrap_or_else(|| panic!("{chart}"));
+    assert_eq!(
+        lines[at + 1..at + 4],
+        ["participant P2 as 受付", "participant P3 as 在庫", "end"],
+        "{chart}"
+    );
+}
+
+#[test]
+fn one_actor_is_one_box_whatever_lifelines_open_inside_it() {
+    let core = Core::open(common::script_store()).unwrap();
+    for (target, value) in [
+        ("Charts/Client", json!({"type": "actor"})),
+        ("Charts/S", json!({"type": "actor"})),
+        ("Charts/S/B", json!({})),
+        ("Charts/S/C", json!({})),
+        ("Charts/S/C/F", json!({})),
+        ("Charts/S/D", json!({})),
+    ] {
+        ok(
+            &core,
+            "section_create",
+            json!({"target": target, "value": value}),
+        );
+    }
+    let mut cards = serde_json::Map::new();
+    let reached = [
+        "Charts/S/B:Fb",
+        "Charts/S/C:Fc",
+        "Charts/S/C/F:Ff",
+        "Charts/S/D:Fd",
+    ];
+    for flow in reached {
+        cards.insert(flow.into(), json!({"kind": "flow"}));
+        cards.insert(
+            format!("{flow}.start"),
+            json!({"kind": "begin", "trigger": "receive",
+                "connections": [{"line": "next", "to": "done"}]}),
+        );
+        cards.insert(
+            format!("{flow}.done"),
+            json!({"kind": "end", "outcome": "success"}),
+        );
+    }
+    cards.insert("Charts/Client:Go".into(), json!({"kind": "flow"}));
+    cards.insert(
+        "Charts/Client:Go.start".into(),
+        json!({"kind": "begin", "trigger": "manual",
+            "connections": [{"line": "next", "to": "ask"}]}),
+    );
+    let mut lines: Vec<Value> = reached
+        .iter()
+        .enumerate()
+        .map(|(i, flow)| json!({"line": "partner", "from": format!("steps[{i}]"), "to": flow}))
+        .collect();
+    lines.push(json!({"line": "next", "to": "done"}));
+    cards.insert(
+        "Charts/Client:Go.ask".into(),
+        json!({"kind": "process", "steps": [{"do": "send"}, {"do": "send"}, {"do": "send"}, {"do": "send"}],
+            "connections": lines}),
+    );
+    cards.insert(
+        "Charts/Client:Go.done".into(),
+        json!({"kind": "end", "outcome": "success"}),
+    );
+    ok(&core, "card_create", json!({"value": cards}));
+    let chart = sequence(
+        &core,
+        "Charts/Client:Go",
+        Some(json!([
+            "Charts/S/B",
+            "Charts/S/C",
+            "Charts/S/C/F",
+            "Charts/S/D"
+        ])),
+    );
+    let boxes: Vec<&str> = chart
+        .lines()
+        .map(str::trim)
+        .filter(|l| l.starts_with("box "))
+        .collect();
+    assert_eq!(boxes, ["box transparent S", "box transparent C"], "{chart}");
+    let lines: Vec<&str> = chart.lines().map(str::trim).collect();
+    let at = lines
+        .iter()
+        .position(|l| *l == "box transparent S")
+        .unwrap_or_else(|| panic!("{chart}"));
+    assert_eq!(
+        lines[at + 1..at + 4],
+        ["participant P2 as B", "participant P3 as D", "end"],
+        "{chart}"
+    );
+    // Each message still goes to the lifeline it was drawn to.
+    for (to, flow) in [("B", "Fb"), ("C", "Fc"), ("F", "Ff"), ("D", "Fd")] {
+        let sent = format!("P1->>{}: send {flow}", alias(&chart, to));
+        assert!(lines.contains(&sent.as_str()), "{sent}\n{chart}");
+    }
 }

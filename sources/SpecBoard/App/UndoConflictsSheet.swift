@@ -5,6 +5,8 @@ import SwiftUI
 /// commits that wrote it. Nothing was written, and nothing is chosen here.
 struct UndoConflictsSheet: View {
     var refusal: UndoRefusal
+    /// The order the fields of the card at a path are defined in (`ConflictText.order`).
+    var order: (String) -> [String] = { _ in [] }
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -42,22 +44,23 @@ struct UndoConflictsSheet: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(L10n[.Branches.mergeConflictOf(conflict.path, Merge3.shown(conflict.unit))])
                 .font(.app(11.5, weight: .semibold, design: .monospaced))
-            value(L10n[.Root.undoBefore("\(refusal.seq)")], conflict.before)
-            value(L10n[.Root.undoAfter("\(refusal.seq)")], conflict.after)
-            value(L10n[.Root.undoNow], conflict.now)
+            let fields = order(conflict.path)
+            value(L10n[.Root.undoBefore("\(refusal.seq)")], conflict.before, order: fields)
+            value(L10n[.Root.undoAfter("\(refusal.seq)")], conflict.after, order: fields)
+            value(L10n[.Root.undoNow], conflict.now, order: fields)
         }
         .padding(8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 6).fill(Color.secondary.opacity(0.08)))
     }
 
-    /// A value as the merge window shows one: compact, cut at 160 characters.
-    private func value(_ title: String, _ value: OJSON?) -> some View {
-        let text = value.map { $0.compact() } ?? L10n[.Branches.mergeNoValue]
+    /// A value as the merge window shows one (`ConflictText`).
+    private func value(_ title: String, _ value: OJSON?, order: [String]) -> some View {
+        let text = ConflictText.said(value, order: order) ?? L10n[.Branches.mergeNoValue]
         return HStack(alignment: .top, spacing: 6) {
             Text(title).font(.app(10.5)).foregroundStyle(.secondary).frame(width: 76, alignment: .leading)
-            Text(text.count > 160 ? String(text.prefix(160)) + "…" : text)
-                .font(.app(10.5, design: .monospaced)).lineLimit(3).textSelection(.enabled)
+            Text(ConflictText.cut(text))
+                .font(.app(10.5, design: .monospaced)).lineLimit(ConflictText.lines).textSelection(.enabled)
         }
     }
 }

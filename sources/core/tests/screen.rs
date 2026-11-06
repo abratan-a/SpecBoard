@@ -149,7 +149,7 @@ fn the_projects_are_listed_and_renamed() {
     assert_eq!(one["name"], PROJECT);
     assert_eq!(one["slug"], PROJECT);
     assert_eq!(one["tagGroups"], json!([]));
-    // The sample's 25 cards but the 14 nodes of its flows; its sections with the root.
+    // The sample's cards but the nodes inside its flows; its sections with the root.
     assert_eq!(one["schemaCount"], 11);
     assert_eq!(one["sectionCount"], 12);
     assert_eq!(one["archivedAt"], Value::Null);
@@ -1430,7 +1430,12 @@ impl Locked {
 }
 
 fn locked_main(said: &str) -> bool {
-    said.contains(&specboard_core::write::locked_main())
+    // The window is refused in the screen's words, MCP in the tools'.
+    let on_screen = {
+        let _screen = specboard_core::text::bind_screen(true);
+        specboard_core::write::locked_main()
+    };
+    said.contains(&specboard_core::write::locked_main()) || said.contains(&on_screen)
 }
 
 /// What a locked main refuses, the same from both sides: the rest of a card, with its

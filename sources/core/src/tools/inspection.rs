@@ -48,7 +48,7 @@ impl Group {
 }
 
 /// Every group, in the order they are said.
-pub(crate) const GROUPS: [Group; 21] = [
+pub(crate) const GROUPS: [Group; 22] = [
     Group {
         name: "brokenPaths",
         info: false,
@@ -195,6 +195,13 @@ pub(crate) const GROUPS: [Group; 21] = [
         label: "inspection.group.codeChanged.label",
         fix: "inspection.group.codeChanged.fix",
         keys: &["line"],
+    },
+    Group {
+        name: "untestedScenarios",
+        info: true,
+        label: "inspection.group.untestedScenarios.label",
+        fix: "inspection.group.untestedScenarios.fix",
+        keys: &[],
     },
 ];
 
@@ -358,7 +365,11 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
             name = crate::pathtext::split_section(&text("at")).1.to_string(),
             actors = joined("actors")
         ),
-        "overlaps" => text!("inspection.problem.overlap", over = joined("over")),
+        "overlaps" => text!(
+            "inspection.problem.overlap",
+            section = text("section"),
+            over = joined("over")
+        ),
         "missingPartners" if row.contains_key("op") => {
             text!("inspection.problem.missingPartnerRow", op = text("op"))
         }
@@ -408,6 +419,7 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
                     .collect::<Vec<_>>()
             )
         ),
+        "untestedScenarios" => text!("inspection.problem.untestedScenarios"),
         _ => row
             .get("problem")
             .and_then(Keyed::from_json)
@@ -570,6 +582,28 @@ pub(crate) fn items(seen: &Seen, conn: &Connection) -> Result<Vec<Item>, String>
             row.insert("lineLabel".into(), label.into());
             row.insert("lines".into(), Value::Array(changed));
             rows.push(("codeChanged", row));
+        }
+    }
+    // A spec's scenarios no test is tied to: no line of `testedBy` from the scenario, nor from the
+    // card's head, which covers every scenario.
+    for card in seen.detail.schemas.iter().filter(|c| c.kind == "spec") {
+        let tested = |from: &str| {
+            card.connections
+                .iter()
+                .any(|l| l.line == crate::kinds::TESTED_BY && l.from == from)
+        };
+        if tested("") {
+            continue;
+        }
+        for scenario in card.scenarios() {
+            if !tested(&scenario.name) {
+                let mut row = Map::new();
+                row.insert(
+                    "at".into(),
+                    crate::pathtext::member(&project.full(card), &scenario.name).into(),
+                );
+                rows.push(("untestedScenarios", row));
+            }
         }
     }
     let done = done_cards(seen);
@@ -1173,6 +1207,7 @@ mod tests {
                 "overlaps",
                 "review",
                 "codeChanged",
+                "untestedScenarios",
             ]
         );
         let info: Vec<&str> = GROUPS.iter().filter(|g| g.info).map(|g| g.name).collect();
@@ -1185,7 +1220,8 @@ mod tests {
                 "uncheckedPatterns",
                 "overlaps",
                 "review",
-                "codeChanged"
+                "codeChanged",
+                "untestedScenarios"
             ]
         );
     }

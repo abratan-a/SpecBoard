@@ -107,12 +107,10 @@ extension TableEditor {
             }
             section(L10n[.Properties.ruleUnnest], help: L10n[.Properties.ruleUnnestHelp]) {
                 let arrays = TableEditor.arrays(shape, lookup: lookup)
-                Picker("", selection: Binding(get: { text("unnest") },
-                                              set: { model.setTableRule(card.id, "unnest", $0.isEmpty ? nil : .string($0)) })) {
-                    Text(L10n[.Properties.ruleUnnestNone]).tag("")
-                    ForEach(arrays, id: \.self) { Text($0).tag($0) }
-                }
-                .labelsHidden().pickerStyle(.menu).fixedSize().disabled(!editable)
+                ChoiceMenu(options: [("", L10n[.Properties.ruleUnnestNone])] + arrays.map { ($0, $0) },
+                           selection: Binding(get: { text("unnest") },
+                                              set: { model.setTableRule(card.id, "unnest", $0.isEmpty ? nil : .string($0)) }))
+                    .fixedSize().disabled(!editable)
             }
         }
     }
@@ -130,13 +128,8 @@ extension TableEditor {
     }
 
     private func pathPicker(_ selection: Binding<String>, _ paths: [String]) -> some View {
-        Picker("", selection: selection) {
-            if !paths.contains(selection.wrappedValue) {
-                Text(selection.wrappedValue).tag(selection.wrappedValue)
-            }
-            ForEach(paths, id: \.self) { Text($0).tag($0) }
-        }
-        .labelsHidden().pickerStyle(.menu).fixedSize().disabled(!editable)
+        ChoiceMenu(options: paths.map { ($0, $0) }, selection: selection)
+            .fixedSize().disabled(!editable)
     }
 
     private func remove(_ action: @escaping () -> Void) -> some View {
@@ -154,10 +147,9 @@ extension TableEditor {
         let op = filter["op"]?.asText ?? "eq"
         return HStack(spacing: 6) {
             pathPicker(Binding(get: { filter["path"]?.asText ?? "" }, set: { set("path", .string($0)) }), paths)
-            Picker("", selection: Binding(get: { op }, set: { set("op", .string($0)) })) {
-                ForEach(TableEditor.ops, id: \.0) { Text($0.1).tag($0.0) }
-            }
-            .labelsHidden().pickerStyle(.menu).fixedSize().disabled(!editable)
+            ChoiceMenu(options: TableEditor.ops.map { ($0.0, $0.1) },
+                       selection: Binding(get: { op }, set: { set("op", .string($0)) }))
+                .fixedSize().disabled(!editable)
             if op == "exists" {
                 Toggle(L10n[.Properties.ruleExists], isOn: Binding(get: { filter["value"] != .bool(false) },
                                              set: { set("value", .bool($0)) }))

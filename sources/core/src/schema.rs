@@ -200,6 +200,29 @@ pub const MAP_GROUPS: &str = "core_0025_map_groups";
 /// says them, an enum's value keyed by `name`, a goal's values in English.
 pub const BUILTIN_NAMES: &str = "core_0026_builtin_names";
 
+/// The mark of the time a branch's frozen copy of main was frozen (`branch_frozen.at`): when main
+/// put in place the version after it, the last moment the copy was main.
+pub const FROZEN_TIMES: &str = "core_0027_frozen_times";
+
+/// The mark of the pictures a whiteboard's image cards show (`tools::images`): one table for the
+/// project, each picture once by the sha256 of its contents, which the cards name — so a branch, a
+/// merge, an undo and the history carry the name alone. The contents are kept as base64 text, as a
+/// bundle moves every column as text.
+pub const IMAGES: &str = "core_0028_images";
+
+/// The table of the pictures, made where a store has none (`core_0028_images`).
+pub const IMAGES_TABLE: &str = "
+CREATE TABLE IF NOT EXISTS images (
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  hash       TEXT NOT NULL,
+  format     TEXT NOT NULL,
+  width      INTEGER NOT NULL,
+  height     INTEGER NOT NULL,
+  bytes      INTEGER NOT NULL,
+  data       TEXT NOT NULL,
+  PRIMARY KEY (project_id, hash)
+);";
+
 /// `places` as `core_0025_map_groups` has it, made under the name `places_new` to take the rows of
 /// the one of before.
 pub const PLACES_NEW: &str = "
@@ -223,7 +246,7 @@ DROP TABLE places;
 ALTER TABLE places_new RENAME TO places;";
 
 /// Every mark a store of the form has now, in the order they came.
-pub const MARKS: [&str; 26] = [
+pub const MARKS: [&str; 28] = [
     MARK,
     MCP_WRITES,
     CARD_GHOSTS,
@@ -250,6 +273,8 @@ pub const MARKS: [&str; 26] = [
     CODE_MARKS,
     MAP_GROUPS,
     BUILTIN_NAMES,
+    FROZEN_TIMES,
+    IMAGES,
 ];
 
 /// Every table of the form, created empty.
@@ -475,6 +500,7 @@ CREATE TABLE branch_frozen (
   tbl       TEXT NOT NULL,
   id        TEXT NOT NULL,
   doc       TEXT,
+  at        TEXT,
   PRIMARY KEY (branch_id, tbl, id)
 );
 CREATE TABLE inspection_marks (
@@ -496,6 +522,16 @@ CREATE TABLE code_marks (
   by         TEXT NOT NULL,
   at         TEXT NOT NULL,
   PRIMARY KEY (project_id, line_id)
+);
+CREATE TABLE images (
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  hash       TEXT NOT NULL,
+  format     TEXT NOT NULL,
+  width      INTEGER NOT NULL,
+  height     INTEGER NOT NULL,
+  bytes      INTEGER NOT NULL,
+  data       TEXT NOT NULL,
+  PRIMARY KEY (project_id, hash)
 );
 ";
 

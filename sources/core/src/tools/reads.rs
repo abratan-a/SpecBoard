@@ -215,7 +215,18 @@ pub(crate) fn section_read(store: &Store, args: &Args) -> Result<Output, String>
     }
     let mut out = Map::new();
     out.insert("project".into(), seen.summary.name.clone().into());
-    out.extend(row);
+    // Through MCP, the section's rev after its path (`revs`): a write made from what was read is held to it.
+    let rev = args
+        .paged
+        .then(|| super::revs::section_rev(&seen.detail, &id))
+        .flatten();
+    for (key, value) in row {
+        let after = key == "section";
+        out.insert(key, value);
+        if after && let Some(rev) = &rev {
+            out.insert("rev".into(), rev.clone().into());
+        }
+    }
     // A working directory's section: how and from where it is read, and what it can be made to do.
     let mut warnings = Vec::new();
     if project.section_kind(&id) == Some(crate::kinds::WORKDIR)
@@ -317,10 +328,11 @@ const FROM_BOARD: &str = "from_board";
 /// `card_list`.
 const ACTIONS: &str = "actions";
 
-/// `include`: what to return of each card. When none are named, a card read is given every part
+/// `include`: what to return of each card. When it is left out, a card read is given every part
 /// and a list what each card holds itself (`Projection::own`): where the cards sit and what points
-/// back at them weigh as much again over many cards, and are asked for by name. `places` (a goal's
-/// card map, `card_read` only) is not a part: with it alone, none of them.
+/// back at them weigh as much again over many cards, and are asked for by name. A list's
+/// `include: []` gives none of them. `places` (a goal's card map, `card_read` only) is not a part:
+/// with it alone, none of them.
 fn projection(given: &Map<String, Value>, places: bool) -> Result<Projection, String> {
     let unnamed = || {
         if places {
@@ -360,8 +372,14 @@ fn projection(given: &Map<String, Value>, places: bool) -> Result<Projection, St
             known = known.join(" / ")
         ));
     }
+    // An empty list asked of a list: none of the parts, each card by its path, kind and label — what an
+    // inventory of the project needs, at a fraction of the size.
     if items.is_empty() {
-        return Ok(unnamed());
+        return Ok(if places {
+            unnamed()
+        } else {
+            Projection::none()
+        });
     }
     let parts: Vec<String> = items
         .into_iter()
@@ -464,6 +482,60 @@ fn read_one(
             object.extend(super::code::file_said(&project, card, given));
             if !found.is_empty() {
                 object.insert("referencedBy".into(), Value::Array(found));
+            }
+        }
+    }
+    // A field or an enum's value: what uses it and the lines that land on it, as a card's read says
+    // them when asked by name.
+    let inside = match &target {
+        super::walk::Target::Field(card, _, names) => Some((
+            *card,
+            crate::pathtext::join_names(names.iter().map(String::as_str)),
+        )),
+        super::walk::Target::EnumValue(card, name) => Some((*card, name.to_string())),
+        _ => None,
+    };
+    // Asked for by name only: a field or a value read whole goes back as it was read.
+    let named = |item: &str| {
+        given
+            .get("include")
+            .and_then(Value::as_array)
+            .is_some_and(|items| items.iter().any(|i| i == item))
+    };
+    // An enum's value is not followed through the flows (`as: impact` says so too): asked by name, said
+    // where to look instead.
+    if let super::walk::Target::EnumValue(_, name) = &target
+        && named("used_by")
+    {
+        return Err(text!("reads.include.usedByEnumValue", name = name.as_str()));
+    }
+    if let Some((card, at)) = inside
+        && let Value::Object(object) = &mut read
+    {
+        if named("used_by") {
+            let path = crate::pathtext::member(&card.name, &at);
+            object.extend(seen.used_by_path(&path, card));
+        }
+        if named("ref_by") {
+            let incoming: Vec<Value> = crate::screen_detail::connection_lines(&project)
+                .iter()
+                .filter(|l| {
+                    l["toSchemaId"] == card.id.as_str()
+                        && l["at"].as_str() == Some(at.as_str())
+                        && l["fromSchemaId"] != card.id.as_str()
+                })
+                .filter_map(|l| {
+                    let from = project.card(l["fromSchemaId"].as_str()?)?;
+                    let path = l["from"].as_str().unwrap_or_default();
+                    Some(Value::from(if path.is_empty() {
+                        project.full(from)
+                    } else {
+                        format!("{}.{path}", project.full(from))
+                    }))
+                })
+                .collect();
+            if !incoming.is_empty() {
+                object.insert("referencedBy".into(), Value::Array(incoming));
             }
         }
     }
@@ -803,6 +875,12 @@ pub(crate) fn card_read(store: &Store, args: &Args) -> Result<Output, String> {
             text!("reads.as.linesRenamed"),
             serde_json::json!({ "fix": [{ "at": "/value/as", "to": "lineKinds" }] }),
         ));
+    }
+    if way.as_ref().and_then(Value::as_str) == Some("image") {
+        let [one] = list.as_slice() else {
+            return Err(text!("reads.image.oneTarget", count = list.len()));
+        };
+        return super::images::read(store, &seen, one);
     }
     if way.as_ref().and_then(Value::as_str) == Some("lineKinds") {
         check(&given, "card_read", "as: lineKinds")?;
@@ -1292,7 +1370,7 @@ fn find(
                     &own,
                     kind,
                     &format!("values.{}", v.value),
-                    Some(&format!("{} {}", v.value, v.label)),
+                    Some(&format!("{} {} {}", v.value, v.label, v.description)),
                 )
             });
         for (index, rule) in card.rules.iter().enumerate() {
@@ -1630,8 +1708,27 @@ pub(crate) fn card_list(store: &Store, args: &Args) -> Result<Output, String> {
             .iter()
             .filter_map(|v| v.as_str().map(str::to_string))
             .collect();
+        // A tag no card has and no group is: refused with the tags there are, as a section or a
+        // kind not there is, rather than finding nothing.
+        let used = super::check::project_tags(&seen.detail.schemas);
+        let groups = &seen.detail.project.tag_groups;
+        if let Some(tag) = selected.iter().find(|t| {
+            !used.iter().any(|(u, _)| u == *t)
+                && !groups.iter().any(|g| &g.name == *t || g.tags.contains(t))
+        }) {
+            let there: Vec<String> = used.into_iter().map(|(t, _)| t).collect();
+            return Err(text!(
+                "reads.tags.unknown",
+                tag,
+                tags = if there.is_empty() {
+                    text!("reads.tags.none")
+                } else {
+                    crate::text::list(&there)
+                }
+            ));
+        }
         let wanted: std::collections::HashSet<String> =
-            super::check::expand_tags(&seen.detail.project.tag_groups, &selected)
+            super::check::expand_tags(groups, &selected)
                 .into_iter()
                 .collect();
         chosen.retain(|c| c.tags.iter().any(|t| wanted.contains(t)));
@@ -2100,6 +2197,7 @@ pub(crate) fn tag_list(store: &Store, args: &Args) -> Result<Output, String> {
         Value::Object(m)
     };
     let mut out = Map::new();
+    out.insert("project".into(), seen.summary.name.clone().into());
     out.insert(
         "tags".into(),
         Value::Array(used.iter().map(|(t, n)| row(t, *n)).collect()),
@@ -2109,9 +2207,12 @@ pub(crate) fn tag_list(store: &Store, args: &Args) -> Result<Output, String> {
         Value::Array(
             groups
                 .iter()
-                .map(|(name, tags, _)| {
+                .map(|(name, tags, exclusive)| {
                     let mut g = Map::new();
                     g.insert("name".into(), name.clone().into());
+                    if *exclusive {
+                        g.insert("exclusive".into(), true.into());
+                    }
                     g.insert(
                         "tags".into(),
                         Value::Array(
@@ -2267,11 +2368,25 @@ pub(crate) fn project_read(store: &Store, args: &Args) -> Result<Output, String>
     // may do everything.
     let asked = super::mcp_writes::in_state(&store.conn, &seen.summary.id, State::Ask)?;
     let denied = super::mcp_writes::in_state(&store.conn, &seen.summary.id, State::Deny)?;
+    // Through MCP, the settings' rev after the project's name (`revs`).
+    let rev = if args.paged {
+        Some(super::revs::project_rev(
+            &store.conn,
+            &seen.summary.id,
+            &seen.detail,
+        )?)
+    } else {
+        None
+    };
     let mut out = Map::new();
     for (key, value) in object {
         let at = key == "description"
             || (key == "project" && seen.detail.project.description.is_empty());
+        let named = key == "project";
         out.insert(key, value);
+        if named && let Some(rev) = &rev {
+            out.insert("rev".into(), rev.clone().into());
+        }
         if !at {
             continue;
         }

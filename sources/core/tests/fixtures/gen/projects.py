@@ -33,7 +33,7 @@ FIXTURES = HERE.parent
 REPO = FIXTURES.parents[3]
 SWIFT_FIXTURES = REPO / "sources" / "SpecBoardTests" / "Fixtures"
 
-VERSION = 33
+VERSION = 34
 VERSION_BEFORE = 18
 CARD_V = 7
 

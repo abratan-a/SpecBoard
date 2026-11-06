@@ -513,6 +513,10 @@ fn the_tools_and_the_instructions_are_said_in_the_mcp_answer_language() {
             .as_str()
             .unwrap_or_else(|| panic!("{gone}"));
         assert_eq!(japanese(gone), in_japanese, "{gone}");
+        assert!(
+            gone.contains("get_schema") && gone.contains("card_read"),
+            "{gone}"
+        );
     }
 }
 

@@ -406,22 +406,48 @@ private struct Window {
     func select(_ given: OrderedObject = OrderedObject()) throws -> OrderedObject {
         guard args.raw["project"] != nil else { throw MCPError(.AppControl.errorSelectNeedsProject) }
         let connections = try Self.connections(given)
+        let actorView = try Self.actorView(given)
         let name = try args.string("project")
         let summary = try Self.summary(name, among: visibleProjects())
         let named = try branchNamed(args.optionalString("branch"), projectId: summary.id)
         let detail = try treeDetail(summary, named)
         let pick = try picked(in: detail)
+        if actorView != nil {
+            guard case .section(let section) = pick, section.isActor else {
+                let named = ((try? targets()) ?? nil)?.first ?? detail.project.name
+                throw MCPError(.AppControl.errorViewNotActor(named))
+            }
+        }
         let card = try connections.map { _ in
             guard let card = pick.card(in: detail.directory) else { throw MCPError(.AppControl.errorConnectionsTarget) }
             return card
         }
+        // Chosen once the call is known to go through: a refused one leaves this Mac's choice as it was.
+        if let actorView, case .section(let section) = pick {
+            ActorView.setShowsSequence(actorView == "sequence", project: detail.project.id, actor: section.id)
+            model.actorViewChosen &+= 1
+        }
         openTree(summary.id, named)
         var opened = show(pick, in: detail)
+        // An actor opens as its map or its sequence: which one is said.
+        if case .section(let section) = pick, section.isActor {
+            let sequence = ActorView.showsSequence(project: detail.project.id, actor: section.id)
+            opened["view"] = .string(sequence ? "sequence" : "map")
+        }
         if let depth = connections, let card {
             model.openConnections(card.id, depth: depth)
             opened["connections"] = Self.connectionsValue(card, depth, model.detail?.directory)
         }
         return headed(opened)
+    }
+
+    /// Which of an actor's map and sequence `view` asks for; nil when it does not ask.
+    static func actorView(_ given: OrderedObject) throws -> String? {
+        switch given["view"] {
+        case nil: return nil
+        case .string(let view)? where ["map", "sequence"].contains(view): return view
+        default: throw MCPError(.AppControl.errorSelectView)
+        }
     }
 
     /// The depth `as: connections` asks for; nil when it does not ask.
@@ -653,6 +679,13 @@ private struct Window {
             throw MCPError(.AppControl.errorViewTargetGiven(Self.views.joined(separator: " / "), mode))
         }
         let given = Arguments(raw: given)
+        // An actor's sequence on screen: fit is the one view it takes.
+        if let sequence = model.shownSequence, let scroll = sequence.scroll, scroll.documentView != nil {
+            guard mode == "fit" else { throw MCPError(.AppControl.errorSequenceFitOnly) }
+            sequence.fit()
+            return OrderedObject([("branch", .string(model.openTree.name)), ("view", .string("sequence")),
+                                  ("zoom", Self.zoomValue(scroll.magnification))])
+        }
         let canvas = try onScreenCanvas()
         let zoom = given.number("zoom")
         let wanted = given.int("margin", default: 32)

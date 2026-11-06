@@ -54,7 +54,7 @@ enum Glossary {
         Group("project", ["project", "main", "branch", "section", "project_tree", "free", "ui", "mock", "board", "ghost",
                           "standalone", "base", "merge", "path", "in"]),
         Group("kinds", ["entity", "value", "enum", "flow", "store", "instance", "table", "note", "freedoc", "formatdoc",
-                        "stackdoc", "svg", "html", "frame", "goal", "task", "file", "workdir", "directory", "symbol",
+                        "stackdoc", "spec", "svg", "sketch", "image", "html", "frame", "goal", "task", "file", "workdir", "directory", "symbol",
                         "parsers"]),
         Group("nodes", ["begin", "trigger", "process", "run", "eval", "wait", "join", "end", "diagram", "topLeft"]),
         Group("notes", ["body", "rows", "versions", "version"]),
@@ -65,8 +65,8 @@ enum Glossary {
     ]
 
     static let legend: [LegendRow] = [
-        "embed", "points", "link", "holds", "shapeOf", "rules", "implementedBy", "mentions", "next", "condition", "else",
-        "onError", "onTimeout", "runs", "awaits", "reads", "writes", "partner", "key",
+        "embed", "points", "link", "holds", "shapeOf", "rules", "implementedBy", "testedBy", "mentions", "next", "condition", "else",
+        "onError", "onTimeout", "runs", "awaits", "reads", "writes", "partner", "key", "arrow",
     ].map { LegendRow(words: [$0]) }
 
     static func term(_ word: String) -> Term? {

@@ -154,11 +154,9 @@ struct FlowEditor: View {
             .labelsHidden().pickerStyle(.segmented).fixedSize()
             .help(L10n[.Flow.toolbarShapeHelp])
             BarMenu(title: L10n[.Flow.mermaidMenuTitle], systemImage: "chevron.left.forwardslash.chevron.right") {
-                Toggle("mermaid", isOn: $asMermaid)
-                    .toggleStyle(.button).controlSize(.small)
+                BarToggle(title: "mermaid", systemImage: "chevron.left.forwardslash.chevron.right", isOn: $asMermaid)
                     .help(L10n[.Flow.mermaidViewHelp])
-                Button(L10n[.Flow.mermaidCopy]) { copyMermaid() }
-                    .controlSize(.small)
+                Button { copyMermaid() } label: { Label(L10n[.Flow.mermaidCopy], systemImage: "doc.on.doc") }
             } items: {
                 Toggle(L10n[.Flow.mermaidView], isOn: $asMermaid)
                 Button(L10n[.Flow.mermaidCopy]) { copyMermaid() }

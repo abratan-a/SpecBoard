@@ -40,5 +40,6 @@
   "projects.update.nameShape": "name は新しいプロジェクト名です（文字列）",
   "projects.update.nothingToChange": "変更する項目がありません（name・description・layout・rules・project_tree・renames・slug）",
   "projects.update.renamesShape": "renames[{i}]: project_update の renames は根の直下のセクションの名前（{top_section, to}）だけです（種類と欄・行の名前は kind_update の name と renames）",
-  "projects.update.slugShape": "slug は新しい slug です（文字列）"
+  "projects.update.slugShape": "slug は新しい slug です（文字列）",
+  "projects.update.treeInvalid": "根の直下のセクションの並び（project_tree）に誤りがあるので、変えていません:\n{problems}"
 }

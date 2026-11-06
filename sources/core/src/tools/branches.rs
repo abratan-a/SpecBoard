@@ -219,6 +219,21 @@ pub(crate) fn branch_diff(
         .map(|p| (p.0.as_str(), p.2.as_str()))
         .collect();
     let touched: HashSet<&str> = cards.iter().map(|r| r.id.as_str()).collect();
+    // What the branch still sees of main as it froze it: main moved those since, whatever the
+    // prints say (going back past taking main in puts them back, not the prints).
+    let frozen: HashMap<String, Option<Value>> = {
+        let mut stmt = reader
+            .conn
+            .prepare("SELECT id, doc FROM branch_frozen WHERE project_id = ? AND branch_id = ? AND tbl = 'card_docs'")
+            .map_err(crate::store::sql)?;
+        stmt.query_map([project, branch], |r| {
+            Ok((r.get::<_, String>(0)?, r.get::<_, Option<String>>(1)?))
+        })
+        .map_err(crate::store::sql)?
+        .filter_map(|r| r.ok())
+        .map(|(id, doc)| (id, doc.and_then(|d| serde_json::from_str(&d).ok())))
+        .collect()
+    };
     let main_rows = own_rows(reader, "card_docs", project, "")?;
     let main_docs: HashMap<&str, (&Value, String)> = main_rows
         .iter()
@@ -275,6 +290,15 @@ pub(crate) fn branch_diff(
             ));
         } else if touched.contains(id) {
             continue;
+        } else if let Some(seen) = frozen.get(*id) {
+            match seen {
+                Some(seen) if seen == *now => continue,
+                Some(seen) => out.main_changed.push((
+                    full,
+                    crate::diff::changes(seen, now, &path_main, Some(&section_main)),
+                )),
+                None => out.main_made.push(full),
+            }
         } else if let Some(print) = prints.get(id) {
             let text = main_texts.get(*id).cloned().unwrap_or_default();
             if *print == crate::schema::print(&text) {
@@ -872,8 +896,8 @@ impl Core {
                                 &tree_of(&into),
                                 &into_name,
                             )?;
-                            return Ok(Output::Json(Value::Object(super::merges::preview_view(
-                                &preview, &seen,
+                            return Ok(Output::Json(Value::Object(super::merges::mcp_preview(
+                                super::merges::preview_view(&preview, &seen),
                             ))));
                         }
                         // main, the board and the working directories have no main to differ from.
@@ -942,7 +966,7 @@ impl Core {
                 let into_name = into
                     .as_ref()
                     .map_or_else(|| "main".to_string(), |b| b.1.clone());
-                let take = super::merges::take(given.get("take"))?;
+                let take = super::merges::mcp_take(given.get("take"))?;
                 let places = super::merges::places(&given)?;
                 // Merged into main, the branch is set aside unless kept.
                 let keep = match given.get("keep") {
@@ -1008,9 +1032,10 @@ impl Core {
                             &into_name,
                         )?;
                         if !preview.conflicts.is_empty() || !preview.overlaps.is_empty() {
-                            let shown = crate::ojson::compact(&Value::Object(
-                                super::merges::preview_view(&preview, &seen),
-                            ));
+                            let shown =
+                                crate::ojson::compact(&Value::Object(super::merges::mcp_preview(
+                                    super::merges::preview_view(&preview, &seen),
+                                )));
                             return Err(if preview.overlaps.is_empty() {
                                 text!(
                                     "branches.merge.conflicts",
@@ -1220,7 +1245,9 @@ pub(crate) enum Undid {
 }
 
 /// One commit of the tree `tree` (`""` for main, `~board`, a branch's id; `tree_name` as it is called)
-/// undone alone: in a branch or the board, a commit of its own; main through a branch made for it.
+/// undone alone: in a branch or the board, a commit of its own; main through a branch made for it, or
+/// — `in_place`, the window's ⌘Z taking back what it wrote itself — by a commit of its own there too
+/// (a locked main is refused: it is written by a merge alone).
 /// Where a later commit changed what it changed too, nothing is written and each such unit is said in
 /// MCP's shape: as it was before the commit, right after it and now. One builder for what MCP
 /// refuses with and what the window is answered, so a person and an AI see the same units.
@@ -1235,12 +1262,13 @@ pub(crate) fn undo_in(
     name: Option<&str>,
     only_by: Option<&write::Author>,
     asked: bool,
+    in_place: bool,
 ) -> Result<Undid, String> {
     let next = write::history_of(tx.conn(), project, tree, 1)?
         .first()
         .map_or(0, |c| c.seq)
         + 1;
-    let done = if tree.is_empty() {
+    let done = if tree.is_empty() && !in_place {
         tx.undo_one_into_branch(project, seq, name, only_by, asked)?
     } else {
         tx.undo_one(project, tree, seq, only_by, asked)?
@@ -1320,6 +1348,7 @@ fn undo_one(
         name,
         only_by,
         asked,
+        false,
     )?;
     let (undone, commit, made, paths) = match done {
         Undid::Done {

@@ -181,6 +181,7 @@ fn a_cards_lines_read_as_written_and_in_the_keys_the_screen_read_before() {
             "shapeOf",
             "rules",
             "implementedBy",
+            "testedBy",
             "mentions",
             "next",
             "condition",
@@ -193,6 +194,7 @@ fn a_cards_lines_read_as_written_and_in_the_keys_the_screen_read_before() {
             "writes",
             "partner",
             "key",
+            "arrow",
             "signedBy"
         ]
     );
@@ -204,7 +206,7 @@ fn a_cards_lines_read_as_written_and_in_the_keys_the_screen_read_before() {
         .find(|l| l["line"] == "signedBy")
         .unwrap();
     assert!(own.get("builtin").is_none());
-    assert_eq!(whole["kinds"]["sections"].as_array().unwrap().len(), 12);
+    assert_eq!(whole["kinds"]["sections"].as_array().unwrap().len(), 13);
     assert_eq!(whole["project"]["kinds"]["lines"][0]["line"], "signedBy");
 }
 
@@ -515,7 +517,7 @@ fn a_field_gone_takes_its_lines_and_a_card_gone_leaves_them_broken() {
 fn mentions_are_left_out_of_a_diagram_unless_asked() {
     // The lines a text's [[ ]] names are the most of any kind: drawn only when asked for.
     let core = Core::open(script_store()).unwrap();
-    let read = ok(&core, "kind_read", json!({}));
+    let read = common::kinds_whole(&core);
     let mentions = read["lines"]
         .as_array()
         .unwrap()
@@ -586,7 +588,7 @@ fn a_contents_map_leaves_out_hidden_kinds_unless_asked() {
 #[test]
 fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
     let core = Core::open(script_store()).unwrap();
-    let read = ok(&core, "kind_read", json!({}));
+    let read = common::kinds_whole(&core);
     let names: Vec<(&str, bool)> = read["lines"]
         .as_array()
         .unwrap()
@@ -603,6 +605,7 @@ fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
             ("shapeOf", true),
             ("rules", true),
             ("implementedBy", true),
+            ("testedBy", true),
             ("mentions", true),
             ("next", true),
             ("condition", true),
@@ -615,10 +618,11 @@ fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
             ("writes", true),
             ("partner", true),
             ("key", true),
+            ("arrow", true),
             ("signedBy", false)
         ]
     );
-    let all = ok(&core, "kind_read", json!({}));
+    let all = common::kinds_whole(&core);
     // Every built-in kind of card but the abstract ones (the sample has none of its own) and the
     // frame, which goes only in a ui section and the sample has none.
     let builtin: Value = serde_json::from_str(include_str!("../src/kinds/builtin.json")).unwrap();
@@ -922,7 +926,7 @@ fn a_designating_lines_landing_is_inside_the_card_it_reaches() {
     assert_eq!(line_of("link", "customer_id"), written[i + 1]);
 
     // A line of the project's own that designates: the same.
-    let kinds = ok(&core, "kind_read", json!({}));
+    let kinds = common::kinds_whole(&core);
     let signed = kinds["lines"]
         .as_array()
         .unwrap()
@@ -1008,7 +1012,7 @@ fn a_project_file_before_12_has_its_lines_moved() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 33);
+    assert_eq!(file["version"], 34);
     // As 11 wrote it: the lines in the cards' fields, no kinds of the project's own.
     file["version"] = 11.into();
     file["project"].as_object_mut().unwrap().remove("kinds");
@@ -1595,13 +1599,16 @@ fn the_lines_a_place_may_draw_follow_the_kinds_from_to_and_max() {
 
     // Without `to`: what it may draw, and what each reaches.
     let (read, now, _) = drawable(&core, &format!("{order}.customer_id"), json!({}));
-    assert_eq!(now, ["embed", "points", "link", "implementedBy"]);
+    assert_eq!(
+        now,
+        ["embed", "points", "link", "implementedBy", "testedBy"]
+    );
     assert_eq!(read["lines"][0]["reaches"], "entity・value・enumの頭");
     assert_eq!(read["lines"][1]["reaches"], "entity・valueの頭・欄");
     assert_eq!(read["lines"][2]["reaches"], "どのカードの頭・欄・行");
 
     // The project's own line, one at most: drawn once, it is full.
-    let kinds = ok(&core, "kind_read", json!({}));
+    let kinds = common::kinds_whole(&core);
     let signed = kinds["lines"]
         .as_array()
         .unwrap()
@@ -1969,4 +1976,51 @@ fn a_flows_rules_are_drawn_from_its_head_in_a_section_diagram() {
         !mermaid.contains("＃d") && !mermaid.contains("#d"),
         "{mermaid}"
     );
+}
+
+#[test]
+fn a_diagram_names_its_lines_as_the_kinds_of_line_are_named() {
+    let core = Core::open(script_store()).unwrap();
+    let read = |target: &str, value: Value| {
+        let (failed, text) = common::call(
+            &core,
+            "section_read",
+            json!({"project": "見本", "target": target, "value": value}),
+        );
+        (failed, text)
+    };
+    let mermaid = |target: &str, value: Value| -> String {
+        let (failed, text) = read(target, value);
+        assert!(!failed, "{text}");
+        let v: Value = serde_json::from_str(&text).unwrap();
+        v["mermaid"].as_str().unwrap().to_string()
+    };
+    // A send row's line to the flow it hands on to is drawn as the partner line it is.
+    let charts = mermaid("Charts/Shop", json!({"as": "diagram"}));
+    assert!(charts.contains(": partner"), "{charts}");
+    assert!(!charts.contains(": next"), "{charts}");
+    // The names of the kinds of line are taken as they are written in kind_list.
+    let only = mermaid(
+        "Charts/Shop",
+        json!({"as": "diagram", "kinds": ["runs", "partner"]}),
+    );
+    assert!(
+        only.contains(": runs") && only.contains(": partner"),
+        "{only}"
+    );
+    // A store's holds line is drawn.
+    let schemas = mermaid("Schemas", json!({"as": "diagram", "kinds": ["holds"]}));
+    assert!(schemas.contains(": holds"), "{schemas}");
+    // A refusal names the kinds as kind_list does.
+    let (failed, said) = read(
+        "Charts/Shop",
+        json!({"as": "diagram", "kinds": ["nothing"]}),
+    );
+    assert!(failed, "{said}");
+    for name in ["runs", "partner"] {
+        assert!(said.contains(name), "{name}: {said}");
+    }
+    for old in ["lookup", " run ", " next "] {
+        assert!(!said.contains(old), "{old}: {said}");
+    }
 }

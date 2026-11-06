@@ -872,13 +872,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diff against main (same content as branch_read)"
+            "value" : "Diff against main"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main との差分（branch_read と同じ中身）"
+            "value" : "main との差分"
           }
         }
       }
@@ -1257,6 +1257,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "フィルター"
+          }
+        }
+      }
+    },
+    "folded" : {
+      "comment" : "The map band's word while value objects and enums are drawn inside the cards that hold them; pressing it lists them. The argument is how many.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card folded inside"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards folded inside"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚は中に畳んでいます"
+          }
+        }
+      }
+    },
+    "foldedHelp" : {
+      "comment" : "Tooltip of the map band's folded count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value objects and enums are drawn in the rows of the cards that hold them. Lists them"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値オブジェクトと列挙は、持っているカードの行に畳んで描いています。一覧を出します"
+          }
+        }
+      }
+    },
+    "foldedNote" : {
+      "comment" : "Line under the folded cards' list; the argument is the card menu's item that draws one on its own.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To draw one as a card of its own: “%@” on it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 枚で出すには、そのカードの「%@」"
+          }
+        }
+      }
+    },
+    "foldedRowHelp" : {
+      "comment" : "Tooltip of a row of the folded cards' list: pressing it shows the field holding the card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the field that holds it"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "持っている欄へ移ります"
           }
         }
       }
@@ -1825,6 +1909,42 @@
         }
       }
     },
+    "noticeBubble.more" : {
+      "comment" : "Under a notification bubble in the header: how many more are waiting behind it; the argument is the count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほか %lld 件"
+          }
+        }
+      }
+    },
+    "noticeBubble.openHelp" : {
+      "comment" : "Tooltip of a notification bubble in the header: pressing it opens the bell's list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the list of notifications"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知の一覧を開きます"
+          }
+        }
+      }
+    },
     "noticeKind.aiMerge" : {
       "comment" : "Kind of notification: an AI merged into a locked main. Mark tooltip in the bell's list and a row of the Notifications settings.",
       "extractionState" : "manual",
@@ -1929,6 +2049,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通知はありません"
+          }
+        }
+      }
+    },
+    "overlaps" : {
+      "comment" : "The map band's word while cards overlap on the diagram; pressing it tidies the map. The argument is how many pairs overlap.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld overlap"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld overlaps"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なり %lld か所"
+          }
+        }
+      }
+    },
+    "overlapsHelp" : {
+      "comment" : "Tooltip of the map band's overlap count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves the overlapping cards down apart, as Tidy does"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なっているカードを、「整える」と同じに下へずらして離します"
           }
         }
       }
@@ -2534,13 +2702,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Export main to each export's default destination folder, as the exports are set up (set them up in the navigator, under “Export” on the “Directory” dashboard)"
+            "value" : "Export main to each export's default destination folder, as the exports are set up (set them up in Project Settings, on the “Export” tab)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main を、エクスポートごとの既定のエクスポート先のフォルダへ、設定どおりに書きます（エクスポートは、ナビパネルの「ディレクトリ」のダッシュボードの「エクスポート」で決めます）"
+            "value" : "main を、エクスポートごとの既定のエクスポート先のフォルダへ、設定どおりに書きます（エクスポートは、プロジェクト設定の「エクスポート」のタブで決めます）"
           }
         }
       }
@@ -2773,42 +2941,6 @@
         }
       }
     },
-    "noticeBubble.more" : {
-      "comment" : "Under a notification bubble in the header: how many more are waiting behind it; the argument is the count.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld more"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ほか %lld 件"
-          }
-        }
-      }
-    },
-    "noticeBubble.openHelp" : {
-      "comment" : "Tooltip of a notification bubble in the header: pressing it opens the bell's list.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open the list of notifications"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通知の一覧を開きます"
-          }
-        }
-      }
-    },
     "undo.after" : {
       "comment" : "Label of a unit's value right after the commit being undone; the argument is the commit number.",
       "extractionState" : "manual",
@@ -2931,6 +3063,330 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "今"
+          }
+        }
+      }
+    },
+    "whiteboardImage.contents" : {
+      "comment" : "Row title of an image card's picture in its property panel.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Picture"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像"
+          }
+        }
+      }
+    },
+    "whiteboardImage.fullSize" : {
+      "comment" : "Button in an image card's property panel that sizes it as its picture.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original size"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原寸に戻す"
+          }
+        }
+      }
+    },
+    "whiteboardImage.replace" : {
+      "comment" : "Button in an image card's property panel that replaces its picture.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差し替え…"
+          }
+        }
+      }
+    },
+    "whiteboardImage.unreadable" : {
+      "comment" : "Error when a pasted, dropped or chosen file is no picture.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is not a picture SpecBoard can read (PNG, JPEG, GIF, TIFF or HEIC)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読める画像ではありません（PNG・JPEG・GIF・TIFF・HEIC）"
+          }
+        }
+      }
+    },
+    "whiteboardTool.arrow" : {
+      "comment" : "Label of the whiteboard bar's tool: Arrow.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrow"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矢印"
+          }
+        }
+      }
+    },
+    "whiteboardTool.arrowHelp" : {
+      "comment" : "Tooltip of the whiteboard bar's arrow tool.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose, then drag from one shape to another to draw an arrow."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んでから図形から図形へ引くと、矢印を引く"
+          }
+        }
+      }
+    },
+    "whiteboardTool.cylinder" : {
+      "comment" : "Label of the whiteboard bar's tool: Cylinder.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cylinder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "円柱"
+          }
+        }
+      }
+    },
+    "whiteboardTool.diamond" : {
+      "comment" : "Label of the whiteboard bar's tool: Diamond.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diamond"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ひし形"
+          }
+        }
+      }
+    },
+    "whiteboardTool.ellipse" : {
+      "comment" : "Label of the whiteboard bar's tool: Ellipse.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ellipse"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "丸"
+          }
+        }
+      }
+    },
+    "whiteboardTool.image" : {
+      "comment" : "Label of the whiteboard bar's tool: Image.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像"
+          }
+        }
+      }
+    },
+    "whiteboardTool.imageHelp" : {
+      "comment" : "Tooltip of the whiteboard bar's image tool.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose, then press on the whiteboard and pick a picture to place there. A picture can also be pasted (⌘V) or dropped from Finder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んでからホワイトボードの上を押し、画像のファイルを選ぶと、そこに置く。⌘V の貼り付けと Finder からのドロップでも置ける"
+          }
+        }
+      }
+    },
+    "whiteboardTool.note" : {
+      "comment" : "Label of the whiteboard bar's tool: Sticky.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticky"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付箋"
+          }
+        }
+      }
+    },
+    "whiteboardTool.placeHelp" : {
+      "comment" : "Tooltip of a whiteboard bar's shape tool.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose, then press on the whiteboard to place it there."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んでからホワイトボードの上を押すと、そこに置く"
+          }
+        }
+      }
+    },
+    "whiteboardTool.rect" : {
+      "comment" : "Label of the whiteboard bar's tool: Rectangle.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "四角"
+          }
+        }
+      }
+    },
+    "whiteboardTool.rounded" : {
+      "comment" : "Label of the whiteboard bar's tool: Rounded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rounded"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角丸"
+          }
+        }
+      }
+    },
+    "whiteboardTool.select" : {
+      "comment" : "Label of the whiteboard bar's tool: Select.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選ぶ"
+          }
+        }
+      }
+    },
+    "whiteboardTool.selectHelp" : {
+      "comment" : "Tooltip of the whiteboard bar's select tool.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick and move what is on the whiteboard."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホワイトボードの上のものを選んで動かす"
+          }
+        }
+      }
+    },
+    "whiteboardTool.text" : {
+      "comment" : "Label of the whiteboard bar's tool: Text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字"
           }
         }
       }

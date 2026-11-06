@@ -685,4 +685,9 @@ fn a_branchs_undo_of_its_first_copy_comes_back_to_main_as_the_branch_sees_it() {
     let now = card(&core, "work", "Schemas:Customer");
     assert_eq!(now["description"], was["description"]);
     assert_eq!(now["label"], was["label"]);
+    // main itself as main wrote it.
+    assert_eq!(
+        card(&core, "main", "Schemas:Customer")["label"],
+        "main のあとの名"
+    );
 }

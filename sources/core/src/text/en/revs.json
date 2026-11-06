@@ -1,9 +1,14 @@
 {
   "revs.at.path": "{path}: ",
+  "revs.given.metaShape": "The rev of {tool} must be the rev as it was read (the rev in the read's answer; a string)",
   "revs.given.shape": "{at}rev must be the rev of the card as it was read (the rev in the answer of card_read; a string)",
   "revs.stale.changed": "{path} has changed since it was read (rev {rev}) (now rev {now}{last}). Read it again before writing",
   "revs.stale.lastBy": ", last changed by {said}",
+  "revs.stale.meta": "{what} has changed since it was read (rev {rev}) (now rev {now}). Read it again before writing",
   "revs.stale.notBefore": "{path} does not exist before this call. Give rev when writing a card that was read (not for a card made in the same call, nor for a path it is renamed to)",
+  "revs.what.kind": "Kind {name}",
+  "revs.what.project": "The project's settings",
+  "revs.what.section": "Section {path}",
   "revs.writer.at": "{who}, {at}",
   "revs.writer.thisKey": "this access key ({named})"
 }

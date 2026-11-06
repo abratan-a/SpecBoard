@@ -511,6 +511,13 @@ fn a_kinds_face_said_resizable_is_read_and_let_go() {
         json!({"top": ["done"], "markdown": "body"}),
         "{task}"
     );
+    // Taken, and read back as written.
+    let risk = ok(&core, "kind_read", json!({"target": "risk"}));
+    assert_eq!(
+        risk["face"],
+        json!({"markdown": "memo", "resizable": false}),
+        "{risk}"
+    );
 }
 
 /// `core()` with `Free:Wide` sized `{w: 20}` on main and `Free:Next` at (240, 200), clear of it, and

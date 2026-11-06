@@ -229,7 +229,10 @@ pub(crate) fn edited(
         Value::Object(edits) => edits,
         _ => return Err(shape()),
     };
-    if let Some(other) = edits.keys().find(|k| *k != "add" && *k != "remove") {
+    if let Some(other) = edits
+        .keys()
+        .find(|k| !["add", "remove", "change"].contains(&k.as_str()))
+    {
         return Err(text!("lines.edit.noKey", other, shape = shape()));
     }
     let list = |key: &str| -> Result<Vec<Map<String, Value>>, String> {
@@ -247,7 +250,7 @@ pub(crate) fn edited(
             Some(_) => Err(text!("lines.edit.notList", key, shape = shape())),
         }
     };
-    let (adding, removing) = (list("add")?, list("remove")?);
+    let (adding, removing, changing) = (list("add")?, list("remove")?, list("change")?);
     let names = Either { resolver };
     // A line as the document keeps it: its card by id, where it lands as written there.
     let read = |line: &Map<String, Value>| -> Result<Map<String, Value>, String> {
@@ -310,23 +313,28 @@ pub(crate) fn edited(
         .unwrap_or(Value::Null);
         crate::ojson::compact(&shown)
     };
-    for (i, wanted) in removing.iter().enumerate() {
+    // The one line of the card's `wanted` names by the keys it gives (`key[i]` in what is said).
+    let pick = |kept: &[Map<String, Value>],
+                wanted: &Map<String, Value>,
+                key: &str,
+                i: usize|
+     -> Result<usize, String> {
         if wanted.keys().all(|k| !PICKED_BY.contains(&k.as_str())) {
-            return Err(text!("lines.edit.removeNeeds", i));
+            return Err(text!("lines.edit.removeNeeds", key, i));
         }
-        let as_kept = read(wanted).map_err(|e| format!("connections.remove[{i}]: {e}"))?;
+        let as_kept = read(wanted).map_err(|e| format!("connections.{key}[{i}]: {e}"))?;
         let matches: Vec<usize> = kept
             .iter()
             .enumerate()
             .filter(|(_, line)| {
-                PICKED_BY.iter().all(|key| {
-                    if !wanted.contains_key(*key) {
+                PICKED_BY.iter().all(|k| {
+                    if !wanted.contains_key(*k) {
                         return true;
                     }
-                    if *key == "to" && as_kept.get("to").is_some_and(Value::is_null) {
+                    if *k == "to" && as_kept.get("to").is_some_and(Value::is_null) {
                         return gone_to(line);
                     }
-                    text(line, key) == text(&as_kept, key)
+                    text(line, k) == text(&as_kept, k)
                 }) && (!wanted.contains_key("description")
                     || text(line, "description") == text(&as_kept, "description"))
                     && fields_given(line, &as_kept)
@@ -334,23 +342,69 @@ pub(crate) fn edited(
             .map(|(j, _)| j)
             .collect();
         match matches.as_slice() {
-            [one] => {
-                kept.remove(*one);
+            [one] => Ok(*one),
+            [] => Err(text!(
+                "lines.edit.removeNone",
+                key,
+                i,
+                lines = crate::text::List::of(kept.iter().map(said_of))
+            )),
+            many => Err(text!(
+                "lines.edit.removeMany",
+                key,
+                i,
+                n = many.len(),
+                lines = crate::text::List::of(many.iter().map(|j| said_of(&kept[*j])))
+            )),
+        }
+    };
+    for (i, wanted) in removing.iter().enumerate() {
+        let one = pick(&kept, wanted, "remove", i)?;
+        kept.remove(one);
+    }
+    // Changed where it is: its description and the fields `set` writes, its place and id kept.
+    for (i, wanted) in changing.iter().enumerate() {
+        let mut wanted = wanted.clone();
+        let set = match wanted.shift_remove("set") {
+            Some(Value::Object(set))
+                if !set.is_empty() && set.keys().all(|k| k == "description" || k == "fields") =>
+            {
+                set
             }
-            [] => {
-                return Err(text!(
-                    "lines.edit.removeNone",
-                    i,
-                    lines = crate::text::List::of(kept.iter().map(said_of))
-                ));
+            _ => return Err(text!("lines.edit.changeSet", i)),
+        };
+        let one = pick(&kept, &wanted, "change", i)?;
+        let line = &mut kept[one];
+        if let Some(said) = set.get("description") {
+            match said.as_str().map(str::trim).filter(|d| !d.is_empty()) {
+                Some(d) => {
+                    line.insert("description".into(), d.into());
+                }
+                None => {
+                    line.shift_remove("description");
+                }
             }
-            many => {
-                return Err(text!(
-                    "lines.edit.removeMany",
-                    i,
-                    n = many.len(),
-                    lines = crate::text::List::of(many.iter().map(|j| said_of(&kept[*j])))
-                ));
+        }
+        if let Some(fields) = set.get("fields") {
+            let Value::Object(fields) = fields else {
+                return Err(text!("lines.edit.changeSet", i));
+            };
+            let mut now = line
+                .get("fields")
+                .and_then(Value::as_object)
+                .cloned()
+                .unwrap_or_default();
+            for (name, value) in fields {
+                if value.is_null() {
+                    now.shift_remove(name);
+                } else {
+                    now.insert(name.clone(), value.clone());
+                }
+            }
+            if now.is_empty() {
+                line.shift_remove("fields");
+            } else {
+                line.insert("fields".into(), Value::Object(now));
             }
         }
     }
@@ -605,6 +659,46 @@ fn landing_elsewhere(
     )
 }
 
+/// A process node's rows' lines of a kind the row does not take (a write line from a sign row):
+/// kept, not drawn and not counted, and said by the check. Writing them is not refused, so that a
+/// node holding one can still be written.
+pub(crate) fn step_misfits(project: &Project, card: &Card) -> Vec<crate::text::Keyed> {
+    if card.kind != "process" {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    for line in &card.connections {
+        if !super::check::STEP_LINES.contains(&line.line.as_str()) {
+            continue;
+        }
+        let Some(op) =
+            crate::detail::step_index(line.from.trim()).and_then(|i| super::walk::step_op(card, i))
+        else {
+            continue;
+        };
+        if super::check::step_lines(&op).contains(&line.line.as_str()) {
+            continue;
+        }
+        let Some(def) = project.defs.line(&line.line) else {
+            continue;
+        };
+        let said = keyed!(
+            "lines.said.from",
+            from = line.from,
+            label = def.label,
+            name = def.name
+        );
+        out.push(keyed!(
+            "lines.misfit.stepLine",
+            said,
+            op,
+            label = def.label,
+            name = def.name
+        ));
+    }
+    out
+}
+
 /// Every way a card's lines do not fit the project's kinds of line: each said with the line
 /// it is about. A line whose card is gone, or whose landing leads nowhere, is a broken
 /// path (`check::line_paths`), not this — but a designating line's landing written outside
@@ -665,6 +759,9 @@ pub(crate) fn misfits(project: &Project, card: &Card) -> Vec<crate::text::Keyed>
                 card = project.full(card)
             )),
             Some(place) => {
+                if !on_its_sections(project, def, card, reached_card(project, line)) {
+                    out.push(keyed!("lines.misfit.whiteboard", said, label = def.label));
+                }
                 if !def.leaves(&card.kind, &place) {
                     out.push(keyed!(
                         "lines.misfit.leaves",
@@ -856,6 +953,20 @@ pub(crate) fn misfits(project: &Project, card: &Card) -> Vec<crate::text::Keyed>
     out
 }
 
+/// Whether a line of `def` may join `card` and `reached` where they are: an arrow only between the
+/// parts of a whiteboard, which it is drawn by its own fields on; any other kind anywhere.
+fn on_its_sections(project: &Project, def: &LineDef, card: &Card, reached: Option<&Card>) -> bool {
+    def.name != "arrow"
+        || std::iter::once(card)
+            .chain(reached)
+            .all(|c| project.section_kind(&project.section_of(c)) == Some(super::grid::WHITEBOARD))
+}
+
+/// The card a written line reaches, when it is one of the project's.
+fn reached_card<'p>(project: &'p Project, line: &crate::model::Connection) -> Option<&'p Card> {
+    line.to.as_deref().and_then(|id| project.card(id))
+}
+
 // MARK: - What a place may draw
 
 /// One kind of line a place may draw, and how many of its kind the place has now.
@@ -928,7 +1039,10 @@ pub(crate) fn drawable<'d>(
         .map(|op| super::check::step_lines(&op));
     let (mut now, mut full) = (Vec::new(), Vec::new());
     for def in &project.defs.lines {
-        if def.from_text || !def.leaves(&card.kind, &leaves) {
+        if def.from_text
+            || !def.leaves(&card.kind, &leaves)
+            || !on_its_sections(project, def, card, to.map(|(t, _)| t))
+        {
             continue;
         }
         if let Some(allowed) = step_lines

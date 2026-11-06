@@ -137,7 +137,7 @@ fn a_card_is_carried_out_in_a_file_kept_by_its_path() {
         broken(&core, "main")
     );
 
-    // What a place may draw to a file: the kind that reaches files alone (the window's つなぐ).
+    // What a place may draw to a file: the kinds that reach files alone (the window's つなぐ).
     let lines = ok(
         &core,
         "card_read",
@@ -149,7 +149,7 @@ fn a_card_is_carried_out_in_a_file_kept_by_its_path() {
         .iter()
         .filter_map(|l| l["line"].as_str())
         .collect();
-    assert_eq!(kinds, ["implementedBy"], "{lines}");
+    assert_eq!(kinds, ["implementedBy", "testedBy"], "{lines}");
     assert_eq!(lines["to"], "repo/src:'a.rs'", "{lines}");
     // And to a card: no line that reaches files.
     let lines = ok(

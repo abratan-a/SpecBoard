@@ -529,7 +529,7 @@ fn actor_sections_and_marks_go_through_the_project_file() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 33);
+    assert_eq!(file["version"], 34);
 
     let again = Core::create(common::place("again.sqlite")).unwrap();
     let read = op(&again, json!({"op": "project_file_read", "text": text}));
@@ -545,7 +545,7 @@ fn actor_sections_and_marks_go_through_the_project_file() {
 
     // A file written by an app newer than this one is refused as one.
     let mut newer = file.clone();
-    newer["version"] = 34.into();
+    newer["version"] = 35.into();
     let later = Core::create(common::place("later.sqlite")).unwrap();
     let refused = op(
         &later,
@@ -621,7 +621,20 @@ fn an_actors_sections_page_says_what_it_provides_and_uses() {
         .nth(1)
         .unwrap_or_else(|| panic!("{page}"));
     assert!(chart.contains("sequenceDiagram"), "{chart}");
-    assert!(chart.contains("box 注文サーバ"), "{chart}");
+    assert!(chart.contains("box transparent 注文サーバ"), "{chart}");
+    // The lifelines of what is inside it, inside its box.
+    let boxed: Vec<&str> = chart
+        .split("box transparent 注文サーバ")
+        .nth(1)
+        .unwrap()
+        .lines()
+        .skip(1)
+        .take_while(|l| l.trim() != "end")
+        .collect();
+    assert!(
+        boxed.iter().any(|l| l.contains("受付")) && boxed.iter().any(|l| l.contains("在庫")),
+        "{chart}"
+    );
     assert!(chart.contains("TakeOrder 注文を受ける"), "{chart}");
     assert!(page.contains("## TakeOrder"), "{page}");
     assert!(page.contains("## Reserve"), "{page}");

@@ -728,6 +728,15 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
         )
         .map_err(sql)?;
     }
+    // The pictures of the image cards (`schema::IMAGES`): none yet.
+    if !marked(&tx, crate::schema::IMAGES)? {
+        tx.execute_batch(crate::schema::IMAGES_TABLE).map_err(sql)?;
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::IMAGES],
+        )
+        .map_err(sql)?;
+    }
     // A diagram's groups, rows of `places` (`schema::MAP_GROUPS`): the table made anew, its rows kept.
     if !marked(&tx, crate::schema::MAP_GROUPS)? {
         if !has_column(&tx, "places", "look")? {
@@ -746,6 +755,19 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
         tx.execute(
             "INSERT INTO _migrations (name) VALUES (?1)",
             [crate::schema::BUILTIN_NAMES],
+        )
+        .map_err(sql)?;
+    }
+    // When each frozen copy was frozen (`schema::FROZEN_TIMES`): none for the ones of before, which
+    // are as old as their branch.
+    if !marked(&tx, crate::schema::FROZEN_TIMES)? {
+        if !has_column(&tx, "branch_frozen", "at")? {
+            tx.execute_batch("ALTER TABLE branch_frozen ADD COLUMN at TEXT")
+                .map_err(sql)?;
+        }
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::FROZEN_TIMES],
         )
         .map_err(sql)?;
     }

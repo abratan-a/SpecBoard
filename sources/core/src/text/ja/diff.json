@@ -20,6 +20,8 @@
   "diff.change.rowsReordered": "行の並びを変える",
   "diff.change.section": "セクション {from} → {to}",
   "diff.change.target": "指す先 {from} → {to}",
+  "diff.change.valueDescription": "値 {name} の説明を変える",
+  "diff.change.valueLabel": "値 {name} の表示名を変える",
   "diff.change.valuesAdded": "値を足す {values}",
   "diff.change.valuesRemoved": "値を消す {values}",
   "diff.part.empty": "（空）",

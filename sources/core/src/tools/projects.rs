@@ -1,8 +1,5 @@
 //! The tools that write a project's own settings, or make a project (`project_create`,
-//! `project_update`; the Swift app's `MCPSurface.projects`, `MCPTools`' `create_project` /
-//! `update_project` / `exportDirectoryEdits` and `Repository.createProject`,
-//! `updateProjectDescription`, `setDefaultSettings` and the export directories of
-//! `Repository+Exports`): what a project holds once, whichever tree is read — not a branch's.
+//! `project_update`): what a project holds once, whichever tree is read — not a branch's.
 //! Its name and its writing rules are written here for the window too (`project_rename`,
 //! `writing_rules_set`), in the same words.
 
@@ -84,7 +81,7 @@ fn unique_name(conn: &Connection, name: &str, excluding: Option<&str>) -> Result
 
 // MARK: - project_create
 
-/// A project made (`create_project`, `Repository.createProject`): main's root with one section of
+/// A project made (`create_project`): main's root with one section of
 /// each of the root's own kinds, the project's layout, and its board beside main
 /// (`ensureBoard`). Not opened: the window stays where it is.
 pub(crate) fn project_create(tx: &mut Tx, args: &Args) -> Result<Value, String> {
@@ -220,6 +217,14 @@ pub(crate) fn project_create(tx: &mut Tx, args: &Args) -> Result<Value, String> 
 /// rules are checked as the window's are (`project_rename`, `writing_rules_set`), and pass
 /// main's lock as the description does.
 pub(crate) fn project_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Value, String> {
+    let before = super::update::description_keys(tx, scope)?;
+    let out = project_update_now(tx, scope, args)?;
+    let warnings = super::update::description_warnings(tx, scope, &before)?;
+    Ok(super::warned(out, &warnings))
+}
+
+/// `project_update` itself, before what its description no longer resolves is said.
+fn project_update_now(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<Value, String> {
     let given = args.value()?;
     // The kinds are kind_*'s; what is
     // directly under each root and its sections' names stay the project's.
@@ -244,9 +249,31 @@ pub(crate) fn project_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
     {
         return Err(text!("projects.update.nothingToChange"));
     }
-    let tree = given
-        .get("project_tree")
-        .map(|t| Value::Object(Map::from_iter([("project_tree".to_string(), t.clone())])));
+    // A tree left out of `project_tree` (the board's, when main's alone is given) stays as it is.
+    let tree = match given.get("project_tree") {
+        Some(Value::Object(written)) => {
+            let mut whole = written.clone();
+            if crate::kinds::Tree::ALL
+                .iter()
+                .any(|t| !whole.contains_key(t.key()))
+            {
+                let own = super::own_kinds::kept(tx.conn(), &scope.project)?;
+                let now = crate::kinds::Defs::of_project(Some(&Value::Object(own).to_string()))
+                    .tree
+                    .json();
+                for t in crate::kinds::Tree::ALL {
+                    if !whole.contains_key(t.key())
+                        && let Some(kept) = now.get(t.key())
+                    {
+                        whole.insert(t.key().into(), kept.clone());
+                    }
+                }
+            }
+            Some(Value::Object(whole))
+        }
+        other => other.cloned(),
+    }
+    .map(|t| Value::Object(Map::from_iter([("project_tree".to_string(), t)])));
     // What is directly under each root checked, nothing written (the screen's tab for kinds, as
     // it is written).
     let dry = match given.get("dryRun") {
@@ -280,6 +307,8 @@ pub(crate) fn project_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
         }
         return Ok(Value::Object(out));
     }
+    // What is directly under each root is kept in the kinds' definitions: refused, it is said as the tree.
+    let invalid = text!("ownKinds.set.invalid", problems = "");
     let tree_now = (given.contains_key("project_tree") || given.contains_key("renames"))
         .then(|| {
             super::own_kinds::set_kinds(
@@ -290,6 +319,10 @@ pub(crate) fn project_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<
                 false,
                 Some(&keyed!("projects.line.treeChanged")),
             )
+            .map_err(|e| match e.strip_prefix(&invalid) {
+                Some(problems) => text!("projects.update.treeInvalid", problems),
+                None => e,
+            })
         })
         .transpose()?;
     let current = Layout::read(tx.conn(), &scope.project)?;

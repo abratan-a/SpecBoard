@@ -153,6 +153,12 @@ pub fn inline_schema(project: &Project, card: &Card) -> Value {
     object_schema(project, card, 0)
 }
 
+/// A description as a JSON Schema says it: each `[[…]]` as the words it is shown by, as the JSON Schema
+/// export writes them.
+fn said(project: &Project, text: &str) -> String {
+    crate::notetext::plain_note(text, &project.work_dir_names())
+}
+
 /// The deepest an embedded form is followed.
 const DEEP: usize = 12;
 
@@ -161,7 +167,10 @@ fn object_schema(project: &Project, card: &Card, depth: usize) -> Value {
     let mut out = Map::new();
     out.insert("type".into(), "object".into());
     if !card.description.is_empty() {
-        out.insert("description".into(), card.description.clone().into());
+        out.insert(
+            "description".into(),
+            said(project, &card.description).into(),
+        );
     }
     fields_into(project, &card.fields, depth, &mut out);
     // The form of the arguments (or of a `value`) always says its properties, none or not.
@@ -254,14 +263,17 @@ fn field_schema(project: &Project, field: &Field, depth: usize) -> Value {
             out.insert("items".into(), Value::Object(Map::new()));
         }
         if !field.description.is_empty() {
-            out.insert("description".into(), field.description.clone().into());
+            out.insert(
+                "description".into(),
+                said(project, &field.description).into(),
+            );
         }
         return Value::Object(out);
     };
     // What the form an array's elements embed says of them.
     let item_says = embedded
         .filter(|c| c.kind != "enum" && !c.description.is_empty())
-        .map(|c| c.description.clone());
+        .map(|c| said(project, &c.description));
     let element = |own: &Map<String, Value>| -> Map<String, Value> {
         // An element: its type, what an enum or an object adds, what its form says of it.
         let mut e = Map::new();
@@ -283,8 +295,15 @@ fn field_schema(project: &Project, field: &Field, depth: usize) -> Value {
 
     let mut out = Map::new();
     if field.is_array {
-        // What else it takes beside the array (a value of its own shape, an object of edits).
-        let types = type_list("array", &field.also, field.is_nullable);
+        // What else it takes beside the array (a value of its own shape, an object of edits): an
+        // element with a shape of its own takes no other object, as the instance check.
+        let also: Vec<String> = field
+            .also
+            .iter()
+            .filter(|t| !(*t == "object" && (field.is_ref() || field.is_object())))
+            .cloned()
+            .collect();
+        let types = type_list("array", &also, field.is_nullable);
         out.insert("type".into(), one_or_list(types));
         out.insert("items".into(), Value::Object(element(&own)));
     } else if field.also.is_empty() {
@@ -312,7 +331,10 @@ fn field_schema(project: &Project, field: &Field, depth: usize) -> Value {
         }
     }
     if !field.description.is_empty() {
-        out.insert("description".into(), field.description.clone().into());
+        out.insert(
+            "description".into(),
+            said(project, &field.description).into(),
+        );
     }
     if !field.is_array {
         for key in ["properties", "required"] {
@@ -334,7 +356,7 @@ fn with_null(values: &Value, nullable: bool) -> Value {
 }
 
 /// A type as `"string"`, or a list when there are several.
-fn one_or_list(types: Vec<String>) -> Value {
+pub(crate) fn one_or_list(types: Vec<String>) -> Value {
     if types.len() == 1 {
         types[0].clone().into()
     } else {

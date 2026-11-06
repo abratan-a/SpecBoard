@@ -338,8 +338,9 @@ struct LineList: View {
                     .padding(.horizontal, 18).padding(.vertical, 4)
             }
             ForEach(arriving, id: \.self) { relation in
-                HStack(spacing: 6) {
-                    LineSample(look: kinds.look(relation.line))
+                // The sample beside the kind's name, not between it and the line under it.
+                HStack(alignment: .top, spacing: 6) {
+                    LineSample(look: kinds.look(relation.line)).padding(.top, 3)
                     Button {
                         if let id = relation.connection { model.selectLine(LineRef(card: relation.fromSchemaId, id: id)) }
                     } label: {
@@ -384,8 +385,8 @@ struct LineList: View {
     private func lineRow(_ ref: LineRef) -> some View {
         let kinds = model.detail?.lineKinds ?? LineKinds()
         if let (_, line) = model.line(ref) {
-            HStack(spacing: 6) {
-                LineSample(look: kinds.look(line.line))
+            HStack(alignment: .top, spacing: 6) {
+                LineSample(look: kinds.look(line.line)).padding(.top, 3)
                 Button { model.selectLine(ref) } label: {
                     VStack(alignment: .leading, spacing: 1) {
                         Text(kinds.label(line.line)).font(.app(11.5))
@@ -516,6 +517,8 @@ struct LineProperties: View {
                 Button(role: .destructive) { LineRemoval.remove(model, ref) } label: {
                     Label(L10n[.Lines.propsRemoveLine], systemImage: "minus.circle")
                 }
+                .buttonStyle(.borderless)
+                .font(.app(11.5))
                 .padding(.horizontal, 18).padding(.vertical, 10)
             }
         } else {
@@ -538,6 +541,14 @@ struct LineFieldControl: View {
 
     var body: some View {
         switch field.fieldtype {
+        case "radio" where ColorChoice.offers(field.options):
+            if editable {
+                ColorChoice(options: field.options, selection: Binding(
+                    get: { value?.stringValue ?? field.defaultText ?? "" },
+                    set: { model.setLineField(ref, field.name, .string($0)) }))
+            } else {
+                Text(value?.display ?? "—").foregroundStyle(value == nil ? .tertiary : .primary)
+            }
         case "dropdownlist", "radio":
             if editable {
                 // As wide as the value chosen, within the panel's column (`FittingChoice`).

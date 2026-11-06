@@ -1,6 +1,7 @@
 {
   "files.execute.dryRunBool": "dryRun は true か false です",
   "files.execute.noDefault": "エクスポート {name} の既定のエクスポート先が、この機械で決まっていません（export_update の path か、「エクスポート」のタブの「エクスポート先を決める…」。パスを渡すなら targetdir に書きます）",
+  "files.execute.noDefault.screen": "エクスポート {name} の既定のエクスポート先が、この Mac で決まっていません（「エクスポート」のタブの「エクスポート先を決める…」で決めます）",
   "files.execute.noExports": "エクスポートがありません（export_create で作ります）",
   "files.execute.notWritable": "{name} はエクスポートできません（エクスポートするのは main か branch）",
   "files.execute.strayKey": "export_execute の value に {stray} は書けません（dryRun）",
@@ -8,6 +9,7 @@
   "files.line.wrote": "エクスポート {name} を {folder} に書いた（{count} ファイル）",
   "files.line.wroteRemoved": "エクスポート {name} を {folder} に書いた（{count} ファイル、{removed} ファイルを消した）",
   "files.note.noDefault": "エクスポート {name} の既定のエクスポート先がこの機械で決まっていないので、書いた記録とフォルダは見ていません（決めるのは export_update の path か「エクスポート」のタブ。パスを渡すなら targetdir に書きます）",
+  "files.note.noDefault.screen": "エクスポート {name} の既定のエクスポート先がこの Mac で決まっていないので、書いた記録とフォルダは見ていません（「エクスポート先を決める…」で決めます）",
   "files.problem.clash": "{other} と {said} が同じファイル {full} です",
   "files.problem.overlap": "エクスポート先が重なっていて、同じファイルに 2 度書こうとしています。エクスポートの to かエクスポート先を変えてください\n{clashes}",
   "files.read.filesList": "files はファイルのパスの並びです",

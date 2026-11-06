@@ -478,7 +478,7 @@ fn a_section_and_the_other_lists_are_read_on_to_their_ends() {
 }
 
 #[test]
-fn a_project_gone_from_between_the_pages_is_gone_on_from_where_it_stood() {
+fn a_project_renamed_between_the_pages_is_read_on_from_where_its_name_stood() {
     let core = Core::open(store_with(&["sample", "datamodel", "small"])).unwrap();
     let names = |page: &Value| -> Vec<String> {
         page["projects"]
@@ -938,26 +938,37 @@ fn bare_of_the_rest(card: &Value) {
 #[test]
 fn a_card_list_gives_what_each_card_holds_itself_and_the_rest_when_named() {
     let core = sample();
-    for value in [json!({"limit": 200}), json!({"limit": 200, "include": []})] {
-        let listed = mcp(
-            &core,
-            "card_list",
-            json!({"project": SAMPLE, "value": value}),
-        );
-        let cards = listed["cards"].as_array().unwrap();
-        assert!(!cards.is_empty());
-        cards.iter().for_each(bare_of_the_rest);
-        let customer = cards
-            .iter()
-            .find(|c| c["path"] == "Schemas:Customer")
-            .unwrap();
-        assert!(customer.get("fields").is_some(), "{customer}");
-        let order = cards
-            .iter()
-            .find(|c| c["path"] == "Schemas/Ordering:Order")
-            .unwrap();
-        assert!(order.get("refersTo").is_some(), "{order}");
-    }
+    let listed = mcp(
+        &core,
+        "card_list",
+        json!({"project": SAMPLE, "value": {"limit": 200}}),
+    );
+    let cards = listed["cards"].as_array().unwrap();
+    assert!(!cards.is_empty());
+    cards.iter().for_each(bare_of_the_rest);
+    let customer = cards
+        .iter()
+        .find(|c| c["path"] == "Schemas:Customer")
+        .unwrap();
+    assert!(customer.get("fields").is_some(), "{customer}");
+    let order = cards
+        .iter()
+        .find(|c| c["path"] == "Schemas/Ordering:Order")
+        .unwrap();
+    assert!(order.get("refersTo").is_some(), "{order}");
+    // Nothing included: each card's path, kind and label only.
+    let bare = mcp(
+        &core,
+        "card_list",
+        json!({"project": SAMPLE, "value": {"limit": 200, "include": []}}),
+    );
+    let customer = bare["cards"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["path"] == "Schemas:Customer")
+        .unwrap();
+    assert!(customer.get("fields").is_none(), "{customer}");
     // The window lists the same.
     let window = screen(
         &core,
@@ -1126,4 +1137,13 @@ fn answers_leave_out_what_says_nothing() {
         goal.get("cards").is_none() && goal.get("progress").is_none(),
         "{goal}"
     );
+}
+
+#[test]
+fn the_tool_list_every_session_reads_keeps_to_its_room() {
+    // What every AI session pays before its first call: held, so that a tool's words grow on purpose.
+    let size = serde_json::to_string(&json!({"tools": specboard_core::mcp::listed()}))
+        .unwrap()
+        .len();
+    assert!(size <= 34_000, "tools/list is {size} bytes");
 }

@@ -59,7 +59,7 @@ fn link(kind: LinkKind, row: String, path: String) -> Link {
 /// the line of the body that names it first (`#b<line>`); for a freedoc, the same from a row each
 /// (`#m<n>`); for a formatdoc, what each item's rows name and draw, from the item's row
 /// (`#top` for the rows at the top); for a stackdoc, what each version's body names, from the
-/// version; for a custom card, what each row is joined to.
+/// version; for a spec, what its story names from its head and each scenario from it; for a custom card, what each row is joined to.
 pub(crate) fn links(card: &Card) -> Vec<Link> {
     match card.kind.as_str() {
         "flow" => card
@@ -121,6 +121,34 @@ pub(crate) fn links(card: &Card) -> Vec<Link> {
                         ));
                     }
                 }
+            }
+            out
+        }
+        // A spec: what its story names, from its head; what a scenario's steps and what follows
+        // them name, from that scenario (its name).
+        "spec" => {
+            let mut out = Vec::new();
+            let mut from = |row: String, texts: Vec<String>| {
+                let mut seen = HashSet::new();
+                for text in texts {
+                    for r in notetext::refs(&text) {
+                        if seen.insert(r.path.clone()) {
+                            out.push(link(LinkKind::Mentions, row.clone(), r.path));
+                        }
+                    }
+                }
+            };
+            from(
+                String::new(),
+                ["as", "iWant", "soThat", "about"]
+                    .iter()
+                    .map(|f| card.spec_field(f))
+                    .collect(),
+            );
+            for scenario in card.scenarios() {
+                let mut texts: Vec<String> = scenario.steps.into_iter().map(|(_, t)| t).collect();
+                texts.push(scenario.note);
+                from(scenario.name, texts);
             }
             out
         }
@@ -467,6 +495,13 @@ pub(crate) fn row_lines(project: &crate::export::Project, flow: &Card) -> Vec<Ro
                 let Some(index) = crate::detail::step_index(&line.from) else {
                     continue;
                 };
+                // A line the row's kind does not take is not one of its own (`step_misfits` says it).
+                let op = step_op(node, index);
+                if crate::tools::check::STEP_LINES.contains(&line.line.as_str())
+                    && !crate::tools::check::step_lines(&op).contains(&line.line.as_str())
+                {
+                    continue;
+                }
                 let step_row = format!("{row}.{index}");
                 match line.line.as_str() {
                     "reads" => push(step_row, "reads", line),
@@ -480,7 +515,7 @@ pub(crate) fn row_lines(project: &crate::export::Project, flow: &Card) -> Vec<Ro
                         },
                         line,
                     ),
-                    "partner" if ["send", "call"].contains(&step_op(node, index).as_str()) => {
+                    "partner" if ["send", "call"].contains(&op.as_str()) => {
                         push(step_row, "next", line)
                     }
                     _ => {}

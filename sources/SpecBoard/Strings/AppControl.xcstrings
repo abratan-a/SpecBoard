@@ -739,6 +739,42 @@
         }
       }
     },
+    "error.selectView" : {
+      "comment" : "app_control's answer to an unknown view in op: select.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "view in op: select's value is map or sequence (its form is in guide's about: app_control)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "op: select の value の view は map か sequence です（形は guide の about: app_control）"
+          }
+        }
+      }
+    },
+    "error.sequenceFitOnly" : {
+      "comment" : "app_control's answer to op: view other than fit while an actor's sequence is shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While an actor's sequence is shown, op: view takes fit only. For the other targets, select it with view: map in the value first"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アクターのシーケンスを開いているときの view は fit だけです。ほかの target は、value の view: map で select してマップにしてから呼んでください"
+          }
+        }
+      }
+    },
     "error.storeNotOpen" : {
       "comment" : "app_control's answer when the store holding the project isn't open.",
       "extractionState" : "manual",
@@ -843,6 +879,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "value はオブジェクトです（形は guide）"
+          }
+        }
+      }
+    },
+    "error.viewNotActor" : {
+      "comment" : "app_control's answer to a view given for a section that is no actor's.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "view in the value (map or sequence) is for opening an actor's section only (%@ is no actor)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "value の view（map・sequence）は、アクターのセクションを開くときだけです（%@ はアクターではありません）"
           }
         }
       }

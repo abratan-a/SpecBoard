@@ -248,7 +248,12 @@ fn every_key_the_code_says_is_in_the_tables_and_every_key_there_is_said() {
     let mut unsaid: Vec<&String> = keys
         .keys()
         .filter(|key| {
-            let quoted = format!("\"{key}\"");
+            // The window's words of a text are said wherever the text is.
+            let said = key
+                .strip_suffix(".screen")
+                .filter(|base| keys.contains_key(*base))
+                .unwrap_or(key);
+            let quoted = format!("\"{said}\"");
             !code.iter().any(|(_, source)| source.contains(&quoted))
         })
         .collect();
@@ -315,9 +320,16 @@ fn a_list_is_joined_as_the_language_joins_one() {
     let _en = bind(Some("en"));
     assert_eq!(list(&items), "a, b, c");
     assert_eq!(list_comma(&items), "a, b, c");
-    let kept = keyed!("inspection.problem.overlap", over = List::of(items));
-    assert_eq!(kept.render_in("ja"), "a・b・c に重なっています");
-    assert_eq!(kept.render_in("en"), "It overlaps a, b, c");
+    let kept = keyed!(
+        "inspection.problem.overlap",
+        section = "Free",
+        over = List::of(items)
+    );
+    assert_eq!(kept.render_in("ja"), "Free の図で a・b・c に重なっています");
+    assert_eq!(
+        kept.render_in("en"),
+        "On the map of Free, it overlaps a, b, c"
+    );
     let labels = List::of_keyed([
         keyed!("common.label.description"),
         keyed!("common.label.displayName"),
@@ -611,6 +623,8 @@ const NOT_SAID: &[(&str, &str)] = &[
     ("src/nodes.rs", "ノードの移し替え"),
     // A full-width number sign stands in for `#`, which mermaid reads as its own, in every language.
     ("src/export/ident.rs", "＃"),
+    // A full-width backtick stands in for one, which mermaid reads as Markdown text's start.
+    ("src/export/ident.rs", "｀"),
 ];
 
 #[test]

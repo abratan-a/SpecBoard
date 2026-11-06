@@ -83,12 +83,12 @@ fn the_list_says_each_kind_in_a_line_and_where_it_goes() {
     assert_eq!(embed["label"], "内包", "{embed}");
     assert!(embed["purpose"].is_string(), "{embed}");
     // Short enough to read whole, in every language: the sample's working directories put their
-    // kinds of section in it too, beside the actor.
+    // kinds of section in it too, beside the actor and the whiteboard with its sketch and arrow.
     for lang in specboard_core::text::LANGUAGES {
         let _lang = specboard_core::text::bind(Some(lang));
         let list = ok(&core, "kind_list", json!({}));
         let chars = serde_json::to_string(&list).unwrap().chars().count();
-        assert!(chars <= 9_000, "{lang}: {chars}");
+        assert!(chars <= 9_900, "{lang}: {chars}");
     }
 }
 

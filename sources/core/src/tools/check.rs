@@ -530,19 +530,29 @@ pub(crate) fn declared_paths(
         str::to_string,
     );
     let mut out = Vec::new();
-    let from_rules = |at: &str, rules: &[crate::model::Rule], out: &mut Vec<DeclaredPath>| {
-        for rule in rules {
-            let kind = crate::export::rule_kind(rule);
-            for key in crate::export::rule_path_params(kind) {
-                if let Some(value) = crate::export::rule_string(rule, key)
-                    && value.contains('.')
-                {
-                    out.push(declared(at, format!("rules.{kind}.{key}"), value));
+    let from_rules =
+        |at: &str, names: &str, rules: &[crate::model::Rule], out: &mut Vec<DeclaredPath>| {
+            for rule in rules {
+                let kind = crate::export::rule_kind(rule);
+                for key in crate::export::rule_path_params(kind) {
+                    if let Some(value) = crate::export::rule_string(rule, key)
+                        && value.contains('.')
+                    {
+                        out.push(declared(at, format!("rules.{kind}.{key}"), value));
+                    }
+                }
+                // A field it names, a field where its names are looked for: checked as the path to that
+                // field, a name with dots going down as a path does.
+                for (key, name) in crate::export::rule_field_names(rule) {
+                    out.push(declared(
+                        at,
+                        format!("rules.{kind}.{key}"),
+                        &format!("{names}.{}", crate::pathtext::join_names(name.split('.'))),
+                    ));
                 }
             }
-        }
-    };
-    from_rules(&own, &card.rules, &mut out);
+        };
+    from_rules(&own, &own, &card.rules, &mut out);
     // What a description names (the
     // links in a description are checked as a body's are): each reference once, by where it is.
     let in_text = |at: &str, place: &str, text: &str, out: &mut Vec<DeclaredPath>| {
@@ -560,6 +570,15 @@ pub(crate) fn declared_paths(
         }
     };
     in_text(&own, "description", &card.description, &mut out);
+    // Why a field is not there names places as a description does.
+    for (i, absent) in card.absent_fields.iter().enumerate() {
+        in_text(
+            &own,
+            &format!("absentFields[{i}].reason"),
+            &absent.reason,
+            &mut out,
+        );
+    }
     for line in &card.connections {
         let Some(said) = line.description.as_deref() else {
             continue;
@@ -579,8 +598,14 @@ pub(crate) fn declared_paths(
     // A flow's node is a card of its own: the paths its fields and rows
     // write (what it carries and returns, what an eval reads, what a signature covers), and
     // the conditions its lines say. What it runs, waits for, reads and writes are its lines.
-    // A stackdoc's versions are its definition's rows too: what each body names.
-    if crate::kinds::inner_only(&card.kind) || kinds.is_own(&card.kind) || card.kind == "stackdoc" {
+    // A stackdoc's versions are its definition's rows too: what each body names; and a spec's
+    // story, scenarios and their steps.
+    if crate::kinds::inner_only(&card.kind)
+        || kinds.is_own(&card.kind)
+        || card.kind == "stackdoc"
+        || card.kind == "spec"
+        || card.kind == crate::kinds::SKETCH
+    {
         for (via, path) in form_paths(kinds, card) {
             out.push(declared(&own, via, &path));
         }
@@ -594,7 +619,7 @@ pub(crate) fn declared_paths(
             for r in notetext::refs(text) {
                 out.push(from_ref(
                     &own,
-                    "connections.branch.fields.when".to_string(),
+                    "connections.condition.fields.when".to_string(),
                     &r,
                 ));
             }
@@ -665,7 +690,19 @@ pub(crate) fn declared_paths(
             "{own}.{}",
             crate::pathtext::join_names(path.iter().map(String::as_str))
         );
-        from_rules(&at, &field.rules, &mut out);
+        // A value field's rule names the fields beside it.
+        let parent = &path[..path.len() - 1];
+        let names = if crate::export::rule_names_inside(field) {
+            at.clone()
+        } else if parent.is_empty() {
+            own.clone()
+        } else {
+            format!(
+                "{own}.{}",
+                crate::pathtext::join_names(parent.iter().map(String::as_str))
+            )
+        };
+        from_rules(&at, &names, &field.rules, &mut out);
         in_text(&at, "description", &field.description, &mut out);
     });
     out
@@ -708,23 +745,46 @@ fn form_texts(kinds: &crate::kinds::Kinds, card: &Card) -> Vec<(String, String)>
             }
         }
     }
-    let mut out = Vec::new();
-    fields(&kind.fields, &form["fields"], "", &mut out);
-    for row in &kind.rows {
-        for (i, item) in form["rows"][&row.name]
-            .as_array()
-            .into_iter()
-            .flatten()
-            .enumerate()
-        {
-            fields(
-                &row.fields,
-                &item["fields"],
-                &format!("{}[{i}]", row.name),
-                &mut out,
-            );
+    // A row's own rows (a scenario's steps) after it, each where it is under it.
+    fn rows(
+        defs: &[&crate::kinds::Row],
+        values: &Value,
+        at: &str,
+        out: &mut Vec<(String, String)>,
+    ) {
+        for row in defs {
+            for (i, item) in values[&row.name]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+            {
+                let here = if at.is_empty() {
+                    format!("{}[{i}]", row.name)
+                } else {
+                    format!("{at}.{}[{i}]", row.name)
+                };
+                fields(&row.fields, &item["fields"], &here, out);
+                let inner: Vec<&crate::kinds::Row> = row
+                    .children
+                    .iter()
+                    .filter_map(|c| match c {
+                        crate::kinds::Child::Row(r) => Some(r),
+                        crate::kinds::Child::Again { .. } => None,
+                    })
+                    .collect();
+                rows(&inner, &item["rows"], &here, out);
+            }
         }
     }
+    let mut out = Vec::new();
+    fields(&kind.fields, &form["fields"], "", &mut out);
+    rows(
+        &kind.rows.iter().collect::<Vec<_>>(),
+        &form["rows"],
+        "",
+        &mut out,
+    );
     out
 }
 

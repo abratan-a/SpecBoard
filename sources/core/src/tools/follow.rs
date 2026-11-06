@@ -1,6 +1,4 @@
-//! Paths written in the project, followed through a rename or a move
-//! (`Repository.rewritePaths`, `followRenames`, `storeInFull` and `PathIdentities` in the
-//! Swift app).
+//! Paths written in the project, followed through a rename or a move.
 //!
 //! A path held by a card's id (`store: id`: a `ref`, a pointer's card, a goal's items)
 //! follows by itself. A path written as text — in a `path` field, a rule's parameter, or
@@ -572,9 +570,10 @@ fn follow_doc(
             count += 1;
         }
     }
-    // A shape's face, its names as its fields are named now.
+    // A shape's face, its names as its fields are named now; and its rules, the fields they name.
     if let Some(card) = owner_old.filter(|c| c.kind == "entity" || c.kind == "value") {
         count += super::faces::followed(card, &mut doc, new_fields);
+        count += rules_followed(card, &mut doc, new_fields);
     }
     (count > 0).then_some((doc, count))
 }
@@ -1216,4 +1215,90 @@ pub(crate) fn store_in_full(
         tx.put_card(&scope.project, &scope.tree, doc.as_object().unwrap())?;
     }
     Ok(())
+}
+
+/// A shape's rules, the fields their field params name (`rule_field_params`) as the fields are named
+/// now: a card's rules by its fields, a field's rules by the fields of its elements. Names stay names.
+fn rules_followed(
+    before: &Card,
+    doc: &mut Value,
+    now: &std::collections::HashMap<String, String>,
+) -> usize {
+    fn renamed(
+        rules: &mut Value,
+        fields: &[crate::model::Field],
+        now: &std::collections::HashMap<String, String>,
+    ) -> usize {
+        let mut count = 0;
+        // A name with dots goes down through the fields inside, each step renamed as its field was.
+        let mut one = |s: &mut String| {
+            let mut level = fields;
+            let mut steps: Vec<String> = Vec::new();
+            let mut changed = false;
+            for step in s.split('.') {
+                let Some(field) = level.iter().find(|f| f.name == step) else {
+                    return;
+                };
+                match now.get(&field.id) {
+                    Some(name) if name != step => {
+                        steps.push(name.clone());
+                        changed = true;
+                    }
+                    _ => steps.push(step.to_string()),
+                }
+                level = &field.children;
+            }
+            if changed {
+                *s = steps.join(".");
+                count += 1;
+            }
+        };
+        for rule in rules.as_array_mut().into_iter().flatten() {
+            let kind = rule["kind"].as_str().unwrap_or("").to_string();
+            for key in crate::export::rule_field_params(&kind) {
+                match rule.get_mut(*key) {
+                    Some(Value::String(s)) => one(s),
+                    Some(Value::Array(list)) => {
+                        for v in list.iter_mut() {
+                            if let Value::String(s) = v {
+                                one(s);
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+        count
+    }
+    fn rows(
+        list: &mut Value,
+        fields: &[crate::model::Field],
+        now: &std::collections::HashMap<String, String>,
+    ) -> usize {
+        let mut count = 0;
+        for row in list.as_array_mut().into_iter().flatten() {
+            let Some(field) = row["id"]
+                .as_str()
+                .and_then(|id| fields.iter().find(|f| f.id == id))
+            else {
+                continue;
+            };
+            if let Some(rules) = row.pointer_mut("/fields/rules") {
+                count += renamed(rules, crate::export::rule_names_under(field, fields), now);
+            }
+            if let Some(inner) = row.pointer_mut("/rows/fields") {
+                count += rows(inner, &field.children, now);
+            }
+        }
+        count
+    }
+    let mut count = 0;
+    if let Some(rules) = doc.pointer_mut("/fields/rules") {
+        count += renamed(rules, &before.fields, now);
+    }
+    if let Some(inner) = doc.pointer_mut("/rows/fields") {
+        count += rows(inner, &before.fields, now);
+    }
+    count
 }

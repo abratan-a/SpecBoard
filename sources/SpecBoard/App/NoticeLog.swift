@@ -26,6 +26,9 @@ struct NoticeLog: Equatable {
         let project: String?
         /// The release tag of a new version said to be there, which the entry offers to download.
         let update: String?
+        /// The goal on the board of `project` still naming a branch merged into main, which the entry
+        /// offers to finish.
+        var goal: String? = nil
 
         /// What it says in `code`: the list follows the screen's language when it changes.
         @MainActor func text(in code: String) -> String {
@@ -35,7 +38,7 @@ struct NoticeLog: Equatable {
 
         static func == (a: Entry, b: Entry) -> Bool {
             a.id == b.id && a.kind == b.kind && a.text == b.text && a.toldIn == b.toldIn && a.at == b.at
-                && a.project == b.project && a.update == b.update
+                && a.project == b.project && a.update == b.update && a.goal == b.goal
         }
     }
 
@@ -50,11 +53,11 @@ struct NoticeLog: Equatable {
     /// The newest one told, dropped off or cleared or not.
     private(set) var lastTold = 0
 
-    mutating func add(_ kind: Kind, _ text: String, project: String? = nil, update: String? = nil,
+    mutating func add(_ kind: Kind, _ text: String, project: String? = nil, update: String? = nil, goal: String? = nil,
                       at time: Date = Date(), sayIn: (@MainActor (String) -> String)? = nil) {
         lastTold += 1
         entries.insert(Entry(id: lastTold, kind: kind, text: text, toldIn: Language.current, sayIn: sayIn, at: time,
-                             project: project, update: update), at: 0)
+                             project: project, update: update, goal: goal), at: 0)
         if entries.count > Self.kept { entries.removeLast(entries.count - Self.kept) }
     }
 

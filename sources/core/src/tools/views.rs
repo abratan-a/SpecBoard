@@ -529,6 +529,16 @@ impl Seen {
             } else if card.kind == "stackdoc" {
                 // Its versions without their bodies: a body is read with the version's path.
                 out.insert("versions".into(), version_list(card, &project.full(card)));
+            } else if card.kind == "spec" {
+                // Its story, and its scenarios without their steps: those are read with a
+                // scenario's path.
+                for key in ["as", "iWant", "soThat", "about"] {
+                    let said = card.spec_field(key);
+                    if !said.is_empty() {
+                        out.insert(key.into(), said.into());
+                    }
+                }
+                out.insert("scenarios".into(), scenario_list(card, &project.full(card)));
             } else {
                 out.insert("body".into(), card.body.clone().into());
             }
@@ -598,7 +608,7 @@ impl Seen {
         } else if fields
             && matches!(
                 card.kind.as_str(),
-                "goal" | "task" | "file" | "svg" | "html" | "frame"
+                "goal" | "task" | "file" | "svg" | "html" | "frame" | "sketch" | "image"
             )
         {
             if let Some(form) = &card.form {
@@ -671,7 +681,7 @@ impl Seen {
                 out.insert("cards".into(), Value::Array(inside));
             }
         }
-        if projection.has("used_by") && card.is_shape() {
+        if projection.has("used_by") && (card.is_shape() || card.kind == "flow") {
             for (key, value) in self.used_by(card) {
                 out.insert(key, value);
             }
@@ -768,9 +778,15 @@ impl Seen {
     /// Which flows a change to this card reaches, and which writings mention it: the
     /// `usedBy` and `mentionedBy` of a card.
     pub fn used_by(&self, card: &Card) -> Vec<(String, Value)> {
+        self.used_by_path(&card.name, card)
+    }
+
+    /// `usedBy` and `mentionedBy` of `path` read from `card`'s section: the card itself, or a field or
+    /// a value in it.
+    pub fn used_by_path(&self, path: &str, card: &Card) -> Vec<(String, Value)> {
         let project = self.project();
         let base = project.section_of(card);
-        let Some(hits) = super::impact::of(&card.name, &project, Some(&base)) else {
+        let Some(hits) = super::impact::of(path, &project, Some(&base)) else {
             return Vec::new();
         };
         let (notes, flows): (Vec<_>, Vec<_>) = hits.into_iter().partition(|h| h.card.is_writing());
@@ -1009,6 +1025,26 @@ pub(crate) fn version_list(card: &Card, under: &str) -> Value {
     )
 }
 
+/// A spec's scenarios as a card's read lists them: each by its path, with its heading.
+pub(crate) fn scenario_list(card: &Card, under: &str) -> Value {
+    Value::Array(
+        card.scenarios()
+            .iter()
+            .map(|s| {
+                let mut entry = Map::new();
+                entry.insert(
+                    "path".into(),
+                    crate::pathtext::member(under, &s.name).into(),
+                );
+                if !s.heading.is_empty() {
+                    entry.insert("heading".into(), s.heading.clone().into());
+                }
+                Value::Object(entry)
+            })
+            .collect(),
+    )
+}
+
 /// How many rows are in rows, all the way down (`FormatRows.count`).
 fn format_count(rows: &[crate::model::FormatRow]) -> usize {
     rows.iter()
@@ -1088,6 +1124,9 @@ impl Seen {
             Target::FormatRow(doc, names) => self.row_view(doc, names),
             Target::CustomRow(card, names) if card.kind == "stackdoc" => {
                 self.version_view(card, &names[0])
+            }
+            Target::CustomRow(card, names) if card.kind == "spec" => {
+                self.scenario_view(card, &names[0])
             }
             Target::CustomRow(card, names) if card.kind == crate::kinds::INSTANCE => {
                 self.value_view(card, names)
@@ -1226,6 +1265,42 @@ impl Seen {
         mentions.dedup();
         if !mentions.is_empty() {
             out.insert("mentions".into(), strings(&mentions));
+        }
+        Value::Object(out)
+    }
+
+    /// One scenario of a spec, by its name: its heading, its steps as they are written
+    /// (`{given: …}`), and what is written after them.
+    pub fn scenario_view(&self, card: &Card, name: &str) -> Value {
+        let project = self.project();
+        let mut out = Map::new();
+        out.insert("project".into(), self.summary.name.clone().into());
+        out.insert(
+            "path".into(),
+            crate::pathtext::member(&project.full(card), name).into(),
+        );
+        let Some(scenario) = card.scenarios().into_iter().find(|s| s.name == name) else {
+            return Value::Object(out);
+        };
+        if !scenario.heading.is_empty() {
+            out.insert("heading".into(), scenario.heading.clone().into());
+        }
+        out.insert(
+            "steps".into(),
+            Value::Array(
+                scenario
+                    .steps
+                    .iter()
+                    .map(|(k, said)| {
+                        let mut step = Map::new();
+                        step.insert(k.clone(), said.clone().into());
+                        Value::Object(step)
+                    })
+                    .collect(),
+            ),
+        );
+        if !scenario.note.is_empty() {
+            out.insert("note".into(), scenario.note.clone().into());
         }
         Value::Object(out)
     }

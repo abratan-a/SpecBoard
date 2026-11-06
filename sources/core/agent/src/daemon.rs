@@ -125,8 +125,17 @@ pub(crate) struct Seen {
     pub(crate) said_at: u64,
 }
 
+/// The longest a line to an app is waited on before the app is taken to have stopped reading.
+const SAY_WAIT: std::time::Duration = std::time::Duration::from_secs(2);
+
 impl Client {
-    /// One line to the app; false when it is gone.
+    /// Its connection closed both ways.
+    fn close(&self) {
+        let out = self.out.lock().unwrap_or_else(|e| e.into_inner());
+        let _ = out.shutdown(std::net::Shutdown::Both);
+    }
+
+    /// One line to the app; false when it is gone or does not take it in `SAY_WAIT`.
     fn say(&self, message: &Value) -> bool {
         let mut out = self.out.lock().unwrap_or_else(|e| e.into_inner());
         writeln!(out, "{message}")
@@ -277,7 +286,11 @@ impl Listener for Clients {
         let all: Vec<(u64, Arc<Client>)> =
             self.all.lock().unwrap_or_else(|e| e.into_inner()).clone();
         for (id, client) in all {
-            client.say(&json!({"t": "changed", "notice": notice, "own": asking == Some(id)}));
+            if !client.say(&json!({"t": "changed", "notice": notice, "own": asking == Some(id)})) {
+                // Gone, or not reading: let go of, its connection closed so its own thread ends too.
+                self.remove(id);
+                client.close();
+            }
         }
     }
 }
@@ -363,6 +376,9 @@ fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream
     let Ok(out) = connection.try_clone() else {
         return;
     };
+    // What it is told is not waited on for long: an app that has stopped reading is let go
+    // (`Clients::changed`) rather than holding up the writes that tell it.
+    let _ = out.set_write_timeout(Some(SAY_WAIT));
     let reader = CONNECTIONS.fetch_add(1, Ordering::SeqCst).to_string();
     let client = Arc::new(Client {
         out: Mutex::new(out),
