@@ -540,6 +540,30 @@ fn screen_review(core: &Core) -> Value {
         .clone()
 }
 
+/// The window's reading says how each line's code stands as the files are on the disk when it is
+/// asked: a file changed with nothing written to the store is told by the very next reading — what
+/// the core keeps of a tree's reading is not taken for one made looking at files.
+#[test]
+fn the_windows_reading_tells_code_changed_on_the_disk_though_nothing_is_written() {
+    let (core, repo) = core_with_repository();
+    draw(
+        &core,
+        ORDER,
+        json!([{"line": "implementedBy", "to": "repo/src:'a.rs'.helper"}]),
+    );
+    // Read again and again with nothing changed: nothing to look at.
+    for _ in 0..3 {
+        assert!(screen_review(&core).is_null());
+    }
+    edit(&repo, "n + 1", "n + 2");
+    let review = screen_review(&core);
+    assert_eq!(review[0]["state"], "changed", "{review}");
+    assert_eq!(screen_review(&core)[0]["state"], "changed");
+    // Put back as it was: nothing to look at again.
+    edit(&repo, "n + 2", "n + 1");
+    assert!(screen_review(&core).is_null());
+}
+
 #[test]
 fn a_function_named_anew_or_a_file_taken_away_is_said_broken_and_reviewed_records_only_the_rest() {
     let (core, repo) = core_with_repository();

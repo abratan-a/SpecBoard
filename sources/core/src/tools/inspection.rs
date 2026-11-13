@@ -353,6 +353,11 @@ fn problem_of(group: &Group, row: &Map<String, Value>) -> String {
         "unresolvedPointers" => text!("inspection.problem.unresolvedPointer", by = text("by")),
         "missingFolders" => text!("inspection.problem.missingFolder", path = text("path")),
         "strayFields" => text!("inspection.problem.strayFields", fields = joined("fields")),
+        // None of the group's tags is a tag forgotten, not one too many: said apart.
+        "tagGroupViolations" if none_of_the_group(row) => text!(
+            "inspection.problem.tagGroupMissing",
+            group = text("tagGroup")
+        ),
         "tagGroupViolations" => text!(
             "inspection.problem.tagGroupViolation",
             group = text("tagGroup"),
@@ -513,14 +518,15 @@ fn in_done(at: &str, done: &HashSet<String>) -> bool {
             .any(|(i, c)| (c == '.' || c == '[') && done.contains(&at[..i]))
 }
 
-/// The check of the tree `seen` read, item by item, in the groups' order. `conn` reads the
-/// project's layout, which the overlaps are worked out on.
-pub(crate) fn items(seen: &Seen, conn: &Connection) -> Result<Vec<Item>, String> {
+/// The check of the tree `seen` read, item by item, in the groups' order. `reader` reads the
+/// project's layout, which the overlaps are worked out on, and the board beside a branch.
+pub(crate) fn items(seen: &Seen, reader: &crate::store::Reader) -> Result<Vec<Item>, String> {
+    let conn = reader.conn;
     let layout = super::grid::Layout::read(conn, &seen.summary.id)?;
-    let overlaps = super::tidy::overlaps(&crate::store::Reader { conn }, seen, &layout)?;
+    let overlaps = super::tidy::overlaps(reader, seen, &layout)?;
     // A branch an open goal works in is its plan: code its lines name may be still to write.
     let planned = if crate::write::is_branch_tree(&seen.named.tree) {
-        let board = super::cross::board(&crate::store::Reader { conn }, &seen.summary.id)?;
+        let board = super::cross::board(reader, &seen.summary.id)?;
         super::cross::open_goal_of(&board, &seen.named.name)
     } else {
         None
@@ -778,6 +784,12 @@ fn listed(item: &Item, standing: &Standing) -> Value {
     Value::Object(out)
 }
 
+/// A card with none of an exclusive tag group's tags: a tag forgotten, said and fixed apart from one too
+/// many.
+fn none_of_the_group(row: &Map<String, Value>) -> bool {
+    row.get("count").and_then(Value::as_u64) == Some(0)
+}
+
 /// An item as `inspection_read` reads it: all the group says of it and how to fix it.
 fn read_whole(item: &Item, standing: &Standing) -> Value {
     let mut out = Map::new();
@@ -790,7 +802,12 @@ fn read_whole(item: &Item, standing: &Standing) -> Value {
     for (k, v) in &item.content {
         out.insert(k.clone(), v.clone());
     }
-    out.insert("fix".into(), item.group.fix().into());
+    let fix = if item.group.name == "tagGroupViolations" && none_of_the_group(&item.content) {
+        text!("inspection.group.tagGroupViolations.fixNone")
+    } else {
+        item.group.fix()
+    };
+    out.insert("fix".into(), fix.into());
     marked(&mut out, standing);
     Value::Object(out)
 }
@@ -1045,7 +1062,7 @@ pub(crate) fn update(tx: &mut Tx, scope: &Scope, args: &Args, by: &str) -> Resul
     match accept {
         Accept::Mark(reason) => {
             let seen = Seen::in_tx(tx, scope)?;
-            let found = items(&seen, tx.conn())?;
+            let found = items(&seen, &tx.reader())?;
             let missing: Vec<String> = ids
                 .iter()
                 .filter(|id| !found.iter().any(|i| i.id == **id))
@@ -1138,7 +1155,7 @@ impl crate::Core {
             args.string("project")?,
             args.optional_string("branch"),
         )?;
-        let found = items(&seen, &store.conn)?;
+        let found = items(&seen, &store.reader())?;
         let kept = marks(&store.conn, &seen.summary.id)?;
         let out = if name == "inspection_list" {
             let value = args.value()?;
@@ -1168,7 +1185,7 @@ mod tests {
     fn the_check_is_as_kept() {
         let store = Store::open(crate::fixtures::read_only_sample()).unwrap();
         let seen = Seen::read(&store, "見本", None).unwrap();
-        let found = items(&seen, &store.conn).unwrap();
+        let found = items(&seen, &store.reader()).unwrap();
         let none = HashMap::new();
         let whole: Vec<Value> = found
             .iter()

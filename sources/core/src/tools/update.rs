@@ -469,6 +469,41 @@ pub(crate) fn flow_wrong(project: &crate::export::Project, id: &str) -> Option<S
     node_problems(&card.nodes, &project.defs.vias).0
 }
 
+/// The rows of `prior` that `moves` rename (a value, a row, a version, a scenario: the same parent,
+/// a new last name) given their new names, so that the wire's renamed row is paired with the row it
+/// was and keeps its id — a rename is then one row changed, in a branch's diff and its merge, not one
+/// row let go of and another made.
+fn renamed_rows(prior: &mut Value, moves: &[(Vec<String>, Vec<String>)]) {
+    fn find<'v>(rows: &'v mut Value, path: &[String]) -> Option<&'v mut Value> {
+        let (first, rest) = path.split_first()?;
+        let item = rows
+            .as_object_mut()?
+            .values_mut()
+            .filter_map(Value::as_array_mut)
+            .flatten()
+            .find(|item| item["fields"]["name"].as_str() == Some(first.as_str()))?;
+        if rest.is_empty() {
+            Some(item)
+        } else {
+            find(item.get_mut("rows")?, rest)
+        }
+    }
+    for (from, to) in moves {
+        let (Some((_, parent)), Some((name, again))) = (from.split_last(), to.split_last()) else {
+            continue;
+        };
+        if parent != again || from == to {
+            continue;
+        }
+        if let Some(rows) = prior.get_mut("rows")
+            && let Some(item) = find(rows, from)
+            && let Some(fields) = item.get_mut("fields").and_then(Value::as_object_mut)
+        {
+            fields.insert("name".into(), Value::String(name.clone()));
+        }
+    }
+}
+
 /// A change to a card's document by what MCP writes: the kind's keys of `value`, a new
 /// name or kind, and where its rows or nodes moved to.
 /// Returns what was said.
@@ -736,7 +771,8 @@ pub(crate) fn edit_card(
         }
         super::lines::put_into(&mut doc, &whole, &resolver)?;
     }
-    let prior = Value::Object(doc.clone());
+    let mut prior = Value::Object(doc.clone());
+    renamed_rows(&mut prior, inner);
     let parts = crate::kinds::from_wire(
         def,
         &wire,

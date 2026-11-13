@@ -21,6 +21,9 @@
 //! - アクセスキーと公開（`access`。画面の頼み）: `access_keys`・`access_key_create`・`access_key_rename`・
 //!   `access_key_permit`・`access_key_revoke`・`access_key_regenerate`・`access_grant`・
 //!   `project_public`・`project_public_set`
+//! - ハブ越しの共有（`hub`。`specboard://SpecBoard/Docs/Design:DesignHub`）: 本体の頼み `hub_state`・`hub_outgoing`・
+//!   `hub_incoming`・`hub_call`、画面の頼み `hub_shares`・`hub_share_set`。共有されたプロジェクトへのキーの許可は
+//!   `access_grant` に `owner` を添える
 //! - MCP からの書き込みの許可（`tools::mcp_writes`。プロジェクトごと。画面の頼み）: `mcp_writes`・`mcp_writes_set`
 //! - `project_file`: プロジェクト（`project` に id）のファイル（今の版。`projectfile::VERSION`）の文字
 //! - 履歴と押さえ（`ops`。画面の頼み）: `commits`（木の履歴）・`revert`（戻す）・`undo_commit`（1 つのコミットだけ取り消す。かち合えば書かずに、かち合った所を答える）・`cut`（足を切る）・
@@ -35,7 +38,8 @@
 //!   `writing_rules_set`・`places`・`place_unplaced`・`prune`・
 //!   `release_screen_holds`
 //!
-//! 書いた頼みは、書いた木ごとに知らせる（`{"op": "changed", "project", "branch", "rev"}`）。
+//! 書いた頼みは、書いた木ごとに知らせる（`{"op": "changed", "project", "branch", "rev"}`）。ハブの様子・共有・
+//! 共有されたプロジェクトが変わったら `{"op": "hub"}`。
 //!
 //! どの頼みにも `lang`（`text::LANGUAGES` のどれか）を添えられ、コアの作る文はその言語で答える（画面は画面の言語、
 //! エージェントの `mcp` はいつも英語）。添えなければ日本語（`text::UNBOUND`）。
@@ -59,7 +63,9 @@ mod export_move;
 #[cfg(test)]
 mod fixtures;
 mod ghost_move;
+mod hub;
 mod ids;
+mod kept;
 mod key_move;
 pub mod kinds;
 mod line_move;
@@ -91,6 +97,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
+pub use hub::Hub;
 pub use store::BOARD;
 
 /// The most one MCP request may carry in its body, and the most of files one call may read into
@@ -119,7 +126,8 @@ pub trait Listener: Send + Sync {
 /// `app_control`: コアは呼び出しを確かめてから（op に要るキーの項目（state・select・view・windows は app_control、
 /// capture は app_control.capture）を許可か、人が今回だけ許したか、引数と op ごとの value の形）頼み、答えをツールの答えに
 /// する（`tools::app`）。`arguments` は呼び出しの引数（JSON。書かれた順のまま）、`caller` は呼んだキー（`{"id", "name"}`。
-/// キー無し（画面の頼み）なら `null`）。答えは JSON で、`{"json": 値}`・`{"blocks": [文…]}`・
+/// キー無し（画面の頼み）なら `null`。ハブ越しに渡ってきた呼び出しは、`member` に差出人のエージェントの id が付き、
+/// `id` はどのキーの id でもない）。答えは JSON で、`{"json": 値}`・`{"blocks": [文…]}`・
 /// `{"image": {"data": <base64>, "mimeType": …}, "note": 値}`・`{"error": 文}` のどれか。
 ///
 /// `ask`: 都度承認の項目に当たる呼び出しが `request: true` を
@@ -185,12 +193,18 @@ pub struct Core {
     readers: Option<Mutex<Vec<store::Store>>>,
     /// What the working directories read, shared by the connections (`workdir::Shared`).
     work: workdir::Shared,
+    /// What was read of the store, kept while it stands as it was read (`kept`).
+    readings: Arc<kept::Readings>,
     /// The access keys a request came by while a write held the store, to note as used once it is
     /// free (`Core::caller`).
     used: Mutex<Vec<String>>,
     listeners: Mutex<Vec<Arc<dyn Listener>>>,
     /// What answers `app_control`; none until the app hands it over.
     app: Mutex<Option<Arc<dyn App>>>,
+    /// The way to the other agents of the hub; none until the agent hands it over.
+    hub: Mutex<Option<Arc<dyn Hub>>>,
+    /// What the agent told of the hub last (`hub_state`): whether it is linked, and who else is.
+    hub_now: Mutex<hub::Now>,
     closed: AtomicBool,
     /// The mark of the last change told about: one more for each tree a write changed.
     rev: AtomicU64,
@@ -255,9 +269,12 @@ impl Core {
             store: Mutex::new(store),
             readers,
             work: workdir::Shared::default(),
+            readings: Arc::new(kept::Readings::of(place)),
             used: Mutex::new(Vec::new()),
             listeners: Mutex::new(Vec::new()),
             app: Mutex::new(None),
+            hub: Mutex::new(None),
+            hub_now: Mutex::new(hub::Now::default()),
             closed: AtomicBool::new(false),
             rev: AtomicU64::new(0),
             sent: deltas::Sent::default(),
@@ -277,6 +294,14 @@ impl Core {
     /// 開いているデータベースのファイル。
     pub fn place(&self) -> &Path {
         &self.place
+    }
+
+    /// How many readings of `kind` (`tree`: a tree worked out of its documents; `detail`: the
+    /// window's reading of one; `branches`: the list of the branches) this core has worked out to
+    /// answer reads. For the tests that hold what a read costs; nothing else needs it.
+    #[doc(hidden)]
+    pub fn readings_made(&self, kind: &str) -> u64 {
+        kept::Kind::named(kind).map_or(0, |kind| self.readings.made(kind))
     }
 
     /// 頼みの JSON を受けて、答えの JSON を返す。断るときも答えは返す（`{"error": …}`）。
@@ -303,7 +328,12 @@ impl Core {
         *self.app.lock().unwrap_or_else(|e| e.into_inner()) = Some(app);
     }
 
-    /// 閉じる。閉じたあとの頼みは断り、知らせも止める（`app_control` に答えるものも放す）。
+    /// The way to the other agents of the hub, handed over (`Hub`). The one handed last is used.
+    pub fn set_hub(&self, hub: Arc<dyn Hub>) {
+        *self.hub.lock().unwrap_or_else(|e| e.into_inner()) = Some(hub);
+    }
+
+    /// 閉じる。閉じたあとの頼みは断り、知らせも止める（`app_control` に答えるものと、ハブへの道も放す）。
     pub fn close(&self) {
         self.closed.store(true, Ordering::SeqCst);
         self.listeners
@@ -311,6 +341,7 @@ impl Core {
             .unwrap_or_else(|e| e.into_inner())
             .clear();
         *self.app.lock().unwrap_or_else(|e| e.into_inner()) = None;
+        *self.hub.lock().unwrap_or_else(|e| e.into_inner()) = None;
     }
 
     /// What answers `app_control` now, if anything does: taken out, so it is not held
@@ -332,8 +363,9 @@ impl Core {
             .get("op")
             .and_then(Value::as_str)
             .ok_or_else(|| text!("core.error.noOp"))?;
-        // What the window asks is answered in the screen's words; MCP's in the tools' (`text::bind_screen`).
-        let _screen = text::bind_screen(op != "mcp");
+        // What the window asks is answered in the screen's words; MCP's — a call of this agent's
+        // keys, or one handed over the hub — in the tools' (`text::bind_screen`).
+        let _screen = text::bind_screen(!matches!(op, "mcp" | "hub_call"));
         match op {
             "ping" => {
                 let result = json!({ "core": VERSION });
@@ -356,9 +388,9 @@ impl Core {
                     .get("branch")
                     .and_then(Value::as_str)
                     .filter(|b| !b.is_empty());
-                let detail = {
+                let read = {
                     let store = self.reading()?;
-                    screen_detail::read(&store.reader(), project, branch)?
+                    deltas::read(&store.reader(), project, branch)?
                 };
                 // The agent's connection the request came by; the app that holds the core is
                 // the one reader of its own.
@@ -370,7 +402,7 @@ impl Core {
                 let since = request.get("since").and_then(Value::as_str);
                 Ok(self
                     .sent
-                    .answer(&reader, project, branch.unwrap_or(""), detail, since))
+                    .answer(&reader, project, branch.unwrap_or(""), &read, since))
             }
             "export_files" => {
                 let project = request
@@ -385,7 +417,7 @@ impl Core {
                         )
                     })?;
                 let store = self.reading()?;
-                let detail = model::typed(&detail::read(&store.reader(), project, None)?)?;
+                let detail = detail::typed(&store.reader(), project, None)?;
                 let exports = store.exports(project)?;
                 let grid = crate::tools::grid::Layout::read(&store.conn, project)?;
                 let built = export::build(&detail, &exports, &grid);
@@ -424,10 +456,15 @@ impl Core {
                     return Ok(json!({ "status": 401, "body": access::key_refused(&headers) }));
                 };
                 let who = write::Who::mcp(Some(&caller.name));
+                // A project another agent shares with this one is its owner's to answer for
+                // (`hub`); every other call is run here.
                 let run = |name: &str,
                            arguments: &serde_json::Map<String, Value>|
                  -> Result<mcp::Output, String> {
-                    access::as_caller(&caller, name, || self.tool(&who, name, arguments))
+                    access::as_caller(&caller, name, || match self.hub_named(name, arguments)? {
+                        Some(shared) => self.hub_relay(&shared, name, arguments),
+                        None => self.tool(&who, name, arguments),
+                    })
                 };
                 let reply = mcp::answer(&message, &headers, &run);
                 let mut out = json!({ "status": reply.status, "body": reply.body });
@@ -456,6 +493,7 @@ impl Core {
                 .history_op(other, &request)
                 .or_else(|| self.merge_op(other, &request))
                 .or_else(|| self.access_op(other, &request))
+                .or_else(|| self.hub_op(other, &request))
                 .or_else(|| self.screen_op(other, &request))
                 .unwrap_or_else(|| Err(text!("core.error.notYet", other))),
         }
@@ -493,14 +531,33 @@ impl Core {
                 }
             },
         };
-        let _ = workdir::take_in(&store, &self.work);
-        store
-            .conn
-            .execute_batch("BEGIN")
-            .map_err(|e| text!("store.error.read", e))?;
+        // Not taken in, the folders as this connection holds them are no other's: what it reads
+        // is neither kept nor taken from what is kept.
+        let folders_shared = workdir::take_in(&store, &self.work).is_ok();
+        // Asking for the data version is the transaction's first read of the store: what it sees
+        // is fixed from there, which is what the moment it stands at is told by (`kept::At`).
+        let at = kept::At::begun(&self.readings, || {
+            store
+                .conn
+                .execute_batch("BEGIN")
+                .and_then(|()| {
+                    store
+                        .conn
+                        .query_row("PRAGMA main.data_version", [], |_| Ok(()))
+                })
+                .map_err(|e| text!("store.error.read", e))
+        });
+        let at = match at {
+            Ok(at) => at,
+            Err(problem) => {
+                let _ = store.conn.execute_batch("ROLLBACK");
+                return Err(problem);
+            }
+        };
+        *store.at.borrow_mut() = folders_shared.then_some(at);
         Ok(Reading::Apart {
             core: self,
-            store: Some(store),
+            store: Some(Box::new(store)),
         })
     }
 
@@ -558,7 +615,7 @@ pub(crate) enum Reading<'c> {
     /// done.
     Apart {
         core: &'c Core,
-        store: Option<store::Store>,
+        store: Option<Box<store::Store>>,
     },
     /// Under the writes' lock (a store without a write-ahead log).
     Locked(Locked<'c>),
@@ -587,6 +644,7 @@ impl Drop for Reading<'_> {
         let Some(store) = store.take() else {
             return;
         };
+        *store.at.borrow_mut() = None;
         // Done: what it read the working directories as is kept (`temp`), and given out.
         if store.conn.execute_batch("COMMIT").is_err()
             && store.conn.execute_batch("ROLLBACK").is_err()
@@ -597,7 +655,7 @@ impl Drop for Reading<'_> {
         if let Some(idle) = &core.readers {
             let mut idle = idle.lock().unwrap_or_else(|e| e.into_inner());
             if idle.len() < IDLE_READERS {
-                idle.push(store);
+                idle.push(*store);
             }
         }
     }
@@ -929,6 +987,65 @@ mod tests {
             .unwrap()["usedAt"]
             .clone();
         assert!(noted.is_string(), "{keys}");
+    }
+
+    /// What the exports would write is worked out of what was committed, beside a write that
+    /// holds the store: the writes' lock is not taken to work it out. The order is held, not the
+    /// time: the write is left open until the answer is in.
+    #[test]
+    fn what_an_export_would_write_is_worked_out_while_a_write_holds_the_store() {
+        let (project, _) = built_ids();
+        let project = project.as_str();
+        let core = written();
+        let (id, _) = first_card(&core, project);
+        let (_, key) = key(&core, project);
+        let allowed = parse(&core.call(
+            &json!({"op": "mcp_writes_set", "project": project, "group": "export", "state": "allow"})
+                .to_string(),
+        ));
+        assert!(allowed.get("error").is_none(), "{allowed}");
+        let folder = fixtures::folder("export-beside-a-write");
+        let would_write = || -> Value {
+            let message = json!({"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                "params": {"name": "export_execute", "arguments": {"project": project,
+                    "targetdir": folder.to_str().unwrap(), "value": {"dryRun": true}}}});
+            let reply = parse(&core.call(
+                &json!({"op": "mcp", "message": message, "headers": {"authorization": format!("Bearer {key}")}})
+                    .to_string(),
+            ));
+            let text = reply["result"]["body"]["result"]["content"][0]["text"]
+                .as_str()
+                .unwrap_or_default()
+                .to_string();
+            serde_json::from_str(&text).unwrap_or(Value::String(text))
+        };
+        let before = would_write();
+        assert_eq!(before["dryRun"], true, "{before}");
+        assert!(
+            before["exports"].as_array().is_some_and(|e| !e.is_empty()),
+            "{before}"
+        );
+        let (held, holding) = std::sync::mpsc::channel();
+        let (go, going) = std::sync::mpsc::channel::<()>();
+        let (core, id, would_write) = (&core, &id, &would_write);
+        std::thread::scope(|s| {
+            s.spawn(move || {
+                let mut store = core.lock();
+                let mut tx = store.write(write::Who::screen()).unwrap();
+                relabelled(&mut tx, project, id, "書きかけ");
+                held.send(()).unwrap();
+                going.recv().unwrap();
+                tx.commit().unwrap();
+            });
+            holding.recv().unwrap();
+            let (said, saying) = std::sync::mpsc::channel();
+            s.spawn(move || said.send(would_write()).unwrap());
+            let answered = saying.recv_timeout(std::time::Duration::from_secs(30));
+            // Let the write go whatever came: a call that waited for it ends then, and is said.
+            go.send(()).unwrap();
+            let answered = answered.expect("書き出しの下見が、書いている間待った");
+            assert_eq!(answered, before, "書きかけから組んだ");
+        });
     }
 
     /// One reading is of one moment: what is committed while it goes on is read by the next.

@@ -190,15 +190,16 @@ const KIND_KEYS: [(&str, &[&str]); 38] = [
 ];
 
 /// The forms beside the card's that only some kinds take: a field's (a target written down to a
-/// field), a formatdoc's row's, a stackdoc's version's, a data card's value's, an enum's value's and
-/// a process node's step's.
-const KIND_FORMS: [(&str, &[&str]); 6] = [
+/// field), a formatdoc's row's, a stackdoc's version's, a data card's value's, an enum's value's,
+/// a process node's step's and a spec's scenario's.
+const KIND_FORMS: [(&str, &[&str]); 7] = [
     ("field", &["entity", "value"]),
     ("row", &["formatdoc"]),
     ("version", &["stackdoc"]),
     ("value", &["instance"]),
     ("enumValue", &["enum"]),
     ("step", &["process"]),
+    ("scenario", &["spec"]),
 ];
 
 /// The keys of a node's value that only some kinds of node take; the rest of the node's form is

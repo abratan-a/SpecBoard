@@ -144,17 +144,20 @@ nonisolated struct ExportRead: Decodable, Equatable, Sendable, Identifiable {
         var to: String
         var format: String?
         var kinds: [String]?
+        /// The kinds of line a row of the cards' lines (`json-connections`) is narrowed to.
+        var lines: [String]?
         /// What the row leaves out of what it reaches, and why, a line each: a row that writes no
         /// card says so where its files are listed.
         var unwritten: [String] = []
 
-        enum CodingKeys: String, CodingKey { case from, to, format, kinds, unwritten }
+        enum CodingKeys: String, CodingKey { case from, to, format, kinds, lines, unwritten }
 
-        init(from: String, to: String, format: String?, kinds: [String]?, unwritten: [String] = []) {
+        init(from: String, to: String, format: String?, kinds: [String]?, lines: [String]? = nil, unwritten: [String] = []) {
             self.from = from
             self.to = to
             self.format = format
             self.kinds = kinds
+            self.lines = lines
             self.unwritten = unwritten
         }
 
@@ -164,7 +167,15 @@ nonisolated struct ExportRead: Decodable, Equatable, Sendable, Identifiable {
             to = try c.decode(String.self, forKey: .to)
             format = try c.decodeIfPresent(String.self, forKey: .format)
             kinds = try c.decodeIfPresent([String].self, forKey: .kinds)
+            lines = try c.decodeIfPresent([String].self, forKey: .lines)
             unwritten = try c.decodeIfPresent([String].self, forKey: .unwritten) ?? []
+        }
+
+        /// How the row is narrowed, in a line: the kinds of card it takes, then the kinds of line it
+        /// says. Nil for a row that takes all it reaches.
+        var narrowing: String? {
+            let parts = [kinds ?? [], lines ?? []].filter { !$0.isEmpty }.map { $0.joined(separator: ", ") }
+            return parts.isEmpty ? nil : parts.joined(separator: " · ")
         }
     }
 
@@ -179,6 +190,8 @@ nonisolated struct ExportRead: Decodable, Equatable, Sendable, Identifiable {
         var outputChanged: Bool?
         /// Where in a working directory's tree it is, when it is written into that directory's folder.
         var directory: InDirectory?
+        /// The rows of its export that write it, by their numbers from 1.
+        var rows: [Int]?
 
         var id: String { path }
     }
@@ -240,6 +253,8 @@ nonisolated struct WrittenTo: Decodable, Hashable, Sendable {
 /// What a file holds, as `export_read` says it: a format, `chart`, `document` or `mock` (a ui section's page).
 enum ExportWords {
     static let codeFormats = ["typescript", "zod", "json-schema"]
+    /// Every format a row may be written in: the code formats, the data cards' JSON and the cards' lines'.
+    static let formats = codeFormats + ["json-data", "json-connections"]
 
     static func label(_ content: String) -> String {
         switch content {
@@ -255,6 +270,8 @@ enum ExportWords {
         case "typescript": "TypeScript"
         case "zod": "Zod"
         case "json-schema": "JSON Schema"
+        case "json-data": "JSON Data"
+        case "json-connections": "JSON Connections"
         default: format
         }
     }

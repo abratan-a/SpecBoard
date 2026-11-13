@@ -450,11 +450,7 @@ pub(crate) fn section_action(conn: &Connection, args: &Args) -> Result<Value, St
         return Err(text!("workdirs.action.noValue", key));
     }
     let tree = (!named.tree.is_empty()).then_some(named.tree.as_str());
-    let detail = crate::model::typed(&crate::detail::read(
-        &crate::store::Reader { conn },
-        &store_named.id,
-        tree,
-    )?)?;
+    let detail = crate::detail::typed(&crate::store::Reader::of(conn), &store_named.id, tree)?;
     let project = Project::new(&detail);
     let section = super::section_id(&project, &path)?;
     let kind = project

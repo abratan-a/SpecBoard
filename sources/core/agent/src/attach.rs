@@ -6,18 +6,99 @@
 //! and this one says so and ends: the database a newer core has moved on is not for an older one,
 //! and two apps of different builds would each stop the other's. `start`, `stop` and `status` do
 //! the same from a shell on the host.
+//!
+//! The hub's own (`hub::serve`) is reached, started and stopped the same way, from its own place
+//! (`Place::hub`).
 
 use crate::daemon;
 use serde_json::{Value, json};
 use std::io::{BufRead, BufReader, Write};
 use std::os::unix::net::UnixStream;
 use std::os::unix::process::CommandExt;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::time::{Duration, Instant};
 
 /// How long a daemon just started has to take its socket, and one told to stop to let it go.
 const WAIT: Duration = Duration::from_secs(10);
+
+/// One of this program's two daemons — the agent's own, or the hub — as `attach`, `start`, `stop`
+/// and `status` reach it: where it keeps itself, and the role that runs it.
+pub(crate) struct Place {
+    pub home: PathBuf,
+    pub socket: PathBuf,
+    pub log: PathBuf,
+    /// The arguments that run it (`serve`, or `hub serve`).
+    serve: &'static [&'static str],
+    hub: bool,
+}
+
+impl Place {
+    /// The agent's own.
+    pub(crate) fn agent() -> Place {
+        let home = daemon::home();
+        Place {
+            socket: daemon::socket(&home),
+            log: daemon::log(&home),
+            home,
+            serve: &["serve"],
+            hub: false,
+        }
+    }
+
+    /// The hub.
+    pub(crate) fn hub() -> Place {
+        let home = crate::hub::home();
+        Place {
+            socket: crate::hub::socket(&home),
+            log: crate::hub::log(&home),
+            home,
+            serve: &["hub", "serve"],
+            hub: true,
+        }
+    }
+
+    fn no_start(&self) -> String {
+        let log = self.log.display();
+        if self.hub {
+            specboard_core::text!("agent.hub.noStart", log)
+        } else {
+            specboard_core::text!("agent.cli.noStart", log)
+        }
+    }
+
+    fn start_failed(&self, error: impl std::fmt::Display) -> String {
+        if self.hub {
+            specboard_core::text!("agent.hub.startFailed", error)
+        } else {
+            specboard_core::text!("agent.cli.startFailed", error)
+        }
+    }
+
+    fn newer_running(&self, build: u64) -> String {
+        if self.hub {
+            specboard_core::text!("agent.hub.newerRunning", build)
+        } else {
+            specboard_core::text!("agent.cli.newerRunning", build)
+        }
+    }
+
+    fn old_wont_stop(&self) -> String {
+        if self.hub {
+            specboard_core::text!("agent.hub.oldWontStop")
+        } else {
+            specboard_core::text!("agent.cli.oldWontStop")
+        }
+    }
+
+    fn no_connect(&self) -> String {
+        if self.hub {
+            specboard_core::text!("agent.hub.noConnect")
+        } else {
+            specboard_core::text!("agent.cli.noConnect")
+        }
+    }
+}
 
 /// The daemon there is, as it says itself; none when nothing answers at the socket.
 fn who(socket: &Path) -> Option<Value> {
@@ -47,14 +128,15 @@ fn stop_one(socket: &Path) -> bool {
 }
 
 /// A daemon of this build, started let go of this session; waited for until it answers.
-fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
+fn start_one(place: &Place) -> Result<Value, String> {
+    let (home, socket) = (&place.home, &place.socket);
     std::fs::create_dir_all(home).map_err(|e| {
         specboard_core::text!("agent.run.cannotCreate", path = home.display(), error = e)
     })?;
     let log = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
-        .open(daemon::log(home))
+        .open(&place.log)
         .map_err(|e| specboard_core::text!("agent.cli.logFailed", error = e))?;
     // Where this start's lines begin in the log: what it says when it stops at once is after it.
     let begun_at = log.metadata().map(|m| m.len()).unwrap_or(0);
@@ -62,7 +144,7 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
         .map_err(|e| specboard_core::text!("agent.cli.exeUnknown", error = e))?;
     let mut command = Command::new(exe);
     command
-        .arg("serve")
+        .args(place.serve)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(log);
@@ -74,9 +156,7 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
             Ok(())
         });
     }
-    let mut child = command
-        .spawn()
-        .map_err(|e| specboard_core::text!("agent.cli.startFailed", error = e))?;
+    let mut child = command.spawn().map_err(|e| place.start_failed(e))?;
     let begun = Instant::now();
     while begun.elapsed() < WAIT {
         if let Some(said) = who(socket) {
@@ -86,16 +166,13 @@ fn start_one(home: &Path, socket: &Path) -> Result<Value, String> {
         // the app shows it where it shows that the agent cannot be reached.
         if let Ok(Some(status)) = child.try_wait()
             && !status.success()
-            && let Some(why) = last_line(&daemon::log(home), begun_at)
+            && let Some(why) = last_line(&place.log, begun_at)
         {
-            return Err(specboard_core::text!("agent.cli.startFailed", error = why));
+            return Err(place.start_failed(why));
         }
         std::thread::sleep(Duration::from_millis(50));
     }
-    Err(specboard_core::text!(
-        "agent.cli.noStart",
-        log = daemon::log(home).display()
-    ))
+    Err(place.no_start())
 }
 
 /// The last line written to the log at `path` from `from` on, if any.
@@ -116,11 +193,10 @@ fn build_number(build: &Value) -> Option<u64> {
 }
 
 /// The daemon of this build running: the one there is when it is this build's, else one started.
-fn ensure() -> Result<Value, String> {
-    let home = daemon::home();
-    let socket = daemon::socket(&home);
+fn ensure(place: &Place) -> Result<Value, String> {
+    let socket = &place.socket;
     let me = daemon::me();
-    if let Some(running) = who(&socket) {
+    if let Some(running) = who(socket) {
         if running["exe"] == me["exe"] {
             return Ok(running);
         }
@@ -128,31 +204,30 @@ fn ensure() -> Result<Value, String> {
             (build_number(&running["build"]), build_number(&me["build"]))
             && theirs > mine
         {
-            return Err(specboard_core::text!(
-                "agent.cli.newerRunning",
-                build = theirs
-            ));
+            return Err(place.newer_running(theirs));
         }
         // Another build, not newer: stopped, and this one started (every app it held reconnects).
-        if !stop_one(&socket) {
-            return Err(specboard_core::text!("agent.cli.oldWontStop"));
+        if !stop_one(socket) {
+            return Err(place.old_wont_stop());
         }
     }
-    start_one(&home, &socket)
+    start_one(place)
 }
 
 /// `attach`: the app's lines handed to the daemon and back, until either goes.
 pub fn attach() -> i32 {
-    if let Err(problem) = ensure() {
+    attach_to(&Place::agent())
+}
+
+/// The app's lines handed to the daemon of `place` — started first when none of this build runs —
+/// and back, until either goes.
+pub(crate) fn attach_to(place: &Place) -> i32 {
+    if let Err(problem) = ensure(place) {
         println!("{}", json!({"t": "failed", "message": problem}));
         return 1;
     }
-    let socket = daemon::socket(&daemon::home());
-    let Ok(stream) = UnixStream::connect(&socket) else {
-        println!(
-            "{}",
-            json!({"t": "failed", "message": specboard_core::text!("agent.cli.noConnect")})
-        );
+    let Ok(stream) = UnixStream::connect(&place.socket) else {
+        println!("{}", json!({"t": "failed", "message": place.no_connect()}));
         return 1;
     };
     let Ok(mut to_daemon) = stream.try_clone() else {
@@ -173,7 +248,7 @@ pub fn attach() -> i32 {
 
 /// `start`: the daemon running, from a shell on the host (after the host started again, say).
 pub fn start() -> i32 {
-    match ensure() {
+    match ensure(&Place::agent()) {
         Ok(running) => {
             println!(
                 "{}",
@@ -194,12 +269,17 @@ pub fn start() -> i32 {
 
 /// `stop`: the daemon stopped.
 pub fn stop() -> i32 {
-    let socket = daemon::socket(&daemon::home());
-    if who(&socket).is_none() {
+    stop_of(&Place::agent())
+}
+
+/// The daemon of `place` stopped, from a shell.
+pub(crate) fn stop_of(place: &Place) -> i32 {
+    let socket = &place.socket;
+    if who(socket).is_none() {
         println!("{}", specboard_core::text!("agent.cli.notRunning"));
         return 0;
     }
-    if stop_one(&socket) {
+    if stop_one(socket) {
         println!("{}", specboard_core::text!("agent.cli.stopped"));
         0
     } else {
@@ -222,6 +302,28 @@ pub fn status() -> i32 {
                 )
             );
             println!("{}", mcp_line(&running["mcp"]));
+            0
+        }
+        None => {
+            println!("{}", specboard_core::text!("agent.cli.notRunning"));
+            3
+        }
+    }
+}
+
+/// `hub status`: whether the hub runs.
+pub(crate) fn status_of_hub() -> i32 {
+    match who(&Place::hub().socket) {
+        Some(running) => {
+            println!(
+                "{}",
+                specboard_core::text!(
+                    "agent.cli.runningBuild",
+                    pid = running["pid"],
+                    exe = running["exe"],
+                    build = running["build"]
+                )
+            );
             0
         }
         None => {
@@ -255,7 +357,7 @@ pub fn port(wanted: Option<&str>) -> i32 {
         eprintln!("{}", specboard_core::text!("agent.cli.portUsage"));
         return 2;
     };
-    if let Err(problem) = ensure() {
+    if let Err(problem) = ensure(&Place::agent()) {
         eprintln!("{problem}");
         return 1;
     }

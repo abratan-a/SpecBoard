@@ -516,6 +516,10 @@ fn export_said(plan: &Plan, at: usize, folder: Option<&str>, homes: &[(String, S
                 json!({"name": place.0, "path": place.1}),
             );
         }
+        // The rows that write it, numbered as what stops an export says them ("row 2").
+        let mut by: Vec<usize> = file.rows.iter().map(|n| n + 1).collect();
+        by.sort();
+        row.insert("rows".into(), json!(by));
         if folder.is_some() {
             let stands = standing(plan, file, kept.as_ref(), folder);
             row.insert("status".into(), stands.status.into());
@@ -880,8 +884,11 @@ impl crate::Core {
             Some(_) => return Err(text!("files.execute.dryRunBool")),
         };
         let target = Target::of(args)?;
+        // What is written is worked out of one moment of what was committed, apart from the
+        // writes (`Core::reading`): the files, and the tree's newest commit they are marked with.
+        // The writes' lock is taken only for the mark in the history, once the files are written.
         let (plan, defaults, commit, now) = {
-            let store = self.lock();
+            let store = self.reading()?;
             let plan = Plan::of(
                 &store,
                 args.string("project")?,

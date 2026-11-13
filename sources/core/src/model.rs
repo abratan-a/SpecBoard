@@ -509,6 +509,11 @@ pub const CODE_FORMATS: [&str; 3] = ["typescript", "zod", "json-schema"];
 /// Not a language, so not in `CODE_FORMATS`; never said by an extension, so always written.
 pub const JSON_DATA: &str = "json-data";
 
+/// The format of an export that writes the cards' lines as JSON, a card after another, with a
+/// spec's scenarios (`export::lines`). Said by no extension, so always written; an entry of it takes
+/// a card of any kind.
+pub const JSON_CONNECTIONS: &str = "json-connections";
+
 impl ExportSetting {
     /// The format a path's extension says, for a schema.
     pub fn format_of(path: &str) -> Option<&'static str> {
@@ -567,6 +572,11 @@ impl ExportSetting {
         }
         let folder = self.path.ends_with('/');
         let markdown = self.path.to_lowercase().ends_with(".md");
+        // The cards' lines: of a card of any kind, into the one file of JSON its entry names.
+        if self.format.as_deref() == Some(JSON_CONNECTIONS) {
+            return (folder || !self.path.to_lowercase().ends_with(".json"))
+                .then(|| keyed!("model.problem.linesFile"));
+        }
         match kind {
             "note" => {
                 if folder || markdown {

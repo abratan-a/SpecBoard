@@ -403,11 +403,13 @@ struct CardDetails: View {
         PropertyCategory(title: L10n[.Common.wordValue]) {
             PropertyRow("name", help: L10n[.CardEditor.helpEnumValue]) {
                 if editable {
-                    CommitField(L10n[.Common.wordValue], text: value.value, monospaced: true) { text in
+                    let write = { (text: String) in
                         var next = list
                         next[index].value = text
                         model.setValues(schema.id, next)
                     }
+                    CommitField.refusing(L10n[.Common.wordValue], text: value.value, monospaced: true,
+                                         refuse: { text in model.refusal { write(text) } }, leave: write)
                     .id("value-\(value.id)")
                 } else {
                     Text(value.value).font(.app(11.5, design: .monospaced)).textSelection(.enabled)
@@ -540,10 +542,12 @@ struct CardDetails: View {
             PropertyRow("also", help: L10n[.CardEditor.helpAlso]) {
                 let types = field.also ?? []
                 if editable {
-                    CommitField(L10n[.Common.wordNone], text: types.joined(separator: ", "), monospaced: true) { text in
+                    let write = { (text: String) in
                         let names = text.split(whereSeparator: { $0 == "," || $0 == " " || $0 == "、" }).map(String.init)
                         model.updateField(field.id, .init(also: names))
                     }
+                    CommitField.refusing(L10n[.Common.wordNone], text: types.joined(separator: ", "), monospaced: true,
+                                         refuse: { text in model.refusal { write(text) } }, leave: write)
                     .id("falso-\(field.id)-\(types.joined(separator: ","))")
                 } else {
                     Text(types.isEmpty ? L10n[.Common.wordNone] : types.joined(separator: ", "))

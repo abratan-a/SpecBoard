@@ -21,6 +21,7 @@
   "write.bundle.otherForm": "移す元と移す先で、置き場の形が違います（アプリとエージェントのビルドを揃えてから移します）",
   "write.bundle.projectNotFound": "プロジェクトが見つかりません",
   "write.bundle.slugTaken": "移す先に slug「{slug}」のプロジェクト（{name}）があります（どちらかの名前を変えてから移します）",
+  "write.bundle.strayRow": "移すプロジェクトの {table} に、束に無いコミットか branch を名指す行があります（読み込みません）",
   "write.bundle.thereAlready": "プロジェクト「{name}」は移す先にもうあります",
   "write.dbWrite": "データベースに書けません: {e}",
   "write.docWithoutId": "文書に id がありません",

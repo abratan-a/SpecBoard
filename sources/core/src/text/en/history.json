@@ -19,6 +19,7 @@
   "history.revert.otherCommit": "{seq} ({who})",
   "history.revert.othersIn": "Not reverted, as it includes commits by other writers: {commits}. Other writers' commits can be undone one at a time with undo of branch_revert, with request: true",
   "history.revertIntoBranch.line": "main as of right after commit {seq} ({count} commits undone; it goes into main by merge)",
+  "history.row.unreadable": "A history row cannot be read (a piece of what it kept is missing, or not as long as it was)",
   "history.undo.already": "What commit {seq} changed is already as it was before it",
   "history.undo.holderGone": "{path} cannot come back, as {holder} it was in is gone",
   "history.undo.line": "Undo what commit {seq} ({who}) changed",

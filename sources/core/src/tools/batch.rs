@@ -297,6 +297,9 @@ fn replay(
         // What the project lets MCP do, as when the step's tool is called on its own: as the project
         // says now, so a step staged before a person stopped it is refused here.
         let args = Args::new(arguments);
+        if let Err(e) = crate::hub::refuse_folders(tool, &args) {
+            return Err(failure(index, tool, &e));
+        }
         let asks = match mcp_writes::judge(tx.conn(), tx.who(), tool, &args, Some(&named)) {
             Ok(asks) => asks,
             Err(e) => return Err(failure(index, tool, &e)),
@@ -654,6 +657,11 @@ impl Core {
                 let mut arguments = arguments.clone();
                 arguments.insert("project".into(), named.project.clone().into());
                 let step = Args::new(&arguments);
+                // A step a call handed over the hub may not make is refused by the run, in its
+                // words: nobody is asked about a run that will not be made.
+                if crate::hub::refuse_folders(tool, &step).is_err() {
+                    return Ok((Vec::new(), String::new()));
+                }
                 // A step denied now is refused by the run, in its words.
                 let found = mcp_writes::judge(tx.conn(), tx.who(), tool, &step, Some(&named))
                     .unwrap_or_default();

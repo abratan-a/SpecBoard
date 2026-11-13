@@ -80,6 +80,25 @@ extension AppModel {
         write { _ = try tool("section_update", target: path, value: value) }
     }
 
+    /// A working directory named `name` added at the end of the project's tree, bound to `folder`: what
+    /// refused it, or nil.
+    func addWorkDir(name: String, folder: URL) -> String? {
+        guard let tree = OJSON.parse(projectTreeText()), case .object(var top) = tree,
+              case .array(var main)? = top["main_sections"] else { return L10n[.Common.problemCoreUnreadable] }
+        main.append(.object(OrderedObject([("type", .string(WorkDirIds.workdirKind)), ("name", .string(name))])))
+        top["main_sections"] = .array(main)
+        if let refused = refusal({ saveProjectTree(.object(top)) }) { return refused }
+        // Named by its path in main, not looked up in what the window holds: that is read again after the write
+        // (off the main thread in the window), and is the board's tree while the board is open.
+        let readType = WorkDirSheet.readsAsGit(folder) ? "git" : "basic"
+        return refusal {
+            write {
+                _ = try tool("section_update", target: PathText.quote(name),
+                             value: ["folder": folder.path, "readType": readType], inTree: false)
+            }
+        }
+    }
+
     /// The folder the working directory of the section `id` is bound to on the machine its project is kept
     /// on; nil lets it go. Read again from it.
     func bindWorkDirFolder(_ id: String, to folder: String?) {
@@ -127,6 +146,14 @@ extension AppModel {
             }
         }
         exportMarks = marks
+        // A row no longer there — taken away, its export deleted or renamed, another project's exports
+        // read — is not picked: one of the same from and to coming back later is another row.
+        if let ref = pickedExportEntry,
+           !exports.exports.contains(where: { export in
+               export.name == ref.export && export.entries.contains { $0.from == ref.from && $0.to == ref.to }
+           }) {
+            pickedExportEntry = nil
+        }
     }
 
     /// A change to the exports, as the window makes it: the refusal said back, or nil; read again after.
@@ -166,6 +193,43 @@ extension AppModel {
 
     func updateExport(_ name: String, _ value: [String: Any]) -> String? {
         changeExports("export_update", target: name, value: value)
+    }
+
+    /// The row picked on the exports tab as the exports say it now, with its number among its export's rows.
+    /// Nothing while another tab or screen is in front, or once the row is gone.
+    var pickedExport: (export: ExportRead, entry: ExportRead.Entry, row: Int)? {
+        guard case .settings(.exports) = here, let ref = pickedExportEntry,
+              let export = exports.exports.first(where: { $0.name == ref.export }),
+              let at = export.entries.firstIndex(where: { $0.from == ref.from && $0.to == ref.to }) else { return nil }
+        return (export, export.entries[at], at + 1)
+    }
+
+    func pickExportEntry(_ ref: ExportEntryRef?) {
+        pickedExportEntry = ref
+    }
+
+    /// A row changed where it stands (`export_update`'s `entries.change`): what `set` names, the rest
+    /// as it was, and still picked under the to it has now. The refusal, when it is refused.
+    func changeExportEntry(_ ref: ExportEntryRef, set: [String: Any]) -> String? {
+        var set = set
+        // The kinds of line are written of a JSON Connections row alone: another format takes them off with
+        // it, rather than be refused until they are emptied first.
+        if let format = set["format"], (format as? String) != "json-connections", set["lines"] == nil,
+           let entry = exports.exports.first(where: { $0.name == ref.export })?
+               .entries.first(where: { $0.from == ref.from && $0.to == ref.to }),
+           !(entry.lines ?? []).isEmpty {
+            set["lines"] = NSNull()
+        }
+        let wasPicked = pickedExportEntry == ref
+        let change: [String: Any] = ["from": ref.from, "to": ref.to, "set": set]
+        if let said = updateExport(ref.export, ["entries": ["change": [change]]]) { return said }
+        // Read again, the row is under the to it has now: picked there, as it was.
+        if wasPicked {
+            var next = ref
+            if let to = set["to"] as? String { next.to = to.trimmingCharacters(in: .whitespaces) }
+            pickedExportEntry = next
+        }
+        return nil
     }
 
     func deleteExport(_ name: String) -> String? {

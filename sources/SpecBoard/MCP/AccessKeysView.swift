@@ -21,6 +21,9 @@ struct AccessKeysView: View {
     @State private var counts: [String: Int] = [:]
     @State private var selected: String?
     @State private var grants: [String: AccessLevel] = [:]
+    /// The projects other agents share with this one, and what the chosen key was given of them.
+    @State private var shared: [CoreClient.HubShares.Shared] = []
+    @State private var hubGrants: [CoreClient.HubProject: AccessLevel] = [:]
     @State private var draftName = ""
     @FocusState private var nameFocused: Bool
     @State private var naming = false
@@ -56,6 +59,8 @@ struct AccessKeysView: View {
         _counts = State(initialValue: read.counts)
         _selected = State(initialValue: read.selected)
         _grants = State(initialValue: read.grants)
+        _shared = State(initialValue: read.shared)
+        _hubGrants = State(initialValue: read.hubGrants)
         _renaming = State(initialValue: read.keys.first { $0.id == read.selected }?.name ?? "")
         switch asking {
         case .regenerate(let id): _regenerating = State(initialValue: read.keys.first { $0.id == id })
@@ -263,6 +268,12 @@ struct AccessKeysView: View {
                     settingsSection(L10n[.MCP.keysSectionProjects]) {
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(model.projects.filter { $0.place == place }) { project in grantRow(key, project) }
+                            // The projects other agents share with this one, after its own: usable
+                            // only as far as both the share and the key allow.
+                            if !shared.isEmpty {
+                                Color.clear.frame(height: 14)
+                                ForEach(shared) { one in sharedRow(key, one) }
+                            }
                         }
                     }
 
@@ -302,6 +313,32 @@ struct AccessKeysView: View {
             MCPStateChoice(state: key.state(permit)) { state in
                 act { try $0.setPermit(key.id, permit, state) }
             }
+        }
+    }
+
+    /// What a shared project's row says after its name: who shares it, and for what.
+    static func sharedNote(_ shared: CoreClient.HubShares.Shared) -> String {
+        L10n[.MCP.keysSharedBy(shared.ownerName, shared.level == .write ? L10n[.MCP.keysLevelWrite] : L10n[.MCP.keysLevelRead])]
+    }
+
+    /// A project another agent shares with this one, among the key's grants: what the key may do
+    /// with it, no more than the share lets any key.
+    private func sharedRow(_ key: AccessKey, _ shared: CoreClient.HubShares.Shared) -> some View {
+        let project = CoreClient.HubProject(owner: shared.owner, project: shared.project)
+        return VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: "point.3.connected.trianglepath.dotted")
+                    .font(.app(10.5)).foregroundStyle(.secondary).frame(width: 14)
+                Text(shared.name).font(.app(12)).lineLimit(1)
+                Text(Self.sharedNote(shared)).font(.app(10)).foregroundStyle(.tertiary).lineLimit(1)
+                Spacer()
+                LevelSegments(level: hubGrants[project], most: shared.level) { level in
+                    act { try $0.setGrant(keyId: key.id, owner: shared.owner, projectId: shared.project, level) }
+                }
+                .fixedSize()
+            }
+            .padding(.vertical, 6)
+            Divider()
         }
     }
 
@@ -353,6 +390,8 @@ struct AccessKeysView: View {
         var counts: [String: Int] = [:]
         var selected: String?
         var grants: [String: AccessLevel] = [:]
+        var shared: [CoreClient.HubShares.Shared] = []
+        var hubGrants: [CoreClient.HubProject: AccessLevel] = [:]
         var error: String?
     }
 
@@ -367,6 +406,8 @@ struct AccessKeysView: View {
             for row in rows { read.counts[row.id] = row.levels.count }
             read.selected = read.keys.contains { $0.id == selected } ? selected : read.keys.first?.id
             read.grants = rows.first { $0.id == read.selected }?.levels ?? [:]
+            read.hubGrants = rows.first { $0.id == read.selected }?.hubLevels ?? [:]
+            read.shared = try core.hubShares().shared
         } catch {
             read.error = ErrorText.said(error)
         }
@@ -379,6 +420,8 @@ struct AccessKeysView: View {
         counts = read.counts
         selected = read.selected
         grants = read.grants
+        shared = read.shared
+        hubGrants = read.hubGrants
         renaming = keys.first { $0.id == selected }?.name ?? ""
         error = read.error
     }
@@ -392,6 +435,8 @@ struct AccessKeysView: View {
         counts = read.counts
         selected = read.selected
         grants = read.grants
+        shared = read.shared
+        hubGrants = read.hubGrants
         error = read.error
     }
 
@@ -433,5 +478,42 @@ struct AccessKeysShown: PreferenceKey {
     static func reduce(value: inout Value, nextValue: () -> Value) {
         let next = nextValue()
         if next != Value() { value = next }
+    }
+}
+
+/// 「なし｜読む｜読み書き」 for a project another agent shares: what the share itself does not let any
+/// key do (writing one shared to read) stays in its place, and cannot be chosen.
+struct LevelSegments: NSViewRepresentable {
+    var level: AccessLevel?
+    /// What the share lets a key be given at the most.
+    var most: AccessLevel
+    var set: (AccessLevel?) -> Void
+
+    private static let levels: [AccessLevel?] = [nil, .read, .write]
+
+    func makeCoordinator() -> Coordinator { Coordinator(set: set) }
+
+    func makeNSView(context: Context) -> NSSegmentedControl {
+        let labels = [L10n[.Common.wordNone], L10n[.MCP.keysLevelRead], L10n[.MCP.keysLevelWrite]]
+        let control = NSSegmentedControl(labels: labels, trackingMode: .selectOne,
+                                         target: context.coordinator, action: #selector(Coordinator.chosen(_:)))
+        control.segmentStyle = .automatic
+        return control
+    }
+
+    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        context.coordinator.set = set
+        control.selectedSegment = Self.levels.firstIndex(of: level) ?? 0
+        control.setEnabled(most == .write, forSegment: 2)
+    }
+
+    final class Coordinator: NSObject {
+        var set: (AccessLevel?) -> Void
+
+        init(set: @escaping (AccessLevel?) -> Void) { self.set = set }
+
+        @objc func chosen(_ control: NSSegmentedControl) {
+            set(LevelSegments.levels[control.selectedSegment])
+        }
     }
 }

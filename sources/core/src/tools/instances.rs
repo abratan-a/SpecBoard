@@ -474,16 +474,19 @@ fn is_uuid(text: &str) -> bool {
             .all(|(g, n)| g.len() == n && g.bytes().all(|b| b.is_ascii_hexdigit()))
 }
 
+/// An absolute URI (RFC 3986: a scheme, `:`, and what follows), as JSON Schema's `format: uri` takes:
+/// besides `https://…`, an app's own scheme (`com.example.app:/cb`) and `urn:…` are URLs to the
+/// specifications a design is written from. A scheme of one letter is a drive (`C:\x`), not one.
 fn is_url(text: &str) -> bool {
-    match text.split_once("://") {
+    match text.split_once(':') {
         Some((scheme, rest)) => {
-            !scheme.is_empty()
+            scheme.len() > 1
                 && scheme
                     .bytes()
                     .all(|b| b.is_ascii_alphanumeric() || b"+-.".contains(&b))
                 && scheme.as_bytes()[0].is_ascii_alphabetic()
                 && !rest.is_empty()
-                && !rest.contains(char::is_whitespace)
+                && !rest.contains(|c: char| c.is_whitespace() || c.is_control())
         }
         None => false,
     }

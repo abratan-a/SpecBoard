@@ -202,6 +202,9 @@ pub(crate) fn said(export: &Export, project: &crate::export::Project) -> Value {
                     if !e.kinds.is_empty() {
                         row.insert("kinds".into(), json!(e.kinds));
                     }
+                    if !e.lines.is_empty() {
+                        row.insert("lines".into(), json!(e.lines));
+                    }
                     // What the row leaves out, and why: a row that writes nothing says so.
                     let left = unwritten(e, &export.name, &paths.project);
                     if !left.is_empty() {
@@ -227,22 +230,36 @@ pub(crate) fn said(export: &Export, project: &crate::export::Project) -> Value {
     Value::Object(out)
 }
 
-/// An entry as written: `{from, to, format, kinds}`.
+/// An entry as written: `{from, to, format, kinds, lines}`.
 fn entry_of(raw: &Value, at: &str, paths: &Paths) -> Result<Entry, String> {
     let Some(row) = raw.as_object() else {
         return Err(text!("exports.entry.shape", at));
     };
     if let Some(stray) = row
         .keys()
-        .find(|k| !["from", "to", "format", "kinds"].contains(&k.as_str()))
+        .find(|k| !["from", "to", "format", "kinds", "lines"].contains(&k.as_str()))
     {
         return Err(text!("exports.entry.stray", at, stray));
     }
-    let from = row
+    let said_from = row
         .get("from")
         .and_then(Value::as_str)
         .ok_or_else(|| text!("exports.entry.needFrom", at))?;
-    let (from, version) = paths.from(from).map_err(|e| format!("{at}: {e}"))?;
+    let (from, version) = paths.from(said_from).map_err(|e| format!("{at}: {e}"))?;
+    entry_from(row, from, version, said_from, at, paths)
+}
+
+/// An entry of the card or section `from` (a stackdoc's version, with `version`), the rest as `row`
+/// writes it: a row changed is looked at so, keeping the from it has — one that is gone too, which
+/// no path names any more.
+fn entry_from(
+    row: &Map<String, Value>,
+    from: String,
+    version: Option<String>,
+    said_from: &str,
+    at: &str,
+    paths: &Paths,
+) -> Result<Entry, String> {
     // What a working directory's section holds is read from a folder, not written out.
     let section = paths
         .project
@@ -267,7 +284,9 @@ fn entry_of(raw: &Value, at: &str, paths: &Paths) -> Result<Entry, String> {
     let format = match row.get("format") {
         None | Some(Value::Null) => None,
         Some(Value::String(f))
-            if CODE_FORMATS.contains(&f.as_str()) || f == crate::model::JSON_DATA =>
+            if CODE_FORMATS.contains(&f.as_str())
+                || f == crate::model::JSON_DATA
+                || f == crate::model::JSON_CONNECTIONS =>
         {
             Some(f.clone())
         }
@@ -279,7 +298,7 @@ fn entry_of(raw: &Value, at: &str, paths: &Paths) -> Result<Entry, String> {
                     CODE_FORMATS
                         .iter()
                         .copied()
-                        .chain(std::iter::once(crate::model::JSON_DATA))
+                        .chain([crate::model::JSON_DATA, crate::model::JSON_CONNECTIONS])
                 ),
                 other
             ));
@@ -310,6 +329,49 @@ fn entry_of(raw: &Value, at: &str, paths: &Paths) -> Result<Entry, String> {
         }
         Some(_) => return Err(text!("exports.entry.kindsList", at)),
     };
+    // The kinds of line an entry of the cards' lines says: ones the project has, so that one
+    // misspelt is not a file that silently holds none of them.
+    let lines_format = format.as_deref() == Some(crate::model::JSON_CONNECTIONS);
+    let lines = match row.get("lines") {
+        None | Some(Value::Null) => Vec::new(),
+        Some(_) if !lines_format => return Err(text!("exports.entry.linesOnly", at)),
+        Some(Value::Array(list)) => {
+            let mut out = Vec::new();
+            for line in list {
+                let Some(line) = line.as_str() else {
+                    return Err(text!("exports.entry.linesList", at));
+                };
+                if line == crate::kinds::OF_LINE || paths.project.defs.line(line).is_none() {
+                    return Err(text!(
+                        "exports.entry.noLine",
+                        at,
+                        line,
+                        lines = crate::text::List::of(
+                            paths
+                                .project
+                                .defs
+                                .lines
+                                .iter()
+                                .map(|l| l.name.as_str())
+                                .filter(|l| *l != crate::kinds::OF_LINE)
+                        )
+                    ));
+                }
+                if !out.iter().any(|l| l == line) {
+                    out.push(line.to_string());
+                }
+            }
+            out
+        }
+        Some(_) => return Err(text!("exports.entry.linesList", at)),
+    };
+    if lines_format && !to.to_lowercase().ends_with(".json") {
+        return Err(text!("exports.entry.linesFile", at, to));
+    }
+    // A version has no lines of its own: its card's would be written whole under its name.
+    if lines_format && version.is_some() {
+        return Err(text!("exports.entry.linesRow", at, from = said_from));
+    }
     // A section's entry with kinds writes each of them where it may be written: refused here, not
     // only when it is written.
     if paths.project.card(&from).is_none() {
@@ -346,7 +408,26 @@ fn entry_of(raw: &Value, at: &str, paths: &Paths) -> Result<Entry, String> {
         to,
         format,
         kinds,
+        lines,
     })
+}
+
+/// Refuses two entries of the cards' lines that write one file: each may be narrowed its own way,
+/// and what reads the file could not tell which cards were narrowed how.
+fn lines_once(entries: &[Entry]) -> Result<(), String> {
+    let file = |e: &Entry| {
+        e.to.trim_matches(|c: char| c == ' ' || c == '\t')
+            .to_string()
+    };
+    for (n, entry) in entries.iter().enumerate().filter(|(_, e)| e.is_lines()) {
+        if entries[..n]
+            .iter()
+            .any(|e| e.is_lines() && file(e) == file(entry))
+        {
+            return Err(text!("exports.entries.linesTwice", to = file(entry)));
+        }
+    }
+    Ok(())
 }
 
 /// A list of entries as written.
@@ -470,6 +551,8 @@ pub(crate) fn export_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<V
         Some(raw) => entries_of(raw, "entries", &paths)?,
         None => Vec::new(),
     };
+    rows_once(&entries, "entries", &paths)?;
+    lines_once(&entries)?;
     let exclude = match given.get("exclude") {
         Some(raw) => ids_of(raw, "exclude", &paths)?,
         None => Vec::new(),
@@ -498,13 +581,85 @@ pub(crate) fn export_create(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<V
     Ok(Value::Object(out))
 }
 
-/// Entries added and taken away (`{add: [...], remove: [...]}`); an entry taken away by its from and
-/// to.
+/// Whether two rows are one to what picks a row: of one from (a stackdoc's version too) to one file
+/// or folder.
+fn same_row(one: &Entry, other: &Entry) -> bool {
+    one.from == other.from && one.row == other.row && one.to == other.to
+}
+
+/// Refuses two rows of one from and to among the rows an export is made with.
+fn rows_once(entries: &[Entry], key: &str, paths: &Paths) -> Result<(), String> {
+    for (n, entry) in entries.iter().enumerate() {
+        if entries[..n].iter().any(|e| same_row(e, entry)) {
+            return Err(text!(
+                "exports.entries.sameRow",
+                at = format!("{key}[{n}]"),
+                row = format!("{} → {}", paths.said_from(entry), entry.to)
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// The rows an edit picks by `from` (and `to`): those of the card or section — or the stackdoc's
+/// version — the path names; or, where no path is one (a row whose from is gone), those said as
+/// `from` by `export_read`, which is all there is to pick such a row by.
+fn picked(
+    now: &[Entry],
+    written: &str,
+    to: Option<&str>,
+    at: &str,
+    paths: &Paths,
+) -> Result<Vec<usize>, String> {
+    let fits = |e: &Entry| to.is_none_or(|t| e.to == t.trim());
+    let rows = |of: &dyn Fn(&Entry) -> bool| -> Vec<usize> {
+        now.iter()
+            .enumerate()
+            .filter(|(_, e)| of(e) && fits(e))
+            .map(|(n, _)| n)
+            .collect()
+    };
+    match paths.from(written) {
+        Ok((from, version)) => Ok(rows(&|e| e.from == from && e.row == version)),
+        Err(said) => {
+            let found = rows(&|e| paths.said_from(e) == written.trim());
+            if found.is_empty() {
+                Err(format!("{at}: {said}"))
+            } else {
+                Ok(found)
+            }
+        }
+    }
+}
+
+/// The rows there are, said as a refusal lists them (`from → to`), the first of many.
+fn rows_said(now: &[Entry], paths: &Paths) -> String {
+    const SHOWN: usize = 10;
+    let mut rows: Vec<String> = now
+        .iter()
+        .take(SHOWN)
+        .map(|e| format!("{} → {}", paths.said_from(e), e.to))
+        .collect();
+    if now.len() > SHOWN {
+        rows.push(text!("exports.entries.more", count = now.len() - SHOWN));
+    }
+    if rows.is_empty() {
+        text!("exports.entries.noRows")
+    } else {
+        crate::text::list(&rows)
+    }
+}
+
+/// Entries taken away, changed where they stand and added, in that order (`{remove: [...], change:
+/// [...], add: [...]}`); an entry taken away or changed is picked by its from and to — so an export
+/// holds one row of a from and to, and neither a change nor an add makes a second. One changed is
+/// looked at as one added is, as it would be with what is set over it — and stays where it stood, so
+/// that what lists the rows (the screen, what stops an export: "row 2") keeps its order.
 fn entries_over(raw: &Value, now: &mut Vec<Entry>, paths: &Paths) -> Result<(), String> {
     let Some(edits) = raw.as_object() else {
         return Err(text!("exports.entries.edits"));
     };
-    keys_of(edits, "entries", &["add", "remove"])?;
+    keys_of(edits, "entries", &["add", "remove", "change"])?;
     if let Some(gone) = edits.get("remove") {
         let Some(list) = gone.as_array() else {
             return Err(text!("exports.entries.removeList"));
@@ -522,40 +677,136 @@ fn entries_over(raw: &Value, now: &mut Vec<Entry>, paths: &Paths) -> Result<(), 
                 ),
                 _ => return Err(text!("exports.entries.removeItem", at)),
             };
-            let (from, version) = paths.from(written).map_err(|e| format!("{at}: {e}"))?;
-            let before = now.len();
-            now.retain(|e| {
-                !(e.from == from && e.row == version && to.is_none_or(|t| e.to == t.trim()))
+            let gone = picked(now, written, to, &at, paths)?;
+            let mut n = 0;
+            now.retain(|_| {
+                n += 1;
+                !gone.contains(&(n - 1))
             });
-            if now.len() == before {
-                const SHOWN: usize = 10;
-                let mut rows: Vec<String> = now
-                    .iter()
-                    .take(SHOWN)
-                    .map(|e| format!("{} → {}", paths.said_from(e), e.to))
-                    .collect();
-                if now.len() > SHOWN {
-                    rows.push(text!("exports.entries.more", count = now.len() - SHOWN));
-                }
+            if gone.is_empty() {
                 return Err(text!(
                     "exports.entries.noRow",
                     at,
                     from = written.trim(),
                     to = to.map(|t| format!(" → {}", t.trim())).unwrap_or_default(),
-                    rows = if rows.is_empty() {
-                        text!("exports.entries.noRows")
-                    } else {
-                        crate::text::list(&rows)
-                    }
+                    rows = rows_said(now, paths)
                 ));
             }
         }
     }
-    if let Some(add) = edits.get("add") {
-        for entry in entries_of(add, "entries.add", paths)? {
-            if !now.contains(&entry) {
-                now.push(entry);
+    if let Some(changes) = edits.get("change") {
+        let Some(list) = changes.as_array() else {
+            return Err(text!("exports.entries.changeList"));
+        };
+        for (i, item) in list.iter().enumerate() {
+            let at = format!("entries.change[{i}]");
+            let Some(item) = item.as_object() else {
+                return Err(text!("exports.entries.changeItem", at));
+            };
+            if item
+                .keys()
+                .any(|k| !["from", "to", "set"].contains(&k.as_str()))
+            {
+                return Err(text!("exports.entries.changeItem", at));
             }
+            let written = item
+                .get("from")
+                .and_then(Value::as_str)
+                .ok_or_else(|| text!("exports.entries.changeItem", at))?;
+            let to = item.get("to").and_then(Value::as_str);
+            const SET: [&str; 4] = ["to", "format", "kinds", "lines"];
+            let set = item
+                .get("set")
+                .and_then(Value::as_object)
+                .filter(|set| !set.is_empty())
+                .ok_or_else(|| text!("exports.entries.changeSet", at))?;
+            if let Some(stray) = set.keys().find(|k| !SET.contains(&k.as_str())) {
+                return Err(text!("exports.entries.changeStray", at, stray));
+            }
+            let found = picked(now, written, to, &at, paths)?;
+            let n = match found.as_slice() {
+                [n] => *n,
+                [] => {
+                    return Err(text!(
+                        "exports.entries.noRow",
+                        at,
+                        from = written.trim(),
+                        to = to.map(|t| format!(" → {}", t.trim())).unwrap_or_default(),
+                        rows = rows_said(now, paths)
+                    ));
+                }
+                many => {
+                    let rows: Vec<String> = many
+                        .iter()
+                        .map(|n| format!("{} → {}", paths.said_from(&now[*n]), now[*n].to))
+                        .collect();
+                    return Err(text!(
+                        "exports.entries.changeMany",
+                        at,
+                        from = written.trim(),
+                        rows = crate::text::list(&rows)
+                    ));
+                }
+            };
+            // The row as it is written, with what is set over it (null takes a key off).
+            let said_from = paths.said_from(&now[n]);
+            let mut row = Map::new();
+            row.insert("to".into(), now[n].to.clone().into());
+            if let Some(format) = &now[n].format {
+                row.insert("format".into(), format.clone().into());
+            }
+            if !now[n].kinds.is_empty() {
+                row.insert("kinds".into(), json!(now[n].kinds));
+            }
+            if !now[n].lines.is_empty() {
+                row.insert("lines".into(), json!(now[n].lines));
+            }
+            for (key, value) in set {
+                if value.is_null() {
+                    row.remove(key);
+                } else {
+                    row.insert(key.clone(), value.clone());
+                }
+            }
+            let changed = entry_from(
+                &row,
+                now[n].from.clone(),
+                now[n].row.clone(),
+                &said_from,
+                &at,
+                paths,
+            )?;
+            if now
+                .iter()
+                .enumerate()
+                .any(|(m, e)| m != n && same_row(e, &changed))
+            {
+                return Err(text!(
+                    "exports.entries.sameRow",
+                    at,
+                    row = format!("{said_from} → {}", changed.to)
+                ));
+            }
+            now[n] = changed;
+        }
+    }
+    if let Some(add) = edits.get("add") {
+        for (i, entry) in entries_of(add, "entries.add", paths)?
+            .into_iter()
+            .enumerate()
+        {
+            // The row there is, written again: nothing to add, nothing to say.
+            if now.contains(&entry) {
+                continue;
+            }
+            if now.iter().any(|e| same_row(e, &entry)) {
+                return Err(text!(
+                    "exports.entries.sameRow",
+                    at = format!("entries.add[{i}]"),
+                    row = format!("{} → {}", paths.said_from(&entry), entry.to)
+                ));
+            }
+            now.push(entry);
         }
     }
     Ok(())
@@ -622,6 +873,7 @@ pub(crate) fn export_update(tx: &mut Tx, scope: &Scope, args: &Args) -> Result<V
     if let Some(raw) = given.get("entries") {
         let kept = list[at].entries.clone();
         entries_over(raw, &mut list[at].entries, &paths)?;
+        lines_once(&list[at].entries)?;
         // Said of the entries added alone: an entry kept as it was is not said again.
         let added = Export {
             entries: list[at]

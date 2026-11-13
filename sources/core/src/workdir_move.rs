@@ -50,7 +50,7 @@ pub fn move_project(conn: &Connection, project: &str) -> Result<(), String> {
         .and_then(|v| v.as_object().cloned())
         .unwrap_or_default();
     let mut tree = Defs::of_project(kinds.as_deref()).tree;
-    let seen = Reader { conn }.compose(project, None)?;
+    let seen = Reader::of(conn).compose(project, None)?;
     let root = seen
         .sections
         .iter()

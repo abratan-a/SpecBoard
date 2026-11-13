@@ -12,6 +12,7 @@ pub(crate) mod documents;
 pub(crate) mod flowdoc;
 pub mod ident;
 mod jsonschema;
+pub(crate) mod lines;
 pub mod mermaid;
 pub mod mock;
 pub mod pages;
@@ -40,6 +41,8 @@ pub enum Content {
     Document,
     /// The data cards (`json-data`): a list of their data, as JSON.
     Data,
+    /// The cards' lines (`json-connections`): each card's, and a spec's scenarios, as JSON.
+    Lines,
     /// An SVG card's picture, as it is.
     Svg,
     /// An HTML card's page.
@@ -56,6 +59,7 @@ impl Content {
             Content::Chart => "chart".into(),
             Content::Document => "document".into(),
             Content::Data => crate::model::JSON_DATA.into(),
+            Content::Lines => crate::model::JSON_CONNECTIONS.into(),
             Content::Svg => "svg".into(),
             Content::Html => "html".into(),
             Content::Mock => "mock".into(),
@@ -68,6 +72,7 @@ impl Content {
             Content::Chart => keyed!("export.content.chart"),
             Content::Document => keyed!("export.content.document"),
             Content::Data => keyed!("export.content.data"),
+            Content::Lines => keyed!("export.content.lines"),
             Content::Svg => keyed!("export.content.svg"),
             Content::Html => keyed!("export.content.html"),
             Content::Mock => keyed!("export.content.mock"),
@@ -86,6 +91,8 @@ pub struct Planned {
     pub row: Option<String>,
     /// A ui section's page: the section, by id (its parts are `cards`).
     pub section: Option<String>,
+    /// The entries of its export that write it, by their places among them.
+    pub rows: Vec<usize>,
 }
 
 /// The project, and what the writers look up in it.
@@ -402,24 +409,40 @@ impl<'a> Project<'a> {
     }
 
     /// A file a line holds by its id, as it is written: its path in the tree (`repo/src:'a.rs'`) —
-    /// its card's where it is there, else made of the names in its id.
+    /// its card's where it is there, else made of the names in its id. Where the working
+    /// directories were not read into a tree beside this one (what is written out is, on any
+    /// machine, with no folder bound), made of the working directory's name in the project tree and
+    /// the names in the id: the same path, whoever says it.
     pub fn file_written(&self, id: &str) -> Option<String> {
-        let files = self.files.as_deref()?;
-        if let Some(card) = files.card(id) {
-            return Some(files.full(card));
+        let files = self.files.as_deref();
+        if let Some(card) = files.and_then(|f| f.card(id)) {
+            return files.map(|f| f.full(card));
         }
         let (dir, path) = crate::workdir::of_file_id(id)?;
         let mount_id = crate::workdir::dir_id(dir, "");
-        let mount = files.detail.sections.iter().find(|s| s.id == mount_id)?;
+        let sections = files
+            .map(|f| f.detail.sections.as_slice())
+            .unwrap_or_default();
+        let mount = match sections.iter().find(|s| s.id == mount_id) {
+            Some(mount) => mount.name.clone(),
+            None => self
+                .defs
+                .tree
+                .main
+                .iter()
+                .find(|t| t.kind == crate::kinds::WORKDIR && t.directory.as_deref() == Some(dir))?
+                .name
+                .clone(),
+        };
         let parts: Vec<&str> = path.split('/').collect();
         let (file, dirs) = parts.split_last()?;
-        let mut names = vec![mount.name.clone()];
+        let mut names = vec![mount];
         let mut at = Some(mount_id);
         for (i, seg) in dirs.iter().enumerate() {
             let id = crate::workdir::dir_id(dir, &dirs[..=i].join("/"));
             let named = at
                 .as_deref()
-                .and_then(|_| files.detail.sections.iter().find(|s| s.id == id))
+                .and_then(|_| sections.iter().find(|s| s.id == id))
                 .map(|s| s.name.clone());
             at = named.as_ref().map(|_| id);
             names.push(named.unwrap_or_else(|| (*seg).to_string()));
@@ -807,15 +830,15 @@ pub fn rule_names_inside(field: &crate::model::Field) -> bool {
     field.kind == "object" || field.kind == "ref"
 }
 
-/// The fields the names of a rule on `field` are looked for in, `siblings` the fields beside it.
-pub fn rule_names_under<'a>(
-    field: &'a crate::model::Field,
-    siblings: &'a [crate::model::Field],
-) -> &'a [crate::model::Field] {
+/// Where the names of a rule on `field` are looked for, as names from the card's fields down:
+/// `path` (the field's own, itself last) when they are looked for inside it, else its parent's —
+/// none for a field of the card itself, whose rule names the card's fields. The one place this is
+/// decided: the inspection resolves a rule's names from it, and a rename rewrites them from it.
+pub fn rule_names_base<'p>(field: &crate::model::Field, path: &'p [String]) -> &'p [String] {
     if rule_names_inside(field) {
-        &field.children
+        path
     } else {
-        siblings
+        &path[..path.len().saturating_sub(1)]
     }
 }
 
@@ -1331,6 +1354,9 @@ pub(crate) fn file_path(card: &Card, placed: &settings::Placed) -> String {
 
 /// What a card of `kind` is written as, if at all.
 fn content(card: &Card, setting: &ExportSetting) -> Option<Content> {
+    if setting.format.as_deref() == Some(crate::model::JSON_CONNECTIONS) {
+        return Some(Content::Lines);
+    }
     if card.kind == "instance" {
         return (setting.schema_format().as_deref() == Some(crate::model::JSON_DATA))
             .then_some(Content::Data);
@@ -1466,7 +1492,8 @@ pub(crate) fn layout_named(
     let mut files: HashMap<String, Planned> = HashMap::new();
     let mut order: Vec<String> = Vec::new();
     let mut problems = Vec::new();
-    for card in &project.detail.schemas {
+    let detail = project.detail;
+    for card in detail.schemas.iter().chain(&detail.inner) {
         for placed in placed(card, resolved) {
             let setting = &placed.setting;
             let Some(content) = content(card, setting) else {
@@ -1521,6 +1548,9 @@ pub(crate) fn layout_named(
                 if !file.cards.contains(&card.id) {
                     file.cards.push(card.id.clone());
                 }
+                if !file.rows.contains(&placed.entry) {
+                    file.rows.push(placed.entry);
+                }
             } else {
                 files.insert(
                     key.clone(),
@@ -1531,6 +1561,52 @@ pub(crate) fn layout_named(
                         cards: vec![card.id.clone()],
                         row: placed.row.clone(),
                         section: None,
+                        rows: vec![placed.entry],
+                    },
+                );
+                order.push(key);
+            }
+        }
+    }
+    // A file of the cards' lines is written with no card to say too.
+    for placed in &resolved.lines {
+        let path = placed
+            .setting
+            .path
+            .trim_matches(|c: char| c == ' ' || c == '\t')
+            .to_string();
+        let key = format!("{}\u{1}{path}", exports[placed.export].id);
+        match files.get_mut(&key) {
+            Some(file) if file.content == Content::Lines => {
+                if !file.rows.contains(&placed.entry) {
+                    file.rows.push(placed.entry);
+                }
+            }
+            Some(file) => problems.push(Problem::of(
+                placed.export,
+                keyed!(
+                    "export.layout.twoContents",
+                    name = exports[placed.export].name,
+                    path,
+                    first = file.content.label(),
+                    second = Content::Lines.label()
+                ),
+            )),
+            None => {
+                if let Some(problem) = ExportSetting::path_problem(&placed.setting.path) {
+                    problems.push(Problem::at(placed.export, &path, problem));
+                    continue;
+                }
+                files.insert(
+                    key.clone(),
+                    Planned {
+                        export: placed.export,
+                        path,
+                        content: Content::Lines,
+                        cards: Vec::new(),
+                        row: None,
+                        section: None,
+                        rows: vec![placed.entry],
                     },
                 );
                 order.push(key);
@@ -1571,6 +1647,7 @@ pub(crate) fn layout_named(
                 cards,
                 row: None,
                 section: Some(page.section.clone()),
+                rows: vec![page.entry],
             },
         );
         order.push(key);
@@ -1879,6 +1956,22 @@ fn build_in_language(
         }
     }
 
+    // The cards' lines, a card after another by its path, as one JSON: narrowed as the one entry
+    // that writes the file says.
+    for file in planned.iter().filter(|f| f.content == Content::Lines) {
+        let entry = exports[file.export].entries.iter().find(|e| {
+            e.is_lines() && e.to.trim_matches(|c: char| c == ' ' || c == '\t') == file.path
+        });
+        let cards: Vec<&Card> = file
+            .cards
+            .iter()
+            .filter_map(|id| project.card(id))
+            .collect();
+        out.entry(exports[file.export].id.clone())
+            .or_default()
+            .insert(file.path.clone(), lines::build(&project, &cards, entry));
+    }
+
     // Charts, notes and documents, linking to what is written in the same export.
     let mut used: Vec<usize> = planned.iter().map(|f| f.export).collect();
     used.sort();
@@ -1988,7 +2081,7 @@ fn build_in_language(
                         .or_default()
                         .insert(file.path.clone(), html);
                 }
-                Content::Types(_) | Content::Data => {}
+                Content::Types(_) | Content::Data | Content::Lines => {}
             }
         }
     }

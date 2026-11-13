@@ -1,10 +1,11 @@
 {
   "export.chart.fieldNotInShape": "欄「{field}」は、描くデータの形（{shapes}）にありません",
   "export.content.chart": "チャート",
-  "export.content.data": "データの JSON",
+  "export.content.data": "JSON Data",
   "export.content.document": "文書",
   "export.content.format": "{format}",
   "export.content.html": "HTML",
+  "export.content.lines": "JSON Connections",
   "export.content.mock": "UI のモック",
   "export.content.svg": "SVG",
   "export.data.empty": "{here}: データが空です",
@@ -35,6 +36,8 @@
   "export.problem.at": "{at}: {problem}",
   "export.settings.formatFolder": "エクスポート {export} の {row} 行目: format「{format}」はファイル 1 つに書くので、to「{to}」のフォルダには何も書きません（to をファイルのパスに）",
   "export.settings.fromGone": "エクスポート {export} の {row} 行目の from（{to} へ書く）が、もうありません（消えたカードかセクション）",
+  "export.settings.lineGone": "エクスポート {export} の {row} 行目（{to} へ書く JSON Connections）: lines の「{line}」は、もうプロジェクトに無い線の種類です",
+  "export.settings.linesTwice": "エクスポート {export} の {row} 行目: {to} は、前の行がもう JSON Connections として書きます（1 つのファイルに書く JSON Connections の行は 1 つ）",
   "export.settings.problem": "エクスポート {export}: {card}: {problem}",
   "export.settings.versionGone": "エクスポート {export} の {row} 行目の from（{to} へ書く）の版が、もうありません（{card} の消えた版）"
 }

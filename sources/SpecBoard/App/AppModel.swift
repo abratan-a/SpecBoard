@@ -492,6 +492,42 @@ final class AppModel {
     /// The agents connected, by host: their names, or their hosts as they are reached (`user@host`)
     /// when they have none (`RemoteHosts.Host.displayName`).
     private(set) var agentNames: [UUID: String] = [:]
+    /// The place of this Mac's own agent while it is connected (`RemoteHosts.local`): its projects
+    /// are this Mac's, listed and named as such.
+    private(set) var localAgentPlace: UUID?
+
+    /// Whether a place is this Mac: the store this app holds, or this Mac's own agent.
+    func isThisMac(_ place: UUID?) -> Bool {
+        place == nil || place == localAgentPlace
+    }
+
+    /// This Mac's projects still in the store this app holds, moved to this Mac's own agent: while
+    /// it is connected they are kept there. How many were moved.
+    @discardableResult
+    func settleThisMac() -> Int {
+        guard let place = localAgentPlace else { return 0 }
+        // As the store holds them now: another window may have moved them already.
+        if let localCore { try? readProjects(localCore) }
+        var moved = 0
+        for project in projects where project.place == nil {
+            if moveProject(project.id, to: place, telling: false, from: localCore) != nil { moved += 1 }
+        }
+        return moved
+    }
+
+    /// The projects this Mac's own agent keeps, moved back to the store this app holds, before the
+    /// agent is switched off. False when one could not be: the agent stays on.
+    func leaveLocalAgent() -> Bool {
+        guard let place = localAgentPlace else { return true }
+        for project in projects where project.place == place {
+            guard moveProject(project.id, to: nil, telling: false, from: agentCores[place]) != nil else { return false }
+        }
+        return true
+    }
+
+    /// Where what is made on, read into or moved to this Mac goes: its own agent while that is
+    /// connected, else the store this app holds.
+    var thisMacPlace: UUID? { localAgentPlace }
     /// The agents whose holds of this Mac's were let go of this run.
     @ObservationIgnored private var released: Set<UUID> = []
 
@@ -884,6 +920,14 @@ final class AppModel {
             if let merge = AIMerge(told) { tell(merge) }
             return
         }
+        // The hub's members, an agent's shares or what is shared with it changed: what the pages read
+        // of them from the core is read again.
+        if told["op"] as? String == "hub" {
+            DispatchQueue.main.async { [weak self] in
+                MainActor.assumeIsolated { self?.noticesHeard += 1 }
+            }
+            return
+        }
         guard told["op"] as? String == "changed" else { return }
         let first = rereads.isEmpty
         rereads.append((place, told["project"] as? String))
@@ -932,7 +976,9 @@ final class AppModel {
         guard let place = core.place else { return }
         agentCores[place]?.close()
         agentCores[place] = core
-        agentNames[place] = name
+        // This Mac's own agent is this Mac, wherever a place is named.
+        agentNames[place] = core.onThisMac ? L10n[.Common.wordThisMac] : name
+        if core.onThisMac { localAgentPlace = place }
         core.listen { [weak self] notice in
             DispatchQueue.main.async { MainActor.assumeIsolated { self?.heard(notice, from: place) } }
         }
@@ -948,6 +994,8 @@ final class AppModel {
         } catch {
             lastError = ErrorText.said(error)
         }
+        // While this Mac's own agent is on, this Mac's projects are kept there.
+        if core.onThisMac { settleThisMac() }
         defer { reportWindows() }
         guard let awaited, projects.contains(where: { $0.id == awaited.project && $0.place == place }) else { return }
         self.awaited = nil
@@ -996,6 +1044,11 @@ final class AppModel {
     /// from it closed, to be opened again when it is back.
     func agentGone(_ place: UUID, said: String) {
         guard agentCores.removeValue(forKey: place) != nil else { return }
+        if localAgentPlace == place {
+            localAgentPlace = nil
+            // What was moved back before it was switched off, by this window or another.
+            if let localCore { try? readProjects(localCore) }
+        }
         agentNames[place] = nil
         reportedWindows[place] = nil
         let open = detail?.project.id
@@ -2023,6 +2076,8 @@ final class AppModel {
     func showSettings(_ tab: SettingsTab) {
         guard let at = activeTab, case .settings = tabs[at] else { return }
         tabs[at] = .settings(tab)
+        // A row of an export is picked on the exports tab alone.
+        if tab != .exports { pickedExportEntry = nil }
         saveTabs()
     }
 
@@ -2675,6 +2730,46 @@ final class AppModel {
         }
     }
 
+    /// What `body` wrote was refused for, taken from the bubble to be said where it was typed (the bell's list
+    /// keeps it): nil when it went through.
+    func refusal(_ body: () -> Void) -> String? {
+        lastError = nil
+        body()
+        guard let said = lastError else { return nil }
+        lastError = nil
+        return said
+    }
+
+    /// The cards the window asks whether to delete (the Delete key), as the menus' 「カードを削除…」 asks.
+    var deleteAsk: [String]?
+
+    /// Asks whether to delete those of `ids` that are cards that can be — not what stands for a section on a map,
+    /// nor a working directory's file — and nothing where nothing can be changed.
+    func askToDelete(_ ids: [String]) {
+        guard !isReadOnly, let detail else { return }
+        let cards = ids.filter { id in
+            guard let card = schema(id) else { return false }
+            let section = detail.directory.sectionId(of: card)
+            return !isInWorkDir(section: section)
+        }
+        guard !cards.isEmpty else { return }
+        deleteAsk = cards
+    }
+
+    /// Asks whether to delete the card picked.
+    func askToDeleteSelected() {
+        guard let id = selectedSchemaId, schema(id) != nil else { return }
+        askToDelete([id])
+    }
+
+    /// The cards asked about, deleted in one write: one commit, taken back at once by ⌘Z.
+    func deleteAsked() {
+        let paths = (deleteAsk ?? []).compactMap { try? cardPath($0) }
+        deleteAsk = nil
+        guard !paths.isEmpty else { return }
+        write { _ = try tool("card_delete", target: paths) }
+    }
+
     // MARK: - ⌘Z (`specboard://SpecBoard/Docs/Features/Change:History`「⌘Z で戻し」)
 
     /// The window's undo: each commit the window writes is put on it, to be taken back by a commit of
@@ -2685,6 +2780,18 @@ final class AppModel {
     /// The newest commit's number in the tree open of `projectId`.
     private func newestCommit(_ projectId: String) -> Int? {
         try? core?.commits(projectId, branch: openTrees[projectId], limit: 1).first?.seq
+    }
+
+    /// `body` written through `ownWrite`, and the commit it made put on ⌘Z as `write` does: for the
+    /// window's writes that do not go through `write` (a card, a field or a section made, a node's rows).
+    private func undoable<T>(_ body: () throws -> T) throws -> T {
+        let projectId = detail?.project.id
+        let before = undoManager == nil ? nil : projectId.flatMap { newestCommit($0) }
+        let result = try ownWrite(body)
+        if let projectId, let before, let made = newestCommit(projectId), made != before {
+            canTakeBack(made, projectId)
+        }
+        return result
     }
 
     /// Commit `seq` put on the undo (or, while an undo runs, the redo) to be taken back — in the tree it
@@ -2793,7 +2900,7 @@ final class AppModel {
     /// (The MCP tool deliberately does not — an agent creating one in the background
     /// is a different situation.) Made where `place` says: this Mac (nil), or an agent.
     func createProject(name: String, description: String = "", in place: UUID? = nil) {
-        guard let core = core(at: place) else { return }
+        guard let core = core(at: place ?? thisMacPlace) else { return }
         do {
             let before = Set(projects.map(\.id))
             _ = try ownWrite {
@@ -2837,14 +2944,17 @@ final class AppModel {
     /// first, whole, so nothing that was here is lost; this Mac's settings for it
     /// (the export root, the access keys) stay. Read into this Mac's projects.
     func readProjectFile(_ text: String, copy: Bool) {
-        guard let core = localCore else { return }
+        guard let into = core(at: thisMacPlace) else { return }
         do {
             guard let found = peekProjectFile(text) else {
                 throw CoreClient.Refusal(L10n[.Model.errorNotProjectFile])
             }
+            // In place of the project with its id: where that one is kept, of this Mac's stores.
+            let there = projects.first { $0.id == found.id && isThisMac($0.place) }
+            let core = copy ? into : there.flatMap { self.core(at: $0.place) } ?? into
             let id: String
             if copy {
-                let names = Set(projects.filter { $0.place == nil }.map(\.name))
+                let names = Set(projects.filter { isThisMac($0.place) }.map(\.name))
                 var name = found.name, n = 2
                 if names.contains(name) { name = L10n[.Model.importName(found.name)] }
                 while names.contains(name) { name = L10n[.Model.importNameNumbered(found.name, n)]; n += 1 }
@@ -2854,7 +2964,7 @@ final class AppModel {
                 id = (read as? [String: Any])?["project"] as? String ?? found.id
             } else {
                 // What was here goes to the archive first, whole, so nothing is lost.
-                let archiveFirst = projects.contains { $0.id == found.id && $0.place == nil && !$0.isArchived }
+                let archiveFirst = there.map { !$0.isArchived } ?? false
                 let read = try ownWrite {
                     try core.request("project_file_read", ["text": text, "landing": "replace", "archiveFirst": archiveFirst])
                 }
@@ -2873,14 +2983,14 @@ final class AppModel {
     /// The project a file holds, its id and name, as the core reads it (`project_file_peek`); nil
     /// for what is no project file.
     func peekProjectFile(_ text: String) -> (id: String, name: String)? {
-        guard let read = (try? localCore?.request("project_file_peek", ["text": text])) as? [String: Any],
+        guard let read = (try? core(at: thisMacPlace)?.request("project_file_peek", ["text": text])) as? [String: Any],
               let id = read["id"] as? String, let name = read["name"] as? String else { return nil }
         return (id, name)
     }
 
     /// Whether a project with the file's id is on this Mac already — reading it in would
     /// then mean choosing between replacing it and keeping both.
-    func projectExists(_ projectId: String) -> Bool { projects.contains { $0.id == projectId && $0.place == nil } }
+    func projectExists(_ projectId: String) -> Bool { projects.contains { $0.id == projectId && isThisMac($0.place) } }
 
     func archiveProject(_ projectId: String) {
         editProjects(projectId) { _ = try $0.request("project_archive", ["project": projectId]) }
@@ -2949,35 +3059,71 @@ final class AppModel {
     /// file kept on this Mac, and then let go of where it was. What is the store's own stays (the
     /// folders bound, the keys, public). Not while a tree of it is being put right in one go. The file
     /// kept, or nil.
+    /// `telling`: said in a notice, as a move a person asked for is. `source`: the store it is
+    /// moved from, when the list cannot say — a move cut short leaves it in both of this Mac's.
     @discardableResult
-    func moveProject(_ projectId: String, to place: UUID?) -> URL? {
-        guard let from = core(of: projectId), let to = core(at: place), from !== to,
+    func moveProject(_ projectId: String, to place: UUID?, telling: Bool = true, from source: CoreClient? = nil) -> URL? {
+        guard let from = source ?? core(of: projectId), let to = core(at: place), from !== to,
               let summary = projects.first(where: { $0.id == projectId }) else { return nil }
         do {
             let trees = [nil] + (try from.branches(projectId)).map { Optional($0.id) } + [Board.id]
             if try trees.contains(where: { !(try from.holds(projectId, branch: $0)).isEmpty }) {
                 throw CoreClient.Refusal(L10n[.Model.errorMoveWhileGrouping])
             }
-            let bundle = try from.request("project_bundle", ["project": projectId])
-            _ = try ownWrite { try to.request("project_bundle_read", ["bundle": bundle]) }
-            do {
-                _ = try to.detail(projectId, branch: nil)
-            } catch {
-                _ = try? ownWrite { () throws -> Any in try to.request("project_delete", ["project": projectId]) }
-                throw CoreClient.Refusal(L10n[.Model.errorMoveCantOpen(ErrorText.said(error))])
+            // Between this Mac's two stores, what the store keeps of this machine goes too (the
+            // folders bound): they are this Mac's either way.
+            let machine = from.onThisMac && to.onThisMac
+            // Between this Mac's two stores, a move cut short before left it in both: finished now.
+            if machine, let there = try to.projects().first(where: { $0.id == projectId }) {
+                let here = try from.projects().first { $0.id == projectId }
+                if let here, here.updatedAt > there.updatedAt {
+                    // Written where it was since: that one is the project. What the move left
+                    // behind goes (its file kept), and the move is made again.
+                    let text = (try to.request("project_file", ["project": projectId]) as? [String: Any])?["text"] as? String ?? ""
+                    _ = try keepMoved(text, slug: summary.slug)
+                    _ = try ownWrite { try to.request("project_delete", ["project": projectId]) }
+                } else {
+                    // What the move put there is as new: only letting go of the one left behind
+                    // remained to be done.
+                    let text = (try from.request("project_file", ["project": projectId]) as? [String: Any])?["text"] as? String ?? ""
+                    let kept = try keepMoved(text, slug: summary.slug)
+                    _ = try ownWrite { try from.request("project_delete", ["project": projectId]) }
+                    try readProjects(from)
+                    try readProjects(to)
+                    try? readPublic(to)
+                    if detail?.project.id == projectId { show(projectId) }
+                    lastError = nil
+                    return kept
+                }
             }
-            let text = (try from.request("project_file", ["project": projectId]) as? [String: Any])?["text"] as? String ?? ""
-            let kept = try keepMoved(text, slug: summary.slug)
-            _ = try ownWrite { try from.request("project_delete", ["project": projectId]) }
+            let bundle = try from.request("project_bundle", ["project": projectId, "machine": machine])
+            _ = try ownWrite { try to.request("project_bundle_read", ["bundle": bundle, "machine": machine]) }
+            let kept: URL
+            do {
+                do {
+                    _ = try to.detail(projectId, branch: nil)
+                } catch {
+                    throw CoreClient.Refusal(L10n[.Model.errorMoveCantOpen(ErrorText.said(error))])
+                }
+                let text = (try from.request("project_file", ["project": projectId]) as? [String: Any])?["text"] as? String ?? ""
+                kept = try keepMoved(text, slug: summary.slug)
+                _ = try ownWrite { try from.request("project_delete", ["project": projectId]) }
+            } catch {
+                // Still where it was: what was put there is taken away again, so it is in one place.
+                _ = try? ownWrite { () throws -> Any in try to.request("project_delete", ["project": projectId]) }
+                throw error
+            }
             try readProjects(from)
             try readProjects(to)
             try? readPublic(to)
             if detail?.project.id == projectId { show(projectId) }
             lastError = nil
             let host = place.flatMap { agentNames[$0] }
-            tell(notice: { code in
-                L10n.text(.Model.noticeMoved(summary.name, host ?? L10n.text(.Common.wordThisMac, in: code), kept.path), in: code)
-            })
+            if telling {
+                tell(notice: { code in
+                    L10n.text(.Model.noticeMoved(summary.name, host ?? L10n.text(.Common.wordThisMac, in: code), kept.path), in: code)
+                })
+            }
             return kept
         } catch {
             lastError = ErrorText.said(error)
@@ -3051,7 +3197,7 @@ final class AppModel {
             value["kind"] = kindName
             if !label.isEmpty { value["label"] = label }
             let name = PathText.trimmed(name)
-            try ownWrite { _ = try tool("card_create", target: PathText.cardPath(section, name), value: value) }
+            try undoable { _ = try tool("card_create", target: PathText.cardPath(section, name), value: value) }
             lastError = nil
             // What was made is handed back, so it is read before this returns.
             readWritten(projectId, now: true)
@@ -3336,7 +3482,7 @@ final class AppModel {
         do {
             let under = try parentFieldId.map(fieldPath) ?? cardPath(schemaId)
             let name = PathText.trimmed(name)
-            try ownWrite { _ = try tool("card_create", target: PathText.member(under, name), value: ["type": type.rawValue]) }
+            try undoable { _ = try tool("card_create", target: PathText.member(under, name), value: ["type": type.rawValue]) }
             lastError = nil
             readWritten(projectId) { [weak self] in
                 guard let self else { return }
@@ -3463,7 +3609,7 @@ final class AppModel {
             // The node is a card inside its flow. One row's own keys are written on the row
             // (`steps[n]`, only the keys that changed); a change of the lines, or of more than one row,
             // on the node, as the lines that came and went and the rows.
-            try ownWrite {
+            try undoable {
                 guard let value = try nodeChange(flow, from: was, to: held) else { return }
                 let place = try PathText.member(cardPath(id), node)
                 if value.keys.allSatisfy({ $0 == "steps" }), let row = NodeWrite.rowEdit(from: was, to: held) {
@@ -3526,7 +3672,7 @@ final class AppModel {
             return
         }
         do {
-            try ownWrite {
+            try undoable {
                 let place = try PathText.member(cardPath(id), node)
                 switch change {
                 case .add(let op, let at):
@@ -3622,9 +3768,9 @@ final class AppModel {
             .flatMap { detail?.sectionHolds[$0] }
         let builtin: [SchemaKind]
         switch (kind, defined) {
-        case (let kind?, _): builtin = SchemaKind.made.filter(kind.holds.contains)
-        // A kind of section the project defines: the built-in kinds its definition holds.
-        case (nil, let holds?): builtin = SchemaKind.made.filter { holds.contains("*") || holds.contains($0.rawValue) }
+        // The core's definition of the kind of section says what it holds; the app's own list only while none is read.
+        case (_, let holds?): builtin = SchemaKind.made.filter { holds.contains("*") || holds.contains($0.rawValue) }
+        case (let kind?, nil): builtin = SchemaKind.made.filter(kind.holds.contains)
         case (nil, nil): builtin = SchemaKind.made
         }
         let own = (detail?.cardKinds.own(heldBy: defined ?? (kind == nil ? ["*"] : [])) ?? []).map(\.kind)
@@ -3676,7 +3822,7 @@ final class AppModel {
             if let type { value["type"] = type }
             if let written = figure?.written { value["figure"] = written }
             if let icon { value["icon"] = Self.written(icon) }
-            try ownWrite { _ = try tool("section_create", target: path, value: value.isEmpty ? nil : value) }
+            try undoable { _ = try tool("section_create", target: path, value: value.isEmpty ? nil : value) }
             lastError = nil
             readWritten(projectId) { [weak self] in
                 if let made = self?.detail?.sections.first(where: { $0.name == name && ($0.parentId ?? "") == parent }) {
@@ -3996,6 +4142,8 @@ final class AppModel {
     /// (`file:<directory>/<path>`): which export, and how it stands.
     var exports = ExportsRead()
     var exportMarks: [String: ExportMark] = [:]
+    /// The row of an export picked on the exports tab, for the property panel.
+    var pickedExportEntry: ExportEntryRef?
     /// What the last change to the exports went through with but warned of: a row that leaves cards
     /// out, and why (`changeExports`). Said where the change was made.
     var exportWarnings: [String] = []

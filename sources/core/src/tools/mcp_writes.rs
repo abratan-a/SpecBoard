@@ -860,23 +860,7 @@ pub(crate) fn judge(
     if who.side != Side::Mcp {
         return Ok(Vec::new());
     }
-    let mut asks = Vec::new();
-    let mut key_denied = Vec::new();
-    if let Some(item) = key_touched(tool, args)
-        && let Some(caller) = access::caller()
-    {
-        match caller_state(&caller, item) {
-            State::Allow => {}
-            State::Ask => asks.push(Asked {
-                item,
-                whose: Whose::Key {
-                    id: caller.key.clone(),
-                    name: caller.name.clone(),
-                },
-            }),
-            State::Deny => key_denied.push(item),
-        }
-    }
+    let (mut asks, key_denied) = key_judged(tool, args);
     let board = match batch {
         Some(named) => named.tree == BOARD,
         None => args
@@ -932,6 +916,40 @@ pub(crate) fn judge(
         Ok(asks)
     } else {
         Err(denied(&project_denied, &key_denied))
+    }
+}
+
+/// The key's item a call of `tool` touches, as the caller's key stands with it: to be asked of a
+/// person, or denied; nothing for an item allowed, a tool that touches none, or a call with no key.
+fn key_judged(tool: &str, args: &Args) -> (Vec<Asked>, Vec<&'static Item>) {
+    let (mut asks, mut denied) = (Vec::new(), Vec::new());
+    if let Some(item) = key_touched(tool, args)
+        && let Some(caller) = access::caller()
+    {
+        match caller_state(&caller, item) {
+            State::Allow => {}
+            State::Ask => asks.push(Asked {
+                item,
+                whose: Whose::Key {
+                    id: caller.key.clone(),
+                    name: caller.name.clone(),
+                },
+            }),
+            State::Deny => denied.push(item),
+        }
+    }
+    (asks, denied)
+}
+
+/// A call judged by the key's items alone, for a project that is another agent's: the project's
+/// items are its owner's to judge (`hub`). Refused when the item it touches is denied; else what a
+/// person is to be asked about.
+pub(crate) fn judge_key(tool: &str, args: &Args) -> Result<Vec<Asked>, String> {
+    let (asks, key_denied) = key_judged(tool, args);
+    if key_denied.is_empty() {
+        Ok(asks)
+    } else {
+        Err(denied(&[], &key_denied))
     }
 }
 

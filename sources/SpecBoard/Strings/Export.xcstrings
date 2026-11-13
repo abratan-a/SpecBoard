@@ -577,6 +577,24 @@
         }
       }
     },
+    "entry.narrowedHelp" : {
+      "comment" : "Tooltip of the mark on a row narrowed by kinds of card or of line; the argument lists them.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrowed to: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "絞っています: %@"
+          }
+        }
+      }
+    },
     "entry.removeHelp" : {
       "comment" : "Tooltip of the button that removes a row of an export.",
       "extractionState" : "manual",
@@ -908,13 +926,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Each export decides what to write where. The folder it is written to is the export's default folder (set on %@) or the folder you choose when exporting. Exporting from a section includes the cards of writable kinds in it and in the sections under it (unless limited by kind, flows are left out, and notes are included only in schema sections), and a single card is written by the row nearest to it. This is a project setting: it does not change per branch and main's lock does not apply."
+            "value" : "Each export decides what to write where. The folder it is written to is the export's default folder (set on %@) or the folder you choose when exporting. Exporting from a section includes the cards of writable kinds in it and in the sections under it (unless limited by kind, flows are left out, and notes are included only in schema sections), and a single card is written by the row nearest to it (a JSON Connections row alone is apart: it writes every line under its section). This is a project setting: it does not change per branch and main's lock does not apply."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エクスポートごとに、何をどこに書くかを決めます。書く先のフォルダは、エクスポートごとの既定の先（%@の設定）か、書くときに選んだフォルダです。セクションから書くと、下のセクションまでの書ける種類のカードが入り（種類で絞らなければ flow は入らず、note はスキーマのセクションだけ）、1 枚のカードはそれに一番近い行で書かれます。プロジェクトの設定で、branch では変わらず、main のロックも受けません"
+            "value" : "エクスポートごとに、何をどこに書くかを決めます。書く先のフォルダは、エクスポートごとの既定の先（%@の設定）か、書くときに選んだフォルダです。セクションから書くと、下のセクションまでの書ける種類のカードが入り（種類で絞らなければ flow は入らず、note はスキーマのセクションだけ）、1 枚のカードはそれに一番近い行で書かれます（JSON Connections の行だけは別で、そのセクションの下の線を全部書きます）。プロジェクトの設定で、branch では変わらず、main のロックも受けません"
           }
         }
       }
@@ -1245,6 +1263,240 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "（前に書いて今回書かない %lld ファイルを消しました）"
+          }
+        }
+      }
+    },
+    "panel.all" : {
+      "comment" : "Faint text of an empty kinds or lines field in the property panel of an export's row: nothing narrows it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて"
+          }
+        }
+      }
+    },
+    "panel.cardsHelp" : {
+      "comment" : "What the cards property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many cards the files this row writes hold."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行が書くファイルに入るカードの数"
+          }
+        }
+      }
+    },
+    "panel.empty" : {
+      "comment" : "Shown in the property panel on the exports tab while no row is picked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a row, and its settings appear here"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行を選ぶと、その設定がここに出ます"
+          }
+        }
+      }
+    },
+    "panel.filesHelp" : {
+      "comment" : "What the files property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The files this row writes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この行が書くファイル"
+          }
+        }
+      }
+    },
+    "panel.filesMore" : {
+      "comment" : "After the first files of a row that writes many; the argument is how many more.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほか %lld"
+          }
+        }
+      }
+    },
+    "panel.formatHelp" : {
+      "comment" : "What the format property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The format written. “From extension” takes it from to's extension (.ts TypeScript, .zod.ts Zod, .json JSON Schema). JSON Data writes the data cards' contents and JSON Connections the cards' lines, each into one .json file."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く形式。「拡張子から」は、to の拡張子で決めます（.ts は TypeScript、.zod.ts は Zod、.json は JSON Schema）。JSON Data はデータのカードの中身を、JSON Connections はカードの線を、1 つの .json に書きます"
+          }
+        }
+      }
+    },
+    "panel.fromHelp" : {
+      "comment" : "What the from property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The card or section written out. It is not changed here: remove the row and add one."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポートするカードかセクション。ここでは変えられません（行を外して、足し直します）"
+          }
+        }
+      }
+    },
+    "panel.kindsHelp" : {
+      "comment" : "What the kinds property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The kinds of card written, for a section's row (separated by commas). Empty: every card of a kind to can hold (every kind, for a JSON Connections row)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くカードの種類（セクションの行のとき。カンマで区切ります）。空なら、to に書ける種類のカード全部（JSON Connections の行は全部の種類）"
+          }
+        }
+      }
+    },
+    "panel.linesHelp" : {
+      "comment" : "What the lines property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The kinds of line written (separated by commas). Empty: all of them."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書く線の種類（カンマで区切ります）。空なら全部"
+          }
+        }
+      }
+    },
+    "panel.row" : {
+      "comment" : "Title of the property panel's group for an export's row picked: its settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行"
+          }
+        }
+      }
+    },
+    "panel.statusHelp" : {
+      "comment" : "What the status property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How the files stand against what was written last."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前に書いたものと比べた、ファイルの様子"
+          }
+        }
+      }
+    },
+    "panel.toHelp" : {
+      "comment" : "What the to property of an export's row means.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file written: a path in the export folder. Ending with /, a folder, with a file for each card."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くファイル（エクスポート先の中のパス）。/ で終わればフォルダで、カードごとのファイルになります"
+          }
+        }
+      }
+    },
+    "panel.writes" : {
+      "comment" : "Title of the property panel's group for an export's row picked: what it writes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What it writes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書くもの"
           }
         }
       }

@@ -53,7 +53,7 @@ fn typed(
     project: &str,
     tree: Option<&str>,
 ) -> Result<crate::model::Detail, String> {
-    crate::model::typed(&crate::detail::read(reader, project, tree)?)
+    crate::detail::typed(reader, project, tree)
 }
 
 struct Own {
@@ -103,8 +103,20 @@ pub(crate) fn branch_diff(
     branch: &str,
     whole: bool,
 ) -> Result<BranchDiff, String> {
+    branch_diff_read(reader, reader, project, branch, whole)
+}
+
+/// `branch_diff`, the branch's own tree read by `mine_by`: what reads it in passing does not have
+/// it kept.
+fn branch_diff_read(
+    reader: &Reader,
+    mine_by: &Reader,
+    project: &str,
+    branch: &str,
+    whole: bool,
+) -> Result<BranchDiff, String> {
     let main = typed(reader, project, None)?;
-    let mine = typed(reader, project, Some(branch))?;
+    let mine = typed(mine_by, project, Some(branch))?;
     let main_names = crate::export::Project::new(&main);
     let my_names = crate::export::Project::new(&mine);
     let cards = own_rows(reader, "card_docs", project, branch)?;
@@ -520,24 +532,45 @@ pub(crate) fn verify_gone() -> String {
 /// Each branch, a row apiece: how much it changed, how much main did since it was made, and
 /// when it was merged if nothing was written in it since (`branchesView`: what
 /// it sees hidden and shares is `branch_read`'s, what is wrong in it `inspection_list`'s).
+///
+/// Each row holds its branch against main, read whole: the list is kept while the store stands as
+/// it was read (`kept`), as main's tree is. A branch's tree is read in passing — the list says
+/// all that is wanted of it, and every branch's kept would take the room of the trees read again.
 pub(crate) fn branches_view(reader: &Reader, project: &str) -> Result<Value, String> {
-    let mut rows = Vec::new();
-    for (id, name) in super::branches(reader.conn, project)? {
-        let diff = branch_diff(reader, project, &id, false)?;
-        let mut row = Map::new();
-        row.insert("branch".into(), name.into());
-        row.insert("changes".into(), diff.changes().into());
-        if diff.changes() == 0
-            && let Some(at) = merged_at(reader, project, &id)?
-        {
-            row.insert("merged".into(), at.into());
+    let make = || -> Result<(Value, usize), String> {
+        let passing = reader.passing();
+        let mut rows = Vec::new();
+        for (id, name) in super::branches(reader.conn, project)? {
+            let diff = branch_diff_read(reader, &passing, project, &id, false)?;
+            let mut row = Map::new();
+            row.insert("branch".into(), name.into());
+            row.insert("changes".into(), diff.changes().into());
+            if diff.changes() == 0
+                && let Some(at) = merged_at(reader, project, &id)?
+            {
+                row.insert("merged".into(), at.into());
+            }
+            if diff.main_moved() > 0 {
+                row.insert("mainMoved".into(), diff.main_moved().into());
+            }
+            rows.push(Value::Object(row));
         }
-        if diff.main_moved() > 0 {
-            row.insert("mainMoved".into(), diff.main_moved().into());
-        }
-        rows.push(Value::Object(row));
-    }
-    Ok(Value::Array(rows))
+        let rows = Value::Array(rows);
+        let weight = crate::kept::weigh(&rows);
+        Ok((rows, weight))
+    };
+    let Some(at) = &reader.at else {
+        return make().map(|(rows, _)| rows);
+    };
+    at.reading(
+        crate::kept::Kind::Branches,
+        project,
+        "",
+        || crate::workdir::kept_by(reader.conn, project),
+        make,
+        |kept, made| kept == made,
+    )
+    .map(|rows| (*rows).clone())
 }
 
 /// `branch_create`, `branch_update` and `branch_delete`, written in a transaction already

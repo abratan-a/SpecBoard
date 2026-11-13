@@ -185,7 +185,8 @@ impl Core {
             // A project whole, to move it to another store and back (`write::bundle`).
             "project_bundle" => {
                 let project = text(request, "project", op, &text!("ops.what.projectId"))?;
-                write::bundle(&self.reading()?.conn, project)
+                let machine = request.get("machine").and_then(Value::as_bool) == Some(true);
+                write::bundle(&self.reading()?.conn, project, machine)
             }
             "project_bundle_read" => {
                 let bundle = request
@@ -199,8 +200,9 @@ impl Core {
                             what = text!("ops.what.bundle")
                         )
                     })?;
+                let machine = request.get("machine").and_then(Value::as_bool) == Some(true);
                 self.plain_writing(Who::screen_for(request), |tx| {
-                    tx.read_bundle(bundle)
+                    tx.read_bundle(bundle, machine)
                         .map(|project| json!({ "project": project }))
                 })
             }

@@ -77,3 +77,8 @@ license = "MIT OR Apache-2.0"
 [workspace.dependencies]
 # Keeps the order of keys: a document's keys (the parameters of a rule, say) come back as written
 serde_json = { version = "1", features = ["preserve_order"] }
+
+# The Linux agent's allocator is C: built unoptimized with the tests, every allocation of the agent's tests is
+# slow enough to bring the ones that time thousands of writes near their limit.
+[profile.dev.package.libmimalloc-sys]
+opt-level = 3

@@ -715,3 +715,44 @@ fn page_whole(core: &Core) -> Vec<String> {
         .map(|c| c["path"].as_str().unwrap().to_string())
         .collect()
 }
+
+#[test]
+fn op_written_inside_value_is_told_to_go_beside_target() {
+    let core = sample();
+    goal(&core, "Inside", json!({}));
+    let (refused, said) = common::call(
+        &core,
+        "card_action",
+        json!({"project": PROJECT, "branch": BOARD, "target": "Goals:Inside", "value": {"op": "done"}}),
+    );
+    assert!(refused, "{said}");
+    assert!(said.contains("value の中に書かれています"), "{said}");
+    assert!(said.contains("target と並べて"), "{said}");
+}
+
+#[test]
+fn a_goal_whose_branch_was_merged_offers_to_continue_on_a_new_branch() {
+    let core = sample();
+    goal(&core, "Ship2", json!({}));
+    let start = |core: &Core| {
+        ok(
+            core,
+            "card_read",
+            json!({"branch": BOARD, "target": "Goals:Ship2", "value": {"include": ["actions"]}}),
+        )["actions"][0]
+            .clone()
+    };
+    assert_eq!(start(&core)["label"], "開始");
+    action(&core, "Goals:Ship2", "start", json!({})).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"branch": "ship2", "target": "Free:ShipMemo", "value": {"kind": "note", "body": "メモ"}}),
+    );
+    ok(&core, "branch_merge", json!({"target": "ship2"}));
+    let after = start(&core);
+    assert_eq!(after["op"], "start", "{after}");
+    assert_eq!(after["available"], true, "{after}");
+    assert_eq!(after["label"], "続ける（新しい branch）", "{after}");
+    assert_eq!(after["suggestedBranch"], "ship2-2", "{after}");
+}

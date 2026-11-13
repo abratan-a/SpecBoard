@@ -64,7 +64,7 @@ fn under_root(
     project: &str,
     tree: Option<&str>,
 ) -> Result<(Option<String>, Vec<Under>), String> {
-    let seen = Reader { conn }.compose(project, tree)?;
+    let seen = Reader::of(conn).compose(project, tree)?;
     let root = seen
         .sections
         .iter()

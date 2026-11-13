@@ -11,9 +11,19 @@ publish = false
 license.workspace = true
 
 [dependencies]
-serde_json.workspace = true
+# `raw_value`: the hub hands the body of a line on as it was written, without reading it
+# (`hub::serve`).
+serde_json = { workspace = true, features = ["raw_value"] }
+serde = { version = "1", features = ["derive"] }
 specboard-core = { path = "..", features = ["dynamic-grammars"] }
 libc = "0.2"
+
+# The agent's allocator on Linux: musl's (the agent is linked statically with it) and glibc's keep what
+# a read of a whole project let go of, so a long-running agent grows to the most it ever held at once.
+[target.'cfg(target_os = "linux")'.dependencies]
+# Without transparent huge pages: on a host that gives them to every process, a freed block inside one
+# would keep the whole page.
+mimalloc = { version = "0.1", default-features = false, features = ["no_thp"] }
 
 [dev-dependencies]
 # A database a newer core moved on is made in the tests by writing its mark.

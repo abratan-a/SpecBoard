@@ -185,7 +185,7 @@ fn branches(conn: &Connection, project: &str) -> Result<Vec<String>, String> {
 
 /// What a tree sees, `""` for main.
 fn compose(conn: &Connection, project: &str, tree: &str) -> Result<Composition, String> {
-    Reader { conn }.compose(project, (!tree.is_empty()).then_some(tree))
+    Reader::of(conn).compose(project, (!tree.is_empty()).then_some(tree))
 }
 
 fn text<'d>(doc: &'d Doc, key: &str) -> &'d str {
@@ -524,7 +524,7 @@ pub(crate) fn apply(tx: &mut Tx, project: &str, projects: &[TreeProject]) -> Res
             .chain(branch_ids.iter().cloned())
         {
             let branch = (!tree.is_empty()).then_some(tree.as_str());
-            let detail = crate::model::typed(&crate::detail::read(&tx.reader(), project, branch)?)?;
+            let detail = crate::detail::typed(&tx.reader(), project, branch)?;
             before.push((tree, detail));
         }
     }

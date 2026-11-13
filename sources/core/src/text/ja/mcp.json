@@ -5,6 +5,7 @@
   "mcp.call.shapeHint": "（引数の形は guide の about: {name}）",
   "mcp.complaint.badValues": "{prefix}{key} に使えない値です: {unknown}。使えるのは {names}",
   "mcp.complaint.guideHint": "（形は guide の about: {key}）",
+  "mcp.complaint.insideValue": "（value の中に書かれています。{name} は target と並べて引数の一番上に書きます）",
   "mcp.complaint.itemNotString": "{prefix}{key}[{index}] は string で指定してください（渡されたのは {given}）",
   "mcp.complaint.noKeys": "{path} にはキーがありません（書かれたのは {given}）",
   "mcp.complaint.noNull": "{prefix}{key} に null は渡せません（変えないなら省いてください）",

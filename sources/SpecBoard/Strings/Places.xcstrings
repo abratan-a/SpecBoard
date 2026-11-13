@@ -19,6 +19,24 @@
         }
       }
     },
+    "addHubForm.note" : {
+      "comment" : "Explanation in the popover that adds a hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hub runs as a user of its own on a host that stays up (for example sbhub@host). It opens no network port: agents reach it over SSH with a key that can do nothing else."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブは、起きたままのホストの専用の利用者で動かします（例: sbhub@host）。ネットワークに口を開けず、エージェントは、ほかに何もできない鍵で SSH から繋ぎます。"
+          }
+        }
+      }
+    },
     "agent.linuxLabel" : {
       "comment" : "Name of the kind of host an agent is carried for, used inside a failure message.",
       "extractionState" : "manual",
@@ -62,13 +80,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Access keys and public settings are kept in the agent itself, so they can be seen only while it is connected (connect it in the “Connection” tab)"
+            "value" : "The hub, access keys and public settings are kept in the agent itself, so they can be seen only while it is connected (connect under \"Connection\")"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アクセスキーと公開は、エージェントの本体に置いているので、繋がっている間だけ見られます（接続は「接続」で）"
+            "value" : "ハブ・アクセスキー・公開は、エージェントの本体に置いているので、繋がっている間だけ見られます（接続は「接続」で）"
           }
         }
       }
@@ -105,6 +123,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SSH の接続先を足すと、そこにエージェントを置いて起こします。エージェントはそこでプロジェクトを持ちます"
+          }
+        }
+      }
+    },
+    "column.addHub" : {
+      "comment" : "Button under the list of places, and the title of the form it opens.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブを追加"
+          }
+        }
+      }
+    },
+    "column.addHubHelp" : {
+      "comment" : "Tooltip of the Add hub button.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add the SSH destination of the user the hub runs as. The hub is put there and started. It keeps no projects: it passes requests between your agents."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブを動かす利用者の SSH の接続先を足すと、そこにハブを置いて起こします。ハブはプロジェクトを持たず、エージェントどうしの頼みを渡します"
           }
         }
       }
@@ -529,6 +583,1248 @@
         }
       }
     },
+    "hub.about" : {
+      "comment" : "The 'Hub' tab of an agent's settings: what the tab is for.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share this agent's projects with your other agents through the hub, and use the projects they share. The projects stay with the agent that has them: the hub only passes requests on. The AI sessions here use shared projects with this agent's own access keys."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントのプロジェクトを、ハブを通してほかのエージェントと共有し、ほかのエージェントが共有しているプロジェクトを使います。プロジェクトは持っているエージェントに置いたままで、ハブは頼みを渡すだけです。ここの AI のセッションは、共有されたプロジェクトを、このエージェントのアクセスキーで使います。"
+          }
+        }
+      }
+    },
+    "hub.afterJoin" : {
+      "comment" : "The 'Hub' tab of an agent's settings: shown under the form that joins the agent to a hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared projects appear here once this agent is in the hub."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに加えると、共有するプロジェクトと、共有されているプロジェクトがここに並びます。"
+          }
+        }
+      }
+    },
+    "hub.down" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the link to the hub dropped; the arguments are the time, why, and the seconds until it is tried again.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnected at %@ (%@). Trying again in %@ s"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に切れました（%@）。%@ 秒後に繋ぎ直します"
+          }
+        }
+      }
+    },
+    "hub.fieldHub" : {
+      "comment" : "The 'Hub' tab of an agent's settings: label of the hub to join.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブ"
+          }
+        }
+      }
+    },
+    "hub.fieldTo" : {
+      "comment" : "The 'Hub' tab of an agent's settings: label of the hub's SSH destination as the agent's host reaches it.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hub address from this host"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホストから見たハブの宛先"
+          }
+        }
+      }
+    },
+    "hub.fieldToNote" : {
+      "comment" : "The 'Hub' tab of an agent's settings: note beside the hub's address.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "as this host reaches it over SSH"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このホストから SSH で繋ぐときの宛先"
+          }
+        }
+      }
+    },
+    "hub.from" : {
+      "comment" : "The 'Hub' tab of an agent's settings: who shares a project with this agent; the argument is that agent's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から"
+          }
+        }
+      }
+    },
+    "hub.hubAway" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the hub chosen to join is not connected from this app.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This hub is not connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このハブに繋がっていません"
+          }
+        }
+      }
+    },
+    "hub.in" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the agent is in a hub; the argument is the hub's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ に参加中"
+          }
+        }
+      }
+    },
+    "hub.inUnknown" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the agent is in a hub this app does not have among its places.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In a hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに参加中"
+          }
+        }
+      }
+    },
+    "hub.join" : {
+      "comment" : "The 'Hub' tab of an agent's settings: button that joins the agent to the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに加える"
+          }
+        }
+      }
+    },
+    "hub.joinNote" : {
+      "comment" : "The 'Hub' tab of an agent's settings: explanation of what joining does.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joining makes a key on this host that can only connect to the hub, and adds it to the hub. Nothing else on either host is given access."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加えると、このホストに、ハブへ繋ぐことしかできない鍵を作り、ハブに足します。どちらのホストにも、ほかのものへのアクセスは渡しません。"
+          }
+        }
+      }
+    },
+    "hub.keysNote" : {
+      "comment" : "The 'Hub' tab of an agent's settings: note under the projects shared with the agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Which access keys may use them is set in Access keys. A shared project can be used only as far as both the share and the key allow."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのアクセスキーで使えるかは「アクセスキー」で決めます。共有されたプロジェクトは、共有とキーの許可の両方が許す範囲でだけ使えます。"
+          }
+        }
+      }
+    },
+    "hub.leave" : {
+      "comment" : "The 'Hub' tab of an agent's settings: button that takes the agent out of the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave hub…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブから外す…"
+          }
+        }
+      }
+    },
+    "hub.leaveConfirm" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the confirming button of the confirmation before leaving the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブから外す"
+          }
+        }
+      }
+    },
+    "hub.leaveMessage" : {
+      "comment" : "The 'Hub' tab of an agent's settings: message of the confirmation before leaving the hub; the argument is the agent's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The projects %@ shares, and the ones shared with it, can no longer be used through the hub, and which access keys may use the shared ones is forgotten. The projects themselves stay where they are."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ が共有しているプロジェクトも、共有されているプロジェクトも、ハブ越しには使えなくなり、共有されたプロジェクトへのアクセスキーの許可は消えます。プロジェクトそのものは、今の場所に残ります。"
+          }
+        }
+      }
+    },
+    "hub.leaveTitle" : {
+      "comment" : "The 'Hub' tab of an agent's settings: title of the confirmation before leaving the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take this agent out of the hub?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントをハブから外しますか？"
+          }
+        }
+      }
+    },
+    "hub.linkDown" : {
+      "comment" : "The 'Hub' tab of an agent's settings: a shared project that cannot be used because this agent is not linked to the hub now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This agent is not connected to the hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントがハブに繋がっていません"
+          }
+        }
+      }
+    },
+    "hub.noHubs" : {
+      "comment" : "The 'Hub' tab of an agent's settings: shown when this app has no hub among its places.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a hub first (“Add hub” under the list of places)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先にハブを足してください（場所の一覧の下の「ハブを追加」）。"
+          }
+        }
+      }
+    },
+    "hub.noOthers" : {
+      "comment" : "The 'Hub' tab of an agent's settings: shown in the shares popover when no other agent is in the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No other agent is in the hub yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブには、まだほかのエージェントがいません"
+          }
+        }
+      }
+    },
+    "hub.noProjects" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the agent has no projects to share.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This agent has no projects yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントには、まだプロジェクトがありません"
+          }
+        }
+      }
+    },
+    "hub.notIn" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the agent has joined no hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not in a hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに加わっていません"
+          }
+        }
+      }
+    },
+    "hub.notShared" : {
+      "comment" : "The 'Hub' tab of an agent's settings: a project shared with no agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not shared"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有していません"
+          }
+        }
+      }
+    },
+    "hub.nothingShared" : {
+      "comment" : "The 'Hub' tab of an agent's settings: no project is shared with the agent.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing is shared with this agent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有されているプロジェクトはありません"
+          }
+        }
+      }
+    },
+    "hub.otherVersion" : {
+      "comment" : "The 'Hub' tab of an agent's settings: a shared project whose owner runs another version, so calls are not passed on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different version"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の版"
+          }
+        }
+      }
+    },
+    "hub.ownerAway" : {
+      "comment" : "The 'Hub' tab of an agent's settings: a shared project whose owner is not linked to the hub now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected to the hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに繋がっていません"
+          }
+        }
+      }
+    },
+    "hub.reachable" : {
+      "comment" : "The 'Hub' tab of an agent's settings: a shared project whose owner can be reached now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reachable"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使えます"
+          }
+        }
+      }
+    },
+    "hub.rowCount" : {
+      "comment" : "Under a hub's name in the list of places: how many agents are in it, and how many are connected now.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld agents · %lld connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント %lld・接続中 %lld"
+          }
+        }
+      }
+    },
+    "hub.share" : {
+      "comment" : "The 'Hub' tab of an agent's settings: button on a project's row that opens its shares.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有…"
+          }
+        }
+      }
+    },
+    "hub.shareAbout" : {
+      "comment" : "The 'Hub' tab of an agent's settings: explanation in the popover that sets a project's shares.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what each agent in the hub may do with this project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブのエージェントごとに、このプロジェクトでできることを選びます。"
+          }
+        }
+      }
+    },
+    "hub.shareDone" : {
+      "comment" : "The 'Hub' tab of an agent's settings: button that closes the popover that sets a project's shares.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
+    "hub.shareTitle" : {
+      "comment" : "The 'Hub' tab of an agent's settings: title of the popover that sets a project's shares; the argument is the project's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share “%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」を共有"
+          }
+        }
+      }
+    },
+    "hub.sharedBy" : {
+      "comment" : "The 'Hub' tab of an agent's settings: heading of the agent's projects, each with the agents it is shared with.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SHARED BY THIS AGENT"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントが共有しているプロジェクト"
+          }
+        }
+      }
+    },
+    "hub.sharedWith" : {
+      "comment" : "The 'Hub' tab of an agent's settings: heading of the projects other agents share with this one.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SHARED WITH THIS AGENT"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このエージェントに共有されているプロジェクト"
+          }
+        }
+      }
+    },
+    "hub.unknown" : {
+      "comment" : "The 'Hub' tab of an agent's settings: shown until the agent has said whether it is in a hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not known yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ分かりません"
+          }
+        }
+      }
+    },
+    "hub.up" : {
+      "comment" : "The 'Hub' tab of an agent's settings: the link to the hub is up; the argument is the time it came up.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected since %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から繋がっています"
+          }
+        }
+      }
+    },
+    "hubSettings.about" : {
+      "comment" : "A hub's settings: what a hub is.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hub passes requests between your agents. It keeps no projects: only who is in it and how to reach them. It runs as its own user on a host that stays up, and listens on no network port: agents reach it over SSH with a key that can do nothing else."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブは、エージェントどうしの頼みを渡します。プロジェクトは持たず、誰が加わっているかと、渡し方だけを持ちます。起きたままのホストの専用の利用者で動き、ネットワークに口を開けません。エージェントは、ほかに何もできない鍵で SSH から繋ぎます。"
+          }
+        }
+      }
+    },
+    "hubSettings.addNote" : {
+      "comment" : "A hub's settings: note under the agents: where an agent is added from.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add an agent from its own settings (Hub tab)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントは、そのエージェントの設定（「ハブ」のタブ）から加えます。"
+          }
+        }
+      }
+    },
+    "hubSettings.agents" : {
+      "comment" : "A hub's settings: heading of the agents that joined the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AGENTS IN THIS HUB"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このハブのエージェント"
+          }
+        }
+      }
+    },
+    "hubSettings.counts" : {
+      "comment" : "A hub's settings: how many projects an agent shares and how many shared ones it uses.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "shares %lld · uses %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有 %lld・利用 %lld"
+          }
+        }
+      }
+    },
+    "hubSettings.noAgents" : {
+      "comment" : "A hub's settings: no agent has joined the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No agent has joined yet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだエージェントが加わっていません"
+          }
+        }
+      }
+    },
+    "hubSettings.remove" : {
+      "comment" : "A hub's settings: button that takes the hub off this app's list of places.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove hub…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブを外す…"
+          }
+        }
+      }
+    },
+    "hubSettings.removeConfirm" : {
+      "comment" : "A hub's settings: the confirming button of the confirmation before removing the hub from the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブを外す"
+          }
+        }
+      }
+    },
+    "hubSettings.removeMember" : {
+      "comment" : "A hub's settings: context menu of an agent's row, and the confirming button: takes the agent out of the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブから外す"
+          }
+        }
+      }
+    },
+    "hubSettings.removeMemberMessage" : {
+      "comment" : "A hub's settings: message of the confirmation before taking an agent out of the hub.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its key is removed from the hub, so its agent can no longer connect. An agent this app is connected to also lets go of its own key and of what it kept of the hub. One that is not connected now keeps them: take it out later from the agent's own settings (Hub tab)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブから鍵を消すので、そのエージェントは繋げなくなります。このアプリが繋がっているエージェントは、自分の鍵とハブの控えも片付けます。今繋がっていないエージェントには残るので、あとでそのエージェントの設定（「ハブ」のタブ）から外してください。"
+          }
+        }
+      }
+    },
+    "hubSettings.removeMemberTitle" : {
+      "comment" : "A hub's settings: title of the confirmation before taking an agent out of the hub; the argument is the agent's name.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take %@ out of the hub?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ をハブから外しますか？"
+          }
+        }
+      }
+    },
+    "hubSettings.removeMessage" : {
+      "comment" : "A hub's settings: message of the confirmation before removing the hub from the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hub keeps running on its host and its agents stay in it. Only this app stops showing it."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブはホストで動き続け、エージェントも加わったままです。このアプリの一覧から外すだけです。"
+          }
+        }
+      }
+    },
+    "hubSettings.removeTitle" : {
+      "comment" : "A hub's settings: title of the confirmation before removing the hub from the list.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove this hub from the list?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このハブを一覧から外しますか？"
+          }
+        }
+      }
+    },
+    "hubSettings.running" : {
+      "comment" : "A hub's settings: the hub is running; the argument is its version.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running · version %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動いています・バージョン %@"
+          }
+        }
+      }
+    },
+    "hubSettings.runningBuild" : {
+      "comment" : "A hub's settings: the hub is running another build than this app's; the argument is the build.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running · build %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動いています・ビルド %@"
+          }
+        }
+      }
+    },
+    "hubSettings.seen" : {
+      "comment" : "A hub's settings: an agent not linked to the hub; the argument is when it was last linked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last seen %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に接続: %@"
+          }
+        }
+      }
+    },
+    "hubSettings.since" : {
+      "comment" : "A hub's settings: an agent linked to the hub; the argument is the time it linked.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected since %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から接続中"
+          }
+        }
+      }
+    },
+    "hubSettings.unknown" : {
+      "comment" : "A hub's settings: the agents are not known while the hub is not connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown while the hub is connected"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブに繋がっている間だけ見られます"
+          }
+        }
+      }
+    },
+    "localAgent.about" : {
+      "comment" : "Explanation at the top of This Mac's local agent settings. The argument is the agent's home as it is said (~/.specboard).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs the agent bundled with this app for your user on this Mac (under %@), without SSH. While it is on, the agent keeps this Mac's projects and receives MCP on this Mac's 127.0.0.1, so AI sessions on this Mac can read and write them with an access key. The agent keeps running after SpecBoard quits."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアプリに入っているエージェントを、SSH を使わずに、この Mac のあなたの利用者（%@）で動かします。入れている間は、エージェントがこの Mac のプロジェクトを持ち、この Mac の 127.0.0.1 で MCP を受けるので、この Mac の AI のセッションがアクセスキーで読み書きできます。エージェントは SpecBoard を閉じても動き続けます。"
+          }
+        }
+      }
+    },
+    "localAgent.kept" : {
+      "comment" : "Line in the local agent's box: how many of This Mac's projects the agent keeps. The arguments are the agent's home as it is said (~/.specboard) and the count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac's projects kept by the agent (%1$@): %2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント（%1$@）が持っているこの Mac のプロジェクト: %2$lld 件"
+          }
+        }
+      }
+    },
+    "localAgent.mcpListening" : {
+      "comment" : "Line in This Mac's local agent tab: where the agent listens for MCP. The argument is the port.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: listening on this Mac's 127.0.0.1:%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP: この Mac の 127.0.0.1:%@ で受けています"
+          }
+        }
+      }
+    },
+    "localAgent.off" : {
+      "comment" : "State under the local agent's name while its switch is off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切"
+          }
+        }
+      }
+    },
+    "localAgent.offNote" : {
+      "comment" : "Note under the local agent's box while its switch is off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While the local agent is off, MCP doesn't reach this Mac's projects, so there are no access keys and nothing is public. Agents on other hosts are under their own gear in the list on the left."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカルエージェントを切っている間は、この Mac のプロジェクトには MCP が届かないので、アクセスキーと公開はありません。ほかのホストのエージェントは、左の一覧のそれぞれの ⚙ にあります。"
+          }
+        }
+      }
+    },
+    "localAgent.portNote" : {
+      "comment" : "Explanation under the MCP port field in This Mac's local agent tab.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The port that the AI sessions of this user on this Mac connect to (127.0.0.1). Use a different port for each user."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac の、この利用者の AI のセッションが繋ぐポート（127.0.0.1）。利用者ごとに別のポートにします。"
+          }
+        }
+      }
+    },
+    "localAgent.running" : {
+      "comment" : "State under the local agent's name while it is connected.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動いています"
+          }
+        }
+      }
+    },
+    "localAgent.starting" : {
+      "comment" : "State under the local agent's name while it is being put and started.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "起こしています…"
+          }
+        }
+      }
+    },
+    "localAgent.switchHelp" : {
+      "comment" : "Tooltip of the local agent's switch.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run the agent on this Mac, so that MCP reaches this Mac's projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac でエージェントを動かし、この Mac のプロジェクトに MCP が届くようにします"
+          }
+        }
+      }
+    },
+    "localAgent.turnOff.action" : {
+      "comment" : "Button of the confirmation that turns the local agent off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切る"
+          }
+        }
+      }
+    },
+    "localAgent.turnOff.text" : {
+      "comment" : "Text of the confirmation shown when the local agent's switch is turned off. The argument is how many projects the agent keeps.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent stops and its projects (%lld) move back to this app's own store. MCP no longer reaches them."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントを止め、そのプロジェクト（%lld 件）をこのアプリ自身の置き場へ戻します。MCP は届かなくなります。"
+          }
+        }
+      }
+    },
+    "localAgent.turnOff.textAway" : {
+      "comment" : "Text of the confirmation shown when the local agent's switch is turned off while the agent is not reached. The argument is the agent's home as it is said (~/.specboard).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent is not reached now, so its projects stay in its store (%@) and come back when the local agent is turned on again. MCP no longer reaches them."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまエージェントに繋がっていないので、そのプロジェクトはエージェントの置き場（%@）に残り、ローカルエージェントをまた入れると戻ります。MCP は届かなくなります。"
+          }
+        }
+      }
+    },
+    "localAgent.turnOff.title" : {
+      "comment" : "Title of the confirmation shown when the local agent's switch is turned off.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off the local agent?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカルエージェントを切りますか？"
+          }
+        }
+      }
+    },
+    "localAgent.turnOn.action" : {
+      "comment" : "Button of the confirmation that turns the local agent on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入れる"
+          }
+        }
+      }
+    },
+    "localAgent.turnOn.text" : {
+      "comment" : "Text of the confirmation shown when the local agent's switch is turned on. The arguments are how many projects This Mac has and the agent's home as it is said (~/.specboard).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac's projects (%1$lld) move to the agent's store (%2$@), with their history. The agent keeps running after SpecBoard quits."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Mac のプロジェクト（%1$lld 件）が、履歴ごとエージェントの置き場（%2$@）へ移ります。エージェントは SpecBoard を閉じても動き続けます。"
+          }
+        }
+      }
+    },
+    "localAgent.turnOn.title" : {
+      "comment" : "Title of the confirmation shown when the local agent's switch is turned on.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on the local agent?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカルエージェントを入れますか？"
+          }
+        }
+      }
+    },
     "mcp.listening" : {
       "comment" : "Line in an agent's connection tab; the argument is the port.",
       "extractionState" : "manual",
@@ -788,13 +2084,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Place settings (connection, access keys, public)"
+            "value" : "Place settings (connection, hub, access keys, public)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この場所の設定（接続・アクセスキー・公開）"
+            "value" : "この場所の設定（接続・ハブ・アクセスキー・公開）"
           }
         }
       }
@@ -925,6 +2221,24 @@
         }
       }
     },
+    "tab.hub" : {
+      "comment" : "Tab of an agent's settings: the hub it shares projects through.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hub"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ハブ"
+          }
+        }
+      }
+    },
     "tab.keys" : {
       "comment" : "Title of a place's settings tab for the MCP access keys.",
       "extractionState" : "manual",
@@ -943,38 +2257,20 @@
         }
       }
     },
-    "thisMac.none" : {
-      "comment" : "What the settings of This Mac say in the place settings pane.",
+    "tab.localAgent" : {
+      "comment" : "Title of the first tab of This Mac's settings while its local agent is on, the name beside its switch, and what This Mac's row says under its name.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MCP doesn't reach this Mac's projects, so there are no access keys and nothing is public."
+            "value" : "Local agent"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この Mac のプロジェクトには MCP が届かないので、アクセスキーと公開はありません。"
-          }
-        }
-      }
-    },
-    "thisMac.where" : {
-      "comment" : "Explanation under the notice in the settings of This Mac.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MCP is received by the agent on the host where the AI session runs, and answers for that agent's projects. To let an AI read a project, move it to an agent with “Move to an agent” in the row's context menu. Access keys and public settings are under the gear of the agent in the list on the left."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MCP は、AI のセッションが動くホストのエージェントが受け、そのエージェントのプロジェクトに答えます。AI に読ませるプロジェクトは、行の右クリック「エージェントへ移す」でエージェントへ移します。アクセスキーと公開は、左の一覧のエージェントの ⚙ にあります。"
+            "value" : "ローカルエージェント"
           }
         }
       }

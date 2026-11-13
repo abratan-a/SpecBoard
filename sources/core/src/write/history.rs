@@ -3,6 +3,7 @@
 //! the transaction first wrote it, a line for each thing done, and who did it — and going
 //! back to a commit, which puts those rows back as one commit of its own.
 
+use super::chunks::Before;
 use super::{Seen, Side, Table, Tx, Who, db, is_branch};
 use crate::text::Keyed;
 use rusqlite::{Connection, OptionalExtension, params};
@@ -400,22 +401,49 @@ impl Gathered {
             }
             // Added to a commit that has the row already: what it was before that stays.
             for (table, row_id, before) in changed {
-                conn.execute(
-                    "INSERT OR IGNORE INTO commit_rows (commit_id, tbl, row_id, before) VALUES (?, ?, ?, ?)",
-                    params![id, table.name(), row_id, before],
-                )
-                .map_err(db)?;
+                keep_row(conn, project, &id, table.name(), row_id, before.as_deref())?;
             }
             for (tbl, row_id, before) in frozen {
-                conn.execute(
-                    "INSERT OR IGNORE INTO commit_rows (commit_id, tbl, row_id, before) VALUES (?, ?, ?, ?)",
-                    params![id, format!("{FROZEN_PREFIX}{tbl}"), row_id, before],
-                )
-                .map_err(db)?;
+                let tbl = format!("{FROZEN_PREFIX}{tbl}");
+                keep_row(conn, project, &id, &tbl, row_id, before.as_deref())?;
             }
         }
         Ok(())
     }
+}
+
+/// A row as it was, kept for the commit unless the commit has it already: a long one in pieces
+/// (`chunks::pack`), which are not made for a row that is not kept.
+fn keep_row(
+    conn: &Connection,
+    project: &str,
+    commit: &str,
+    tbl: &str,
+    row_id: &str,
+    before: Option<&str>,
+) -> Result<(), String> {
+    let there = conn
+        .query_row(
+            "SELECT 1 FROM commit_rows WHERE commit_id = ? AND tbl = ? AND row_id = ?",
+            params![commit, tbl, row_id],
+            |_| Ok(()),
+        )
+        .optional()
+        .map_err(db)?
+        .is_some();
+    if there {
+        return Ok(());
+    }
+    let before = match before {
+        Some(text) => super::chunks::pack(conn, project, text)?,
+        None => rusqlite::types::Value::Null,
+    };
+    conn.execute(
+        "INSERT INTO commit_rows (commit_id, tbl, row_id, before) VALUES (?, ?, ?, ?)",
+        params![commit, tbl, row_id, before],
+    )
+    .map_err(db)?;
+    Ok(())
 }
 
 /// What the table of a commit's row is called when it is a branch's frozen copy of main: an app
@@ -439,7 +467,7 @@ fn frozen_of(
                 Ok((
                     r.get::<_, String>(0)?,
                     r.get::<_, String>(1)?,
-                    r.get::<_, Option<String>>(2)?,
+                    r.get::<_, Before>(2)?,
                 ))
             })
             .map_err(db)?
@@ -448,7 +476,7 @@ fn frozen_of(
         for (tbl, row, before) in rows {
             let tbl = tbl.trim_start_matches(FROZEN_PREFIX).to_string();
             if seen.insert((tbl.clone(), row.clone())) {
-                out.push((tbl, row, before));
+                out.push((tbl, row, before.text(conn)?));
             }
         }
     }
@@ -668,7 +696,7 @@ impl Tx<'_> {
                         Ok((
                             r.get::<_, String>(0)?,
                             r.get::<_, String>(1)?,
-                            r.get::<_, Option<String>>(2)?,
+                            r.get::<_, Before>(2)?,
                         ))
                     })
                     .map_err(db)?
@@ -682,7 +710,7 @@ impl Tx<'_> {
                     if before.contains_key(&key) {
                         continue;
                     }
-                    before.insert(key.clone(), row);
+                    before.insert(key.clone(), row.text(&self.tx)?);
                     order.push(key);
                 }
             }
@@ -899,6 +927,7 @@ impl Tx<'_> {
         {
             return Err(text!("history.cut.groupOn", began));
         }
+        let pieces = super::chunks::pointed_in(&self.tx, project, tree, Some(seq))?;
         let cut = self
             .tx
             .execute(
@@ -910,25 +939,43 @@ impl Tx<'_> {
         if tree.is_empty() {
             self.let_go_of_asides(project)?;
         }
+        // And the pieces only what went pointed at.
+        super::chunks::let_go(&self.tx, project, &pieces)?;
         Ok(cut)
     }
 
     /// The history no one cut, trimmed when a project is opened (`KEPT_COMMITS`,
     /// `KEPT_DAYS`). Returns how many went.
     pub fn prune(&mut self, project: &str) -> Result<usize, String> {
+        const PAST: &str = "at < strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?) AND id IN (
+                   SELECT id FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY branch_id ORDER BY seq DESC) AS n
+                                     FROM commits WHERE project_id = ?) WHERE n > ?)";
+        let days = format!("-{KEPT_DAYS} days");
+        let going: Vec<String> = {
+            let mut stmt = self
+                .tx
+                .prepare(&format!("SELECT id FROM commits WHERE {PAST}"))
+                .map_err(db)?;
+            stmt.query_map(params![days, project, KEPT_COMMITS], |r| r.get(0))
+                .map_err(db)?
+                .collect::<Result<_, _>>()
+                .map_err(db)?
+        };
+        if going.is_empty() {
+            return Ok(0);
+        }
+        let pieces = super::chunks::pointed_by(&self.tx, &going)?;
         let pruned = self
             .tx
             .execute(
-                "DELETE FROM commits WHERE at < strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?) AND id IN (
-                   SELECT id FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY branch_id ORDER BY seq DESC) AS n
-                                     FROM commits WHERE project_id = ?) WHERE n > ?)",
-                params![format!("-{KEPT_DAYS} days"), project, KEPT_COMMITS],
+                &format!("DELETE FROM commits WHERE {PAST}"),
+                params![days, project, KEPT_COMMITS],
             )
             .map_err(db)?;
-        // The branches set aside by merges cut from main's history go with them.
-        if pruned > 0 {
-            self.let_go_of_asides(project)?;
-        }
+        // The branches set aside by merges cut from main's history go with them, and the pieces
+        // only what went pointed at.
+        self.let_go_of_asides(project)?;
+        super::chunks::let_go(&self.tx, project, &pieces)?;
         Ok(pruned)
     }
 
@@ -968,12 +1015,16 @@ impl Tx<'_> {
                 Ok((
                     r.get::<_, String>(0)?,
                     r.get::<_, String>(1)?,
-                    r.get::<_, Option<String>>(2)?,
+                    r.get::<_, Before>(2)?,
                 ))
             })
             .map_err(db)?
             .collect::<Result<Vec<_>, _>>()
             .map_err(db)?;
+        let rows = rows
+            .into_iter()
+            .map(|(table, id, row)| Ok((table, id, row.text(&self.tx)?)))
+            .collect::<Result<Vec<_>, String>>()?;
         Ok(rows
             .into_iter()
             .filter_map(|(table, id, row)| {
@@ -1045,7 +1096,7 @@ pub fn around(
     let Some(commit) = commit else {
         return Ok(Vec::new());
     };
-    let kept: Vec<(String, String, Option<String>)> = {
+    let kept: Vec<(String, String, Before)> = {
         let mut stmt = conn
             .prepare(
                 "SELECT tbl, row_id, before FROM commit_rows WHERE commit_id = ? ORDER BY rowid",
@@ -1068,21 +1119,27 @@ pub fn around(
         let Some(table_of) = Table::of(&table) else {
             continue;
         };
-        let later: Vec<(i64, Option<String>)> = stmt
+        let mut later: Vec<(i64, Before)> = stmt
             .query_map(params![project, tree, seq, table, id], |r| {
                 Ok((r.get(0)?, r.get(1)?))
             })
             .map_err(db)?
             .collect::<Result<_, _>>()
             .map_err(db)?;
+        let later_seqs = later.iter().map(|(s, _)| *s).collect();
+        // What it was after: as the next commit that wrote it kept it. Only that one is read whole.
+        let after = match later.is_empty() {
+            true => None,
+            false => Some(crate::store::parse(
+                later.swap_remove(0).1.text(conn)?.as_deref(),
+            )),
+        };
         out.push(Around {
             table: table_of,
             id,
-            before: crate::store::parse(row.as_deref()),
-            after: later
-                .first()
-                .map(|(_, next)| crate::store::parse(next.as_deref())),
-            later: later.iter().map(|(s, _)| *s).collect(),
+            before: crate::store::parse(row.text(conn)?.as_deref()),
+            after,
+            later: later_seqs,
         });
     }
     Ok(out)
@@ -1522,7 +1579,7 @@ impl Tx<'_> {
                     Ok((
                         r.get::<_, String>(0)?,
                         r.get::<_, String>(1)?,
-                        r.get::<_, Option<String>>(2)?,
+                        r.get::<_, Before>(2)?,
                     ))
                 })
                 .map_err(db)?
@@ -1531,6 +1588,7 @@ impl Tx<'_> {
             let mut seen: HashSet<(String, String)> = HashSet::new();
             for (table, id, before) in kept {
                 if seen.insert((table.clone(), id.clone())) {
+                    let before = before.text(&self.tx)?;
                     rows.push((table, id, crate::store::parse(before.as_deref())));
                 }
             }

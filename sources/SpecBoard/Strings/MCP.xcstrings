@@ -1003,6 +1003,24 @@
         }
       }
     },
+    "keys.sharedBy" : {
+      "comment" : "After a shared project's name among a key's permissions: the agent that shares it, and what the share allows.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "shared by %@ · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ が共有・%@"
+          }
+        }
+      }
+    },
     "keys.showCommand" : {
       "comment" : "Button in the made-key panel that shows the command that registers the key.",
       "extractionState" : "manual",
@@ -1472,13 +1490,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MCP doesn't reach this Mac's projects. To let an AI read a project, move it to an agent"
+            "value" : "MCP doesn't reach this Mac's projects. To let an AI read them, turn on the local agent in This Mac's settings, or move them to an agent"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この Mac のプロジェクトには MCP が届きません。AI に読ませるときはエージェントへ移します"
+            "value" : "この Mac のプロジェクトには MCP が届きません。AI に読ませるときは、この Mac の設定でローカルエージェントを入れるか、エージェントへ移します"
           }
         }
       }

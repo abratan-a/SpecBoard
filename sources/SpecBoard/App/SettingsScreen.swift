@@ -100,7 +100,7 @@ struct SettingsScreen: View {
                 // settings, saying it has none, when there is no agent).
                 MCPSettings(model: model) {
                     page = nil
-                    model.openPlaceSettings(hosts.hosts.first?.id, .keys)
+                    model.openPlaceSettings(hosts.local == nil ? hosts.hosts.first?.id : nil, .keys)
                 }
             }
         case .licenses: ThirdPartyNoticesView().padding(20)

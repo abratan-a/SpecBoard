@@ -1309,6 +1309,29 @@ fn healthz_takes_no_body_and_a_connection_with_no_key_is_closed_after_its_answer
 }
 
 #[test]
+fn a_new_connection_is_taken_as_it_comes() {
+    let home = home(0);
+    let (_app, ready) = App::attach(&home);
+    let port = ready["mcp"]["port"].as_u64().unwrap() as u16;
+    // A client that keeps no connection asks on a new one each time: a listener that looks every
+    // so often for one makes each wait for its next look, however little is asked.
+    let health = || {
+        let (status, _, _) = http(port, "GET", "/healthz", &[], "");
+        assert_eq!(status, 200);
+    };
+    health();
+    let begun = Instant::now();
+    for _ in 0..20 {
+        health();
+    }
+    assert!(
+        begun.elapsed() < Duration::from_millis(500),
+        "20 回に {:?}",
+        begun.elapsed()
+    );
+}
+
+#[test]
 fn an_app_that_stops_reading_does_not_hold_up_the_others_writes() {
     let home = home(0);
     let (mut app, _) = App::attach(&home);

@@ -116,7 +116,7 @@ pub fn move_all(conn: &Connection) -> Result<(), String> {
 /// One project's board moved: a store's, or a project file's of before once it is read into the
 /// store. Written in place, as the documents of before were; no commit says it.
 pub fn move_project(conn: &Connection, project: &str) -> Result<(), String> {
-    let seen = Reader { conn }.compose(project, Some(BOARD))?;
+    let seen = Reader::of(conn).compose(project, Some(BOARD))?;
     let at = crate::write::now(conn)?;
     for doc in planned(&seen, &at) {
         let parent = doc.get("parent_id").and_then(Value::as_str);

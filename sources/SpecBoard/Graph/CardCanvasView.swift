@@ -38,6 +38,8 @@ final class CardCanvasView: NSView {
     var onRowMenu: ((RowHit?) -> NSMenu?)?
     /// A card dropped by hand, on the cell it went nearest, in grid units (§12).
     var onMoveByHand: ((String, GridPoint) -> Void)?
+    /// The cards picked, asked to be deleted (the Delete key).
+    var onDeleteRequest: (([String]) -> Void)?
     /// Whether a card — a section ghost too — may be picked up by its header at all; one
     /// that may not is pressed like the canvas, which moves the view. Every card when not
     /// said.
@@ -322,14 +324,20 @@ final class CardCanvasView: NSView {
     /// The ways round the cards found for the diagrams shown last, and what they were found for: a cut with
     /// the same boxes, the same lines' ends and the same cells takes them rather than searching again — a
     /// search goes with the number of lines and more, and a redraw that moved nothing, or a section shown
-    /// again as it was, would find the same ways.
+    /// again as it was, is drawn as it was left.
     private var routeMemory = RouteMemory()
+    /// What was last found here: the next search starts from it, so that a card put has only the
+    /// lines near it found again (`LineRouter.find`). Kept across the diagrams shown: of another
+    /// diagram's, a way stands only where the line's ends and every box near it are the same.
+    private var lastFound: LineRouter.Found?
     /// While cards are dragged or sized: the cards moving, once every line has been cut as a curve for them.
     /// A line that touches none of them is where it was, so a step cuts again only the lines that do.
     private var curvedFor: Set<String>?
     /// How many times, for the tests: the ways round the cards were searched, the diagram was rebuilt, a
     /// line's wire was worked out, a line's shape was stroked to find a press on it, a line was restyled.
     private(set) var routeSearches = 0
+    /// How many lines a way round the cards was searched for, in all those searches.
+    private(set) var linesSearched = 0
     private(set) var rebuilds = 0
     private(set) var wiresCut = 0
     private(set) var linesStroked = 0
@@ -546,12 +554,22 @@ final class CardCanvasView: NSView {
     override var isFlipped: Bool { true }
     override var acceptsFirstResponder: Bool { true }
 
-    /// Return or Enter on what is picked does what a double-click on it does (overview §13).
+    /// Return or Enter on what is picked does what a double-click on it does (overview §13); Delete asks
+    /// whether to delete it.
     override func keyDown(with event: NSEvent) {
         // Esc: out of the selection mode.
         if event.keyCode == 53, selecting {
             setSelecting(false)
             return
+        }
+        // Delete and Forward Delete: asked whether to delete what is picked, as the menu's 「カードを削除…」 asks.
+        let deleteKeys: Set<UInt16> = [51, 117]
+        if deleteKeys.contains(event.keyCode) {
+            let ids = picks.isEmpty ? (picked.map { [$0.card] } ?? []) : picks.sorted()
+            if !ids.isEmpty, let onDeleteRequest {
+                onDeleteRequest(ids)
+                return
+            }
         }
         let returnKeys: Set<UInt16> = [36, 76]
         if returnKeys.contains(event.keyCode), let hit = picked {
@@ -2155,13 +2173,19 @@ final class CardCanvasView: NSView {
                                           tailY: (tails[edge.key] ?? from.midY) + origin.y, landY: landing + origin.y)
             }
             let boxes = self.boxes, cell = unit
-            if let kept = routeMemory.routes(requests, boxes: boxes, cell: cell) {
-                routed = kept
+            if let kept = routeMemory.found(requests, boxes: boxes, cell: cell) {
+                lastFound = kept
             } else {
                 routeSearches += 1
-                routed = DiagramTimes.measure("routes") { LineRouter.route(requests, boxes: Array(boxes.values), cell: cell) }
-                routeMemory.keep(routed, for: requests, boxes: boxes, cell: cell)
+                let before = lastFound
+                let found = DiagramTimes.measure("routes") {
+                    LineRouter.find(requests, boxes: Array(boxes.values), cell: cell, from: before)
+                }
+                linesSearched += found.searched
+                routeMemory.keep(found, for: requests, boxes: boxes, cell: cell)
+                lastFound = found
             }
+            routed = lastFound?.routes ?? [:]
         }
 
         // A line's mark keeps off the cards, as a card hides what is under it.
@@ -3594,7 +3618,8 @@ final class CardCanvasView: NSView {
             return
         }
         showReceiving(nil)
-        if let drag, let box = boxes[drag.id] {
+        // Pressed and let go where it was is a click, not a placement: not moved off another card it overlaps.
+        if let drag, let box = boxes[drag.id], dragMoved || box != drag.box {
             // On the cell it was dropped nearest, like a spreadsheet's — or, too close
             // to another card, the nearest that keeps the margin clear.
             let wanted = Grid.nearest(x: Double(box.minX / unit.width), y: Double(box.minY / unit.height))
@@ -3605,8 +3630,7 @@ final class CardCanvasView: NSView {
             boxes[drag.id] = dropped
             let stayed = dropped == drag.box
             // Dropped elsewhere, or moved on the way and its lines cut as curves: put where it lies and its
-            // lines cut again — back where it was, from the ways kept. Pressed and let go where it was, its
-            // lines are as they were.
+            // lines cut again — back where it was, from the ways kept.
             if !stayed || dragMoved {
                 withoutAnimation {
                     cardLayers[drag.id]?.frame = layerFrame(drag.id)
@@ -3617,8 +3641,8 @@ final class CardCanvasView: NSView {
                 }
                 tellOverlaps()
             }
-            // Let go on the cell it is kept at: nothing to write — a click is not a placement. A part pressed and
-            // let go where it was: picked, not moved.
+            // Dragged back to the cell it is kept at: nothing to write. A part dragged back where it was: picked,
+            // not moved.
             if !(stayed && (isPart(drag.id) || keptCell(of: drag.id) == at)) {
                 heldByHand = true
                 droppedAt[drag.id] = at
@@ -3646,7 +3670,7 @@ final class CardCanvasView: NSView {
 
     /// The cell the box `id` is kept at as last read, or last dropped here: a card's, a card ghost's or a gone
     /// card's own place; another section's card's or a section ghost's place on this diagram. Nil where none
-    /// is kept — such a box is drawn where it would go, and is written when let go there.
+    /// is kept — such a box is drawn where it would go, and is written when dragged and let go there.
     private func keptCell(of id: String) -> GridPoint? {
         if let dropped = droppedAt[id] { return dropped }
         if let card = drawnCard(id) {

@@ -26,6 +26,9 @@ struct NameAsk: Identifiable {
     var pathName = false
     /// What deciding does, with what was typed, trimmed.
     var onDecide: (String) -> Void
+    /// Where what deciding writes may be refused (a name another already has): why, said under the field
+    /// with the sheet left open, or nil when it went in. Used in place of `onDecide`.
+    var refusing: ((String) -> String?)? = nil
 
     /// What a decision passes on: what was typed, without the spaces around it.
     static func trimmed(_ text: String) -> String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -44,6 +47,16 @@ struct NameAsk: Identifiable {
         onDecide(pathName ? PathText.trimmed(text) : Self.trimmed(text))
         return true
     }
+
+    /// Decided with this typed where it may be refused: why it was, or nil when it went in (or nothing could be
+    /// decided).
+    func decideSaying(_ text: String) -> String? {
+        guard canDecide(text) else { return nil }
+        let typed = pathName ? PathText.trimmed(text) : Self.trimmed(text)
+        if let refusing { return refusing(typed) }
+        onDecide(typed)
+        return nil
+    }
 }
 
 /// The sheet a name is asked for in (`NameAsk`): the field focused when it opens, Return
@@ -58,6 +71,8 @@ struct NameSheet: View {
     @FocusState private var focused: Bool
     /// Decided once: Return and the button are one decision.
     @State private var decided = false
+    /// Why what was typed was refused, said under the field until it is changed.
+    @State private var refused: String?
 
     init(ask: NameAsk, close: @escaping () -> Void) {
         self.ask = ask
@@ -77,6 +92,11 @@ struct NameSheet: View {
                 .textFieldStyle(.roundedBorder)
                 .font(.app(12))
                 .focused($focused)
+                .onChange(of: text) { refused = nil }
+            if let refused {
+                Text(refused).font(.app(10.5)).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             HStack {
                 Spacer()
                 Button(ask.cancel, action: close)
@@ -94,7 +114,11 @@ struct NameSheet: View {
     }
 
     private func decide() {
-        guard !decided, ask.decide(text) else { return }
+        guard !decided, ask.canDecide(text) else { return }
+        if let said = ask.decideSaying(text) {
+            refused = said
+            return
+        }
         decided = true
         close()
     }

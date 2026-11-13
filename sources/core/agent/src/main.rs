@@ -6,9 +6,15 @@
 //! to the app, for the projects of a Mac (`--stdio`): the projects an AI should read are moved
 //! to an agent.
 
+// What a read lets go of is given back to the system (agent/Cargo.toml says why).
+#[cfg(target_os = "linux")]
+#[global_allocator]
+static ALLOCATOR: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 mod attach;
 mod daemon;
 mod http;
+mod hub;
 mod mcp;
 mod screens;
 
@@ -42,10 +48,34 @@ fn main() {
         Some("stop") => attach::stop(),
         Some("status") => attach::status(),
         Some("port") => attach::port(args.get(1).map(String::as_str)),
+        Some("hub") => hub::role(&args[1..]),
         _ => {
             eprintln!("{}", usage());
             2
         }
     };
     std::process::exit(code);
+}
+
+#[cfg(test)]
+mod tests {
+    #[cfg(target_os = "linux")]
+    unsafe extern "C" {
+        /// mimalloc's own: whether `p` is inside the regions it allocates from.
+        fn mi_is_in_heap_region(p: *const std::ffi::c_void) -> bool;
+    }
+
+    /// Only the Linux agent has its own allocator (the macOS one keeps the system's): elsewhere
+    /// there is nothing to hold.
+    #[test]
+    fn on_linux_the_agent_allocates_from_mimalloc() {
+        #[cfg(target_os = "linux")]
+        {
+            let block = vec![0u8; 4096];
+            // SAFETY: only asks whether the address is inside mimalloc's own regions; nothing is
+            // read.
+            let inside = unsafe { mi_is_in_heap_region(block.as_ptr().cast()) };
+            assert!(inside);
+        }
+    }
 }

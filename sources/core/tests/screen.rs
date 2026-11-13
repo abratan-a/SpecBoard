@@ -1024,6 +1024,56 @@ fn a_documents_diagram_is_drawn_by_the_core_as_the_window_shows_it() {
 }
 
 #[test]
+fn a_section_embed_draws_its_own_cards_with_no_line() {
+    let s = Screen::new();
+    s.mcp("section_create", json!({"target": "Schemas/Lone"}));
+    s.mcp(
+        "card_create",
+        json!({"value": {
+            "Schemas/Lone:V": {"kind": "value", "fields": [{"name": "amount", "type": "int"}]},
+            "Schemas/Lone:A": {"kind": "entity", "fields": [{"name": "id", "type": "uuid", "primaryKey": true}, {"name": "v", "type": "string"}],
+                "connections": [{"line": "embed", "from": "v", "to": "Schemas/Lone:V"}]}
+        }}),
+    );
+    for exported in [false, true] {
+        let drawn =
+            s.ok(json!({"op": "embed_diagram", "path": "Schemas/Lone:", "exported": exported}));
+        let text = drawn["mermaid"]
+            .as_str()
+            .unwrap_or_else(|| panic!("{drawn}"));
+        // The window names a card by its path, what is written out by its name.
+        let a = if exported {
+            "class A"
+        } else {
+            "[\"Schemas/Lone:A\"]"
+        };
+        assert!(text.contains(a), "{exported}: {text}");
+        assert!(
+            !text.contains("条件に一致するスキーマがありません"),
+            "{exported}: {text}"
+        );
+    }
+}
+
+#[test]
+fn an_embed_with_nothing_to_draw_says_why_in_a_note() {
+    let s = Screen::new();
+    s.mcp("section_create", json!({"target": "Schemas/Void"}));
+    for exported in [false, true] {
+        let drawn =
+            s.ok(json!({"op": "embed_diagram", "path": "Schemas/Void:", "exported": exported}));
+        let text = drawn["mermaid"]
+            .as_str()
+            .unwrap_or_else(|| panic!("{drawn}"));
+        assert!(text.contains("classDiagram"), "{exported}: {text}");
+        assert!(
+            text.contains("    note \"条件に一致するスキーマがありません\""),
+            "{exported}: {text}"
+        );
+    }
+}
+
+#[test]
 fn a_sections_documents_are_read_in_one_request_as_each_part_is_read_alone() {
     let s = Screen::new();
     let ids = s.ids();

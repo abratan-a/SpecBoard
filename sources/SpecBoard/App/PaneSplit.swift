@@ -29,6 +29,17 @@ enum PaneSplit {
     /// its strip, or open.
     nonisolated enum PropertiesSeat { case absent, folded, open }
 
+    /// Whether the property panel goes with what is open: a section's cards or a card, and of the
+    /// project's settings the exports (a row picked there has settings to show) — not a root's
+    /// dashboard, the other settings nor the inspection.
+    static func fits(_ here: AppModel.Place) -> Bool {
+        switch here {
+        case .section, .map, .card, .connections: true
+        case .settings(let tab): tab == .exports
+        case .root, .inspection: false
+        }
+    }
+
     /// What the two panels take of a window as it is now.
     nonisolated struct Widths: Equatable {
         var nav: CGFloat

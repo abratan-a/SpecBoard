@@ -2,7 +2,7 @@
   {
     "name": "project_list",
     "title": "プロジェクト一覧",
-    "description": "このアクセスキーから見えるプロジェクトを、カード数・セクションの数・最終更新日つきで名前の順に返します（答えは projects。access は read（読むだけ）か write（読み書き）。archived はアーカイブで、読むだけ）。ほかのツールの project に渡す名前を確かめるために、まずこれを呼びます。100 件までで切ります（続きは value の after）。",
+    "description": "このアクセスキーから見えるプロジェクトを、カード数・セクションの数・最終更新日つきで名前の順に返します（答えは projects。access は read（読むだけ）か write（読み書き）。archived はアーカイブで、読むだけ）。ほかのエージェントがハブ越しに共有しているプロジェクトは、owner（持ち主のエージェントの名前）と access だけで並びます。project には名前を渡し、同じ名前がほかにもあれば <名前>@<owner> で指します。reachable: false は、今は持ち主に渡せません（わけは why）。ほかのツールの project に渡す名前を確かめるために、まずこれを呼びます。100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -2230,7 +2230,7 @@
                         "kind"
                       ]
                     },
-                    "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）"
+                    "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
                   },
                   "variants": {
                     "type": "array",
@@ -2484,7 +2484,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
             },
             "absentFields": {
               "type": "array",
@@ -2836,7 +2836,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
             },
             "variants": {
               "type": "array",
@@ -2998,7 +2998,7 @@
                 "schedule",
                 "startup"
               ],
-              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で）/ schedule / startup（起動のたび）"
+              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
             },
             "every": {
               "type": "string",
@@ -3112,7 +3112,7 @@
                 "timer",
                 "event"
               ],
-              "description": "wait が待つもの（必須。event は awaits の線で待つフローの終わり）"
+              "description": "wait が待つもの（必須。event は awaits の線で待つフローの終わりで、待つ結果は線の fields.outcome: success / failure / cancelled）"
             },
             "timeout": {
               "type": "string",
@@ -3861,7 +3861,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
             },
             "absentFields": {
               "type": "array",
@@ -4259,7 +4259,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
             },
             "variants": {
               "type": "array",
@@ -4691,7 +4691,7 @@
                 "schedule",
                 "startup"
               ],
-              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で）/ schedule / startup（起動のたび）"
+              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
             },
             "every": {
               "type": "string",
@@ -4805,7 +4805,7 @@
                 "timer",
                 "event"
               ],
-              "description": "wait が待つもの（必須。event は awaits の線で待つフローの終わり）"
+              "description": "wait が待つもの（必須。event は awaits の線で待つフローの終わりで、待つ結果は線の fields.outcome: success / failure / cancelled）"
             },
             "timeout": {
               "type": "string",
@@ -5219,7 +5219,7 @@
   {
     "name": "export_create",
     "title": "書き出しを作る",
-    "description": "書き出し（何をどこに書くかの組）を作ります（target に名前）。value の entries（{from, to, format, kinds} の並び。to は書き出し先からの相対パスで、書き出し先は書くときに export_execute の targetdir で渡す。from のセクションは下のセクションまでの、書ける種類のカード全部で、kinds を省けば flow は入らず note はスキーマのセクションだけ。1 枚のカードは、それに一番近い from の行で書かれる）・exclude（上のセクションの行から外すカードかセクションのパス）・path（この機械での既定の書き出し先のフォルダ。export_execute の targetdir が [default] のとき書く先。項目 export.dir）。プロジェクトの設定で、branch では変わらず、main のロックも受けません。書くのは export_execute。",
+    "description": "書き出し（何をどこに書くかの組）を作ります（target に名前）。value の entries（{from, to, format, kinds, lines} の並び。to は書き出し先からの相対パスで、書き出し先は書くときに export_execute の targetdir で渡す。from のセクションは下のセクションまでの、書ける種類のカード全部で、kinds を省けば flow は入らず note はスキーマのセクションだけ。1 枚のカードは、それに一番近い from の行で書かれる。json-connections の行（カードの線）だけは別で、from の下の全部を書く）・exclude（上のセクションの行から外すカードかセクションのパス）・path（この機械での既定の書き出し先のフォルダ。export_execute の targetdir が [default] のとき書く先。項目 export.dir）。プロジェクトの設定で、branch では変わらず、main のロックも受けません。書くのは export_execute。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5236,9 +5236,9 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "{from（カードかセクションのパス）, to（書き出し先の中のファイル。/ で終わればフォルダで、文書・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。文書（freedoc・formatdoc・stackdoc・spec）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）}"
+                "description": "{from（カードかセクションのパス）, to（書き出し先の中のファイル。/ で終わればフォルダで、文書・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。カードの線は json-connections（.json 1 つに {cards: [{card, kind, scenarios?, connections}]}。connections は card_read と同じ形、scenarios は spec のシナリオの名前と見出し。from の下の、線のあるカードと spec を、カードの中のカードも全部。1 つのファイルに 1 行）。文書（freedoc・formatdoc・stackdoc・spec）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）, lines（json-connections の行が書く線の種類で絞る）}"
               },
-              "description": "何をどこへ。{from, to, format, kinds}"
+              "description": "何をどこへ。{from, to, format, kinds, lines}"
             },
             "exclude": {
               "type": "array",
@@ -5285,7 +5285,7 @@
   {
     "name": "export_read",
     "title": "書き出しを読む",
-    "description": "書き出しを返します。targetdir を必ず付けます（書き出しごとの既定の先なら [default]、ほかのフォルダならそのパス。そこに書いたとしたときの状況を見るので、パスを渡しても書かず、項目も持ちません）。target を省くと、書き出しごとにファイルの数と、書いた時から変わったもの（changed）・手で変えられたもの（edited）・無くなったもの（missing）・まだ書いていないもの（unwritten）・次に書くと消すもの（removing）の数と、全部の書き出しの書けない理由（problems）。target に名前（配列で複数）で、その設定（entries・exclude を名前とパスで）と、書く先 path、書くファイルごとの path・content・cards・status（current・changed・edited・missing・unwritten）・changedCards（書いた時から変わったカード）、removing と、その書き出しの書けない理由（problems）。value の files（ファイルのパスの並び）で、そのファイルごとの path と中身 text を返します（target は 1 つ）。書いた記録とフォルダを見るのは、書き出し先が決まっているときだけです（[default] で既定の先が決まっていなければ、そう言います）。引数 branch で、その branch のカードで書くものと、その状況を返します（書いた記録とはカードの中身で比べます）。target を省いた一覧は書き出しを、target を付けたときは書くファイルを（書き出しを通して）100 件までで切ります（続きは value の after）。",
+    "description": "書き出しを返します。targetdir を必ず付けます（書き出しごとの既定の先なら [default]、ほかのフォルダならそのパス。そこに書いたとしたときの状況を見るので、パスを渡しても書かず、項目も持ちません）。target を省くと、書き出しごとにファイルの数と、書いた時から変わったもの（changed）・手で変えられたもの（edited）・無くなったもの（missing）・まだ書いていないもの（unwritten）・次に書くと消すもの（removing）の数と、全部の書き出しの書けない理由（problems）。target に名前（配列で複数）で、その設定（entries・exclude を名前とパスで）と、書く先 path、書くファイルごとの path・content・cards・status（current・changed・edited・missing・unwritten）・changedCards（書いた時から変わったカード）・rows（そのファイルを書く行の番号。1 から）、removing と、その書き出しの書けない理由（problems）。value の files（ファイルのパスの並び）で、そのファイルごとの path と中身 text を返します（target は 1 つ）。書いた記録とフォルダを見るのは、書き出し先が決まっているときだけです（[default] で既定の先が決まっていなければ、そう言います）。引数 branch で、その branch のカードで書くものと、その状況を返します（書いた記録とはカードの中身で比べます）。target を省いた一覧は書き出しを、target を付けたときは書くファイルを（書き出しを通して）100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -5356,7 +5356,7 @@
   {
     "name": "export_update",
     "title": "書き出しを直す",
-    "description": "書き出しを直します（target に名前）。value の name（新しい名前）・path（この機械での既定の書き出し先のフォルダ。null で外す。項目 export.dir）・entries と exclude（どちらも {add: [...], remove: [...]}。entries の remove は {from, to} か from の字だけで、to を省けばその from の行全部）。答えは export_read と同じ形の設定です。",
+    "description": "書き出しを直します（target に名前）。value の name（新しい名前）・path（この機械での既定の書き出し先のフォルダ。null で外す。項目 export.dir）・entries と exclude（どちらも {add: [...], remove: [...]}。entries の remove は {from, to} か from の字だけで、to を省けばその from の行全部。entries は change: [{from, to, set: {to, format, kinds, lines}}] で、合う 1 行を並びの場所のまま変えられる。null で外し、remove・change・add の順）。答えは export_read と同じ形の設定です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5382,7 +5382,7 @@
             },
             "entries": {
               "type": "object",
-              "description": "{add: [{from, to, format, kinds}], remove: [{from, to} か from の字]}（行の並びを丸ごと渡す形は無い。remove の to を省けばその from の行全部）"
+              "description": "{add: [{from, to, format, kinds, lines}], remove: [{from, to} か from の字], change: [{from, to, set: {to, format, kinds, lines}}]}（行の並びを丸ごと渡す形は無い。remove の to を省けばその from の行全部。change は合う 1 行を並びの場所のまま変え、null で外す）"
             },
             "exclude": {
               "type": "object",
@@ -5573,7 +5573,7 @@
   {
     "name": "tag_update",
     "title": "タグを付け外す",
-    "description": "タグを付け外しします（target にタグ、value に {add: [カードのパス], remove: [カードのパス]}。付いているほかのタグは保たれる）。target を group:名前 にすると、タググループを作る・変える・消します（value の add・remove にタグ（ほかのグループ名も可）、exclusive: true で「この束からちょうど 1 つ」、delete: true でグループを消す。タグは消えない）。無いグループ名なら作ります。グループ名とタグ名は同じ名前空間です。exclusive の違反は tagGroupViolations に返り、inspection_list（組 tagGroupViolations）にも出ます。",
+    "description": "タグを付け外しします（target にタグ、value に {add: [カードのパス], remove: [カードのパス]}。付いているほかのタグは保たれる）。target を group:名前 にすると、タググループを作る・変える・消します（value の add・remove にタグ（ほかのグループ名も可）、exclusive: true で「タグの付いたカードは、この束からちょうど 1 つ」、delete: true でグループを消す。タグは消えない）。無いグループ名なら作ります。グループ名とタグ名は同じ名前空間です。exclusive の違反は tagGroupViolations に返り、inspection_list（組 tagGroupViolations）にも出ます。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5624,7 +5624,7 @@
             },
             "exclusive": {
               "type": "boolean",
-              "description": "true で「この束からちょうど 1 つ」、false で解除"
+              "description": "true で「タグの付いたカードは、この束からちょうど 1 つ」、false で解除"
             },
             "delete": {
               "type": "boolean",

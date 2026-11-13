@@ -1004,6 +1004,27 @@ enum NavPanelTree {
         return .ghostAt(id, position: position)
     }
 
+    /// What the navigator's ＋ offers.
+    enum PlusItem: Hashable {
+        case addCard
+        case createSection(String)
+        case addWorkDir
+    }
+
+    /// What the ＋ offers with what is open now: a card where the section open holds any, a section inside it
+    /// (not directly under a root, whose sections are the project's tree, nor in a working directory, whose
+    /// folders are read), and a working directory always.
+    static func plusItems(_ model: AppModel) -> [PlusItem] {
+        var items: [PlusItem] = []
+        if let here = model.shownSection, let detail = model.detail, !model.isReadOnly {
+            // As the section's row menu offers them (`sectionMenu`).
+            if NavPanelTree.offersAddCard(here.id, in: detail) { items.append(.addCard) }
+            if here.parentId != nil, !model.isInWorkDir(section: here.id) { items.append(.createSection(here.id)) }
+        }
+        items.append(.addWorkDir)
+        return items
+    }
+
     /// One kind of section a section's menu offers to make inside it (`newSections`): the kind as
     /// `section_create`'s `type` takes it, an actor's figure, and what the menu says.
     struct NewSection: Hashable {
@@ -1259,7 +1280,7 @@ struct NavPanelTreeView: View {
     /// A branch about to be let go, with what it changed.
     @State private var deleting: BranchInfo?
     /// A card about to be removed, asked first (the right-click is where a card goes).
-    @State private var deletingCard: String?
+    @State private var addingWorkDir = false
     /// A section whose export settings are open.
     /// A card ghost being pointed elsewhere (`GhostRetargetSheet`).
     @State private var retargeting: String?
@@ -1291,19 +1312,6 @@ struct NavPanelTreeView: View {
             let now = RowState(model, pressed: pressed, drawn: drawn, allowed: allowed)
             VStack(spacing: 0) {
                 header(detail)
-                    .confirmationDialog(
-                        L10n[.Nav.alertDeleteCard(deletingCard.flatMap { model.schema($0)?.name } ?? "")],
-                        isPresented: Binding(get: { deletingCard != nil }, set: { if !$0 { deletingCard = nil } }),
-                        titleVisibility: .visible
-                    ) {
-                        Button(L10n[.Common.actionDeleteItem], role: .destructive) {
-                            if let id = deletingCard { model.deleteSchema(id) }
-                            deletingCard = nil
-                        }
-                        Button(L10n[.Common.actionCancel], role: .cancel) { deletingCard = nil }
-                    } message: {
-                        Text(CardDeletion.message)
-                    }
                 Divider()
                 settingsRow
                 Divider()
@@ -1378,6 +1386,9 @@ struct NavPanelTreeView: View {
             .onChange(of: expanded) { _, now in save(detail.project.id, now) }
             .nameSheet($asking)
             .sheet(item: $making) { asked in NewSectionSheet(ask: asked) { making = nil } }
+            .sheet(isPresented: $addingWorkDir) { WorkDirSheet(model: model) { addingWorkDir = false } }
+            // Delete (⌫, and the Edit menu's Delete) on the card picked: asked as its menu's 「カードを削除…」 asks.
+            .onDeleteCommand { model.askToDeleteSelected() }
             .confirmationDialog(
                 L10n[.Nav.alertDeleteBranch(deleting?.name ?? "")],
                 isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
@@ -1419,18 +1430,6 @@ struct NavPanelTreeView: View {
             .buttonStyle(.borderless)
             .disabled(expanded.isEmpty)
             .help(L10n[.Common.actionCollapseAll])
-            Menu {
-                if let here = model.shownSection, here.parentId != nil || model.isBoardOpen {
-                    createMenu(in: here, title: L10n[.Nav.menuCreateInside(here.name)])
-                } else {
-                    Text(L10n[.Nav.menuOpenToCreate])
-                }
-            } label: {
-                Image(systemName: "plus").font(.app(11))
-            }
-            .menuStyle(.borderlessButton)
-            .fixedSize()
-            .help(L10n[.Nav.headerCreateHelp])
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
@@ -1451,6 +1450,7 @@ struct NavPanelTreeView: View {
                     Button { filter.query = "" } label: { Image(systemName: "xmark.circle.fill") }
                         .buttonStyle(.plain).foregroundStyle(.secondary).font(.app(10))
                 }
+                plusMenu
             }
             // While the box is written in — or the pointer is on what it offers, so a press on
             // one is not lost as the box lets go of the keyboard — what may be put in it.
@@ -1465,6 +1465,32 @@ struct NavPanelTreeView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
+    }
+
+    /// What can be made from here (`plusItems`): a card and a section in the section open, and a working
+    /// directory from anywhere — beside the box, where the tree it adds to starts.
+    private var plusMenu: some View {
+        Menu {
+            ForEach(NavPanelTree.plusItems(model), id: \.self) { item in
+                switch item {
+                case .addCard:
+                    Button(L10n[.Nav.menuAddCard]) { model.newSchemaRequest = AppModel.NewSchemaRequest() }
+                case .createSection(let id):
+                    if let here = model.detail?.sections.first(where: { $0.id == id }) {
+                        createMenu(in: here, title: L10n[.Nav.menuCreateInside(here.name)])
+                    }
+                case .addWorkDir:
+                    if NavPanelTree.plusItems(model).count > 1 { Divider() }
+                    Button(L10n[.Nav.menuAddWorkDir]) { addingWorkDir = true }
+                        .disabled(model.isReadOnly)
+                }
+            }
+        } label: {
+            Image(systemName: "plus").font(.app(11))
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
+        .help(L10n[.Nav.headerCreateHelp])
     }
 
     /// The kinds and tags the box offers, each a press away from being put in.
@@ -1800,7 +1826,7 @@ struct NavPanelTreeView: View {
                     .disabled(readOnly || goals.isEmpty)
                 }
                 Divider()
-                Button(L10n[.Nav.menuDeleteCard], role: .destructive) { deletingCard = id }
+                Button(L10n[.Nav.menuDeleteCard], role: .destructive) { model.askToDelete([id]) }
                     .disabled(readOnly)
             }
         default:
@@ -2035,6 +2061,8 @@ struct NavPanelTreeView: View {
             pathName: what.namesSection) { typed in
                 commit(what, typed)
             }
+        // What it writes may be refused (a name there already): said in the sheet, which stays open.
+        asking?.refusing = { [model] typed in model.refusal { commit(what, typed) } }
     }
 
     private func commit(_ prompt: Prompt, _ typed: String) {

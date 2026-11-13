@@ -1441,3 +1441,63 @@ fn what_a_card_done_holds_is_information() {
         "{reopened}"
     );
 }
+
+#[test]
+fn an_exclusive_group_with_none_of_its_tags_says_so() {
+    let core = core();
+    ok(
+        &core,
+        "tag_update",
+        json!({"target": "group:layer", "value": {"add": ["wire", "store"], "exclusive": true}}),
+    );
+    ok(
+        &core,
+        "tag_update",
+        json!({"target": "rfc", "value": {"add": ["Schemas:Customer"]}}),
+    );
+    for tag in ["wire", "store"] {
+        ok(
+            &core,
+            "tag_update",
+            json!({"target": tag, "value": {"add": ["Schemas:Status"]}}),
+        );
+    }
+    let said = |at: &str| {
+        let items = list(
+            &core,
+            json!({"show": "fix", "group": "tagGroupViolations", "in": at}),
+        )["items"]
+            .as_array()
+            .unwrap()
+            .clone();
+        assert_eq!(items.len(), 1, "{at}: {items:?}");
+        items[0]["problem"].as_str().unwrap().to_string()
+    };
+    let fix = |at: &str| {
+        let id = list(
+            &core,
+            json!({"show": "fix", "group": "tagGroupViolations", "in": at}),
+        )["items"][0]["id"]
+            .clone();
+        ok(&core, "inspection_read", json!({"target": id}))["items"][0]["fix"]
+            .as_str()
+            .unwrap()
+            .to_string()
+    };
+    assert_eq!(
+        said("Schemas:Customer"),
+        "排他のタググループ layer のタグが付いていません"
+    );
+    assert_eq!(
+        fix("Schemas:Customer"),
+        "排他のタググループのタグを 1 つ付けます"
+    );
+    assert_eq!(
+        fix("Schemas:Status"),
+        "排他のタググループのタグを 1 つだけにします"
+    );
+    assert_eq!(
+        said("Schemas:Status"),
+        "排他のタググループ layer のタグが 2 つ付いています"
+    );
+}

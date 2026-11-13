@@ -523,3 +523,30 @@ fn what_a_scenarios_steps_name_is_drawn_from_its_row() {
     // The story's, from its head.
     assert_eq!(from(&order), [""]);
 }
+
+#[test]
+fn a_scenarios_steps_are_found_by_query() {
+    let core = core();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Rev", "value": {"kind": "spec", "scenarios": [{"name": "cascade", "heading": "連なって消える",
+            "steps": [{"given": "注文がある"}, {"when": "zephyr を押す"}, {"then": "行も消える"}]}]}}),
+    );
+    let found = ok(
+        &core,
+        "card_list",
+        json!({"value": {"query": "zephyr", "section": "Docs"}}),
+    );
+    assert_eq!(found["matched"], 1, "{found}");
+    let wheres: Vec<String> = found["cards"][0]["matches"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{found}"))
+        .iter()
+        .map(|m| m["where"].as_str().unwrap_or("").to_string())
+        .collect();
+    assert!(
+        wheres.iter().any(|w| w == "scenarios[0].steps[1].when"),
+        "{found}"
+    );
+}

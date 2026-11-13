@@ -40,6 +40,8 @@ struct DiagramDefinition {
     /// What stands for another section, put where it had no place.
     var onPlaceOutside: ([String: GridPoint]) -> Void = { _ in }
     var onClickEmpty: () -> Void
+    /// The cards picked, asked to be deleted (the Delete key).
+    var onDeleteRequest: (([String]) -> Void)? = nil
     /// What the open branch changed, made, or saw main change.
     var marks = BranchMarks()
     /// The kinds of line it draws, switched at its top; what the canvas drew when not said.
@@ -155,6 +157,7 @@ struct DiagramFrame: View {
                 imagePicture: { model.imagePicture($0, ready: $1) },
                 onPicture: d.onPicture,
                 onClickEmpty: d.onClickEmpty,
+                onDeleteRequest: d.onDeleteRequest,
                 settings: model.defaultSettings,
                 cardWidth: model.cardWidth,
                 marks: d.marks,

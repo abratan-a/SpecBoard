@@ -78,6 +78,7 @@ mod texts;
 pub(crate) mod tidy;
 mod update;
 mod views;
+pub(crate) use views::connections_json;
 pub(crate) mod walk;
 pub(crate) mod workdirs;
 mod writes;
@@ -102,8 +103,6 @@ pub(crate) struct ProjectSummary {
     pub description: String,
     pub updated_at: String,
     pub archived_at: Option<String>,
-    pub card_count: i64,
-    pub section_count: i64,
 }
 
 /// The tree a call reads and writes in: main, the board, or a branch.
@@ -122,8 +121,10 @@ pub(crate) struct Seen {
     pub named: Named,
     pub detail: crate::model::Detail,
     /// The detail as `project_detail` answers it, for what the typed one leaves out
-    /// (a node or a row as it is written).
-    pub raw: Value,
+    /// (a node or a row as it is written). A read's is the one the core keeps of the tree
+    /// (`detail::Tree`), shared with the reads beside it; a write's is its own, and brought up
+    /// to what it writes.
+    pub raw: std::sync::Arc<Value>,
     /// The project's exports (`export::settings`), in order.
     pub exports: Vec<crate::export::settings::Export>,
     /// main, as the board's lines reach it (`Project::outside`): read for the
@@ -137,7 +138,7 @@ pub(crate) struct Seen {
     pub gone: std::collections::HashMap<String, String>,
     /// Every card's document as the tree sees it, by id (`Scope::doc`): what the detail was made
     /// from, and each card's rev is (`revs`).
-    pub docs: std::collections::HashMap<String, Map<String, Value>>,
+    pub docs: std::sync::Arc<std::collections::HashMap<String, Map<String, Value>>>,
     /// What `project` looks things up by — of `detail`, `outside` and `files` —, made the first
     /// time it is asked for and kept while this stands (what is brought up changes none of it).
     looked: std::cell::OnceCell<Looked>,
@@ -231,9 +232,14 @@ fn gone_of(
         let text = match kept {
             Some(text) => Some(text),
             None => history
-                .query_row([project, id], |r| r.get::<_, String>(0))
+                .query_row([project, id], |r| {
+                    r.get::<_, crate::write::chunks::Before>(0)
+                })
                 .optional()
                 .map_err(crate::store::sql)?
+                // One that cannot be read names nothing: the card is said as one whose history
+                // was let go of.
+                .and_then(|before| before.text(reader.conn).ok().flatten())
                 .and_then(|before| crate::store::parse(Some(&before)))
                 .and_then(|row| row.get("doc").and_then(Value::as_str).map(str::to_string)),
         };
@@ -371,9 +377,7 @@ fn outside_of(
     if tree != Some(crate::store::BOARD) {
         return Ok(None);
     }
-    Ok(Some(crate::model::typed(&crate::detail::read(
-        reader, project, None,
-    )?)?))
+    Ok(Some(crate::detail::typed(reader, project, None)?))
 }
 
 impl Seen {
@@ -383,8 +387,17 @@ impl Seen {
         let named = named(store, &summary.id, branch)?;
         let tree = (!named.tree.is_empty()).then_some(named.tree.as_str());
         let whole = crate::workdir::whole();
-        let crate::detail::Kept { raw, made, .. } =
-            crate::detail::read_kept_as(&store.reader(), &summary.id, tree, whole)?;
+        // With the working directories whole, it is this call's alone; else the one kept.
+        let crate::detail::Tree { raw, docs } = if whole {
+            let crate::detail::Kept { raw, made, .. } =
+                crate::detail::read_kept_as(&store.reader(), &summary.id, tree, true)?;
+            crate::detail::Tree {
+                raw: std::sync::Arc::new(raw),
+                docs: std::sync::Arc::new(made.cards.into_iter().map(|i| (i.id, i.doc)).collect()),
+            }
+        } else {
+            crate::detail::tree(&store.reader(), &summary.id, tree)?
+        };
         let detail = crate::model::typed(&raw)?;
         let exports = store.exports(&summary.id)?;
         let outside = outside_of(&store.reader(), &summary.id, tree)?;
@@ -400,7 +413,7 @@ impl Seen {
             files,
             gone,
             // What each card's rev is made from (`revs`).
-            docs: made.cards.into_iter().map(|i| (i.id, i.doc)).collect(),
+            docs,
             looked: std::cell::OnceCell::new(),
             fields: std::cell::OnceCell::new(),
             held: Held::new(),
@@ -526,8 +539,6 @@ impl Seen {
                 description: String::new(),
                 updated_at: String::new(),
                 archived_at: None,
-                card_count: 0,
-                section_count: 0,
             },
             named: Named {
                 project: scope.project.clone(),
@@ -535,7 +546,7 @@ impl Seen {
                 name: scope.tree_name.clone(),
             },
             detail,
-            raw,
+            raw: std::sync::Arc::new(raw),
             exports,
             outside,
             files,
@@ -543,7 +554,7 @@ impl Seen {
             docs: {
                 let cards = std::mem::take(&mut made.cards);
                 order = cards.iter().map(|i| i.id.clone()).collect();
-                cards.into_iter().map(|i| (i.id, i.doc)).collect()
+                std::sync::Arc::new(cards.into_iter().map(|i| (i.id, i.doc)).collect())
             },
             looked: std::cell::OnceCell::new(),
             fields: std::cell::OnceCell::new(),
@@ -917,52 +928,66 @@ pub(crate) fn slashed(items: Vec<crate::text::Keyed>) -> crate::text::Keyed {
     })
 }
 
-/// Every project, as a connection (a transaction's, say) sees them: by name.
+/// Every project, as a connection (a transaction's, say) sees them: by name. Read from the
+/// projects alone: every call looks its project up here, and none of them but the list of projects
+/// says how many cards one has (`ProjectCounts`).
 pub(crate) fn projects_in(conn: &rusqlite::Connection) -> Result<Vec<ProjectSummary>, String> {
-    let count = |query: &str| -> Result<std::collections::HashMap<String, i64>, String> {
-        let mut stmt = conn.prepare(query).map_err(crate::store::sql)?;
-        let rows = stmt
-            .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?)))
-            .map_err(crate::store::sql)?
-            .collect::<Result<_, _>>()
-            .map_err(crate::store::sql)?;
-        Ok(rows)
-    };
-    // A project's cards as a section counts them: not its card ghosts, nor a flow's nodes
-    // (cards inside the flow, counted as the flow was before).
-    let cards = count(
-        "SELECT project_id, COUNT(*) FROM card_docs WHERE branch_id = '' AND removed = 0 AND kind NOT IN ('ghost', 'begin', 'process', 'run', 'eval', 'wait', 'join', 'end') GROUP BY project_id",
-    )?;
-    let sections = count(
-        "SELECT project_id, COUNT(*) FROM section_docs WHERE branch_id = '' AND removed = 0 GROUP BY project_id",
-    )?;
     let mut stmt = conn
         .prepare("SELECT id, name, slug, description, updated_at, archived_at FROM projects ORDER BY name ASC")
         .map_err(crate::store::sql)?;
-    let out = stmt
-        .query_map([], |r| {
-            Ok(ProjectSummary {
-                id: r.get(0)?,
-                name: r.get(1)?,
-                slug: r.get(2)?,
-                description: r.get(3)?,
-                updated_at: r.get(4)?,
-                archived_at: r.get(5)?,
-                card_count: 0,
-                section_count: 0,
-            })
+    stmt.query_map([], |r| {
+        Ok(ProjectSummary {
+            id: r.get(0)?,
+            name: r.get(1)?,
+            slug: r.get(2)?,
+            description: r.get(3)?,
+            updated_at: r.get(4)?,
+            archived_at: r.get(5)?,
         })
-        .map_err(crate::store::sql)?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(crate::store::sql)?;
-    Ok(out
-        .into_iter()
-        .map(|mut p| {
-            p.card_count = cards.get(&p.id).copied().unwrap_or(0);
-            p.section_count = sections.get(&p.id).copied().unwrap_or(1);
-            p
+    })
+    .map_err(crate::store::sql)?
+    .collect::<Result<Vec<_>, _>>()
+    .map_err(crate::store::sql)
+}
+
+/// How many cards and sections each project's main has, for a list of the projects: counted over
+/// every project of the store at once.
+pub(crate) struct ProjectCounts {
+    cards: std::collections::HashMap<String, i64>,
+    sections: std::collections::HashMap<String, i64>,
+}
+
+impl ProjectCounts {
+    pub(crate) fn of(conn: &rusqlite::Connection) -> Result<ProjectCounts, String> {
+        let count = |query: &str| -> Result<std::collections::HashMap<String, i64>, String> {
+            let mut stmt = conn.prepare(query).map_err(crate::store::sql)?;
+            let rows = stmt
+                .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?)))
+                .map_err(crate::store::sql)?
+                .collect::<Result<_, _>>()
+                .map_err(crate::store::sql)?;
+            Ok(rows)
+        };
+        Ok(ProjectCounts {
+            // A project's cards as a section counts them: not its card ghosts, nor a flow's nodes
+            // (cards inside the flow, counted as the flow was before).
+            cards: count(
+                "SELECT project_id, COUNT(*) FROM card_docs WHERE branch_id = '' AND removed = 0 AND kind NOT IN ('ghost', 'begin', 'process', 'run', 'eval', 'wait', 'join', 'end') GROUP BY project_id",
+            )?,
+            sections: count(
+                "SELECT project_id, COUNT(*) FROM section_docs WHERE branch_id = '' AND removed = 0 GROUP BY project_id",
+            )?,
         })
-        .collect())
+    }
+
+    pub(crate) fn cards(&self, project: &str) -> i64 {
+        self.cards.get(project).copied().unwrap_or(0)
+    }
+
+    /// With the root, which a project always has.
+    pub(crate) fn sections(&self, project: &str) -> i64 {
+        self.sections.get(project).copied().unwrap_or(1)
+    }
 }
 
 /// The projects the call's access key may see; every project for the window
@@ -1025,15 +1050,20 @@ pub(crate) fn project_summary_in(
             crate::access::admit(conn, &p.id, &p.name)?;
             Ok(p.clone())
         }
-        None if projects.is_empty() => Err(text!("tools.project.noneVisible", name = name)),
-        None => Err(text!(
-            "tools.project.gone",
-            name = name,
-            listed = capped(
-                &projects.iter().map(|p| p.name.clone()).collect::<Vec<_>>(),
-                12
-            )
-        )),
+        None => {
+            // What there is: this store's, then the ones other agents share with it that the key
+            // was given, each as a call names it whatever else is called the same.
+            let mut listed: Vec<String> = projects.iter().map(|p| p.name.clone()).collect();
+            listed.extend(crate::hub::names_for_call(conn)?);
+            if listed.is_empty() {
+                return Err(text!("tools.project.noneVisible", name = name));
+            }
+            Err(text!(
+                "tools.project.gone",
+                name = name,
+                listed = capped(&listed, 12)
+            ))
+        }
     }
 }
 
@@ -1194,6 +1224,9 @@ impl Core {
         arguments: &Map<String, Value>,
     ) -> Result<Output, String> {
         let args = Args::new(arguments).paged(who.side == crate::write::Side::Mcp);
+        // A call handed over the hub touches no folder of this host, whatever the project lets MCP
+        // do: refused before a person is asked about it.
+        crate::hub::refuse_folders(name, &args)?;
         // A branch of the app's own (`~…`) is the window's: to MCP it is not there.
         if who.side == crate::write::Side::Mcp
             && let Some(own) = args
@@ -1222,7 +1255,11 @@ impl Core {
         // What only reads, read apart from the writes: what was committed, not waiting for a write
         // going on (`Core::reading`).
         match name {
-            "project_list" => reads::project_list(&*self.reading()?),
+            "project_list" => {
+                let store = self.reading()?;
+                let shared = self.hub_listed(&store.conn)?;
+                reads::project_list(&store, shared)
+            }
             "project_read" => reads::project_read(&*self.reading()?, &args),
             "section_list" => reads::section_list(&*self.reading()?, &args),
             // A picture is drawn by the app, with no store lock held while it draws.

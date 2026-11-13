@@ -263,7 +263,7 @@ struct KindForm: View {
             }
         } else {
             KindFormLine(label: L10n[.Kinds.formOnMap]) {
-                Picker("", selection: Binding(get: { face != nil }, set: { on in
+                Picker("", selection: Binding.choice({ face != nil }, { on in
                     context.edit { draft in
                         if on {
                             if let first = controls.first { draft.set(OJSON.string([first]), at: .kind, "face", "top") }
@@ -309,7 +309,7 @@ struct KindForm: View {
         let mode = asRow?.stringOrNil == "unfold" ? "unfold" : asRow?.stringsOrNil != nil ? "fields" : ""
         KindFormLine(label: L10n[.Kinds.formInContainer]) {
             VStack(alignment: .leading, spacing: 4) {
-                Picker("", selection: Binding(get: { mode }, set: { said in
+                Picker("", selection: Binding.choice({ mode }, { said in
                     context.edit { draft in
                         switch said {
                         case "unfold": draft.set(.string("unfold"), at: .kind, "as_row")

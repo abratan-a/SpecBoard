@@ -97,6 +97,11 @@ pub fn bind_screen(on: bool) -> ScreenBound {
     ScreenBound(SCREEN.with(|c| c.replace(on)))
 }
 
+/// Whether the call running on this thread is the window's (`bind_screen`).
+pub(crate) fn on_screen() -> bool {
+    SCREEN.with(Cell::get)
+}
+
 /// The language of what no call binds, for the whole process: none set (`usize::MAX`), `UNBOUND`.
 static DEFAULT: AtomicUsize = AtomicUsize::new(usize::MAX);
 

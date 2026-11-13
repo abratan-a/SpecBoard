@@ -557,13 +557,18 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ========================================================================
-MIT  (29 packages)
+MIT  (31 packages)
 ========================================================================
 
 generic-array 0.14.7 - https://github.com/fizyk20/generic-array.git
     Copyright (c) 2015 Bartłomiej Kamiński
+libmimalloc-sys 0.1.49 - https://github.com/purpleprotocol/mimalloc_rust/tree/master/libmimalloc-sys
+    Copyright 2019 Octavian Oncescu
+    Copyright (c) 2018-2025 Microsoft Corporation, Daan Leijen
 libsqlite3-sys 0.38.2 - https://github.com/rusqlite/rusqlite
     Copyright (c) 2014 The rusqlite developers
+mimalloc 0.1.52 - https://github.com/purpleprotocol/mimalloc_rust
+    Copyright 2019 Octavian Oncescu
 musl libc 1.2.5 - https://musl.libc.org
     Copyright © 2005-2020 Rich Felker, et al.
 rusqlite 0.40.2 - https://github.com/rusqlite/rusqlite

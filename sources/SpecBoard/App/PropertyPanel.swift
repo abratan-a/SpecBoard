@@ -17,10 +17,17 @@ struct PropertyPanel: View {
             header
             Divider()
             ScrollView { middle }
-            Divider()
-            descriptionPane
+            // An export's row has no description to write.
+            if !isSettings {
+                Divider()
+                descriptionPane
+            }
         }
         .background(Color(nsColor: .controlBackgroundColor).opacity(0.35))
+    }
+
+    private var isSettings: Bool {
+        if case .settings = model.here { true } else { false }
     }
 
     /// What the panel is about, in the order it is looked for: a row picked in a
@@ -37,10 +44,16 @@ struct PropertyPanel: View {
         case gone(AppModel.GonePicked)
         /// A group picked on a diagram.
         case group(GroupRef, MapGroup)
+        /// A row of an export picked on the exports tab, with its number among its export's rows.
+        case exportEntry(ExportRead, ExportRead.Entry, Int)
         case nothing
     }
 
     private var subject: Subject {
+        // Among the project's settings nothing of a diagram is picked: an export's row, or nothing.
+        if case .settings = model.here {
+            return model.pickedExport.map { .exportEntry($0.export, $0.entry, $0.row) } ?? .nothing
+        }
         if let gone = model.goneShown { return .gone(gone) }
         if let picked = model.pickedMapGroup { return .group(picked.ref, picked.group) }
         if let line = model.selectedLine { return .line(line) }
@@ -92,6 +105,10 @@ struct PropertyPanel: View {
             case .group(_, let group):
                 Text(group.name).font(.app(12, weight: .semibold, design: .monospaced)).lineLimit(1)
                 Text(L10n[.Properties.groupHeading]).font(.app(10.5)).foregroundStyle(.secondary)
+            case .exportEntry(let export, let entry, _):
+                Text("\(entry.from) → \(entry.to)").font(.app(12, weight: .semibold, design: .monospaced))
+                    .lineLimit(1).truncationMode(.middle)
+                Text(L10n[.Export.labelExport(export.name)]).font(.app(10.5)).foregroundStyle(.secondary).lineLimit(1)
             case .nothing:
                 Text(L10n[.Properties.headerProperties]).font(.app(12, weight: .semibold))
             }
@@ -125,6 +142,10 @@ struct PropertyPanel: View {
     /// What the top of the panel says is picked, and what it is: a row of a card, a card,
     /// the section open — as the panel shows it, for the tests too.
     static func heading(_ model: AppModel) -> (title: String, kind: String) {
+        if case .settings = model.here {
+            guard let picked = model.pickedExport else { return (L10n[.Properties.headerProperties], "") }
+            return ("\(picked.entry.from) → \(picked.entry.to)", L10n[.Export.labelExport(picked.export.name)])
+        }
         if let gone = model.goneShown { return goneHeading(gone) }
         if let picked = model.pickedMapGroup { return (picked.group.name, L10n[.Properties.groupHeading]) }
         if let ref = model.selectedLine, let (_, line) = model.line(ref) {
@@ -252,8 +273,10 @@ struct PropertyPanel: View {
             goneContent(gone)
         case .group(let ref, let group):
             GroupProperties(model: model, ref: ref, group: group, editable: model.canWriteGroups)
+        case .exportEntry(let export, let entry, let row):
+            ExportEntryProperties(model: model, export: export, entry: entry, row: row, editable: model.canEditExports)
         case .nothing:
-            Text(L10n[.Properties.emptyNothing])
+            Text(isSettings ? L10n[.Export.panelEmpty] : L10n[.Properties.emptyNothing])
                 .font(.app(11)).foregroundStyle(.tertiary)
                 .padding(12)
         }
@@ -347,7 +370,7 @@ struct PropertyPanel: View {
             return Describable(key: "gone-\(node.id)", text: node.description, place: "node.description") { _ in }
         case .gone(.section(let section)):
             return Describable(key: "gone-\(section.id)", text: section.description, place: "section.description") { _ in }
-        case .ghost, .gone(.ghost), .group, .nothing:
+        case .ghost, .gone(.ghost), .group, .exportEntry, .nothing:
             return nil
         }
     }
@@ -388,22 +411,28 @@ struct PropertyPanel: View {
 /// beside a setting.
 struct PropertyInfo: View {
     var text: String
+    /// How big the mark is, how wide its window, and whether it is as faint as beside a property's name:
+    /// beside a tab's title it is the one place the tab says what it is for.
+    var size: CGFloat = 9.5
+    var width: CGFloat = 280
+    var faint = true
 
     @State private var open = false
 
     var body: some View {
         if !text.isEmpty {
             Button { open.toggle() } label: {
-                Image(systemName: "info.circle").font(.app(9.5)).foregroundStyle(.tertiary)
+                Image(systemName: "info.circle").font(.app(size))
+                    .foregroundStyle(faint ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.secondary))
             }
             .buttonStyle(.borderless)
             .help(text)
-            .popover(isPresented: $open, arrowEdge: .trailing) {
+            .popover(isPresented: $open, arrowEdge: faint ? .trailing : .bottom) {
                 Text(text)
                     .font(.app(11))
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
-                    .frame(width: 280, alignment: .leading)
+                    .frame(width: width, alignment: .leading)
                     .padding(10)
             }
         }

@@ -31,6 +31,9 @@ nonisolated final class CoreClient: @unchecked Sendable {
     /// This Mac as the core knows the window it writes from (a hold's `client`): empty for the
     /// store this app holds, the Mac's name for an agent's, which the agent says with each request.
     let client: String
+    /// Whether its store is on this Mac: the store this app holds itself, and this Mac's own agent's
+    /// (`LocalAgent`) — where a folder is chosen in a panel, not typed as a host's is.
+    let onThisMac: Bool
 
     /// The store at `url` opened; a new, empty one made there when there is none. Why it cannot be is said
     /// in the screen's language.
@@ -40,13 +43,16 @@ nonisolated final class CoreClient: @unchecked Sendable {
             ? try Core.open(place: url.path) : try Core.create(place: url.path))
         place = nil
         client = ""
+        onThisMac = true
     }
 
-    /// The core of the agent on the host `place`, reached through `agent` (started, as `client`).
-    init(agent: AgentCore, place: UUID, client: String) {
+    /// The core of the agent on the host `place`, reached through `agent` (started, as `client`);
+    /// `onThisMac` for this Mac's own agent.
+    init(agent: AgentCore, place: UUID, client: String, onThisMac: Bool = false) {
         way = .agent(agent)
         self.place = place
         self.client = client
+        self.onThisMac = onThisMac
     }
 
     var isAgent: Bool { place != nil }

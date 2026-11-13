@@ -19,7 +19,12 @@
 //!   The request goes with the app's machine as its `client`: the windows of two Macs are two
 //!   hands, and what one holds the other waits for (`Who::client`); and with the connection's own
 //!   number as its `connection`: what the core sent it of a project (`project_detail`) is its own,
-//!   answered next with what changed, and let go of when it goes
+//!   answered next with what changed, and let go of when it goes.
+//!   The requests are answered one at a time in the order they come, but for the window's readings
+//!   of a tree (`project_detail`): those are answered on a thread of their own, one at a time in
+//!   the order asked among themselves, so that a big tree read does not hold the app's next
+//!   request (a click, a write). A reading reads what was committed when it is worked out, which
+//!   may be later than when it was asked — never what a write asked before it had not yet written
 //! - `{"t":"changed","notice":"…","own":…}`: what changed, told to every app it holds
 //!   (`Core::listen`), the notice's text; `own` to the app whose request changed it, which reads it
 //!   again itself (as the window does what it writes to the core it holds)
@@ -41,10 +46,18 @@
 //!   on every app it holds — a person is at one Mac or another — and the first answer taken; then
 //!   `{"t":"asked","id":n}` to every app, which takes the question away (answered on another Mac, or no
 //!   answer in time)
+//! - `{"t":"hub"}` → `{"t":"hub","joined":…,"id"?,"to"?,"link":{is, since?, at?, why?, retryAt?},"members":[…]}`:
+//!   where this agent's link to the hub stands (`hub::link`); told to every app each time it changes
+//! - `{"t":"hub_key"}` → `{"t":"hub_key","id":…,"key":…}`: this agent's id and public key in the hub, made
+//!   when it has none (the private key stays on this host); the app hands them to the hub
+//! - `{"t":"hub_join","to":…,"hostKeys":[…]}`: joined — where the hub is, as this host's ssh names it, and
+//!   the hub's host's public host keys as the hub handed them to the app — and linked from now on
+//! - `{"t":"hub_leave"}`: the link let go, and nothing of the hub kept
 //! - `{"t":"stop"}`: it ends, and every app it holds with it
 //!
 //! It answers MCP itself at its user's loopback, with the access keys in its own database (`mcp.rs`).
 
+use crate::hub::link::Link;
 use crate::mcp::Mcp;
 use serde_json::{Value, json};
 use specboard_core::{Core, Listener};
@@ -52,7 +65,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::{UnixListener, UnixStream};
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 /// Where the agent of the user it runs as keeps itself.
@@ -342,6 +355,21 @@ pub fn serve() -> i32 {
             clients.tell_each(|lang| json!({"t": "mcp", "mcp": mcp.said_in(lang)}));
         });
     }
+    // The link to the hub this agent joined, if it joined one: the way the core hands a call for
+    // a project another agent shares to its owner, and is told who is there.
+    let link = Link::start(core.clone(), &home);
+    core.set_hub(link.clone());
+    core.listen(link.clone());
+    {
+        let clients = clients.clone();
+        let told = Arc::downgrade(&link);
+        link.tell_with(move || {
+            if let Some(link) = told.upgrade() {
+                let said = hub_line(&link);
+                clients.tell_each(|_| said.clone());
+            }
+        });
+    }
     let path = socket(&home);
     let _ = std::fs::remove_file(&path);
     let listener = match UnixListener::bind(&path) {
@@ -362,9 +390,25 @@ pub fn serve() -> i32 {
         let clients = clients.clone();
         let path = path.clone();
         let mcp = mcp.clone();
-        std::thread::spawn(move || answer(&core, &clients, &mcp, connection, &path));
+        let link = link.clone();
+        std::thread::spawn(move || answer(&core, &clients, &mcp, &link, connection, &path));
     }
     0
+}
+
+/// `said`, as the answer to the line `asked`: with its number (`re`), when it has one.
+fn answering(mut said: Value, asked: &Value) -> Value {
+    if !asked["id"].is_null() {
+        said["re"] = asked["id"].clone();
+    }
+    said
+}
+
+/// Where the link to the hub stands, as an app is told it (`Link::said`).
+fn hub_line(link: &Link) -> Value {
+    let mut said = link.said();
+    said["t"] = "hub".into();
+    said
 }
 
 /// The number of the connection an app came by: told apart from those before it, which a request's
@@ -372,7 +416,14 @@ pub fn serve() -> i32 {
 static CONNECTIONS: AtomicU64 = AtomicU64::new(0);
 
 /// One app's lines, answered until it goes (or says stop).
-fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream, path: &Path) {
+fn answer(
+    core: &Core,
+    clients: &Clients,
+    mcp: &Arc<Mcp>,
+    link: &Arc<Link>,
+    connection: UnixStream,
+    path: &Path,
+) {
     let Ok(out) = connection.try_clone() else {
         return;
     };
@@ -386,92 +437,167 @@ fn answer(core: &Core, clients: &Clients, mcp: &Arc<Mcp>, connection: UnixStream
     });
     let mut id = None;
     let mut name = String::new();
-    for line in BufReader::new(connection).lines() {
-        let Ok(line) = line else { break };
-        let message: Value = serde_json::from_str(&line).unwrap_or(Value::Null);
-        match message["t"].as_str() {
-            Some("who") => {
-                let mut said = me();
-                said["t"] = "daemon".into();
-                said["mcp"] = mcp.said_in(message["lang"].as_str());
-                client.say(&said);
-            }
-            Some("hello") => {
-                let mut said = me();
-                said["t"] = "ready".into();
-                if id.is_none() {
-                    id = Some(clients.add(client.clone()));
+    // The window's readings of a tree, answered apart (see the module's words on `core`): the
+    // number each was asked by, and the request.
+    let (reads, asked) = std::sync::mpsc::channel::<(Value, String)>();
+    let gone = AtomicBool::new(false);
+    std::thread::scope(|scope| {
+        let (reading, gone) = (client.clone(), &gone);
+        scope.spawn(move || {
+            for (id, request) in asked {
+                // Its app gone, what it still asked for is no one's.
+                if gone.load(Ordering::SeqCst) {
+                    continue;
                 }
-                name = message["client"].as_str().unwrap_or("").to_string();
-                let lang = message["lang"].as_str().map(str::to_string);
-                said["mcp"] = mcp.said_in(lang.as_deref());
-                {
+                // One that cannot be answered at all ends the connection, as it does where the
+                // other requests are answered: the app is told it is gone, not left waiting.
+                let answered =
+                    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| core.call(&request)));
+                match answered {
+                    Ok(answer) => {
+                        reading.say(&json!({"t": "core", "id": id, "answer": answer}));
+                    }
+                    Err(_) => {
+                        reading.close();
+                        break;
+                    }
+                }
+            }
+        });
+        for line in BufReader::new(connection).lines() {
+            let Ok(line) = line else { break };
+            let message: Value = serde_json::from_str(&line).unwrap_or(Value::Null);
+            match message["t"].as_str() {
+                Some("who") => {
+                    let mut said = me();
+                    said["t"] = "daemon".into();
+                    said["mcp"] = mcp.said_in(message["lang"].as_str());
+                    client.say(&said);
+                }
+                Some("hello") => {
+                    let mut said = me();
+                    said["t"] = "ready".into();
+                    if id.is_none() {
+                        id = Some(clients.add(client.clone()));
+                    }
+                    name = message["client"].as_str().unwrap_or("").to_string();
+                    let lang = message["lang"].as_str().map(str::to_string);
+                    said["mcp"] = mcp.said_in(lang.as_deref());
+                    {
+                        let mut seen = client.seen.lock().unwrap_or_else(|e| e.into_inner());
+                        seen.name = name.clone();
+                        seen.lang = lang;
+                    }
+                    eprintln!("{}", specboard_core::text!("agent.run.connected", name));
+                    client.say(&said);
+                }
+                Some("core") => {
+                    let mut request = match &message["request"] {
+                        Value::String(text) => serde_json::from_str(text).unwrap_or(Value::Null),
+                        other => other.clone(),
+                    };
+                    if let Some(fields) = request.as_object_mut() {
+                        fields.insert("client".to_string(), Value::String(name.clone()));
+                        fields.insert("connection".to_string(), Value::String(reader.clone()));
+                    }
+                    let apart = request["op"] == "project_detail";
+                    let request = request.to_string();
+                    // Answered inline all the same should the readings' thread be gone.
+                    let request = if apart {
+                        match reads.send((message["id"].clone(), request)) {
+                            Ok(()) => continue,
+                            Err(back) => back.0.1,
+                        }
+                    } else {
+                        request
+                    };
+                    ASKING.with(|a| a.set(id));
+                    let answer = core.call(&request);
+                    ASKING.with(|a| a.set(None));
+                    client.say(&json!({"t": "core", "id": message["id"], "answer": answer}));
+                }
+                // The app's windows that show this agent's projects (none while it does not take
+                // `app_control` from here).
+                Some("windows") => {
                     let mut seen = client.seen.lock().unwrap_or_else(|e| e.into_inner());
-                    seen.name = name.clone();
-                    seen.lang = lang;
+                    seen.windows = message["windows"].as_array().cloned().unwrap_or_default();
+                    seen.said_at = clients.said.fetch_add(1, Ordering::SeqCst) + 1;
                 }
-                eprintln!("{}", specboard_core::text!("agent.run.connected", name));
-                client.say(&said);
-            }
-            Some("core") => {
-                let mut request = match &message["request"] {
-                    Value::String(text) => serde_json::from_str(text).unwrap_or(Value::Null),
-                    other => other.clone(),
-                };
-                if let Some(fields) = request.as_object_mut() {
-                    fields.insert("client".to_string(), Value::String(name.clone()));
-                    fields.insert("connection".to_string(), Value::String(reader.clone()));
+                Some("app") | Some("ask") | Some("picture") => {
+                    let ask = message["id"].as_u64().unwrap_or(0);
+                    clients.answered(ask, message["answer"].as_str().unwrap_or("").to_string());
                 }
-                let request = request.to_string();
-                ASKING.with(|a| a.set(id));
-                let answer = core.call(&request);
-                ASKING.with(|a| a.set(None));
-                client.say(&json!({"t": "core", "id": message["id"], "answer": answer}));
-            }
-            // The app's windows that show this agent's projects (none while it does not take
-            // `app_control` from here).
-            Some("windows") => {
-                let mut seen = client.seen.lock().unwrap_or_else(|e| e.into_inner());
-                seen.windows = message["windows"].as_array().cloned().unwrap_or_default();
-                seen.said_at = clients.said.fetch_add(1, Ordering::SeqCst) + 1;
-            }
-            Some("app") | Some("ask") | Some("picture") => {
-                let ask = message["id"].as_u64().unwrap_or(0);
-                clients.answered(ask, message["answer"].as_str().unwrap_or("").to_string());
-            }
-            Some("mcp_port") => {
-                // Refused in the screen's language, when the app says it.
-                let _lang = specboard_core::text::bind(message["lang"].as_str());
-                let port = message["port"]
-                    .as_u64()
-                    .and_then(|p| u16::try_from(p).ok())
-                    .unwrap_or(0);
-                match mcp.move_to(port) {
-                    Ok(()) => {
-                        clients.tell_each(|lang| json!({"t": "mcp", "mcp": mcp.said_in(lang)}));
-                        if id.is_none() {
-                            client.say(&json!({"t": "mcp", "mcp": mcp.said()}));
+                Some("mcp_port") => {
+                    // Refused in the screen's language, when the app says it.
+                    let _lang = specboard_core::text::bind(message["lang"].as_str());
+                    let port = message["port"]
+                        .as_u64()
+                        .and_then(|p| u16::try_from(p).ok())
+                        .unwrap_or(0);
+                    match mcp.move_to(port) {
+                        Ok(()) => {
+                            clients.tell_each(|lang| json!({"t": "mcp", "mcp": mcp.said_in(lang)}));
+                            if id.is_none() {
+                                client.say(&json!({"t": "mcp", "mcp": mcp.said()}));
+                            }
+                        }
+                        Err(problem) => {
+                            client.say(&json!({"t": "mcp", "mcp": mcp.said(), "refused": problem}));
                         }
                     }
-                    Err(problem) => {
-                        client.say(&json!({"t": "mcp", "mcp": mcp.said(), "refused": problem}));
+                }
+                // The link to the hub (`hub::link`). What is asked with a number (`id`) is answered to who
+                // asked, with it (`re`); what changed is told to every app besides (`Link::tell_with`).
+                Some("hub") => {
+                    client.say(&answering(hub_line(link), &message));
+                }
+                Some("hub_key") => {
+                    let _lang = specboard_core::text::bind(message["lang"].as_str());
+                    let said = match link.key() {
+                        Ok((member, key)) => json!({"t": "hub_key", "id": member, "key": key}),
+                        Err(problem) => json!({"t": "hub_key", "refused": problem}),
+                    };
+                    client.say(&answering(said, &message));
+                }
+                Some("hub_join") => {
+                    let _lang = specboard_core::text::bind(message["lang"].as_str());
+                    let refused = link
+                        .join(message["to"].as_str().unwrap_or(""), &message["hostKeys"])
+                        .err();
+                    // Every app is told when it joined; who asked with a number, or is no app, is
+                    // answered too — and always why it did not.
+                    if refused.is_some() || id.is_none() || !message["id"].is_null() {
+                        let mut said = hub_line(link);
+                        if let Some(problem) = refused {
+                            said["refused"] = problem.into();
+                        }
+                        client.say(&answering(said, &message));
                     }
                 }
-            }
-            Some("stop") => {
-                eprintln!("{}", specboard_core::text!("agent.run.stopping"));
-                core.close();
-                let _ = std::fs::remove_file(path);
-                std::process::exit(0);
-            }
-            _ => {
-                client.say(&json!({
-                    "t": "error",
-                    "message": specboard_core::text!("agent.run.unknownLine", line)
-                }));
+                Some("hub_leave") => {
+                    link.leave();
+                    if id.is_none() || !message["id"].is_null() {
+                        client.say(&answering(hub_line(link), &message));
+                    }
+                }
+                Some("stop") => {
+                    eprintln!("{}", specboard_core::text!("agent.run.stopping"));
+                    link.let_go();
+                    core.close();
+                    let _ = std::fs::remove_file(path);
+                    std::process::exit(0);
+                }
+                _ => {
+                    client.say(&json!({
+                        "t": "error",
+                        "message": specboard_core::text!("agent.run.unknownLine", line)
+                    }));
+                }
             }
         }
-    }
+        gone.store(true, Ordering::SeqCst);
+        drop(reads);
+    });
     if let Some(id) = id {
         clients.remove(id);
     }

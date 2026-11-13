@@ -16,7 +16,8 @@ struct NewSectionAsk: Identifiable {
     /// The mark picked so far; nothing picked writes no mark.
     var mark = SectionMark()
     /// What deciding does: the section made with the name typed and the mark picked.
-    var onDecide: (String, SectionMark) -> Void
+    /// What deciding does: why it was refused, or nil when it was made.
+    var onDecide: (String, SectionMark) -> String?
 
     /// Asked for `choice` inside `parent`, made through `model`. `single`: the only kind the menu offers,
     /// the parent's own, made as the core makes one with no kind asked for (no `type`).
@@ -32,20 +33,29 @@ struct NewSectionAsk: Identifiable {
         let figure = choice.figure
         let parentId = parent.id
         onDecide = { [weak model] name, mark in
-            model?.createSection(name: name, parentId: parentId, type: type, figure: figure,
-                                 icon: mark.icon == nil && mark.color == nil ? nil : mark)
+            model?.refusal {
+                model?.createSection(name: name, parentId: parentId, type: type, figure: figure,
+                                     icon: mark.icon == nil && mark.color == nil ? nil : mark)
+            }
         }
     }
 
     /// Whether the name typed may be decided: held to what the core holds a section's name to.
     func canDecide(_ text: String) -> Bool { PathText.nameProblem(PathText.trimmed(text)) == nil }
 
-    /// Decided with this typed and the mark picked: whether it was.
+    /// What deciding came to.
+    enum Decision: Equatable {
+        case notYet
+        case made
+        case refused(String)
+    }
+
+    /// Decided with this typed and the mark picked.
     @discardableResult
-    func decide(_ text: String) -> Bool {
-        guard canDecide(text) else { return false }
-        onDecide(PathText.trimmed(text), mark)
-        return true
+    func decide(_ text: String) -> Decision {
+        guard canDecide(text) else { return .notYet }
+        if let said = onDecide(PathText.trimmed(text), mark) { return .refused(said) }
+        return .made
     }
 }
 
@@ -59,6 +69,8 @@ struct NewSectionSheet: View {
     @State private var mark = SectionMark()
     @FocusState private var focused: Bool
     @State private var decided = false
+    /// Why the name was refused, said under it until it is changed: the sheet stays open.
+    @State private var refused: String?
 
     init(ask: NewSectionAsk, close: @escaping () -> Void) {
         self.ask = ask
@@ -72,10 +84,17 @@ struct NewSectionSheet: View {
             SwiftUI.Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
                 GridRow {
                     Text(L10n[.Common.wordName]).font(.app(11)).foregroundStyle(.secondary)
-                    TextField(L10n[.Common.wordName], text: $text)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.app(12))
-                        .focused($focused)
+                    VStack(alignment: .leading, spacing: 3) {
+                        TextField(L10n[.Common.wordName], text: $text)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.app(12))
+                            .focused($focused)
+                            .onChange(of: text) { refused = nil }
+                        if let refused {
+                            Text(refused).font(.app(10.5)).foregroundStyle(.red)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
                 }
                 GridRow {
                     Text(L10n[.Nav.promptMark]).font(.app(11)).foregroundStyle(.secondary)
@@ -99,10 +118,17 @@ struct NewSectionSheet: View {
     }
 
     private func decide() {
+        guard !decided else { return }
         var asked = ask
         asked.mark = mark
-        guard !decided, asked.decide(text) else { return }
-        decided = true
-        close()
+        switch asked.decide(text) {
+        case .made:
+            decided = true
+            close()
+        case .refused(let said):
+            refused = said
+        case .notYet:
+            break
+        }
     }
 }

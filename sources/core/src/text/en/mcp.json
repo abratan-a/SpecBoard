@@ -5,6 +5,7 @@
   "mcp.call.shapeHint": " (for the shape of the arguments, see guide, about: {name})",
   "mcp.complaint.badValues": "{prefix}{key} has values it does not take: {unknown}. It takes {names}",
   "mcp.complaint.guideHint": " (the shape is in guide with about: {key})",
+  "mcp.complaint.insideValue": " (it is written inside value; {name} goes at the top level, beside target)",
   "mcp.complaint.itemNotString": "{prefix}{key}[{index}] must be given as string (got {given})",
   "mcp.complaint.noKeys": "{path} takes no keys (given: {given})",
   "mcp.complaint.noNull": "{prefix}{key} cannot be null (leave it out to keep it as it is)",

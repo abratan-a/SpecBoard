@@ -52,7 +52,7 @@ struct NoteEditor: View {
             EmptyView()
         } tools: {
             if writing, let detail = model.detail { pickers(detail) }
-            Picker("", selection: Binding(get: { writing }, set: { $0 ? startWriting() : finishWriting() })) {
+            Picker("", selection: Binding.choice({ writing }, { $0 ? startWriting() : finishWriting() })) {
                 BarLabel(title: L10n[.CardEditor.modeView], systemImage: "eye").tag(false)
                 BarLabel(title: L10n[.Common.actionEdit], systemImage: "pencil").tag(true)
             }

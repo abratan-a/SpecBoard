@@ -704,7 +704,10 @@ func cardForm(_ schema: SchemaNode, settings: LayoutSettings, cardWidth: CGFloat
     let unit = CGFloat(Grid.unitWidth(cardWidth: Double(cardWidth)))
     let down = CGFloat(Grid.unitHeight)
     if CompactBox.isCompact(schema) {
-        return CardForm(size: CGSize(width: CGFloat(CompactBox.columns) * unit, height: CGFloat(CompactBox.rows) * down))
+        // Drawn as high as the cell it is placed in: it has no rows to keep in sight, and the grid that places
+        // these boxes leaves them that cell apart.
+        return CardForm(size: CGSize(width: CGFloat(CompactBox.columns) * unit, height: CGFloat(CompactBox.rows) * down),
+                        exactHeight: true)
     }
     let own = schema.sizable ? schema.size : nil
     let width = own.map { CGFloat($0.w) * unit }

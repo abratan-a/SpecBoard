@@ -12,10 +12,13 @@ use crate::store::Store;
 use serde_json::{Map, Value};
 
 /// The projects the call's access key may see, each with what it may do with it, their card
-/// and section counts and when each was last written (`list_projects`).
-pub(crate) fn project_list(store: &Store) -> Result<Output, String> {
+/// and section counts and when each was last written (`list_projects`). The ones other agents
+/// share with this one that the key was given (`shared`, as `Core::hub_listed` lists them) stand
+/// among them by their names, after one of this store's called the same.
+pub(crate) fn project_list(store: &Store, shared: Vec<Value>) -> Result<Output, String> {
     let sight = Sight::of_call(&store.conn)?;
-    let rows: Vec<Value> = visible_projects_in(&store.conn)?
+    let counts = super::ProjectCounts::of(&store.conn)?;
+    let mut rows: Vec<Value> = visible_projects_in(&store.conn)?
         .into_iter()
         .map(|p| {
             let mut row = Map::new();
@@ -23,9 +26,10 @@ pub(crate) fn project_list(store: &Store) -> Result<Output, String> {
             if let Some(level) = sight.level(&p.id) {
                 row.insert("access".into(), level.word().into());
             }
-            row.insert("cardCount".into(), p.card_count.into());
-            if p.section_count > 1 {
-                row.insert("sections".into(), p.section_count.into());
+            row.insert("cardCount".into(), counts.cards(&p.id).into());
+            let sections = counts.sections(&p.id);
+            if sections > 1 {
+                row.insert("sections".into(), sections.into());
             }
             row.insert("updatedAt".into(), p.updated_at.into());
             if let Some(archived) = p.archived_at {
@@ -37,6 +41,11 @@ pub(crate) fn project_list(store: &Store) -> Result<Output, String> {
             Value::Object(row)
         })
         .collect();
+    if !shared.is_empty() {
+        rows.extend(shared);
+        // In place for rows called the same: this store's stay first.
+        rows.sort_by(|a, b| a["project"].as_str().cmp(&b["project"].as_str()));
+    }
     Ok(Output::Json(Value::Array(rows)))
 }
 
@@ -700,10 +709,18 @@ fn read_one(
             );
         }
     }
-    // A card: where it is written out (§10).
+    // A card: where it is written out (§10). A card of any kind is, by an entry of the cards'
+    // lines that says it.
     if projection.has("exports")
         && let super::walk::Target::Card(card) = target
-        && (card.is_shape() || card.kind == "flow" || card.is_writing())
+        && (card.is_shape()
+            || card.kind == "flow"
+            || card.is_writing()
+            || seen.exports.iter().any(|e| {
+                e.entries
+                    .iter()
+                    .any(|entry| entry.is_lines() && entry.says(card))
+            }))
         && let Value::Object(object) = &mut read
     {
         // Only where it is written: a file the export leaves it out of (a problem, as
@@ -727,7 +744,9 @@ fn read_one(
                 );
                 // Its path from where the export is written to (that is given when it is written).
                 row.insert("file".into(), crate::export::file_path(card, placed).into());
-                if card.is_shape()
+                if setting.format.as_deref() == Some(crate::model::JSON_CONNECTIONS) {
+                    row.insert("format".into(), crate::model::JSON_CONNECTIONS.into());
+                } else if card.is_shape()
                     && let Some(format) = setting.schema_format()
                 {
                     row.insert("format".into(), format.into());
@@ -2258,7 +2277,13 @@ pub(crate) type TreeSize = (Option<String>, String, i64);
 /// How much of the store a project takes (`projectSize`, `ProjectSize`): the bytes its documents
 /// hold, main's and the branches', and its history per tree — main first, then each
 /// branch as (its id, its name, bytes) — the lengths of what its rows hold, not the
-/// file's size. The board's history is not counted, as the Swift app counts it.
+/// file's size. The board's history is not counted, as the Swift app counts it. A tree's history is
+/// what its rows hold themselves and the pieces they point at (`write::chunks`), a piece many trees
+/// point at counted once, for the first of them — main, then the branches as they are listed.
+///
+/// Each length is asked for as `octet_length` of the column itself: SQLite answers that from the
+/// row's header, without reading the text — a history's rows hold whole documents, and summing
+/// their lengths otherwise reads every one of them.
 pub(crate) fn project_size_of(
     conn: &rusqlite::Connection,
     project: &str,
@@ -2270,15 +2295,20 @@ pub(crate) fn project_size_of(
     let mut content = 0;
     for table in ["card_docs", "section_docs"] {
         content += one(&format!(
-            "SELECT COALESCE(SUM(COALESCE(LENGTH(CAST(doc AS BLOB)), 0) + COALESCE(LENGTH(CAST(base AS BLOB)), 0)), 0) FROM {table} WHERE project_id = ?"
+            "SELECT COALESCE(SUM(COALESCE(octet_length(doc), 0) + COALESCE(octet_length(base), 0)), 0) FROM {table} WHERE project_id = ?"
         ))?;
     }
-    let mut history: std::collections::HashMap<String, i64> = std::collections::HashMap::new();
-    for query in [
-        "SELECT c.branch_id, SUM(COALESCE(LENGTH(CAST(r.before AS BLOB)), 0)) FROM commit_rows r JOIN commits c ON c.id = r.commit_id WHERE c.project_id = ? GROUP BY c.branch_id",
-        "SELECT c.branch_id, SUM(LENGTH(CAST(l.summary AS BLOB))) FROM commit_lines l JOIN commits c ON c.id = l.commit_id WHERE c.project_id = ? GROUP BY c.branch_id",
-    ] {
-        let mut stmt = conn.prepare(query).map_err(crate::store::sql)?;
+    let branches = super::branches(conn, project)?;
+    let order: Vec<&str> = std::iter::once("")
+        .chain(branches.iter().map(|(id, _)| id.as_str()))
+        .collect();
+    let mut history = crate::write::chunks::sizes(conn, project, &order)?;
+    {
+        let mut stmt = conn
+            .prepare(
+                "SELECT c.branch_id, SUM(octet_length(l.summary)) FROM commit_lines l JOIN commits c ON c.id = l.commit_id WHERE c.project_id = ? GROUP BY c.branch_id",
+            )
+            .map_err(crate::store::sql)?;
         let rows = stmt
             .query_map([project], |r| {
                 Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?))
@@ -2287,36 +2317,52 @@ pub(crate) fn project_size_of(
             .collect::<Result<Vec<_>, _>>()
             .map_err(crate::store::sql)?;
         for (tree, bytes) in rows {
-            *history.entry(tree).or_default() += bytes;
+            if let Some(at) = order.iter().position(|t| *t == tree) {
+                history[at] += bytes;
+            }
         }
     }
-    let mut trees = vec![(
-        None,
-        "main".to_string(),
-        history.get("").copied().unwrap_or(0),
-    )];
-    for (id, name) in super::branches(conn, project)? {
-        let bytes = history.get(&id).copied().unwrap_or(0);
-        trees.push((Some(id), name, bytes));
+    let mut trees = vec![(None, "main".to_string(), history[0])];
+    for (at, (id, name)) in branches.iter().enumerate() {
+        trees.push((Some(id.clone()), name.clone(), history[at + 1]));
     }
     Ok((content, trees))
 }
 
-/// How much of the store the project takes, as `project_read` says it.
+/// How much of the store the project takes, as `project_read` says it: kept while the store is as
+/// it was read (`kept::Kind::Sizes`), since it is counted from every row of the project's history.
 fn project_size(store: &Store, project: &str) -> Result<Value, String> {
-    let (content, trees) = project_size_of(&store.conn, project)?;
-    let mut by = Map::new();
-    for (_, name, bytes) in &trees {
-        by.insert(name.clone(), (*bytes).into());
-    }
-    let mut out = Map::new();
-    out.insert("content".into(), content.into());
-    out.insert(
-        "history".into(),
-        trees.iter().map(|t| t.2).sum::<i64>().into(),
-    );
-    out.insert("historyByBranch".into(), Value::Object(by));
-    Ok(Value::Object(out))
+    let make = || -> Result<(Value, usize), String> {
+        let (content, trees) = project_size_of(&store.conn, project)?;
+        let mut by = Map::new();
+        for (_, name, bytes) in &trees {
+            by.insert(name.clone(), (*bytes).into());
+        }
+        let mut out = Map::new();
+        out.insert("content".into(), content.into());
+        out.insert(
+            "history".into(),
+            trees.iter().map(|t| t.2).sum::<i64>().into(),
+        );
+        out.insert("historyByBranch".into(), Value::Object(by));
+        let out = Value::Object(out);
+        let weight = crate::kept::weigh(&out);
+        Ok((out, weight))
+    };
+    let reader = store.reader();
+    let Some(at) = &reader.at else {
+        return make().map(|(size, _)| size);
+    };
+    // No folder is read for it: of whichever reading of them the connection holds.
+    at.reading(
+        crate::kept::Kind::Sizes,
+        project,
+        "",
+        || Some(0),
+        make,
+        |kept, made| kept == made,
+    )
+    .map(|size| (*size).clone())
 }
 
 /// The project itself — its description, settings, how many cards of each kind main has, its

@@ -514,3 +514,73 @@ pub fn kinds_whole(core: &specboard_core::Core) -> serde_json::Value {
         }
     }
 }
+
+/// The pieces a history row kept as a list points at: (the piece's number, its length), in order
+/// (`specboard://SpecBoard/Docs/Design:DesignBranches` §11). The list begins with the number of its
+/// form, 1, and goes on in pairs of whole numbers, seven bits to a byte, the lowest first.
+pub fn pieces(list: &[u8]) -> Vec<(i64, i64)> {
+    assert_eq!(list.first(), Some(&1), "並びの形の番号");
+    let mut numbers = Vec::new();
+    let (mut value, mut shift) = (0i64, 0);
+    for byte in &list[1..] {
+        value |= i64::from(byte & 0x7f) << shift;
+        if byte & 0x80 == 0 {
+            numbers.push(value);
+            (value, shift) = (0, 0);
+        } else {
+            shift += 7;
+        }
+    }
+    assert_eq!(shift, 0, "並びが途中で切れている");
+    assert_eq!(numbers.len() % 2, 0, "番号と長さの組");
+    numbers.chunks(2).map(|pair| (pair[0], pair[1])).collect()
+}
+
+/// Every history row of the store as it was kept, whole, by its rowid: a row kept as a list read
+/// by joining its pieces; none where the row was not there before.
+pub fn kept_rows(conn: &rusqlite::Connection) -> Vec<(i64, Option<String>)> {
+    use rusqlite::types::ValueRef;
+    enum Kept {
+        None,
+        Text(String),
+        List(Vec<u8>),
+    }
+    let rows: Vec<(i64, Kept)> = {
+        let mut stmt = conn
+            .prepare("SELECT rowid, before FROM commit_rows ORDER BY rowid")
+            .unwrap();
+        stmt.query_map([], |r| {
+            let kept = match r.get_ref(1)? {
+                ValueRef::Null => Kept::None,
+                ValueRef::Blob(list) => Kept::List(list.to_vec()),
+                other => Kept::Text(String::from_utf8_lossy(other.as_bytes()?).into_owned()),
+            };
+            Ok((r.get(0)?, kept))
+        })
+        .unwrap()
+        .collect::<Result<_, _>>()
+        .unwrap()
+    };
+    rows.into_iter()
+        .map(|(row, kept)| {
+            let text = match kept {
+                Kept::None => None,
+                Kept::Text(text) => Some(text),
+                Kept::List(list) => {
+                    let mut whole = Vec::new();
+                    for (id, length) in pieces(&list) {
+                        let data: Vec<u8> = conn
+                            .query_row("SELECT data FROM history_chunks WHERE id = ?", [id], |r| {
+                                r.get(0)
+                            })
+                            .unwrap();
+                        assert_eq!(data.len() as i64, length, "塊 {id} の長さ");
+                        whole.extend(data);
+                    }
+                    Some(String::from_utf8(whole).unwrap())
+                }
+            };
+            (row, text)
+        })
+        .collect()
+}

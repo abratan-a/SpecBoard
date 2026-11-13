@@ -54,6 +54,10 @@ export CARGO_PROFILE_RELEASE_STRIP=none
 export CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_STRIP=none
 export MACOSX_DEPLOYMENT_TARGET=11.0
 export SPECBOARD_BUILD="${CURRENT_PROJECT_VERSION:-}"
+# What runs on this Mac is linked with /usr/bin/cc, which finds the macOS SDK itself: the Linux build's
+# build scripts run here too, without SDKROOT, and the cc first on Xcode's PATH needs it. The same for
+# both builds, which share the build scripts: a linker that differed would make each build them again.
+export CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER=/usr/bin/cc
 
 cd "$root/sources/core"
 "$RUSTUP" target add "${targets[@]}" ${linux:+"$linux_target"} >/dev/null

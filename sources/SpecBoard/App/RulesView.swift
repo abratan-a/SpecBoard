@@ -17,15 +17,15 @@ struct RulesView: View {
         ]
     }
 
+    /// The tab's head: its title, and what the tab is for behind the (i).
+    static var head: TabHead<EmptyView> {
+        TabHead(L10n[.ProjectSettings.tabRules], about: L10n[.ProjectSettings.rulesIntro])
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n[.ProjectSettings.tabRules]).font(.app(15, weight: .semibold))
-                    Text(L10n[.ProjectSettings.rulesIntro])
-                        .font(.app(11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                        .readingWidth()
-                }
+                Self.head
                 ForEach(Self.groups, id: \.title) { group in
                     VStack(alignment: .leading, spacing: 10) {
                         Text(group.title).font(.app(10, weight: .semibold)).tracking(1.1).foregroundStyle(.secondary)

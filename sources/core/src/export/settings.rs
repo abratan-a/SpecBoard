@@ -17,6 +17,13 @@
 //! the names of the sections from the entry's down, or to the entry's `.html` file when the entry is
 //! its own; its parts are not files of their own. Kept by id, so a card or a section renamed or moved
 //! is followed; said by path.
+//!
+//! An entry of the cards' lines (`format: json-connections`, with `lines` the kinds of line it is
+//! narrowed to) stands beside the others: it takes every card under its `from` that has a line to
+//! say, whatever entry is nearer the card, and stands in for none. What reads the file counts the
+//! lines there are: a card dropped from it without a word, because a section below got an entry of
+//! its own, would make the count a wrong one. One such entry writes one file, and writes it with
+//! no card to say too: a file saying none is not an export never written.
 
 use crate::model::{Card, ExportSetting};
 use serde_json::{Map, Value, json};
@@ -44,6 +51,8 @@ pub struct Entry {
     pub format: Option<String>,
     /// The kinds of card a section's entry takes; none: as a section's export setting did before.
     pub kinds: Vec<String>,
+    /// The kinds of line an entry of the cards' lines says; none: every kind.
+    pub lines: Vec<String>,
 }
 
 impl Entry {
@@ -59,6 +68,17 @@ impl Entry {
     }
 
     fn of(value: &Value) -> Option<Entry> {
+        let names = |key: &str| -> Vec<String> {
+            value
+                .get(key)
+                .and_then(Value::as_array)
+                .map(|list| {
+                    list.iter()
+                        .filter_map(|k| k.as_str().map(str::to_string))
+                        .collect()
+                })
+                .unwrap_or_default()
+        };
         Some(Entry {
             from: value.get("from")?.as_str()?.to_string(),
             row: value.get("row").and_then(Value::as_str).map(str::to_string),
@@ -67,16 +87,28 @@ impl Entry {
                 .get("format")
                 .and_then(Value::as_str)
                 .map(str::to_string),
-            kinds: value
-                .get("kinds")
-                .and_then(Value::as_array)
-                .map(|list| {
-                    list.iter()
-                        .filter_map(|k| k.as_str().map(str::to_string))
-                        .collect()
-                })
-                .unwrap_or_default(),
+            kinds: names("kinds"),
+            lines: names("lines"),
         })
+    }
+
+    /// Whether this is an entry of the cards' lines (`json-connections`).
+    pub fn is_lines(&self) -> bool {
+        self.format.as_deref() == Some(crate::model::JSON_CONNECTIONS)
+    }
+
+    /// Whether an entry of the cards' lines says a line of the kind `line`.
+    pub fn says_line(&self, line: &str) -> bool {
+        line != crate::kinds::OF_LINE
+            && (self.lines.is_empty() || self.lines.iter().any(|l| l == line))
+    }
+
+    /// Whether an entry of the cards' lines writes `card`: of the kinds it names (any, when it names
+    /// none), and with a line it says — or a spec, whose scenarios are said with no line at all, so
+    /// that the ones no line leaves can be counted.
+    pub fn says(&self, card: &Card) -> bool {
+        (self.kinds.is_empty() || self.kinds.contains(&card.kind))
+            && (card.kind == "spec" || card.connections.iter().any(|c| self.says_line(&c.line)))
     }
 
     fn kept(&self) -> Value {
@@ -91,6 +123,9 @@ impl Entry {
         }
         if !self.kinds.is_empty() {
             out.insert("kinds".into(), json!(self.kinds));
+        }
+        if !self.lines.is_empty() {
+            out.insert("lines".into(), json!(self.lines));
         }
         Value::Object(out)
     }
@@ -153,6 +188,8 @@ pub fn kept(exports: &[Export]) -> Option<String> {
 #[derive(Clone, Debug)]
 pub struct Placed {
     pub export: usize,
+    /// The entry that places it, by its place among its export's.
+    pub entry: usize,
     pub setting: ExportSetting,
     pub row: Option<String>,
 }
@@ -162,6 +199,9 @@ pub struct Placed {
 #[derive(Default)]
 pub struct Resolved {
     pub by_card: HashMap<String, Vec<Placed>>,
+    /// The entries of the cards' lines that write their file, with cards to say or with none: a
+    /// file saying none is told from an export never written.
+    pub lines: Vec<Placed>,
     pub pages: Vec<Page>,
     pub problems: Vec<super::Problem>,
 }
@@ -171,6 +211,8 @@ pub struct Resolved {
 #[derive(Clone, Debug)]
 pub struct Page {
     pub export: usize,
+    /// The entry that writes it, by its place among its export's.
+    pub entry: usize,
     pub section: String,
     pub path: String,
 }
@@ -213,7 +255,11 @@ pub fn left_out(
     project: &super::Project,
 ) -> Vec<(Vec<String>, String)> {
     let detail = project.detail;
-    if !entry.kinds.is_empty() || detail.schemas.iter().any(|c| c.id == entry.from) {
+    // An entry of the cards' lines leaves out what has no line to say: nothing to be told of.
+    if entry.is_lines()
+        || !entry.kinds.is_empty()
+        || detail.schemas.iter().any(|c| c.id == entry.from)
+    {
         return Vec::new();
     }
     let parent: HashMap<&str, Option<&str>> = detail
@@ -308,8 +354,10 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
         let mut nearest: HashMap<String, (usize, Vec<usize>)> = HashMap::new();
         // Each ui section's nearest entry, as a card's: how near, and which.
         let mut nearest_page: HashMap<String, (usize, usize)> = HashMap::new();
+        // The entries of the cards' lines each card is written by, beside its nearest entries.
+        let mut beside: HashMap<String, Vec<usize>> = HashMap::new();
         for (n, entry) in export.entries.iter().enumerate() {
-            if !parent.contains_key(entry.from.as_str()) {
+            if entry.is_lines() || !parent.contains_key(entry.from.as_str()) {
                 continue;
             }
             for section in &detail.sections {
@@ -344,6 +392,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
             if let Some(path) = page_path(&export.entries[n].to, &names, depth) {
                 out.pages.push(Page {
                     export: at,
+                    entry: n,
                     section: section.id.clone(),
                     path,
                 });
@@ -360,6 +409,97 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
             }
         };
         for (n, entry) in export.entries.iter().enumerate() {
+            // The cards' lines: every card under the entry that has one to say, however near
+            // another entry is — and one entry a file, so that the file is narrowed one way.
+            if entry.is_lines() {
+                let to = entry.to.trim_matches(|c: char| c == ' ' || c == '\t');
+                let before = export.entries[..n].iter().any(|e| {
+                    e.is_lines() && e.to.trim_matches(|c: char| c == ' ' || c == '\t') == to
+                });
+                if before {
+                    out.problems.push(super::Problem::of(
+                        at,
+                        keyed!(
+                            "export.settings.linesTwice",
+                            export = export.name,
+                            row = n + 1,
+                            to = entry.to
+                        ),
+                    ));
+                    continue;
+                }
+                if project.card(&entry.from).is_none() && !parent.contains_key(entry.from.as_str())
+                {
+                    out.problems.push(super::Problem::of(
+                        at,
+                        keyed!(
+                            "export.settings.fromGone",
+                            export = export.name,
+                            row = n + 1,
+                            to = entry.to
+                        ),
+                    ));
+                    continue;
+                }
+                // A kind of line the project no longer has would be a file holding none of it,
+                // read as "no such line is drawn".
+                if let Some(line) = entry.lines.iter().find(|l| project.defs.line(l).is_none()) {
+                    out.problems.push(super::Problem::of(
+                        at,
+                        keyed!(
+                            "export.settings.lineGone",
+                            export = export.name,
+                            row = n + 1,
+                            to = entry.to,
+                            line
+                        ),
+                    ));
+                    continue;
+                }
+                out.lines.push(Placed {
+                    export: at,
+                    entry: n,
+                    setting: entry.setting(&export.id),
+                    row: None,
+                });
+                for card in detail.schemas.iter().chain(&detail.inner) {
+                    // What the card is under, nearest first: itself, the cards it is inside (a
+                    // flow's node, what a goal holds — a card each here, with lines of its own),
+                    // then the sections. A ui section's cards too: parts of its page to the other
+                    // entries, but their lines are lines.
+                    let mut under = vec![card.id.clone()];
+                    let mut head: &Card = card;
+                    while let Some(container) = project.container_of(head)
+                        && !under.contains(&container.id)
+                    {
+                        under.push(container.id.clone());
+                        head = container;
+                    }
+                    let sections = chain(&project.section_of(head));
+                    // What a working directory's section holds is read from a folder: there on
+                    // one machine and not on another.
+                    if sections.iter().any(|s| {
+                        matches!(
+                            project.section_kind(s),
+                            Some(crate::kinds::WORKDIR | crate::kinds::DIRECTORY)
+                        )
+                    }) {
+                        continue;
+                    }
+                    under.extend(sections);
+                    let Some(depth) = under.iter().position(|s| *s == entry.from) else {
+                        continue;
+                    };
+                    // Left out: the card, or a card or section between it and the entry's.
+                    if under[..depth].iter().any(|s| left_out.contains(s.as_str())) {
+                        continue;
+                    }
+                    if entry.says(card) {
+                        beside.entry(card.id.clone()).or_default().push(n);
+                    }
+                }
+                continue;
+            }
             // A format writes one file: an entry of a section to a folder takes no card.
             if entry.kinds.is_empty()
                 && !cards.contains_key(entry.from.as_str())
@@ -426,12 +566,12 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
                 }
             }
         }
-        // In the project's order.
-        for card in &detail.schemas {
-            let Some((_, entries)) = nearest.get(&card.id) else {
-                continue;
-            };
-            for n in entries {
+        // In the project's order: the cards, then those inside a card (only an entry of the
+        // cards' lines takes one).
+        for card in detail.schemas.iter().chain(&detail.inner) {
+            let near = nearest.get(&card.id).map(|(_, entries)| entries.as_slice());
+            let also = beside.get(&card.id).map(Vec::as_slice);
+            for n in near.into_iter().chain(also).flatten() {
                 let entry = &export.entries[*n];
                 let setting = entry.setting(&export.id);
                 if let Some(problem) = setting.problem_for(&card.kind) {
@@ -466,6 +606,7 @@ pub fn resolve(exports: &[Export], project: &super::Project) -> Resolved {
                     .or_default()
                     .push(Placed {
                         export: at,
+                        entry: *n,
                         setting,
                         row: entry.row.clone(),
                     });

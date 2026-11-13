@@ -1694,9 +1694,9 @@ fn boxes_of(
 
 /// The paths of a tree's cards and sections, by id.
 fn names(conn: &Connection, project: &str, tree: &str) -> Result<HashMap<String, String>, String> {
-    let reader = crate::store::Reader { conn };
+    let reader = crate::store::Reader::of(conn);
     let branch = (!tree.is_empty()).then_some(tree);
-    let detail = crate::model::typed(&crate::detail::read(&reader, project, branch)?)?;
+    let detail = crate::detail::typed(&reader, project, branch)?;
     let project = crate::export::Project::new(&detail);
     let mut out: HashMap<String, String> = detail
         .sections
@@ -2363,11 +2363,7 @@ impl Tx<'_> {
         }
         // Into main: main as it was, for what the board names of it (`follow_board`).
         let main_before = if target.is_empty() && !source.is_empty() {
-            Some(crate::model::typed(&crate::detail::read(
-                &self.reader(),
-                project,
-                None,
-            )?)?)
+            Some(crate::detail::typed(&self.reader(), project, None)?)
         } else {
             None
         };

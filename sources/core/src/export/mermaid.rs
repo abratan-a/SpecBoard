@@ -130,6 +130,7 @@ pub fn embedded_as(
             project.detail,
             Spec {
                 section: Some(found),
+                whole_section: true,
                 ..Spec::default()
             },
             exported,
@@ -195,8 +196,8 @@ pub struct Spec {
     /// it touches of the others.
     pub section: Option<String>,
     /// The section's own cards drawn whether or not a line reaches them, as the relation panel
-    /// draws them (what the window shows as mermaid and MCP's `as: diagram`).
-    /// Not where a diagram is written out: there a card with no line says nothing.
+    /// draws them (what the window shows as mermaid, MCP's `as: diagram` and a section embedded in a
+    /// document, which stands for its section map).
     pub whole_section: bool,
 }
 
@@ -1638,8 +1639,12 @@ fn draw(graph: &Subgraph, head: &str, project: &Project, plain: bool) -> String 
             )
         ));
     }
+    // A class diagram with nothing in it is not one mermaid reads: why there is nothing is drawn.
     if graph.nodes.is_empty() {
-        lines.push(format!("    %% {}", text!("exportDocs.mermaid.noSchemas")));
+        lines.push(format!(
+            "    note \"{}\"",
+            text!("exportDocs.mermaid.noSchemas")
+        ));
     }
     lines.join("\n") + "\n"
 }

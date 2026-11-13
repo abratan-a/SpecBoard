@@ -5,7 +5,8 @@
 //! (`as_caller`), so the one place a project is looked up by name (`tools::project_summary_in`)
 //! keeps to the projects the key may see, and refuses a write to one it may only read. Nothing
 //! bound is the window — or a test inside this crate that calls a tool itself — which sees
-//! every project and writes it.
+//! every project and writes it. A call another agent hands over the hub is bound to that agent
+//! instead of a key (`Member`): it sees the projects shared with it alone (`hub`).
 //!
 //! Besides the projects, a key says what else it may do — allowed, asked of a person each time, or
 //! denied (`tools::mcp_writes::KEY_ITEMS`): choose and change how the window looks (`app_control`),
@@ -74,7 +75,7 @@ impl Level {
         }
     }
 
-    fn of(word: &str) -> Option<Level> {
+    pub(crate) fn of(word: &str) -> Option<Level> {
         match word {
             "read" => Some(Level::Read),
             "write" => Some(Level::Write),
@@ -83,13 +84,28 @@ impl Level {
     }
 }
 
-/// Who is asking, as the entrance found them by their key (`Caller`).
+/// Who is asking, as the entrance found them by their key (`Caller`) — or, for a call handed over
+/// the hub, the agent it came from (`hub::Core::hub_call`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Caller {
-    /// The key's id.
+    /// The key's id. A member's call has none of this store's: a name no key's id is.
     pub key: String,
+    /// The key's name; for a member's call, the writer its writes are kept under
+    /// (`<its key's name>@<the member's name>`).
     pub name: String,
     pub permits: Permits,
+    /// The member of the hub the call was handed over by; none for a key of this store.
+    pub member: Option<Member>,
+}
+
+/// Another agent of the hub, as a call it handed over is bound to it: it sees the projects shared
+/// with it, and no others (`Sight::of_call`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Member {
+    /// Its id in the hub, which the hub vouches for.
+    pub id: String,
+    /// What the key behind the call may do with the project on its own side.
+    pub level: Level,
 }
 
 /// What a key may do besides the projects it was given (`mcp_writes::KEY_ITEMS`). The window shows
@@ -253,6 +269,13 @@ impl Sight {
         let Some((caller, _)) = context() else {
             return Ok(Sight::Whole);
         };
+        // What is public here is for this agent's own keys.
+        if let Some(member) = &caller.member {
+            return Ok(Sight::Key {
+                grants: crate::hub::shared_with(conn, member)?,
+                public: HashSet::new(),
+            });
+        }
         Ok(Sight::Key {
             grants: grants(conn, &caller.key)?,
             public: public_projects(conn)?.into_iter().collect(),
@@ -287,12 +310,15 @@ pub(crate) fn visible(
 /// Refuses a project the call may not touch as its tool needs to: missing, for one its key may
 /// not see; read-only, for a write to one it may only read (`MCPTools.admit`).
 pub(crate) fn admit(conn: &Connection, project: &str, project_name: &str) -> Result<(), String> {
-    let Some((_, need)) = context() else {
+    let Some((caller, need)) = context() else {
         return Ok(());
     };
     match Sight::of_call(conn)?.level(project) {
         None => Err(no_project()),
-        Some(Level::Read) if need == Need::Write => Err(read_only(project_name)),
+        Some(Level::Read) if need == Need::Write => Err(match caller.member {
+            Some(_) => crate::hub::read_only(project_name),
+            None => read_only(project_name),
+        }),
         Some(_) => Ok(()),
     }
 }
@@ -384,6 +410,7 @@ impl Core {
                         key: r.get(0)?,
                         name: r.get(1)?,
                         permits: permits_of(r, 2)?,
+                        member: None,
                     })
                 },
             )
@@ -490,11 +517,13 @@ fn set_public(conn: &Connection, project: &str, on: bool) -> Result<(), String> 
     Ok(())
 }
 
-/// A project's grants and whether it is public: this store's, not a project file's, so kept over
-/// a project read in from a file in its place (`accessOf(projectId:)`).
+/// A project's grants, whether it is public and which members of the hub it is shared with: this
+/// store's, not a project file's, so kept over a project read in from a file in its place
+/// (`accessOf(projectId:)`).
 pub(crate) struct Kept {
     grants: Vec<(String, Level)>,
     public: bool,
+    shares: Vec<(String, Level)>,
 }
 
 pub(crate) fn kept(conn: &Connection, project: &str) -> Result<Kept, String> {
@@ -520,7 +549,12 @@ pub(crate) fn kept(conn: &Connection, project: &str) -> Result<Kept, String> {
         .optional()
         .map_err(sql)?
         .is_some();
-    Ok(Kept { grants, public })
+    let shares = crate::hub::shares_of(conn, project)?;
+    Ok(Kept {
+        grants,
+        public,
+        shares,
+    })
 }
 
 /// What `kept` took, put back on the project (`restoreAccess`).
@@ -528,11 +562,14 @@ pub(crate) fn restore(conn: &Connection, project: &str, kept: &Kept) -> Result<(
     for (key, level) in &kept.grants {
         set_grant(conn, key, project, Some(*level))?;
     }
+    for (member, level) in &kept.shares {
+        crate::hub::set_share(conn, project, member, Some(*level))?;
+    }
     set_public(conn, project, kept.public)
 }
 
 /// A key's name: there, and 80 characters at the most (`Validate.required`).
-fn key_name(raw: &str) -> Result<String, String> {
+pub(crate) fn key_name(raw: &str) -> Result<String, String> {
     let value = raw.trim().to_string();
     if value.chars().count() > 80 {
         return Err(text!("access.keyNameTooLong"));
@@ -543,7 +580,9 @@ fn key_name(raw: &str) -> Result<String, String> {
     Ok(value)
 }
 
-/// A key as the window lists it, with what it may do and the projects it was given.
+/// A key as the window lists it, with what it may do and the projects it was given: this store's
+/// (`grants`, by project), and the ones other agents share with it (`hubGrants`, each with its
+/// owner).
 fn key_row(conn: &Connection, id: &str) -> Result<Value, String> {
     type Row = (String, Permits, String, Option<String>);
     let (name, permits, created_at, used_at): Row = conn
@@ -566,6 +605,7 @@ fn key_row(conn: &Connection, id: &str) -> Result<Value, String> {
         "createdAt": created_at,
         "usedAt": used_at,
         "grants": given,
+        "hubGrants": crate::hub::grants_said(conn, id)?,
     }))
 }
 
@@ -650,7 +690,7 @@ fn key_there(conn: &Connection, key: &str) -> Result<(), String> {
     }
 }
 
-fn project_there(conn: &Connection, project: &str) -> Result<(), String> {
+pub(crate) fn project_there(conn: &Connection, project: &str) -> Result<(), String> {
     let there = conn
         .query_row("SELECT 1 FROM projects WHERE id = ?", [project], |_| Ok(()))
         .optional()
@@ -784,6 +824,11 @@ impl Core {
                     }
                 };
                 key_there(conn, key)?;
+                // A project another agent shares with this one, by its owner.
+                if let Some(owner) = request.get("owner").and_then(Value::as_str) {
+                    crate::hub::set_grant(conn, key, owner, project, level)?;
+                    return Ok(json!({}));
+                }
                 project_there(conn, project)?;
                 set_grant(conn, key, project, level)?;
                 Ok(json!({}))
@@ -894,6 +939,7 @@ mod tests {
                 capture: State::Deny,
                 create: State::Deny,
             },
+            member: None,
         };
         assert!(context().is_none());
         let seen = as_caller(&caller, "card_update", || Ok(context())).unwrap();

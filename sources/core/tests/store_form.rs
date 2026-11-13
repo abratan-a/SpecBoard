@@ -103,6 +103,13 @@ const FROZEN_TIMES: &str = "core_0027_frozen_times";
 /// The pictures of the image cards (below): `images`.
 const IMAGES: &str = "core_0028_images";
 
+/// What an agent keeps of the hub it joined (below): `hub_members`, `hub_shares`, `hub_projects`,
+/// `hub_grants`.
+const HUB: &str = "core_0029_hub";
+
+/// The pieces a long history row is kept in (below): `history_chunks`.
+const HISTORY_CHUNKS: &str = "core_0030_history_chunks";
+
 /// A store of the form now named as before `core_0014_projects`: `plans`, every `plan_id`, and the
 /// mark let go. What turns a store back into one before an older mark does this too: a store of
 /// before was named so.
@@ -142,7 +149,7 @@ const REQUESTS_BEFORE: &str = "ALTER TABLE merge_requests DROP COLUMN keep;
              ALTER TABLE projects DROP COLUMN ai_merge;";
 
 /// Every mark a store of the form has now.
-const EVERY: [&str; 28] = [
+const EVERY: [&str; 30] = [
     "core_0001_kinds",
     MARK,
     GHOSTS,
@@ -171,6 +178,8 @@ const EVERY: [&str; 28] = [
     BUILTIN_NAMES,
     FROZEN_TIMES,
     IMAGES,
+    HUB,
+    HISTORY_CHUNKS,
 ];
 
 /// Where the copy of the store at `place`, as it was before it was brought up from `mark`
@@ -332,7 +341,9 @@ fn a_new_store_is_of_the_form_now() {
             MAP_GROUPS,
             BUILTIN_NAMES,
             FROZEN_TIMES,
-            IMAGES
+            IMAGES,
+            HUB,
+            HISTORY_CHUNKS
         ]
     );
     assert!(columns(&conn, "projects").ends_with(&[
@@ -523,7 +534,9 @@ fn a_store_made_before_is_brought_up_once() {
                 MAP_GROUPS,
                 BUILTIN_NAMES,
                 FROZEN_TIMES,
-                IMAGES
+                IMAGES,
+                HUB,
+                HISTORY_CHUNKS
             ]
         );
         assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -708,7 +721,9 @@ fn a_store_made_before_is_brought_up_once() {
             MAP_GROUPS,
             BUILTIN_NAMES,
             FROZEN_TIMES,
-            IMAGES
+            IMAGES,
+            HUB,
+            HISTORY_CHUNKS
         ]
     );
     assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -838,6 +853,46 @@ fn a_copy_kept_already_is_not_written_over() {
     std::fs::write(&copy, "前の控え").unwrap();
     Core::open(&place).unwrap().close();
     assert_eq!(std::fs::read_to_string(&copy).unwrap(), "前の控え");
+    assert_eq!(marks(&Connection::open(&place).unwrap()), EVERY);
+}
+
+#[test]
+fn only_the_two_newest_copies_are_kept_beside_a_store() {
+    let place = common::place("kept-newest.sqlite");
+    in_use_before(&place);
+    // Copies of earlier upgrades, the oldest of the store's first form; written in another order
+    // than their marks', so that the newest are told by the marks, not by when they were written.
+    for mark in [GHOSTS, "core_0001_kinds", MARK] {
+        std::fs::write(kept(&place, mark), mark).unwrap();
+    }
+    // One whose name says no mark this core knows is not the core's to judge.
+    let stranger = place.with_file_name(format!(
+        "{}.before-upgrade-from-someone_else.db",
+        place.file_name().unwrap().to_str().unwrap()
+    ));
+    std::fs::write(&stranger, "?").unwrap();
+
+    Core::open(&place).unwrap().close();
+    assert_eq!(copies(&place), [GHOSTS, PR_PLACES]);
+    assert_eq!(
+        std::fs::read_to_string(kept(&place, GHOSTS)).unwrap(),
+        GHOSTS
+    );
+    assert!(stranger.exists());
+    assert_eq!(marks(&Connection::open(&place).unwrap()), EVERY);
+}
+
+#[test]
+fn the_copy_just_taken_is_kept_beside_copies_of_later_forms() {
+    // A store put back from elsewhere to a form before, beside the copies its later upgrades took.
+    let place = common::place("kept-put-back.sqlite");
+    in_use_before(&place);
+    for mark in [FROZEN_TIMES, IMAGES] {
+        std::fs::write(kept(&place, mark), mark).unwrap();
+    }
+
+    Core::open(&place).unwrap().close();
+    assert_eq!(copies(&place), [PR_PLACES, IMAGES]);
     assert_eq!(marks(&Connection::open(&place).unwrap()), EVERY);
 }
 
@@ -1485,6 +1540,56 @@ fn a_store_before_the_code_marks_has_their_table_made_once() {
     drop(core);
     Core::open(&place).unwrap().close();
     assert_eq!(copies(&place), [CODE_MARKS]);
+}
+
+/// A store of before the hub has its tables made, empty, and a project in it keeps what it had.
+#[test]
+fn a_store_before_the_hub_has_its_tables_made_once() {
+    let place = common::place("hub-tables.sqlite");
+    let core = Core::create(&place).unwrap();
+    let (refused, said) = common::call(&core, "project_create", json!({"project": "前からの"}));
+    assert!(!refused, "{said}");
+    core.close();
+    drop(core);
+    Connection::open(&place)
+        .unwrap()
+        .execute_batch(&format!(
+            "DROP TABLE IF EXISTS hub_grants;
+             DROP TABLE IF EXISTS hub_projects;
+             DROP TABLE IF EXISTS hub_shares;
+             DROP TABLE IF EXISTS hub_members;
+             DELETE FROM _migrations WHERE name = '{HUB}';"
+        ))
+        .unwrap();
+
+    let core = Core::open(&place).unwrap();
+    assert_eq!(copies(&place), [HUB]);
+    let conn = Connection::open(&place).unwrap();
+    assert_eq!(marks(&conn), EVERY);
+    assert_eq!(columns(&conn, "hub_members"), ["id", "name"]);
+    assert_eq!(
+        columns(&conn, "hub_shares"),
+        ["project_id", "member", "level"]
+    );
+    assert_eq!(
+        columns(&conn, "hub_projects"),
+        ["owner", "project_id", "name", "slug", "level"]
+    );
+    assert_eq!(
+        columns(&conn, "hub_grants"),
+        ["key_id", "owner", "project_id", "level"]
+    );
+    assert_eq!(
+        common::op(&core, json!({"op": "hub_shares"})),
+        json!({"result": {"members": [], "shares": [], "shared": []}})
+    );
+    let (refused, said) = common::call(&core, "card_list", json!({"project": "前からの"}));
+    assert!(!refused, "{said}");
+    // Opened again: nothing more.
+    core.close();
+    drop(core);
+    Core::open(&place).unwrap().close();
+    assert_eq!(copies(&place), [HUB]);
 }
 
 /// A store of before the frozen times has the column added once, a copy frozen before it left
@@ -2379,4 +2484,130 @@ fn a_store_before_the_workdir_sections_has_them_made_once() {
     Core::open(&place).unwrap().close();
     assert_eq!(count(&conn), 2);
     assert_eq!(copies(&place), [WORKDIR_SECTIONS]);
+}
+
+/// A store of before the pieces has its long history rows cut into them once: each reads as it did,
+/// a short one stays its text, and the store's file gives back what the rows took.
+#[test]
+fn a_store_before_history_chunks_has_its_long_rows_packed_once() {
+    let place = common::script_store();
+    let core = Core::open(&place).unwrap();
+    let mut lines: Vec<String> = (1..=4000)
+        .map(|n| {
+            format!(
+                "{n} 行目の文。札 {} の説明を足して長くする",
+                n * 7919 % 1000
+            )
+        })
+        .collect();
+    common::ok(
+        &core,
+        "card_create",
+        json!({"target": "Docs:Long", "value": {"kind": "note", "body": lines.join("\n")}}),
+    );
+    for round in 0..10 {
+        lines[100 + round * 300] = format!("直した（{} 回目）", round + 1);
+        common::ok(
+            &core,
+            "card_update",
+            json!({"target": "Docs:Long", "value": {"body": lines.join("\n")}}),
+        );
+    }
+    common::ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Customer", "value": {"description": "短い直し"}}),
+    );
+    core.close();
+    drop(core);
+    // Back to the form of before: every row its text, no pieces, no mark.
+    let conn = Connection::open(&place).unwrap();
+    let texts = common::kept_rows(&conn);
+    assert!(
+        texts
+            .iter()
+            .filter(|(_, text)| text.as_ref().is_some_and(|t| t.len() > 200_000))
+            .count()
+            >= 10
+    );
+    for (row, text) in &texts {
+        conn.execute(
+            "UPDATE commit_rows SET before = ? WHERE rowid = ?",
+            rusqlite::params![text, row],
+        )
+        .unwrap();
+    }
+    conn.execute_batch(&format!(
+        "DROP TABLE IF EXISTS history_chunks;
+         DELETE FROM _migrations WHERE name = '{HISTORY_CHUNKS}';
+         VACUUM;"
+    ))
+    .unwrap();
+    drop(conn);
+    let size_before = std::fs::metadata(&place).unwrap().len();
+
+    let core = Core::open(&place).unwrap();
+    assert_eq!(copies(&place), [HISTORY_CHUNKS]);
+    let conn = Connection::open(&place).unwrap();
+    assert_eq!(marks(&conn), EVERY);
+    let kept_as = |conn: &Connection| -> Vec<(i64, String)> {
+        let mut stmt = conn
+            .prepare("SELECT rowid, typeof(before) FROM commit_rows ORDER BY rowid")
+            .unwrap();
+        stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+            .unwrap()
+            .collect::<Result<_, _>>()
+            .unwrap()
+    };
+    let expected: Vec<(i64, String)> = texts
+        .iter()
+        .map(|(row, text)| {
+            let kind = match text {
+                None => "null",
+                Some(text) if text.len() < 4096 => "text",
+                Some(_) => "blob",
+            };
+            (*row, kind.to_string())
+        })
+        .collect();
+    assert_eq!(kept_as(&conn), expected);
+    assert_eq!(common::kept_rows(&conn), texts);
+    let newest = common::ok(
+        &core,
+        "branch_read",
+        json!({"target": "main", "value": {"as": "history", "limit": 2}}),
+    )["commits"][1]["seq"]
+        .as_i64()
+        .unwrap();
+    let read = common::ok(
+        &core,
+        "branch_read",
+        json!({"target": "main", "value": {"as": "history", "seq": newest, "full": true}}),
+    );
+    assert_eq!(
+        read["changes"][0]["units"][0]["after"],
+        lines.join("\n").as_str(),
+        "{}",
+        read.to_string().chars().take(300).collect::<String>()
+    );
+    let pieces = |conn: &Connection| -> i64 {
+        conn.query_row("SELECT count(*) FROM history_chunks", [], |r| r.get(0))
+            .unwrap()
+    };
+    let held = pieces(&conn);
+    assert!(held > 0);
+    core.close();
+    drop(core);
+    drop(conn);
+    let size_after = std::fs::metadata(&place).unwrap().len();
+    assert!(
+        size_after < size_before,
+        "{size_before} バイトが {size_after} バイトに"
+    );
+    // Opened again: nothing more.
+    Core::open(&place).unwrap().close();
+    let conn = Connection::open(&place).unwrap();
+    assert_eq!(copies(&place), [HISTORY_CHUNKS]);
+    assert_eq!(pieces(&conn), held);
+    assert_eq!(kept_as(&conn), expected);
 }

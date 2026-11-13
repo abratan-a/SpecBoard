@@ -138,8 +138,7 @@ impl Core {
                 let store = self.reading()?;
                 let (project, tree) = tree(&store, request, op)?;
                 let branch = (!tree.is_empty()).then_some(tree);
-                let detail =
-                    crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
+                let detail = crate::detail::typed(&store.reader(), project, branch)?;
                 embed_diagram(&detail, request)
             }
             // A sequence diagram as the core builds it: the window draws it and builds none itself.
@@ -147,32 +146,25 @@ impl Core {
                 let store = self.reading()?;
                 let (project, tree) = tree(&store, request, op)?;
                 let branch = (!tree.is_empty()).then_some(tree);
-                let detail =
-                    crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
+                let detail = crate::detail::typed(&store.reader(), project, branch)?;
                 sequence_chart(&detail, request)
             }
             "inserted_values" => {
                 let store = self.reading()?;
                 let (project, tree) = tree(&store, request, op)?;
                 let branch = (!tree.is_empty()).then_some(tree);
-                let detail =
-                    crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
+                let detail = crate::detail::typed(&store.reader(), project, branch)?;
                 inserted_values(&detail, request)
             }
             "document_parts" => {
                 let store = self.reading()?;
                 let (project, tree) = tree(&store, request, op)?;
                 let branch = (!tree.is_empty()).then_some(tree);
-                let detail =
-                    crate::model::typed(&crate::detail::read(&store.reader(), project, branch)?)?;
+                let detail = crate::detail::typed(&store.reader(), project, branch)?;
                 // The board's paths reach main's cards: read with main beside it, as its editor
                 // reads them.
                 let main = match tree {
-                    BOARD => Some(crate::model::typed(&crate::detail::read(
-                        &store.reader(),
-                        project,
-                        None,
-                    )?)?),
+                    BOARD => Some(crate::detail::typed(&store.reader(), project, None)?),
                     _ => None,
                 };
                 // The working directories' files and what is in them, as the tools read a tree's
@@ -644,21 +636,7 @@ fn scope_of(tx: &Tx, project: &str, tree: &str) -> Result<Scope, String> {
 /// cards and sections counted in main as it is kept, whether it is archived or main is
 /// locked, and whether it is public.
 fn projects(conn: &Connection) -> Result<Value, String> {
-    let count = |query: &str| -> Result<HashMap<String, i64>, String> {
-        let mut stmt = conn.prepare(query).map_err(sql)?;
-        stmt.query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?)))
-            .map_err(sql)?
-            .collect::<Result<_, _>>()
-            .map_err(sql)
-    };
-    // A project's cards as a section counts them: not its card ghosts, nor a flow's nodes
-    // (cards inside the flow, counted as the flow was before).
-    let cards = count(
-        "SELECT project_id, COUNT(*) FROM card_docs WHERE branch_id = '' AND removed = 0 AND kind NOT IN ('ghost', 'begin', 'process', 'run', 'eval', 'wait', 'join', 'end') GROUP BY project_id",
-    )?;
-    let sections = count(
-        "SELECT project_id, COUNT(*) FROM section_docs WHERE branch_id = '' AND removed = 0 GROUP BY project_id",
-    )?;
+    let counts = super::ProjectCounts::of(conn)?;
     let public: HashSet<String> = {
         let mut stmt = conn
             .prepare("SELECT project_id FROM project_public")
@@ -707,14 +685,8 @@ fn projects(conn: &Connection) -> Result<Value, String> {
             let Value::Object(mut out) = crate::detail::project_json(&project) else {
                 return Value::Null;
             };
-            out.insert(
-                "schemaCount".into(),
-                cards.get(&project.id).copied().unwrap_or(0).into(),
-            );
-            out.insert(
-                "sectionCount".into(),
-                sections.get(&project.id).copied().unwrap_or(1).into(),
-            );
+            out.insert("schemaCount".into(), counts.cards(&project.id).into());
+            out.insert("sectionCount".into(), counts.sections(&project.id).into());
             out.insert("archivedAt".into(), archived.into());
             out.insert("lockedAt".into(), locked.into());
             out.insert("aiMerge".into(), ai_merge.into());
@@ -1001,7 +973,8 @@ fn commit_changes(store: &Store, project: &str, tree: &str, seq: i64) -> Result<
 }
 
 /// What a cut before `before` would let go (`cutCost`): how many commits, and how many
-/// bytes of the history, as the project's size counts them.
+/// bytes of the history, as the project's size counts them — what the rows hold themselves, and
+/// the pieces no row that stays points at (`write::chunks`).
 fn cut_cost(conn: &Connection, project: &str, tree: &str, before: i64) -> Result<Value, String> {
     let one = |query: &str| -> Result<i64, String> {
         conn.query_row(query, params![project, tree, before], |r| r.get(0))
@@ -1010,14 +983,20 @@ fn cut_cost(conn: &Connection, project: &str, tree: &str, before: i64) -> Result
     let commits =
         one("SELECT COUNT(*) FROM commits WHERE project_id = ? AND branch_id = ? AND seq < ?")?;
     let rows = one(
-        "SELECT COALESCE(SUM(COALESCE(LENGTH(CAST(r.before AS BLOB)), 0)), 0) FROM commit_rows r JOIN commits c ON c.id = r.commit_id
+        "SELECT COALESCE(SUM(COALESCE(octet_length(r.before), 0)), 0) FROM commit_rows r JOIN commits c ON c.id = r.commit_id
           WHERE c.project_id = ? AND c.branch_id = ? AND c.seq < ?",
     )?;
     let lines = one(
-        "SELECT COALESCE(SUM(LENGTH(CAST(l.summary AS BLOB))), 0) FROM commit_lines l JOIN commits c ON c.id = l.commit_id
+        "SELECT COALESCE(SUM(octet_length(l.summary)), 0) FROM commit_lines l JOIN commits c ON c.id = l.commit_id
           WHERE c.project_id = ? AND c.branch_id = ? AND c.seq < ?",
     )?;
-    Ok(json!({ "commits": commits, "bytes": rows + lines }))
+    // As the project's size lists the trees: main and the branches.
+    let branches = super::branches(conn, project)?;
+    let listed: Vec<&str> = std::iter::once("")
+        .chain(branches.iter().map(|(id, _)| id.as_str()))
+        .collect();
+    let pieces = crate::write::chunks::freed(conn, project, tree, before, &listed)?;
+    Ok(json!({ "commits": commits, "bytes": rows + lines + pieces }))
 }
 
 /// Where other sections' cards were put on each section's diagram (`sectionPositions`):

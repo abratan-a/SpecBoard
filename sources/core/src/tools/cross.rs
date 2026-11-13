@@ -11,7 +11,7 @@ use serde_json::{Map, Value};
 
 /// The board, read whole.
 pub(crate) fn board(reader: &Reader, project: &str) -> Result<Detail, String> {
-    crate::model::typed(&crate::detail::read(reader, project, Some(BOARD))?)
+    crate::detail::typed(reader, project, Some(BOARD))
 }
 
 /// One of the board's cards reaching one of main's: where it is, what it is, how far it has come,

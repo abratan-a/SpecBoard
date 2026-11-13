@@ -16,6 +16,8 @@ nonisolated final class AgentCore: @unchecked Sendable {
     private var next = 1
     private var waiting: [Int: DispatchSemaphore] = [:]
     private var answers: [Int: String] = [:]
+    /// What the daemon said to the lines about the hub asked by number (`askHub`).
+    private var hubAnswers: [Int: [String: Any]] = [:]
     private var ended = false
     /// What `attach` said on its standard error, read as it comes — a pipe not read fills (64 KB)
     /// and stops the writer, and with it the way — and only its end kept (`saidLimit`).
@@ -43,6 +45,9 @@ nonisolated final class AgentCore: @unchecked Sendable {
     /// Where the daemon listens for MCP (`{port, listening, problem}`), as it says when it changes,
     /// and why a port asked for was refused (`movePort`).
     var onMCP: (@Sendable ([String: Any], String?) -> Void)?
+    /// Where the daemon's link to the hub it joined stands (`{joined, id?, to?, link, members}`), as it
+    /// says when that changes or when asked (`tellHub`).
+    var onHub: (@Sendable ([String: Any]) -> Void)?
     /// `app_control` the daemon hands to this app for one of its windows: the call's number, its
     /// arguments and caller (both JSON), answered with `answerApp`.
     var onApp: (@Sendable (Int, String, String) -> Void)?
@@ -71,6 +76,9 @@ nonisolated final class AgentCore: @unchecked Sendable {
     func start(_ launch: AgentDeploy.Launch, client: String, timeout: TimeInterval = 30) throws {
         process.executableURL = URL(fileURLWithPath: launch.executable)
         process.arguments = launch.arguments
+        if !launch.environment.isEmpty {
+            process.environment = ProcessInfo.processInfo.environment.merging(launch.environment) { _, added in added }
+        }
         process.standardInput = input
         process.standardOutput = output
         process.standardError = errors
@@ -149,6 +157,66 @@ nonisolated final class AgentCore: @unchecked Sendable {
         send(["t": "mcp_port", "port": port])
     }
 
+    /// The daemon asked where its link to the hub stands; it comes to `onHub`.
+    func tellHub() {
+        send(["t": "hub"])
+    }
+
+    /// Where the daemon's link to the hub stands, asked now and waited for.
+    func hubSaid(timeout: TimeInterval = 10) throws -> [String: Any] {
+        try askHub(["t": "hub"], timeout: timeout)
+    }
+
+    /// The agent's id and public key in the hub, made when it has none yet: the private key stays on
+    /// its host.
+    func hubKey(timeout: TimeInterval = 30) throws -> (id: String, key: String) {
+        let said = try askHub(["t": "hub_key"], timeout: timeout)
+        guard let id = said["id"] as? String, let key = said["key"] as? String else {
+            throw CoreClient.Refusal.unreadable(String(describing: said))
+        }
+        return (id, key)
+    }
+
+    /// The agent joined to the hub: where the hub is, as the agent's own host reaches it, and the
+    /// hub's host's public host keys — the one host its link will take for the hub.
+    func hubJoin(to: String, hostKeys: [String], timeout: TimeInterval = 30) throws {
+        _ = try askHub(["t": "hub_join", "to": to, "hostKeys": hostKeys], timeout: timeout)
+    }
+
+    /// The agent out of the hub: its link let go, and nothing of the hub kept.
+    func hubLeave(timeout: TimeInterval = 30) throws {
+        _ = try askHub(["t": "hub_leave"], timeout: timeout)
+    }
+
+    /// A line about the hub asked by number, and the daemon's answer to it (told apart, by the
+    /// number, from what it says of the link on its own); its refusal is thrown as it said it.
+    private func askHub(_ message: [String: Any], timeout: TimeInterval) throws -> [String: Any] {
+        let done = DispatchSemaphore(value: 0)
+        guarding.lock()
+        if ended {
+            guarding.unlock()
+            throw CoreClient.Refusal(L10n.text(.Model.agentLostNow, in: Language.current))
+        }
+        let id = next
+        next += 1
+        waiting[id] = done
+        guarding.unlock()
+        var message = message
+        message["id"] = id
+        send(message)
+        let timedOut = done.wait(timeout: .now() + timeout) == .timedOut
+        guarding.lock()
+        waiting[id] = nil
+        let answer = hubAnswers.removeValue(forKey: id)
+        guarding.unlock()
+        guard let answer else {
+            throw CoreClient.Refusal(timedOut ? L10n.text(.Model.agentNoAnswer(Int(timeout)), in: Language.current)
+                                              : L10n.text(.Model.agentLostWhileWaiting, in: Language.current))
+        }
+        if let refused = answer["refused"] as? String { throw CoreClient.Refusal(refused) }
+        return answer
+    }
+
     /// Lets the way go: its input closes, and `attach` on the host ends (the daemon stays).
     func stop() {
         try? input.fileHandleForWriting.close()
@@ -225,6 +293,17 @@ nonisolated final class AgentCore: @unchecked Sendable {
             onChanged?(notice, message["own"] as? Bool ?? false)
         case "mcp":
             onMCP?(message["mcp"] as? [String: Any] ?? [:], message["refused"] as? String)
+        case "hub", "hub_key":
+            // The answer to a line asked by number is the asker's; what the daemon says of the link
+            // on its own — and the state an answer carries — is everyone's.
+            if let id = message["re"] as? Int {
+                guarding.lock()
+                let done = waiting[id]
+                if done != nil { hubAnswers[id] = message }
+                guarding.unlock()
+                done?.signal()
+            }
+            if message["t"] as? String == "hub" { onHub?(message) }
         case "app":
             guard let id = message["id"] as? Int else { return }
             onApp?(id, message["arguments"] as? String ?? "{}", message["caller"] as? String ?? "null")

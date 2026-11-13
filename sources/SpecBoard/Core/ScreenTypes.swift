@@ -291,10 +291,12 @@ nonisolated enum AccessLevel: String, Sendable, Comparable {
     static func < (a: Self, b: Self) -> Bool { a == .read && b == .write }
 }
 
-/// Who is asking, as the MCP entrance found them by their key.
+/// Who is asking, as the MCP entrance found them by their key — or, for a call another agent handed
+/// over the hub, by the member it came from (`member`, its id in the hub; `keyId` is then no key's).
 nonisolated struct Caller: Equatable, Sendable {
     var keyId: String
     var name: String
+    var member: String?
 }
 
 /// The stop for a history no one cuts (`prune`, `specboard://SpecBoard/Docs/Design:DesignBranches` §7): per branch,

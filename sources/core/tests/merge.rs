@@ -1517,3 +1517,73 @@ fn a_box_the_diagram_put_by_itself_on_a_branch_is_not_one_the_branch_moved() {
     );
     assert_eq!(preview["places"], 1, "{preview}");
 }
+
+#[test]
+fn rows_versions_and_scenarios_renamed_in_a_branch_merge_as_the_same_rows() {
+    let core = Core::open(script_store()).unwrap();
+    ok(
+        &core,
+        "card_create",
+        json!({"value": {
+            "Docs:Fmt": {"kind": "formatdoc", "rows": [
+                {"name": "a", "kind": "item", "heading": "見出し", "rows": [{"name": "t", "kind": "text", "body": "中の文"}]}
+            ]},
+            "Docs:Log": {"kind": "stackdoc", "versions": [{"name": "v1", "key": "1.0", "body": "版の本文"}]},
+            "Docs:Rev": {"kind": "spec", "scenarios": [{"name": "cascade", "heading": "連なって消える",
+                "steps": [{"given": "注文がある"}, {"when": "消す"}, {"then": "行も消える"}]}]}
+        }}),
+    );
+    ok(&core, "branch_create", json!({"target": "work"}));
+    for (target, name) in [
+        ("Docs:Fmt.a", "b"),
+        ("Docs:Log.v1", "v2"),
+        ("Docs:Rev.cascade", "cascades"),
+    ] {
+        ok(
+            &core,
+            "card_update",
+            json!({"branch": "work", "target": target, "value": {"name": name}}),
+        );
+    }
+    for path in ["Docs:Fmt", "Docs:Log", "Docs:Rev"] {
+        let read = ok(
+            &core,
+            "branch_read",
+            json!({"target": "work", "value": {"as": "diff", "path": path}}),
+        );
+        let units = read["changes"][0]["units"]
+            .as_array()
+            .unwrap_or_else(|| panic!("{read}"));
+        assert_eq!(units.len(), 1, "{path}: {read}");
+    }
+    // Main changed the row renamed meanwhile: one conflict on that row, the renamed one on the branch's side.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Docs:Fmt.a", "value": {"heading": "main の見出し"}}),
+    );
+    let preview = ok(
+        &core,
+        "branch_read",
+        json!({"target": "work", "value": {"against": "main"}}),
+    );
+    let conflicts = preview["conflicts"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{preview}"));
+    assert_eq!(conflicts.len(), 1, "{preview}");
+    assert!(
+        conflicts[0]["source"].to_string().contains("\"b\""),
+        "{preview}"
+    );
+    ok(
+        &core,
+        "branch_merge",
+        json!({"target": "work", "value": {"take": {"Docs:Fmt": {conflicts[0]["unit"].as_str().unwrap(): "source"}}}}),
+    );
+    let fmt = ok(&core, "card_read", json!({"target": "Docs:Fmt.b.t"}));
+    assert_eq!(fmt["body"], "中の文", "{fmt}");
+    let log = ok(&core, "card_read", json!({"target": "Docs:Log.v2"}));
+    assert_eq!(log["body"], "版の本文", "{log}");
+    let rev = ok(&core, "card_read", json!({"target": "Docs:Rev.cascades"}));
+    assert_eq!(rev["steps"][1]["when"], "消す", "{rev}");
+}

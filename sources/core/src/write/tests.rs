@@ -1021,7 +1021,7 @@ fn a_bundle_writes_only_into_the_project_it_is_read_as() {
     let mut store = fresh();
     put(&mut store, Who::screen(), "", &card("c1", "Order", "一")).unwrap();
     // A bundle of another project whose rows still name this one.
-    let mut bundled = bundle::bundle(&store.conn, PROJECT).unwrap();
+    let mut bundled = bundle::bundle(&store.conn, PROJECT, false).unwrap();
     bundled["project"] = json!("p2");
     let tables = bundled["tables"].as_object_mut().unwrap();
     // Only its project and its cards are checked here: rows keyed by ids of their own are left out.
@@ -1038,7 +1038,7 @@ fn a_bundle_writes_only_into_the_project_it_is_read_as() {
         row["doc"] = json!(Value::Object(card("c1", "Order", "束")).to_string());
     }
     let mut tx = store.write(Who::screen()).unwrap();
-    tx.read_bundle(&bundled).unwrap();
+    tx.read_bundle(&bundled, false).unwrap();
     tx.commit().unwrap();
     assert_eq!(label(row(&store, "", "c1").unwrap().1), "一");
     assert_eq!(

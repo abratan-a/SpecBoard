@@ -14,6 +14,7 @@
   "actions.error.notOfKind": "{kind} のアクションは {ops} です（{op} はありません。今使えるもの: {now}）",
   "actions.error.onTheBoard": "{path} は {name} にはありません。ボードのカードです（branch: \"_project_board_\"）",
   "actions.error.oneCard": "target はカード 1 枚のパスです（card_action はカードを 1 つずつ）",
+  "actions.label.resume": "続ける（新しい branch）",
   "actions.line.cancel": "カード {path} を打ち切り（{changes}）",
   "actions.line.done": "カード {path} を済みに（{changes}）",
   "actions.line.finish": "カード {path} を完了（{changes}）",

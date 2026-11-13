@@ -1,0 +1,22 @@
+{
+  "hub.call.folder": "{what} cannot be done over the hub (it touches a folder on the owner's host; do it in a session connected to the owner's agent)",
+  "hub.call.folderOf": "{key} of {tool}",
+  "hub.call.local": "{tool} cannot be done over the hub (do it in a session connected to your own agent)",
+  "hub.call.unreadable": "Cannot read the request of hub_call ({k: \"call\", tool, arguments, key, level, build, lang})",
+  "hub.cut": "It is not known whether this reached the owner. Read to check, then try again",
+  "hub.cutRead": "The way to the owner was cut while this was read. Call again",
+  "hub.down": "Not linked to the hub",
+  "hub.grant.noProject": "Shared project not found",
+  "hub.incoming.projects": "Cannot read projects of hub_incoming ([{id, name, slug, level}])",
+  "hub.noMember": "The agent \"{member}\" is not a member of the hub",
+  "hub.otherBuild": "{owner} is running another version (connecting the app to both agents brings them to the same one)",
+  "hub.ownerAway": "{owner} is not linked to the hub now",
+  "hub.readOnly": "Project \"{project}\" is read only from another agent (the owner's share, or the grant of the access key on the using side, is read only)",
+  "hub.share.self": "A project is not shared with its own agent",
+  "hub.slow": "{owner} did not answer in time. It is not known whether this reached the owner. Read to check, then try again",
+  "hub.state.members": "Cannot read members of hub_state ([{id, name, online, build}])",
+  "hub.twice": "There are {count} shared projects named \"{name}\". Write one of {ways} as project",
+  "hub.unreadable": "The owner's answer could not be read",
+  "hub.unshared": "Project \"{project}\" is not shared by {owner} (project_list has the list as it is now)",
+  "hub.what.member": "the agent's id"
+}

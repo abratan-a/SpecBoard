@@ -259,8 +259,8 @@ pub fn changes(
             ));
         }
     }
-    // An enum's values, by their rows' ids: made, gone (a value renamed is written as a new row),
-    // and what each kept one now says.
+    // An enum's values, by their rows' ids: made, gone, and what each kept one now says (a value
+    // renamed keeps its row).
     let (then, values_now) = (values(before), values(after));
     let kept = |id: &str, list: &[ValueShape]| list.iter().any(|v| v.id == id);
     let added: Vec<&str> = values_now
@@ -278,6 +278,13 @@ pub fn changes(
         let Some(now) = values_now.iter().find(|v| v.id == was.id) else {
             continue;
         };
+        if now.name != was.name {
+            value_lines.push(text!(
+                "diff.change.valueRenamed",
+                name = was.name.as_str(),
+                now = now.name.as_str()
+            ));
+        }
         if now.label != was.label {
             value_lines.push(text!("diff.change.valueLabel", name = was.name.as_str()));
         }

@@ -39,6 +39,70 @@ struct State {
     hashes: HashMap<String, String>,
 }
 
+/// A tree as the screen reads it (`screen_detail::read`), with what its entries are told apart by:
+/// made once for all who read the tree while the store stands as it was read (`kept`), and
+/// answered from, never changed.
+pub(crate) struct Read {
+    detail: Value,
+    groups: Vec<(String, Vec<usize>)>,
+    state: Arc<State>,
+}
+
+impl Read {
+    fn of(detail: Value) -> Read {
+        let groups = groups_of(&detail);
+        let hashes = hashes_of(&detail, &groups);
+        let state = Arc::new(State {
+            digest: digest_of(&hashes),
+            hashes,
+        });
+        Read {
+            detail,
+            groups,
+            state,
+        }
+    }
+
+    /// What it weighs kept (`kept::weigh`).
+    fn weight(&self) -> usize {
+        crate::kept::weigh(&self.detail)
+            + self
+                .state
+                .hashes
+                .keys()
+                .map(|key| 2 * key.len() + 96)
+                .sum::<usize>()
+    }
+}
+
+/// The tree `branch` of the project as the screen reads it: the one kept when the read stands at a
+/// moment of the store one was made at (`Reader::at`), else made now.
+pub(crate) fn read(
+    store: &crate::store::Reader,
+    project: &str,
+    branch: Option<&str>,
+) -> Result<Arc<Read>, String> {
+    let make = || -> Result<(Read, usize), String> {
+        let read = Read::of(crate::screen_detail::read(store, project, branch)?);
+        let weight = read.weight();
+        Ok((read, weight))
+    };
+    let Some(at) = &store.at else {
+        return make().map(|(read, _)| Arc::new(read));
+    };
+    at.reading(
+        crate::kept::Kind::Detail,
+        project,
+        branch.unwrap_or(""),
+        || crate::workdir::kept_by(store.conn, project),
+        make,
+        |kept, made| {
+            kept.state.digest == made.state.digest
+                && crate::kept::written_alike(&kept.detail, &made.detail)
+        },
+    )
+}
+
 type TreeKey = (String, String);
 
 /// What was sent to one reader: its trees, the one read last at the back, each with what it was sent
@@ -56,7 +120,7 @@ pub(crate) struct Sent {
 }
 
 impl Sent {
-    /// The answer to `project_detail` of `detail`, the project as `tree` sees it now, for `reader`:
+    /// The answer to `project_detail` of `read`, the project as `tree` sees it now, for `reader`:
     /// only what differs from the digest `since` when it was sent to this reader of this tree,
     /// else the whole with its hashes. Either way, what it is now is kept as sent.
     pub(crate) fn answer(
@@ -64,21 +128,15 @@ impl Sent {
         reader: &str,
         project: &str,
         tree: &str,
-        detail: Value,
+        read: &Read,
         since: Option<&str>,
     ) -> Value {
-        let groups = groups_of(&detail);
-        let hashes = hashes_of(&detail, &groups);
-        let now = Arc::new(State {
-            digest: digest_of(&hashes),
-            hashes,
-        });
         let key = (project.to_string(), tree.to_string());
         let base = since.and_then(|since| self.find(reader, &key, since));
-        self.keep(reader, key, now.clone());
+        self.keep(reader, key, read.state.clone());
         match base {
-            Some(base) => delta(detail, &base, &now, groups),
-            None => whole(detail, &now),
+            Some(base) => delta(&read.detail, &base, &read.state, &read.groups),
+            None => whole(&read.detail, &read.state),
         }
     }
 
@@ -231,7 +289,8 @@ fn sorted(hashes: impl Iterator<Item = (String, String)>) -> Map<String, Value> 
 }
 
 /// The whole detail, with its hashes and digest.
-fn whole(mut detail: Value, now: &State) -> Value {
+fn whole(detail: &Value, now: &State) -> Value {
+    let mut detail = detail.clone();
     if let Some(out) = detail.as_object_mut() {
         let hashes = sorted(now.hashes.iter().map(|(k, h)| (k.clone(), h.clone())));
         out.insert("hashes".into(), Value::Object(hashes));
@@ -243,15 +302,15 @@ fn whole(mut detail: Value, now: &State) -> Value {
 /// What differs in `detail` (`now`) from what was sent (`base`): the entries whose hash is not the
 /// one sent (new ones among them), the ids of the entries no longer there, the lists whose order is
 /// not the one sent, and the hashes that are not.
-fn delta(mut detail: Value, base: &State, now: &State, groups: Vec<(String, Vec<usize>)>) -> Value {
+fn delta(detail: &Value, base: &State, now: &State, groups: &[(String, Vec<usize>)]) -> Value {
     let differs = |key: &str| base.hashes.get(key) != now.hashes.get(key);
     let mut changed = Map::new();
     let mut order = Map::new();
     for list in LISTS {
-        let entries = match detail[list].take() {
-            Value::Array(entries) => entries,
-            _ => Vec::new(),
-        };
+        let entries = detail[list]
+            .as_array()
+            .map(Vec::as_slice)
+            .unwrap_or_default();
         if differs(&format!("order/{list}")) {
             let ids = entries
                 .iter()
@@ -260,26 +319,27 @@ fn delta(mut detail: Value, base: &State, now: &State, groups: Vec<(String, Vec<
             order.insert(list.into(), Value::Array(ids));
         }
         let entries = entries
-            .into_iter()
+            .iter()
             .filter(|e| differs(&format!("{list}/{}", id_of(e, "id"))))
+            .cloned()
             .collect();
         changed.insert(list.into(), Value::Array(entries));
     }
-    let mut lines: Vec<Option<Value>> = match detail["relations"].take() {
-        Value::Array(lines) => lines.into_iter().map(Some).collect(),
-        _ => Vec::new(),
-    };
+    let lines = detail["relations"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
     let mut by_card = Map::new();
     for (from, at) in groups {
         if differs(&format!("relations/{from}")) {
-            let group = at.iter().filter_map(|&i| lines[i].take()).collect();
-            by_card.insert(from, Value::Array(group));
+            let group = at.iter().filter_map(|&i| lines.get(i).cloned()).collect();
+            by_card.insert(from.clone(), Value::Array(group));
         }
     }
     changed.insert("relations".into(), Value::Object(by_card));
     for one in ONES {
         if differs(one) {
-            changed.insert(one.into(), detail[one].take());
+            changed.insert(one.into(), detail[one].clone());
         }
     }
     let mut gone: HashMap<&str, Vec<&str>> = HashMap::new();
@@ -333,18 +393,36 @@ mod tests {
     fn what_was_kept_is_bounded_by_reader_tree_and_state() {
         let sent = Sent::default();
         for n in 0..(READERS + 3) {
-            sent.answer(&n.to_string(), "p", "", detail(&[("a", "A")]), None);
+            sent.answer(
+                &n.to_string(),
+                "p",
+                "",
+                &Read::of(detail(&[("a", "A")])),
+                None,
+            );
         }
         assert_eq!(sent.readers.lock().unwrap().len(), READERS);
         for n in 0..(TREES_PER_READER + 2) {
-            sent.answer("r", "p", &n.to_string(), detail(&[("a", "A")]), None);
+            sent.answer(
+                "r",
+                "p",
+                &n.to_string(),
+                &Read::of(detail(&[("a", "A")])),
+                None,
+            );
         }
         let readers = sent.readers.lock().unwrap();
         let (_, r) = readers.iter().find(|(r, _)| r == "r").unwrap();
         assert_eq!(r.trees.len(), TREES_PER_READER);
         drop(readers);
         for n in 0..(STATES_PER_TREE + 2) {
-            sent.answer("s", "p", "", detail(&[("a", &n.to_string())]), None);
+            sent.answer(
+                "s",
+                "p",
+                "",
+                &Read::of(detail(&[("a", &n.to_string())])),
+                None,
+            );
         }
         let readers = sent.readers.lock().unwrap();
         let (_, s) = readers.iter().find(|(r, _)| r == "s").unwrap();
@@ -354,10 +432,10 @@ mod tests {
     #[test]
     fn a_reader_that_holds_one_sent_before_the_last_is_still_sent_what_changed() {
         let sent = Sent::default();
-        let first = sent.answer("r", "p", "", detail(&[("a", "A")]), None);
+        let first = sent.answer("r", "p", "", &Read::of(detail(&[("a", "A")])), None);
         let held = first["digest"].as_str().unwrap().to_string();
-        sent.answer("r", "p", "", detail(&[("a", "B")]), None);
-        let answer = sent.answer("r", "p", "", detail(&[("a", "C")]), Some(&held));
+        sent.answer("r", "p", "", &Read::of(detail(&[("a", "B")])), None);
+        let answer = sent.answer("r", "p", "", &Read::of(detail(&[("a", "C")])), Some(&held));
         assert_eq!(answer["delta"], true);
         assert_eq!(answer["changed"]["schemas"][0]["name"], "C");
     }

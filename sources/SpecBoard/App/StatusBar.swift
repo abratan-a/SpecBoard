@@ -29,7 +29,7 @@ struct StatusBar: View {
 
     var body: some View {
         StatusBand(activity: model.activity, said: model.said,
-                   light: MCPLight.of(hosts: hosts.hosts, cores: hosts.coreState), version: updater.version) {
+                   light: MCPLight.of(hosts: hosts.reached, cores: hosts.coreState), version: updater.version) {
             model.statusLine = $0
         }
     }

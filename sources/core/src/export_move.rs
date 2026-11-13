@@ -211,6 +211,7 @@ fn exports_from(sections: &[Section], cards: &[Card], dirs: &[(String, String)])
         to: s.path.clone(),
         format: s.format.clone(),
         kinds: Vec::new(),
+        lines: Vec::new(),
     };
     let mut adds: Vec<(String, Entry)> = Vec::new();
     let mut leaves: Vec<(String, String)> = Vec::new();

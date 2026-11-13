@@ -265,8 +265,9 @@ fn an_enums_values_changed_on_a_branch_are_said_in_its_diff() {
     assert_eq!(
         status["changes"],
         json!([
-            "値を足す opened, cancelled",
-            "値を消す open, shipped",
+            "値を足す cancelled",
+            "値を消す shipped",
+            "値 open の名前を opened に変える",
             "値 paid の表示名を変える",
             "値 paid の説明を変える"
         ]),

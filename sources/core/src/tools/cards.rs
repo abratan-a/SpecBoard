@@ -29,11 +29,7 @@ impl Scope {
 
     /// The project as the transaction sees it now, in this tree.
     pub fn detail(&self, tx: &Tx) -> Result<Detail, String> {
-        crate::model::typed(&crate::detail::read(
-            &tx.reader(),
-            &self.project,
-            self.branch(),
-        )?)
+        crate::detail::typed(&tx.reader(), &self.project, self.branch())
     }
 
     /// main, as the board's lines reach it (`Project::outside`): read for the board alone.
@@ -41,11 +37,11 @@ impl Scope {
         if self.tree != crate::store::BOARD {
             return Ok(None);
         }
-        Ok(Some(crate::model::typed(&crate::detail::read(
+        Ok(Some(crate::detail::typed(
             &tx.reader(),
             &self.project,
             None,
-        )?)?))
+        )?))
     }
 
     /// One card's document as this tree sees it, as `docs` has it: from the project the

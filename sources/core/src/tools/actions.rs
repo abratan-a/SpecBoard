@@ -528,7 +528,16 @@ pub(crate) fn listed(
     for op in &facts.ops {
         let mut row = Map::new();
         row.insert("op".into(), op.clone().into());
-        row.insert("label".into(), label(op).into());
+        // A goal whose work branch a merge set aside goes on in a new branch: said so, not as a first start.
+        let resumes = op == "start"
+            && matches!(facts.work, Work::Gone(_))
+            && Status::InProgress.is(facts.status.as_deref().unwrap_or_default());
+        let said = if resumes {
+            text!("actions.label.resume")
+        } else {
+            label(op)
+        };
+        row.insert("label".into(), said.into());
         if let Some(a) = written(op) {
             row.insert("description".into(), a["description"].clone());
         }

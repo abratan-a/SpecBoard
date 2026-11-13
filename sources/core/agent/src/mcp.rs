@@ -57,7 +57,7 @@ pub fn port_set(home: &Path) -> u16 {
 }
 
 /// The user's settings as kept, or none.
-fn settings_kept(home: &Path) -> Value {
+pub(crate) fn settings_kept(home: &Path) -> Value {
     std::fs::read_to_string(settings(home))
         .ok()
         .and_then(|text| serde_json::from_str::<Value>(&text).ok())
@@ -67,7 +67,7 @@ fn settings_kept(home: &Path) -> Value {
 
 /// One setting kept, the others as they were. Two apps' lines are answered on two threads: one at a
 /// time, so neither writes over what the other kept.
-fn keep(home: &Path, key: &str, value: Value) -> Result<(), String> {
+pub(crate) fn keep(home: &Path, key: &str, value: Value) -> Result<(), String> {
     static WRITING: Mutex<()> = Mutex::new(());
     let _one = WRITING.lock().unwrap_or_else(|e| e.into_inner());
     let place = settings(home);
@@ -117,6 +117,28 @@ type Tell = Box<dyn Fn(&Mcp) + Send + Sync>;
 
 /// How often a port taken is tried again.
 const RETRY: Duration = Duration::from_secs(5);
+
+/// How often a listener with nothing coming looks at whether it is let go.
+const LOOK: Duration = Duration::from_millis(50);
+
+/// Waited for until a connection comes to `listener`, for `wait` at most. The listener is asked
+/// without blocking — a blocking accept would never come back to see that it was let go —, and
+/// what comes is taken as it comes: sleeping between looks makes every call on a new connection
+/// wait for the next look, which a system that stretches short sleeps makes several times longer.
+fn comes(listener: &TcpListener, wait: Duration) {
+    use std::os::unix::io::AsRawFd;
+    let mut fds = [libc::pollfd {
+        fd: listener.as_raw_fd(),
+        events: libc::POLLIN,
+        revents: 0,
+    }];
+    // SAFETY: poll reads and writes only `fds`, which this owns, for its one entry.
+    let said = unsafe { libc::poll(fds.as_mut_ptr(), 1, wait.as_millis() as libc::c_int) };
+    if said < 0 {
+        // Not waited for at all (a signal, say): not looked at again in a tight loop.
+        std::thread::sleep(wait);
+    }
+}
 
 impl Mcp {
     /// Listening at the port of the setting (or saying why it cannot), the streams kept alive.
@@ -242,10 +264,8 @@ impl Mcp {
                     let mcp = self.clone();
                     std::thread::spawn(move || mcp.serve(connection, slot));
                 }
-                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                    std::thread::sleep(Duration::from_millis(50));
-                }
-                Err(_) => std::thread::sleep(Duration::from_millis(50)),
+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => comes(&listener, LOOK),
+                Err(_) => std::thread::sleep(LOOK),
             }
         }
     }

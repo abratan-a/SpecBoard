@@ -1542,3 +1542,35 @@ fn an_embedded_shape_takes_a_list_of_itself_and_no_other_object() {
     );
     assert_eq!(properties["many"]["type"], "array", "{properties}");
 }
+
+#[test]
+fn a_url_is_any_absolute_uri() {
+    let core = with_data();
+    ok(
+        &core,
+        "card_create",
+        json!({"target": "Schemas:Site", "value": {"kind": "value", "fields": [{"name": "site", "type": "url"}]}}),
+    );
+    for (n, good) in [
+        "com.example.app:/cb",
+        "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        "mailto:a@example.com",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        ok(
+            &core,
+            "card_create",
+            json!({"target": format!("Data:good{n}"), "value": {"kind": "instance", "of": "Schemas:Site", "data": {"site": good}}}),
+        );
+    }
+    for (n, bad) in ["example.com", "not a url", ":x"].into_iter().enumerate() {
+        let said = refused(
+            &core,
+            "card_create",
+            json!({"target": format!("Data:bad{n}"), "value": {"kind": "instance", "of": "Schemas:Site", "data": {"site": bad}}}),
+        );
+        assert!(said.contains("site"), "{bad}: {said}");
+    }
+}

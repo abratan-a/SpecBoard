@@ -85,6 +85,24 @@
         }
       }
     },
+    "alert.deleteCards" : {
+      "comment" : "Title of the confirmation dialog when deleting several cards picked; the argument is how many.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %lld cards?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚のカードを削除しますか？"
+          }
+        }
+      }
+    },
     "header.createHelp" : {
       "comment" : "Tooltip of the plus button in the navigator header.",
       "extractionState" : "manual",
@@ -92,13 +110,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create a section inside the open section (not directly under main or a branch)"
+            "value" : "Add a card or a section in the open section, or a working directory"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開いているセクションの中にセクションを作る（main・branch の直下には作れません）"
+            "value" : "開いているセクションにカード・セクションを、または作業ディレクトリを足します"
           }
         }
       }
@@ -153,6 +171,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カードを追加…"
+          }
+        }
+      }
+    },
+    "menu.addWorkDir" : {
+      "comment" : "Item of the navigator's plus menu that adds a working directory (a folder on this Mac read as a section).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add working directory…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリを足す…"
           }
         }
       }
@@ -441,24 +477,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "コードを開く"
-          }
-        }
-      }
-    },
-    "menu.openToCreate" : {
-      "comment" : "Disabled hint in the plus menu of the navigator header when no section is open.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open a section to create sections inside it"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セクションを開くと、その中にセクションを作れます"
           }
         }
       }
@@ -1425,6 +1443,132 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "作業ディレクトリ: この Mac のフォルダから読むだけで、どの branch でも同じ。置けるのはメモだけ"
+          }
+        }
+      }
+    },
+    "workDirSheet.add" : {
+      "comment" : "Button that adds the working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
+        }
+      }
+    },
+    "workDirSheet.choose" : {
+      "comment" : "Button that opens the folder chooser in the sheet that adds a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選ぶ…"
+          }
+        }
+      }
+    },
+    "workDirSheet.folder" : {
+      "comment" : "Label of the folder row in the sheet that adds a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダ"
+          }
+        }
+      }
+    },
+    "workDirSheet.noFolder" : {
+      "comment" : "Shown in the folder row while no folder is chosen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No folder chosen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを選んでいません"
+          }
+        }
+      }
+    },
+    "workDirSheet.readBasic" : {
+      "comment" : "How the chosen folder will be read: it holds no git repository.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read as: basic (the folder has no .git)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み方: basic（フォルダに .git が無い）"
+          }
+        }
+      }
+    },
+    "workDirSheet.readGit" : {
+      "comment" : "How the chosen folder will be read: it holds a git repository.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read as: git repository (the folder has .git)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み方: git リポジトリ（フォルダに .git がある）"
+          }
+        }
+      }
+    },
+    "workDirSheet.title" : {
+      "comment" : "Title of the sheet that adds a working directory.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add working directory"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業ディレクトリを足す"
           }
         }
       }

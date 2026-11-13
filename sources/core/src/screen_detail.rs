@@ -180,9 +180,7 @@ fn dress(
     // The board's lines and text reach main's cards: read with main beside it, their lines in
     // `relations` with `outside`. The screen reads main's detail itself for the cards they reach.
     let main = match branch {
-        Some(crate::store::BOARD) if lines => Some(crate::model::typed(&crate::detail::read(
-            store, project_id, None,
-        )?)?),
+        Some(crate::store::BOARD) if lines => Some(crate::detail::typed(store, project_id, None)?),
         _ => None,
     };
     // main's and a branch's lines reach the working directories' files: read

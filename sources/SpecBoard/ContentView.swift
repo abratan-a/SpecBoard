@@ -56,6 +56,7 @@ struct CardCanvas: NSViewRepresentable {
     /// A picture pasted or dropped on a whiteboard (`CardCanvasView.onPicture`).
     var onPicture: ((Data, GridPoint) -> Void)? = nil
     var onClickEmpty: () -> Void = {}
+    var onDeleteRequest: (([String]) -> Void)? = nil
     /// How the diagram lays its cards out (§12).
     var settings = LayoutSettings.standard
     /// Every card's width (§12).
@@ -95,6 +96,7 @@ struct CardCanvas: NSViewRepresentable {
         view.imagePicture = imagePicture
         view.onPicture = onPicture
         view.onClickEmpty = onClickEmpty
+        view.onDeleteRequest = onDeleteRequest
         wire(groups, view)
         view.show(detail, filters: controller.filters,
                   surroundings: surroundings, settings: settings, cardWidth: cardWidth, marks: marks)
@@ -135,6 +137,7 @@ struct CardCanvas: NSViewRepresentable {
         view.imagePicture = imagePicture
         view.onPicture = onPicture
         view.onClickEmpty = onClickEmpty
+        view.onDeleteRequest = onDeleteRequest
         wire(groups, view)
         context.coordinator.section = lookKey ?? section
         view.curvesOnly = curvesOnly
@@ -254,6 +257,8 @@ struct ContentView: View {
     private var typography: Typography { Typography.shared }
     private var updater: Updater { Updater.shared }
 
+    /// Why the card asked for was refused, said under its name until the name is changed.
+    @State private var draftRefusal: String?
     @State private var draftSchemaName = ""
     @State private var draftSchemaLabel = ""
     @State private var draftSchemaKind = SchemaKind.entity.rawValue
@@ -380,6 +385,19 @@ struct ContentView: View {
         .sheet(item: $model.undoRefusal) { refusal in UndoConflictsSheet(refusal: refusal) { ConflictText.order(of: $0, in: model.detail?.directory) } }
         // A name the window asks for itself: a card ghost's, where its section has the name.
         .nameSheet($model.nameAsk)
+        // Cards picked and the Delete key pressed: asked as the menus' 「カードを削除…」 asks.
+        .confirmationDialog(
+            model.deleteAsk.map { ids in
+                ids.count == 1 ? L10n[.Nav.alertDeleteCard(model.schema(ids[0])?.name ?? "")] : L10n[.Nav.alertDeleteCards(ids.count)]
+            } ?? "",
+            isPresented: Binding(get: { model.deleteAsk != nil }, set: { if !$0 { model.deleteAsk = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button(L10n[.Common.actionDeleteItem], role: .destructive) { model.deleteAsked() }
+            Button(L10n[.Common.actionCancel], role: .cancel) { model.deleteAsk = nil }
+        } message: {
+            Text(CardDeletion.message)
+        }
         // A goal's cancel that throws away what its branch has and main does not, asked first.
         .alert(model.discardAsk.map { L10n[.Board.actionDiscardTitle(model.schema($0.card)?.name ?? "")] } ?? "",
                isPresented: Binding(get: { model.discardAsk != nil }, set: { if !$0 { model.discardAsk = nil } }),
@@ -543,6 +561,7 @@ struct ContentView: View {
             onFormPress: { model.pressForm($0, $1) },
             onPlaceOutside: { [section = model.shownSectionKey] placed in model.keepPlaced(placed, on: section) },
             onClickEmpty: { model.deselect() },
+            onDeleteRequest: { model.askToDelete($0) },
             marks: model.shownMarks,
             takesMenu: false,
             mermaid: { [section = model.shownSectionKey, path = detail.directory.full(section: model.shownSectionKey)] kinds in
@@ -562,14 +581,7 @@ struct ContentView: View {
         .id(model.frontMapKey ?? "")
     }
 
-    /// Whether the property panel goes with what is open: a section's cards or a card,
-    /// not a root's dashboard, the project's settings nor its inspection.
-    private var propertiesFit: Bool {
-        switch model.here {
-        case .section, .map, .card, .connections: true
-        case .root, .settings, .inspection: false
-        }
-    }
+    private var propertiesFit: Bool { PaneSplit.fits(model.here) }
 
     private var propertiesSeat: PaneSplit.PropertiesSeat {
         propertiesFit ? (propertiesOpen ? .open : .folded) : .absent
@@ -973,6 +985,12 @@ struct ContentView: View {
                 .textFieldStyle(.roundedBorder)
                 .font(.app(12, design: .monospaced))
                 .frame(width: 300)
+                .onChange(of: draftSchemaName) { draftRefusal = nil }
+            if let draftRefusal {
+                Text(draftRefusal).font(.app(10.5)).foregroundStyle(.red)
+                    .frame(width: 300, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             TextField(L10n[.Root.newCardLabelPlaceholder], text: $draftSchemaLabel)
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 300)
@@ -1004,16 +1022,22 @@ struct ContentView: View {
                 Button(L10n[.Common.actionCancelDialog]) { model.newSchemaRequest = nil }
                     .keyboardShortcut(.cancelAction)
                 Button(L10n[.Common.actionAddItem]) {
-                    if draftSchemaKind == SchemaKind.instance.rawValue {
-                        model.createInstance(name: draftSchemaName, label: draftSchemaLabel, shape: draftShape)
-                    } else if draftSchemaKind == SchemaKind.table.rawValue {
-                        model.createTable(name: draftSchemaName, label: draftSchemaLabel, shape: draftShape)
-                    } else if draftSchemaKind == SchemaKind.frame.rawValue {
-                        model.createFrame(name: draftSchemaName, label: draftSchemaLabel, target: draftFrameTarget)
-                    } else {
-                        model.createSchema(name: draftSchemaName, label: draftSchemaLabel, kindName: draftSchemaKind)
+                    let refused = model.refusal {
+                        if draftSchemaKind == SchemaKind.instance.rawValue {
+                            model.createInstance(name: draftSchemaName, label: draftSchemaLabel, shape: draftShape)
+                        } else if draftSchemaKind == SchemaKind.table.rawValue {
+                            model.createTable(name: draftSchemaName, label: draftSchemaLabel, shape: draftShape)
+                        } else if draftSchemaKind == SchemaKind.frame.rawValue {
+                            model.createFrame(name: draftSchemaName, label: draftSchemaLabel, target: draftFrameTarget)
+                        } else {
+                            model.createSchema(name: draftSchemaName, label: draftSchemaLabel, kindName: draftSchemaKind)
+                        }
                     }
-                    if model.lastError == nil { model.newSchemaRequest = nil }
+                    if let refused {
+                        draftRefusal = refused
+                    } else {
+                        model.newSchemaRequest = nil
+                    }
                 }
                 .keyboardShortcut(.defaultAction)
                 .disabled(PathText.nameProblem(PathText.trimmed(draftSchemaName)) != nil

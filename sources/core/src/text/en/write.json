@@ -21,6 +21,7 @@
   "write.bundle.otherForm": "The store moved from and the store moved to are of different forms (move it once the app and the agent are of the same build)",
   "write.bundle.projectNotFound": "Project not found",
   "write.bundle.slugTaken": "The destination has a project ({name}) with the slug \"{slug}\" (rename one of them, then move it)",
+  "write.bundle.strayRow": "{table} of the project to move has a row naming a commit or a branch that is not in the bundle (it is not read in)",
   "write.bundle.thereAlready": "Project \"{name}\" is already at the destination",
   "write.dbWrite": "Cannot write to the database: {e}",
   "write.docWithoutId": "The document has no id",

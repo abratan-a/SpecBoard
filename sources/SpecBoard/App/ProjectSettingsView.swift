@@ -10,6 +10,11 @@ struct ProjectSettingsView: View {
     var model: AppModel
     var tab: AppModel.SettingsTab
 
+    /// The project tab's head: the project's name, and what the tab is for behind the (i).
+    static func projectHead(_ name: String) -> TabHead<EmptyView> {
+        TabHead(name, about: L10n[.ProjectSettings.factsNote])
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -51,12 +56,7 @@ private struct ProjectFacts: View {
         if let project = model.detail?.project {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(project.name).font(.app(15, weight: .semibold))
-                        Text(L10n[.ProjectSettings.factsNote])
-                            .font(.app(11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                            .readingWidth()
-                    }
+                    ProjectSettingsView.projectHead(project.name)
                     VStack(alignment: .leading, spacing: 6) {
                         Text(L10n[.Common.wordDescription]).font(.app(10, weight: .semibold)).tracking(1.1).foregroundStyle(.secondary)
                         CommitTextEditor(text: project.description, minHeight: 100) {
@@ -173,7 +173,7 @@ struct CardSizeSettings: View {
                 }
                 .help(L10n[.ProjectSettings.sizeRowsHelp])
                 HStack {
-                    Picker("", selection: Binding(get: { settings.size.width == nil }, set: { auto in
+                    Picker("", selection: Binding.choice({ settings.size.width == nil }, { auto in
                         apply { $0.size.width = auto ? nil : 352 }
                     })) {
                         Text(L10n[.ProjectSettings.sizeWidthAuto]).tag(true)

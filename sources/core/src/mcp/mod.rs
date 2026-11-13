@@ -516,7 +516,13 @@ fn complaints_with(
                     .and_then(|spec| spec.get("enum"))
                     .map(strings)
                     .filter(|w| !w.is_empty());
-                found.push(match words {
+                // A key of the arguments' top written one level down, inside value: said where it goes.
+                let inside = path.is_empty()
+                    && arguments
+                        .get("value")
+                        .and_then(Value::as_object)
+                        .is_some_and(|v| v.contains_key(name));
+                let said = match words {
                     Some(words) => text!(
                         "mcp.complaint.requiredOneOf",
                         prefix,
@@ -530,6 +536,11 @@ fn complaints_with(
                         name,
                         hint = guide_hint(path)
                     ),
+                };
+                found.push(if inside {
+                    said + &text!("mcp.complaint.insideValue", name)
+                } else {
+                    said
                 });
             }
         }
@@ -853,6 +864,31 @@ fn refused(said: &str, call: Option<(&str, &Map<String, Value>)>) -> Value {
     Value::Object(out)
 }
 
+/// What a call of the tool `name` is refused with when its arguments do not fit the tool's schema;
+/// none when they fit.
+fn misfit(name: &str, arguments: &Map<String, Value>, schema: &Value) -> Option<String> {
+    let found = complaints(arguments, schema, "");
+    if found.is_empty() {
+        return None;
+    }
+    let mut complaint = found.join("\n");
+    if !complaint.contains("guide") {
+        complaint += &text!("mcp.call.shapeHint", name);
+    }
+    Some(refusal(complaint, json!({ "guide": name })))
+}
+
+/// A call that did not come through `tools/call` (one handed over the hub), held to what a call
+/// through it is held to before it runs: a tool there is, and arguments that fit its schema.
+pub(crate) fn checked(name: &str, arguments: &Map<String, Value>) -> Result<(), String> {
+    let Some(t) = tool(name) else {
+        return Err(catalog()["gone"][name]
+            .as_str()
+            .map_or_else(|| text!("mcp.call.noTool", name), str::to_string));
+    };
+    misfit(name, arguments, &t["inputSchema"]).map_or(Ok(()), Err)
+}
+
 /// A tool call: checked against the tool's own schema before anything runs.
 fn call_tool(params: Option<&Value>, run: &Runner<'_>) -> Result<Value, (i64, String)> {
     let Some(Value::Object(params)) = params else {
@@ -881,13 +917,7 @@ fn call_tool(params: Option<&Value>, run: &Runner<'_>) -> Result<Value, (i64, St
             ));
         }
     };
-    let found = complaints(&arguments, &t["inputSchema"], "");
-    if !found.is_empty() {
-        let mut complaint = found.join("\n");
-        if !complaint.contains("guide") {
-            complaint += &text!("mcp.call.shapeHint", name);
-        }
-        let complaint = refusal(complaint, json!({ "guide": name }));
+    if let Some(complaint) = misfit(name, &arguments, &t["inputSchema"]) {
         return Ok(content(Err(complaint), Some((name, &arguments))));
     }
     let outcome = if name == "guide" {

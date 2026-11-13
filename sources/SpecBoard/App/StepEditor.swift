@@ -63,7 +63,7 @@ struct StepEditor: View {
         block("do", help: StepEditor.help(step.op, L10n[.Nodes.helpRow])) {
             if editable {
                 ChoiceMenu(options: FlowNode.Vocabulary.processOps.map { ($0, $0) },
-                           selection: Binding(get: { step.op }, set: { op in set { $0 = StepEditor.retyped($0, to: op) } }))
+                           selection: Binding.choice({ step.op }, { op in set { $0 = StepEditor.retyped($0, to: op) } }))
                     .fixedSize()
             } else {
                 Text(step.op).font(.app(12, design: .monospaced))

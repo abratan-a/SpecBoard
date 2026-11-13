@@ -223,15 +223,16 @@ private struct Window {
     static let ops = ["state", "select", "view", "capture", "windows"]
     static let views = ["fit", "cards", "area", "topLeft", "center", "zoom"]
 
-    /// The call as the core handed it over — its arguments, and who made it (`{"id", "name"}`; null
-    /// for the window's own call, which sees every project) — and its value. What the key may do
+    /// The call as the core handed it over — its arguments, and who made it (`{"id", "name"}`, with
+    /// `member` for a call handed over the hub; null for the window's own call, which sees every
+    /// project) — and its value. What the key may do
     /// with the window the core has judged already, a person asked when it is asked each time.
     static func reading(_ model: AppModel?, _ place: UUID?, _ arguments: String, _ caller: String) throws -> (Window, OrderedObject) {
         guard let model else { throw MCPError(.AppControl.errorNoWindow) }
         guard case .object(let raw)? = OJSON.parse(arguments) else { throw MCPError(.AppControl.errorUnreadableArguments) }
         var who: Caller?
         if case .object(let said)? = OJSON.parse(caller), let id = said["id"]?.stringOrNil {
-            who = Caller(keyId: id, name: said["name"]?.stringOrNil ?? "")
+            who = Caller(keyId: id, name: said["name"]?.stringOrNil ?? "", member: said["member"]?.stringOrNil)
         }
         let window = Window(model: model, place: place, caller: who, args: Arguments(raw: raw))
         return (window, try window.value())
@@ -600,6 +601,13 @@ private struct Window {
     private func visibleProjects() -> [ProjectSummary] {
         let here = model.projects.filter { $0.place == place }
         guard let caller else { return place == nil ? model.projects : here }
+        // A call handed over the hub sees the projects shared with the member it came from, and no
+        // others: what is public here is for this agent's own keys.
+        if let member = caller.member {
+            guard let core = model.core(at: place), let shares = try? core.hubShares() else { return [] }
+            let shared = Set(shares.shares.filter { $0.to.contains { $0.member == member } }.map(\.project))
+            return here.filter { shared.contains($0.id) }
+        }
         guard let core = model.core(at: place), let keys = try? core.accessKeys(), let open = try? core.publicProjects() else {
             return []
         }

@@ -596,6 +596,19 @@ fn walk(root: &str, dir: &Directory) -> (Vec<(String, bool)>, Option<Keyed>, Opt
     (out, None, note)
 }
 
+thread_local! {
+    /// How many times a working directory's file was looked for on the disk on this thread
+    /// (`real_file`).
+    static FILES_LOOKED_AT: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// How many times a working directory's file was looked for on the disk on this thread so far:
+/// what was made with a file as it is now on the disk is not the store's alone, nor the folders'
+/// as they were read, and is told by this having moved on while it was made (`kept`).
+pub(crate) fn files_looked_at_on_this_thread() -> u64 {
+    FILES_LOOKED_AT.with(std::cell::Cell::get)
+}
+
 /// The most of a file read to show it (`text`).
 pub const TEXT_LIMIT: usize = 256 * 1024;
 
@@ -605,6 +618,7 @@ pub const TEXT_LIMIT: usize = 256 * 1024;
 /// folder alone. Every read of a working directory's file goes through here, as `bodyFrom` does
 /// (`tools::body_from::read`). A file not there is given where it would be, for the read to say so.
 pub(crate) fn real_file(folder: &str, path: &str) -> Result<PathBuf, Keyed> {
+    FILES_LOOKED_AT.with(|n| n.set(n.get() + 1));
     if path
         .split('/')
         .any(|p| p.is_empty() || p == "." || p == "..")
@@ -1048,6 +1062,30 @@ pub(crate) fn turn(conn: &Connection, project: &str) -> Result<Option<i64>, Stri
         .optional()
         .map_err(sql)?;
     Ok(seen.and_then(|(turn, dirty)| (dirty == 0).then_some(turn)))
+}
+
+/// Which reading of the project's working directories the connection holds, as what the core
+/// keeps of a tree made from it too is told apart by (`kept`): the turn it was given out at — the
+/// same reading on every connection that holds it —, or 0 for a project with no working directory
+/// and for one whose folders no connection of the core's has read yet (reading them then makes it
+/// this connection's alone). None while it is this connection's alone: what is made from it is no
+/// other's.
+pub(crate) fn kept_by(conn: &Connection, project: &str) -> Option<i64> {
+    let seen: Option<(i64, i64)> =
+        match conn.prepare("SELECT turn, dirty FROM temp.work_seen WHERE project_id = ?") {
+            Ok(mut stmt) => stmt
+                .query_row([project], |r| Ok((r.get(0)?, r.get(1)?)))
+                .optional()
+                .ok()?,
+            // Nothing was ever read on it.
+            Err(_) => None,
+        };
+    match seen {
+        None => Some(0),
+        // A turn names a reading given out; one left behind that never was is the connection's.
+        Some((turn, 0)) if turn > 0 => Some(turn),
+        Some(_) => None,
+    }
 }
 
 fn made_overlay(conn: &Connection, project: &str, mounts: Vec<Mount>) -> Result<Overlay, String> {

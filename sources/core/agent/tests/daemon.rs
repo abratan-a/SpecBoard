@@ -284,6 +284,58 @@ fn an_app_reaches_the_agents_own_which_stays_when_it_goes() {
     assert_eq!(run(agent, &home, "stop").0, 0);
 }
 
+/// The window's readings of a tree are answered apart from the app's other requests, in the order
+/// asked: a request sent behind them is not held until they are done. Readings of a project of
+/// some size and a ping are sent together; the order the answers come in is held, not the time.
+#[test]
+fn the_windows_readings_of_a_tree_do_not_hold_the_apps_next_request() {
+    let home = home();
+    let (mut app, ready) = App::attach(Path::new(AGENT), &home, "MacBook");
+    assert_eq!(ready["t"], "ready", "{ready}");
+    let file = std::fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../tests/fixtures/projects/large.json"),
+    )
+    .unwrap();
+    let read = app.core(json!({"op": "project_file_read", "text": file}));
+    assert!(read.get("error").is_none(), "{read}");
+    let project = app.core(json!({"op": "projects"}))["result"]["projects"][0]["id"].clone();
+
+    let first = app.next;
+    let readings = 4;
+    for n in 0..readings {
+        app.send(&json!({"t": "core", "id": first + n,
+            "request": {"op": "project_detail", "project": project}}));
+    }
+    let ping = first + readings;
+    app.send(&json!({"t": "core", "id": ping, "request": {"op": "ping"}}));
+    app.next = ping + 1;
+    let mut answered = Vec::new();
+    while answered.len() < readings as usize + 1 {
+        let line = app.line();
+        if line["t"] == "core" {
+            assert!(text_of(&line["answer"]).get("error").is_none(), "{line}");
+            answered.push(line["id"].as_u64().unwrap());
+        }
+    }
+    let at = |id: u64| answered.iter().position(|a| *a == id).unwrap();
+    assert!(
+        at(ping) < at(first + readings - 1),
+        "読みが済むまで次の頼みが待った: {answered:?}"
+    );
+    let reads: Vec<u64> = answered.iter().copied().filter(|a| *a != ping).collect();
+    assert_eq!(
+        reads,
+        (first..first + readings).collect::<Vec<_>>(),
+        "読みの答えは頼んだ順"
+    );
+    // What is asked next is answered as before, and what the readings were sent is remembered:
+    // asked with the digest held, only what changed comes back.
+    let whole = app.core(json!({"op": "project_detail", "project": project}));
+    let digest = whole["result"]["digest"].as_str().unwrap().to_string();
+    let since = app.core(json!({"op": "project_detail", "project": project, "since": digest}));
+    assert_eq!(since["result"]["delta"], true, "{since}");
+}
+
 #[test]
 fn a_database_a_newer_core_moved_on_is_not_opened_and_the_app_is_told_why() {
     let home = home();

@@ -2200,6 +2200,16 @@
      "why": "src/unicode holds headers of ICU (utf8.h, utf16.h, umachine.h) under this notice"
     }
    ]
+  },
+  {
+   "name": "libmimalloc-sys",
+   "also": [
+    {
+     "license": "MIT",
+     "file": "c_src/mimalloc/v3/LICENSE",
+     "why": "c_src/mimalloc/v3 holds the C source of mimalloc, built into the Linux agent, under this notice"
+    }
+   ]
   }
  ],
  "mapless": {

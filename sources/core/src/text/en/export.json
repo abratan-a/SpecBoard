@@ -1,10 +1,11 @@
 {
   "export.chart.fieldNotInShape": "The field \"{field}\" is not in the shape of the data to draw ({shapes})",
   "export.content.chart": "chart",
-  "export.content.data": "data JSON",
+  "export.content.data": "JSON Data",
   "export.content.document": "document",
   "export.content.format": "{format}",
   "export.content.html": "HTML",
+  "export.content.lines": "JSON Connections",
   "export.content.mock": "ui mock",
   "export.content.svg": "SVG",
   "export.data.empty": "{here}: the data is empty",
@@ -35,6 +36,8 @@
   "export.problem.at": "{at}: {problem}",
   "export.settings.formatFolder": "Export {export}, row {row}: the format \"{format}\" writes one file, so nothing is written to the folder \"{to}\" (give to a file path)",
   "export.settings.fromGone": "In export {export}, the from of row {row} (writing to {to}) is gone (a card or section that was removed)",
+  "export.settings.lineGone": "Export {export}, row {row} (JSON Connections written to {to}): \"{line}\" in lines is no longer a kind of line in the project",
+  "export.settings.linesTwice": "Export {export}, row {row}: {to} is already written as JSON Connections by a row before it (one such row writes one file)",
   "export.settings.problem": "Export {export}: {card}: {problem}",
   "export.settings.versionGone": "In export {export}, the version in the from of row {row} (writing to {to}) is gone (a removed version of {card})"
 }

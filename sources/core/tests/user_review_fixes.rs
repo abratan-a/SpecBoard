@@ -314,3 +314,105 @@ fn a_nested_name_in_a_rule_follows_a_rename_on_its_way() {
     assert_eq!(slots["rules"][1]["keys"], json!(["key.kid"]), "{slots}");
     assert_eq!(broken_rule_names(&core), vec![]);
 }
+
+/// Cards whose rules name fields through what a field embeds: a card's own rule going into what one
+/// of its fields embeds, and a rule on an array of embedded elements naming the element's fields
+/// and, through another embed, the fields of what the element embeds.
+fn rules_through_embeds(core: &Core) {
+    ok(
+        core,
+        "card_create",
+        json!({"value": {
+            "Schemas/Ordering:Badge": {"kind": "value", "fields": [{"name": "serial", "type": "string"}]},
+            "Schemas/Ordering:Address": {"kind": "value", "fields": [{"name": "zip", "type": "string"}]},
+            "Schemas/Ordering:Clerk": {"kind": "value", "fields": [
+                {"name": "badge", "type": "string"},
+                {"name": "nickname", "type": "string"},
+                {"name": "shift", "type": "string"}],
+                "connections": [{"line": "embed", "from": "badge", "to": "Schemas/Ordering:Badge"}]},
+            "Schemas/Ordering:Shop": {"kind": "entity", "fields": [
+                {"name": "address", "type": "string"},
+                {"name": "clerks", "type": "string", "array": true}],
+                "connections": [
+                    {"line": "embed", "from": "address", "to": "Schemas/Ordering:Address"},
+                    {"line": "embed", "from": "clerks", "to": "Schemas/Ordering:Clerk"}]},
+        }}),
+    );
+    ok(
+        core,
+        "card_update",
+        json!({"target": "Schemas/Ordering:Shop", "value": {"rules": [
+            {"kind": "requiredIf", "when": "x", "then": ["address.zip"]}]}}),
+    );
+    ok(
+        core,
+        "card_update",
+        json!({"target": "Schemas/Ordering:Shop.clerks", "value": {"rules": [
+            {"kind": "uniqueBy", "by": ["nickname"]},
+            {"kind": "sortedBy", "keys": ["shift"]},
+            {"kind": "uniqueBy", "by": ["badge.serial"]},
+            {"kind": "sortedBy", "by": ["badge.serial"]}]}}),
+    );
+    assert_eq!(broken_rule_names(core), vec![]);
+}
+
+fn rename(core: &Core, target: &str, name: &str) {
+    ok(
+        core,
+        "card_update",
+        json!({"target": target, "value": {"name": name}}),
+    );
+}
+
+#[test]
+fn a_cards_rule_follows_a_rename_on_its_way_into_what_a_field_embeds() {
+    let core = core();
+    rules_through_embeds(&core);
+    // The field the name begins with, then the one it ends at in what that field embeds.
+    rename(&core, "Schemas/Ordering:Shop.address", "place");
+    rename(&core, "Schemas/Ordering:Address.zip", "postcode");
+    let shop = ok(
+        &core,
+        "card_read",
+        json!({"target": "Schemas/Ordering:Shop"}),
+    );
+    assert_eq!(
+        shop["rules"][0]["then"],
+        json!(["place.postcode"]),
+        "{shop}"
+    );
+    assert_eq!(broken_rule_names(&core), vec![]);
+}
+
+#[test]
+fn a_rule_on_embedded_elements_follows_renames_of_their_fields() {
+    let core = core();
+    rules_through_embeds(&core);
+    // The element's own fields, then one the element embeds and a field of what it embeds.
+    rename(&core, "Schemas/Ordering:Clerk.nickname", "alias");
+    rename(&core, "Schemas/Ordering:Clerk.shift", "hours");
+    rename(&core, "Schemas/Ordering:Clerk.badge", "tag");
+    rename(&core, "Schemas/Ordering:Badge.serial", "number");
+    let clerks = ok(
+        &core,
+        "card_read",
+        json!({"target": "Schemas/Ordering:Shop.clerks"}),
+    );
+    let said: Vec<&Value> = (0..4)
+        .map(|i| {
+            let rule = &clerks["rules"][i];
+            rule.get("by").unwrap_or(&rule["keys"])
+        })
+        .collect();
+    assert_eq!(
+        said,
+        vec![
+            &json!(["alias"]),
+            &json!(["hours"]),
+            &json!(["tag.number"]),
+            &json!(["tag.number"])
+        ],
+        "{clerks}"
+    );
+    assert_eq!(broken_rule_names(&core), vec![]);
+}

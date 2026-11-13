@@ -38,10 +38,18 @@ impl Core {
             return Err(no_app());
         };
         let caller = match access::caller() {
-            Some(c) => json!({
-                "id": c.key,
-                "name": c.name,
-            }),
+            Some(c) => {
+                let mut said = json!({
+                    "id": c.key,
+                    "name": c.name,
+                });
+                // A call handed over the hub: the member it came from, whose projects are the
+                // ones shared with it.
+                if let Some(member) = c.member {
+                    said["member"] = member.id.into();
+                }
+                said
+            }
             None => Value::Null,
         };
         let said = app.app_control(&Value::Object(arguments).to_string(), &caller.to_string());

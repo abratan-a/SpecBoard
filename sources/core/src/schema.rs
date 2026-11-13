@@ -223,6 +223,59 @@ CREATE TABLE IF NOT EXISTS images (
   PRIMARY KEY (project_id, hash)
 );";
 
+/// The mark of what an agent keeps of the hub it joined (`hub`,
+/// `specboard://SpecBoard/Docs/Design:DesignHub`): the hub's members as it was last told them, which
+/// of its projects it shares with which member, the projects the members share with it, and which
+/// of those each access key may use. The store's own, like the access keys: none of it goes into a
+/// project's file or its bundle.
+pub const HUB: &str = "core_0029_hub";
+
+/// The hub's tables, made where a store has none (`core_0029_hub`). A member is named by the id
+/// the hub gave it and no row refers to `hub_members`: the members are written anew each time the
+/// hub tells them, and what a member that is gone left is let go of then (`hub::Core::hub_state`).
+pub const HUB_TABLES: &str = "
+CREATE TABLE IF NOT EXISTS hub_members (
+  id   TEXT PRIMARY KEY,
+  name TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS hub_shares (
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  member     TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (project_id, member)
+);
+CREATE TABLE IF NOT EXISTS hub_projects (
+  owner      TEXT NOT NULL,
+  project_id TEXT NOT NULL,
+  name       TEXT NOT NULL,
+  slug       TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (owner, project_id)
+);
+CREATE TABLE IF NOT EXISTS hub_grants (
+  key_id     TEXT NOT NULL REFERENCES access_keys(id) ON DELETE CASCADE,
+  owner      TEXT NOT NULL,
+  project_id TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (key_id, owner, project_id),
+  FOREIGN KEY (owner, project_id) REFERENCES hub_projects(owner, project_id) ON DELETE CASCADE
+);";
+
+/// The mark of the pieces a long history row is kept in: the table `history_chunks`, and the long
+/// rows of before cut into them (`write::chunks`).
+pub const HISTORY_CHUNKS: &str = "core_0030_history_chunks";
+
+/// The table of the pieces, made where a store has none (`core_0030_history_chunks`). A piece is its
+/// project's: it goes when the project goes, and one project's rows never point at another's.
+pub const HISTORY_CHUNKS_TABLE: &str = "
+CREATE TABLE IF NOT EXISTS history_chunks (
+  id         INTEGER PRIMARY KEY,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  hash       BLOB NOT NULL,
+  data       BLOB NOT NULL
+);
+CREATE INDEX IF NOT EXISTS history_chunks_hash ON history_chunks(project_id, hash);";
+
 /// `places` as `core_0025_map_groups` has it, made under the name `places_new` to take the rows of
 /// the one of before.
 pub const PLACES_NEW: &str = "
@@ -246,7 +299,7 @@ DROP TABLE places;
 ALTER TABLE places_new RENAME TO places;";
 
 /// Every mark a store of the form has now, in the order they came.
-pub const MARKS: [&str; 28] = [
+pub const MARKS: [&str; 30] = [
     MARK,
     MCP_WRITES,
     CARD_GHOSTS,
@@ -275,6 +328,8 @@ pub const MARKS: [&str; 28] = [
     BUILTIN_NAMES,
     FROZEN_TIMES,
     IMAGES,
+    HUB,
+    HISTORY_CHUNKS,
 ];
 
 /// Every table of the form, created empty.
@@ -533,6 +588,39 @@ CREATE TABLE images (
   data       TEXT NOT NULL,
   PRIMARY KEY (project_id, hash)
 );
+CREATE TABLE hub_members (
+  id   TEXT PRIMARY KEY,
+  name TEXT NOT NULL
+);
+CREATE TABLE hub_shares (
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  member     TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (project_id, member)
+);
+CREATE TABLE hub_projects (
+  owner      TEXT NOT NULL,
+  project_id TEXT NOT NULL,
+  name       TEXT NOT NULL,
+  slug       TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (owner, project_id)
+);
+CREATE TABLE hub_grants (
+  key_id     TEXT NOT NULL REFERENCES access_keys(id) ON DELETE CASCADE,
+  owner      TEXT NOT NULL,
+  project_id TEXT NOT NULL,
+  level      TEXT NOT NULL CHECK (level IN ('read', 'write')),
+  PRIMARY KEY (key_id, owner, project_id),
+  FOREIGN KEY (owner, project_id) REFERENCES hub_projects(owner, project_id) ON DELETE CASCADE
+);
+CREATE TABLE history_chunks (
+  id         INTEGER PRIMARY KEY,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  hash       BLOB NOT NULL,
+  data       BLOB NOT NULL
+);
+CREATE INDEX history_chunks_hash ON history_chunks(project_id, hash);
 ";
 
 /// A document's print: what a branch remembers of a card of main, to tell whether main

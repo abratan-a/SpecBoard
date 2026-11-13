@@ -18,16 +18,14 @@ struct MCPWritesView: View {
     @State private var open: Set<String> = []
     @State private var error: String?
 
+    /// The tab's head: its title, and what the tab is for behind the (i).
+    static var head: TabHead<EmptyView> { TabHead(L10n[.MCP.writesTitle], about: L10n[.MCP.writesIntro]) }
+
     var body: some View {
         if let project = model.detail?.project {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(L10n[.MCP.writesTitle]).font(.app(15, weight: .semibold))
-                        Text(L10n[.MCP.writesIntro])
-                            .font(.app(11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                            .readingWidth()
-                    }
+                    Self.head
                     // MCP reaches only an agent's projects.
                     if model.projects.first(where: { $0.id == project.id })?.place == nil {
                         Text(Self.thisMac)

@@ -7,28 +7,32 @@ import SwiftUI
 
 /// The tabs of a place's settings.
 enum PlaceSettingsTab: String, CaseIterable, Identifiable, Sendable {
-    case connection, keys, publishing
+    case connection, localAgent, hub, keys, publishing
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .connection: L10n[.Places.tabConnection]
+        case .localAgent: L10n[.Places.tabLocalAgent]
+        case .hub: L10n[.Places.tabHub]
         case .keys: L10n[.Places.tabKeys]
         case .publishing: L10n[.Places.wordPublic]
         }
     }
 
-    /// The tabs a place has: an agent's three; this Mac's none — it is not reached over SSH, and MCP
+    /// The tabs a place has: an agent's four; this Mac's none — it is not reached over SSH, and MCP
     /// reaches none of its projects, so it has no access keys and nothing public.
-    static func of(place: UUID?) -> [PlaceSettingsTab] {
-        place == nil ? [] : [.connection, .keys, .publishing]
+    static func of(place: UUID?, localAgent: Bool = false) -> [PlaceSettingsTab] {
+        if place != nil { return [.connection, .hub, .keys, .publishing] }
+        return localAgent ? [.localAgent, .hub, .keys, .publishing] : []
     }
 
-    /// The tab a place's settings open at: its first. This Mac's settings have none, and are opened
-    /// by `.keys` all the same (`PlaceSettingsPane` shows them without tabs).
-    static func opening(_ place: UUID?) -> PlaceSettingsTab {
-        of(place: place).first ?? .keys
+    /// The tab a place's settings open at: its first. This Mac's settings have no tabs while its own
+    /// agent is off, and show what the agent's tab shows all the same (`PlaceSettingsPane`): they are
+    /// opened at that tab, so that the settings left open as the agent is switched on stay on it.
+    static func opening(_ place: UUID?, localAgent: Bool = false) -> PlaceSettingsTab {
+        of(place: place, localAgent: localAgent).first ?? .localAgent
     }
 }
 
@@ -39,9 +43,9 @@ enum HomeChoice: Equatable {
     case all, thisMac, agent(UUID)
 }
 
-/// The home's left column: this Mac, then each agent — one row each, its ⚙ at the right — and
-/// 「エージェントを足す」 under them. A row is chosen to show that place's projects; its ⚙ to show its
-/// settings.
+/// The home's left column: this Mac, then each agent — one row each, its ⚙ at the right —, the hubs
+/// under them, and 「エージェントを追加」 and 「ハブを追加」 at the foot. A row is chosen to show that
+/// place's projects; its ⚙ to show its settings. A hub keeps no project: its row shows its settings.
 struct PlaceColumn: View {
     var model: AppModel
     var hosts: RemoteHosts
@@ -54,6 +58,9 @@ struct PlaceColumn: View {
 
     @State private var adding = false
     @State private var draft = ""
+    /// The form that adds a hub, and what is typed.
+    @State private var addingHub = false
+    @State private var hubDraft = ""
     /// The host whose MCP port is being set, and what is typed.
     @State private var porting: UUID?
     @State private var portDraft = ""
@@ -74,20 +81,34 @@ struct PlaceColumn: View {
                     allRow
                     thisMac
                     ForEach(hosts.hosts) { host in hostRow(host) }
+                    if !hosts.hubs.isEmpty {
+                        Divider().padding(.horizontal, 10).padding(.vertical, 8)
+                        ForEach(hosts.hubs) { hub in hubRow(hub) }
+                    }
                 }
                 .padding(.horizontal, 6).padding(.top, 10).padding(.bottom, 8)
             }
             Divider()
-            Button { draft = ""; adding = true } label: {
-                Label(L10n[.Places.columnAddAgent], systemImage: "plus")
-                    .font(.app(12))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
+            HStack(spacing: 8) {
+                Button { draft = ""; adding = true } label: {
+                    Label(L10n[.Places.columnAddAgent], systemImage: "plus")
+                        .font(.app(12))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help(L10n[.Places.columnAddAgentHelp])
+                .popover(isPresented: $adding, arrowEdge: .trailing) { form }
+                Button { hubDraft = ""; addingHub = true } label: {
+                    Text(L10n[.Places.columnAddHub])
+                        .font(.app(11.5)).foregroundStyle(.secondary)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help(L10n[.Places.columnAddHubHelp])
+                .popover(isPresented: $addingHub, arrowEdge: .trailing) { hubForm }
             }
-            .buttonStyle(.plain)
             .padding(.horizontal, 14).padding(.vertical, 10)
-            .help(L10n[.Places.columnAddAgentHelp])
-            .popover(isPresented: $adding, arrowEdge: .trailing) { form }
         }
         .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
     }
@@ -95,7 +116,7 @@ struct PlaceColumn: View {
     // MARK: Rows
 
     private func count(_ place: UUID?) -> Int {
-        model.projects.filter { $0.place == place && !$0.isArchived }.count
+        model.projects.filter { (place == nil ? model.isThisMac($0.place) : $0.place == place) && !$0.isArchived }.count
     }
 
     /// Every place's projects: no settings of its own, so no ⚙.
@@ -113,7 +134,18 @@ struct PlaceColumn: View {
     private var thisMac: some View {
         row(key: "", chosen: !allChosen && selected == nil, choose: { onChoose(nil) }, settings: { onSettings(nil) }) {
             Image(systemName: "desktopcomputer").font(.app(12)).foregroundStyle(.secondary).frame(width: 18)
-            Text(L10n[.Common.wordThisMac]).font(.app(12.5, weight: .semibold)).lineLimit(1)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(L10n[.Common.wordThisMac]).font(.app(12.5, weight: .semibold)).lineLimit(1)
+                // Its own agent, while that is switched on: a dot for whether it is reached, and what it is.
+                if let local = hosts.local {
+                    let core = hosts.coreState[local.id] ?? RemoteHosts.CoreState()
+                    HStack(spacing: 4) {
+                        Circle().fill(core.connected ? Color.green : Color.secondary.opacity(0.4)).frame(width: 6, height: 6)
+                        Text(Self.localStatus(core)).font(.app(10)).foregroundStyle(.secondary)
+                            .lineLimit(1).truncationMode(.tail)
+                    }
+                }
+            }
             Spacer(minLength: 4)
             Text("\(count(nil))").font(.app(10.5, design: .monospaced)).foregroundStyle(.secondary)
         }
@@ -165,6 +197,37 @@ struct PlaceColumn: View {
                  arrowEdge: .trailing) { nameForm(host) }
     }
 
+    /// A hub's row: how many agents are in it and how many are linked, its ⚙ at the right. It keeps
+    /// no project, so a press on it shows its settings too.
+    private func hubRow(_ hub: RemoteHosts.Hub) -> some View {
+        let state = hosts.hubState[hub.id] ?? RemoteHosts.HubState()
+        let said = Self.hubStatus(hub, state)
+        return row(key: hub.id.uuidString, chosen: !allChosen && selected == hub.id,
+                   choose: { onSettings(hub.id) }, settings: { onSettings(hub.id) }) {
+            Image(systemName: "point.3.connected.trianglepath.dotted")
+                .font(.app(12)).foregroundStyle(.secondary).frame(width: 18)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(hub.displayName)
+                    .font(hub.name.isEmpty ? .app(11.5, design: .monospaced) : .app(12, weight: .semibold))
+                    .lineLimit(1).truncationMode(.middle)
+                Text(said).font(.app(10)).foregroundStyle(.secondary)
+                    .lineLimit(1).truncationMode(.tail)
+            }
+            .help("\(hub.destination)\n\(said)")
+            Spacer(minLength: 4)
+            if state.busy { ProgressView().controlSize(.small) }
+        }
+        .contextMenu {
+            Button(hub.enabled ? L10n[.Places.hostDisconnect] : L10n[.Places.hostConnect]) { hosts.setHubEnabled(hub, !hub.enabled) }
+            Button(L10n[.Common.actionRenameMenu]) {
+                nameDraft = hub.name
+                naming = hub.id
+            }
+        }
+        .popover(isPresented: Binding(get: { naming == hub.id }, set: { if !$0 { naming = nil } }),
+                 arrowEdge: .trailing) { hubNameForm(hub) }
+    }
+
     /// One place's row: chosen by a press, its ⚙ at the right.
     private func row<Content: View>(key: String, chosen: Bool, choose: @escaping () -> Void,
                                     settings: (() -> Void)?,
@@ -196,6 +259,14 @@ struct PlaceColumn: View {
     // MARK: Pieces
 
     /// The way to the agent's projects.
+    /// What this Mac's row says under its name while its own agent is switched on: what it is once
+    /// it is reached, and until then how far it has come, or why it is not.
+    static func localStatus(_ core: RemoteHosts.CoreState) -> String {
+        if core.connected { return L10n[.Places.tabLocalAgent] }
+        if core.busy || core.message.isEmpty { return L10n[.Places.localAgentStarting] }
+        return core.message
+    }
+
     static func status(_ host: RemoteHosts.Host, _ core: RemoteHosts.CoreState) -> String {
         if !host.enabled { return L10n[.Places.statusOff] }
         if core.connected { return L10n[.Places.statusConnected] }
@@ -255,6 +326,52 @@ struct PlaceColumn: View {
         naming = nil
     }
 
+    private func hubNameForm(_ hub: RemoteHosts.Hub) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L10n[.Places.nameFormTitle]).font(.app(12, weight: .semibold))
+            TextField(hub.destination, text: $nameDraft)
+                .textFieldStyle(.roundedBorder).font(.app(12))
+                .frame(width: 280)
+                .onSubmit { hosts.renameHub(hub, nameDraft); naming = nil }
+            HStack {
+                Spacer()
+                Button(L10n[.Common.actionChange]) { hosts.renameHub(hub, nameDraft); naming = nil }
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(14)
+    }
+
+    private var hubForm: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L10n[.Places.columnAddHub]).font(.app(12, weight: .semibold))
+            TextField("sbhub@host", text: $hubDraft)
+                .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced))
+                .frame(width: 280)
+                .onSubmit { commitHub() }
+            Text(L10n[.Places.addHubFormNote])
+                .font(.app(10.5)).foregroundStyle(.secondary)
+                .frame(width: 280, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Spacer()
+                Button(L10n[.Common.actionAdd], action: commitHub)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(!RemoteHosts.acceptable(hubDraft.trimmingCharacters(in: .whitespaces)))
+            }
+        }
+        .padding(14)
+    }
+
+    private func commitHub() {
+        let destination = hubDraft.trimmingCharacters(in: .whitespaces)
+        hosts.addHub(destination: destination)
+        if let added = hosts.hubs.first(where: { $0.destination == destination }) {
+            addingHub = false
+            onSettings(added.id)
+        }
+    }
+
     private var form: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(L10n[.Places.columnAddAgent]).font(.app(12, weight: .semibold))
@@ -294,21 +411,29 @@ struct PlaceSettingsPane: View {
     var place: UUID?
     @Binding var tab: PlaceSettingsTab
 
-    private var host: RemoteHosts.Host? { place.flatMap { id in hosts.hosts.first { $0.id == id } } }
+    /// The agent whose settings these are: the place's, or — for this Mac — its own while that is
+    /// switched on.
+    private var host: RemoteHosts.Host? {
+        place.map { id in hosts.hosts.first { $0.id == id } } ?? hosts.local
+    }
+
+    /// The tabs shown, and the one chosen among them (the first when what was chosen is not one).
+    private var tabs: [PlaceSettingsTab] { PlaceSettingsTab.of(place: place, localAgent: hosts.local != nil) }
+    private var chosen: PlaceSettingsTab { tabs.contains(tab) ? tab : tabs.first ?? tab }
 
     var body: some View {
-        if let place {
+        if let agent = place ?? hosts.local?.id {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 12) {
-                    Picker("", selection: $tab) {
-                        ForEach(PlaceSettingsTab.of(place: place)) { Text($0.title).tag($0) }
+                    Picker("", selection: Binding(get: { chosen }, set: { tab = $0 })) {
+                        ForEach(tabs) { Text($0.title).tag($0) }
                     }
                     .pickerStyle(.segmented).labelsHidden().fixedSize()
                     Spacer()
                 }
                 .padding(.horizontal, 16).padding(.vertical, 10)
                 Divider()
-                content(place)
+                content(agent)
             }
         } else {
             thisMac
@@ -317,30 +442,30 @@ struct PlaceSettingsPane: View {
 
     /// What this Mac's settings say: that it has no keys and nothing public, and where they are instead
     /// (also told to a test through `ProjectHomeShown`).
-    static var thisMacNone: String { L10n[.Places.thisMacNone] }
-    static var thisMacWhere: String { L10n[.Places.thisMacWhere] }
+    /// What this Mac's settings say of its own agent: what it is, and — while it is off — what
+    /// that means for MCP (also told to a test through `ProjectHomeShown`).
+    static var localAgentAbout: String { L10n[.Places.localAgentAbout(LocalAgent.shown)] }
+    static var localAgentOff: String { L10n[.Places.localAgentOffNote] }
     /// What an agent's keys and public projects say while it is not connected, and why.
     static var awayNotYet: String { L10n[.Places.awayNotYet] }
     static var awayWhy: String { L10n[.Places.awayWhy] }
 
-    /// This Mac's settings: none, and why.
+    /// This Mac's settings while its own agent is off: what the agent is, its switch, and what its
+    /// being off means for MCP.
     private var thisMac: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(Self.thisMacNone)
-                .font(.app(12.5))
-            Text(Self.thisMacWhere)
-                .font(.app(11)).foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+        ScrollView {
+            LocalAgentView(model: model, hosts: hosts)
+                .frame(maxWidth: 720, alignment: .leading)
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: 560, alignment: .leading)
-        .padding(16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .preference(key: ProjectHomeShown.self, value: ProjectHomeShown.Value(said: [Self.thisMacNone, Self.thisMacWhere]))
+        .preference(key: ProjectHomeShown.self,
+                    value: ProjectHomeShown.Value(said: [Self.localAgentAbout, Self.localAgentOff]))
     }
 
     @ViewBuilder
     private func content(_ place: UUID) -> some View {
-        switch tab {
+        switch chosen {
         case .connection:
             if let host {
                 ScrollView {
@@ -355,6 +480,27 @@ struct PlaceSettingsPane: View {
                 .onDisappear { hosts.stopPolling() }
             } else {
                 Text(L10n[.Places.settingsNoConnection]).font(.app(11.5)).foregroundStyle(.tertiary).padding(16)
+            }
+        case .localAgent:
+            ScrollView {
+                LocalAgentView(model: model, hosts: hosts)
+                    .frame(maxWidth: 720, alignment: .leading)
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .preference(key: ProjectHomeShown.self, value: ProjectHomeShown.Value(said: [Self.localAgentAbout]))
+        case .hub:
+            if let away {
+                notReached(away)
+            } else if let host {
+                ScrollView {
+                    // Rebuilt per agent: what it reads and what is typed are the agent's.
+                    HostHubView(model: model, hosts: hosts, host: host)
+                        .id(host.id)
+                        .frame(maxWidth: 760, alignment: .leading)
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         case .keys:
             if let away {
@@ -395,6 +541,131 @@ struct PlaceSettingsPane: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .preference(key: ProjectHomeShown.self, value: ProjectHomeShown.Value(said: [Self.awayNotYet, Self.awayWhy]))
+    }
+}
+
+/// This Mac's own agent (`LocalAgent`), in this Mac's settings: what it is, its switch — asked
+/// about before it is thrown, as it moves this Mac's projects — how it stands, and, while it runs,
+/// where it listens for MCP.
+struct LocalAgentView: View {
+    var model: AppModel
+    var hosts: RemoteHosts
+
+    @State private var asking: Bool?
+    @State private var portDraft = ""
+
+    var body: some View {
+        let local = hosts.local
+        let core = local.flatMap { hosts.coreState[$0.id] } ?? RemoteHosts.CoreState()
+        VStack(alignment: .leading, spacing: 14) {
+            Text(PlaceSettingsPane.localAgentAbout)
+                .font(.app(11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 9) {
+                HStack(spacing: 8) {
+                    Circle().fill(core.connected ? Color.green : Color.secondary.opacity(0.4)).frame(width: 7, height: 7)
+                    Text(L10n[.Places.tabLocalAgent]).font(.app(12.5, weight: .semibold))
+                    Spacer()
+                    if core.busy { ProgressView().controlSize(.small) }
+                    Toggle("", isOn: Binding(get: { local != nil }, set: { asking = $0 }))
+                        .toggleStyle(.switch).labelsHidden()
+                        .help(L10n[.Places.localAgentSwitchHelp])
+                }
+                Text(local == nil ? L10n[.Places.localAgentOff]
+                     : core.connected ? L10n[.Places.localAgentRunning] : PlaceColumn.localStatus(core))
+                    .font(.app(11)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let local, core.connected {
+                    Text(Self.keptText(count: model.projects.filter { $0.place == local.id }.count))
+                        .font(.app(11)).foregroundStyle(.secondary)
+                }
+            }
+            .padding(12)
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.secondary.opacity(0.07)))
+
+            if let local {
+                VStack(alignment: .leading, spacing: 8) {
+                    mcpLine(core)
+                    if core.connected {
+                        HStack(spacing: 8) {
+                            Text(L10n[.Places.connectionPortLabel]).font(.app(11)).foregroundStyle(.secondary)
+                            TextField("8787", text: $portDraft)
+                                .textFieldStyle(.roundedBorder).font(.app(12, design: .monospaced))
+                                .frame(width: 90)
+                                .onSubmit { setPort(local) }
+                            Button(L10n[.Common.actionChange]) { setPort(local) }
+                                .disabled(Int(portDraft).map { !(1...65535).contains($0) } ?? true)
+                            Spacer()
+                        }
+                        Text(L10n[.Places.localAgentPortNote])
+                            .font(.app(10.5)).foregroundStyle(.secondary)
+                    }
+                }
+            } else {
+                Text(PlaceSettingsPane.localAgentOff)
+                    .font(.app(10.5)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if let error = model.lastError, asking == nil, local != nil, !core.connected, !core.busy {
+                Text(error).font(.app(10.5)).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .onAppear { portDraft = core.mcp.map { String($0.port) } ?? "" }
+        .onChange(of: core.mcp?.port) { _, port in if let port { portDraft = String(port) } }
+        .alert(asking == true ? L10n[.Places.localAgentTurnOnTitle] : L10n[.Places.localAgentTurnOffTitle],
+               isPresented: Binding(get: { asking != nil }, set: { if !$0 { asking = nil } })) {
+            Button(L10n[.Common.actionCancel], role: .cancel) { asking = nil }
+            if asking == true {
+                Button(L10n[.Places.localAgentTurnOnAction]) { hosts.setLocalAgent(true) }
+            } else {
+                Button(L10n[.Places.localAgentTurnOffAction]) {
+                    // Its projects back in the store this app holds first: one that cannot be
+                    // leaves the agent on, and why is said.
+                    if model.leaveLocalAgent() { hosts.setLocalAgent(false) }
+                }
+            }
+        } message: {
+            Text(asking == true
+                 ? Self.turnOnText(count: model.projects.filter { $0.place == nil }.count)
+                 : Self.turnOffText(reached: core.connected, count: model.projects.filter { $0.place == local?.id }.count))
+        }
+    }
+
+    private func setPort(_ host: RemoteHosts.Host) {
+        guard let port = Int(portDraft), (1...65535).contains(port) else { return }
+        hosts.setMCPPort(host, port)
+    }
+
+    /// What is asked before the agent is switched on: `count` projects move to its store.
+    static func turnOnText(count: Int) -> String { L10n[.Places.localAgentTurnOnText(count, LocalAgent.shown)] }
+
+    /// How many of this Mac's projects the agent keeps.
+    static func keptText(count: Int) -> String { L10n[.Places.localAgentKept(LocalAgent.shown, count)] }
+
+    /// What is asked before the agent is switched off: `count` projects come back — or, while the
+    /// agent is not reached, that they cannot and where they stay.
+    static func turnOffText(reached: Bool, count: Int) -> String {
+        reached ? L10n[.Places.localAgentTurnOffText(count)] : L10n[.Places.localAgentTurnOffTextAway(LocalAgent.shown)]
+    }
+
+    /// Where the agent answers MCP for the AI sessions on this Mac, or why it does not.
+    private func mcpLine(_ state: RemoteHosts.CoreState) -> some View {
+        let said: String
+        if let mcp = state.mcp {
+            said = mcp.listening ? L10n[.Places.localAgentMcpListening(String(mcp.port))]
+                : mcp.problem.isEmpty ? L10n[.Places.mcpNotListening] : L10n[.Places.mcpNotListeningWhy(mcp.problem)]
+        } else {
+            said = L10n[.Places.mcpUnknown]
+        }
+        return VStack(alignment: .leading, spacing: 2) {
+            Text(said).font(.app(10.5))
+                .foregroundStyle(state.mcp?.listening ?? true ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
+                .lineLimit(2)
+            if let refused = state.portRefused {
+                Text(refused).font(.app(10.5)).foregroundStyle(.red).lineLimit(2)
+            }
+        }
     }
 }
 

@@ -71,7 +71,7 @@ struct StackDocEditor: View {
             EmptyView()
         } tools: {
             if writing, let detail = model.detail { pickers(detail) }
-            Picker("", selection: Binding(get: { writing }, set: { $0 ? startWriting() : finishWriting() })) {
+            Picker("", selection: Binding.choice({ writing }, { $0 ? startWriting() : finishWriting() })) {
                 BarLabel(title: L10n[.Docs.modeView], systemImage: "eye").tag(false)
                 BarLabel(title: L10n[.Common.actionEdit], systemImage: "pencil").tag(true)
             }
@@ -107,12 +107,12 @@ struct StackDocEditor: View {
             if editable {
                 Button { newKey = ""; adding = true } label: { BarLabel(title: L10n[.Docs.versionAdd], systemImage: "plus", markWhenWide: true) }
                     .help(L10n[.Docs.versionAddHelp])
-                Button { if let open { save(); model.moveVersion(doc.id, open.name, by: -1) } } label: {
+                Button { if let open { keep(); model.moveVersion(doc.id, open.name, by: -1) } } label: {
                     BarLabel(title: L10n[.Common.actionMoveUp], systemImage: "arrow.up", markWhenWide: true)
                 }
                 .disabled((openIndex ?? 0) == 0)
                 .help(L10n[.Docs.versionMoveUpHelp])
-                Button { if let open { save(); model.moveVersion(doc.id, open.name, by: 1) } } label: {
+                Button { if let open { keep(); model.moveVersion(doc.id, open.name, by: 1) } } label: {
                     BarLabel(title: L10n[.Common.actionMoveDown], systemImage: "arrow.down", markWhenWide: true)
                 }
                 .disabled(openIndex.map { $0 >= doc.versions.count - 1 } ?? true)
@@ -208,9 +208,15 @@ struct StackDocEditor: View {
     }
 
     private func save() {
-        guard let taken = draftOf else { return }
+        keep()
         draftOf = nil
-        guard let current = model.schema(taken.card)?.versions.first(where: { $0.name == taken.version }),
+    }
+
+    /// What is written so far put in its version, the writing going on: a version moved keeps its name, and
+    /// what is typed after is put in it too.
+    private func keep() {
+        guard let taken = draftOf,
+              let current = model.schema(taken.card)?.versions.first(where: { $0.name == taken.version }),
               current.body != draft else { return }
         model.updateVersion(taken.card, taken.version, ["body": draft])
     }

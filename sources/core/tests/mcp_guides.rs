@@ -370,3 +370,31 @@ fn the_glossarys_legend_says_each_line_as_its_definition() {
     }
     assert!(!guide.contains("同じ木の中"), "{guide}");
 }
+
+#[test]
+fn wait_and_begin_say_awaits_needs_an_outcome() {
+    let json = |about: &str| match mcp::guide(Some(about)) {
+        Ok(mcp::Output::Json(said)) => said,
+        _ => panic!("{about} の guide がありません"),
+    };
+    let wait = json("wait").to_string();
+    assert!(wait.contains("outcome"), "{wait}");
+    let begin = json("begin")["keys"]["card_create"]["trigger"].to_string();
+    assert!(begin.contains("outcome"), "{begin}");
+    let wait_for = json("wait")["keys"]["card_create"]["for"].to_string();
+    assert!(wait_for.contains("outcome"), "{wait_for}");
+}
+
+#[test]
+fn card_create_names_the_topic_for_a_scenario() {
+    let json = |about: &str| match mcp::guide(Some(about)) {
+        Ok(mcp::Output::Json(said)) => said,
+        _ => panic!("{about} の guide がありません"),
+    };
+    for tool in ["card_create", "card_update"] {
+        let said = json(tool)["value"]["scenario"].to_string();
+        assert!(said.contains("about: spec"), "{tool}: {said}");
+    }
+    let spec = json("spec");
+    assert!(spec.to_string().contains("\"scenario\""), "{spec}");
+}

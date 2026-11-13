@@ -21,23 +21,96 @@ nonisolated enum LineRouter {
     /// How far apart lines sharing a run are set.
     static let laneSpacing: CGFloat = 3
 
+    /// How near a box that came, went or changed a way passes to be found again, in cells: a way
+    /// round a card keeps to the cells beside it, so one that went round a card that left is within this.
+    static let near: CGFloat = 2
+
     /// The corners of each line found a way, from the point it leaves its card to the point it
     /// reaches the other; a line for which there is none (the two cards overlap, no clear cell
     /// beside them) is left out, to be drawn as a curve.
     static func route(_ requests: [Request], boxes: [CGRect], cell: CGSize) -> [String: [CGPoint]] {
-        guard cell.width > 0, cell.height > 0, !requests.isEmpty else { return [:] }
+        find(requests, boxes: boxes, cell: cell).routes
+    }
+
+    /// What was found for a diagram, with what it was found for: what the next search of the diagram
+    /// starts from (`find`'s `from`), so that a card moved has only the lines near it found again.
+    struct Found: Equatable {
+        var requests: [Request] = []
+        var boxes: [CGRect] = []
+        var cell: CGSize = .zero
+        /// Each line's corners as it is drawn.
+        var routes: [String: [CGPoint]] = [:]
+        /// How many lines a way was searched for; the others kept the way they had.
+        var searched = 0
+        /// Each line's runs as it is drawn: where a way kept runs, for the ways found beside it
+        /// later to keep off.
+        fileprivate var runs: [String: [Run]] = [:]
+    }
+
+    /// The ways for the lines, with what the next search starts from. From `before` — what was found
+    /// for the diagram as it was — a line keeps its way when its ends are as they were, the way
+    /// passes no box that came, went or changed nor the cells near one (`near`), and no card sits on
+    /// it now: only the other lines are searched, the ways kept counted as passing where they pass.
+    /// A way kept stays to the point; the ways found are set a lane off the kept ones they run
+    /// beside. Every line is searched when most would lose their way anyway — the ways then are as
+    /// if nothing had been found before — and when the cells are not the size they were. A line that
+    /// had no way (its cards overlap) is searched each time, and is not counted among those.
+    ///
+    /// A way kept is not always the one a search of everything would find now: a card moved no
+    /// longer changes the lines it has nothing to do with.
+    static func find(_ requests: [Request], boxes: [CGRect], cell: CGSize, from before: Found? = nil) -> Found {
+        var out = Found(requests: requests, boxes: boxes, cell: cell)
+        guard cell.width > 0, cell.height > 0, !requests.isEmpty else { return out }
         var grid = Field(boxes: boxes, cell: cell, lines: requests.flatMap { [$0.tailY, $0.landY] })
+        var kept: [String: [Run]] = [:]
+        if let before, before.cell == cell {
+            let was = Dictionary(before.requests.map { ($0.key, $0) }, uniquingKeysWith: { first, _ in first })
+            let changed = boxes.filter { !before.boxes.contains($0) } + before.boxes.filter { !boxes.contains($0) }
+            let around = changed.map { $0.insetBy(dx: -near * cell.width, dy: -near * cell.height) }
+            for request in requests {
+                guard was[request.key] == request, let way = before.routes[request.key],
+                      let runs = before.runs[request.key],
+                      !Self.passes(way, around), grid.clear(way, of: request) else { continue }
+                kept[request.key] = runs.map { grid.kept($0) }
+            }
+            // A line that had no way and is as it was loses none: looked for again, which is soon
+            // done, without making the others be.
+            let lost = requests.filter {
+                kept[$0.key] == nil && !(was[$0.key] == $0 && before.routes[$0.key] == nil)
+            }.count
+            if lost * 2 > requests.count { kept = [:] }
+            for request in requests where kept[request.key] != nil {
+                grid.count(before.routes[request.key] ?? [], of: request)
+            }
+        }
         var found: [(key: String, runs: [Run])] = []
-        for request in requests {
+        for request in requests where kept[request.key] == nil {
+            out.searched += 1
             guard let runs = grid.search(request) else { continue }
             found.append((request.key, runs))
         }
-        Self.spread(&found, cell: cell)
-        var out: [String: [CGPoint]] = [:]
+        // Not the first and last runs, which are at the rows a line leaves and lands.
+        let fixed = kept.values.flatMap { $0.count > 2 ? Array($0[1..<($0.count - 1)]) : [] }
+        Self.spread(&found, cell: cell, beside: fixed)
         for (key, runs) in found {
-            out[key] = Self.points(runs)
+            out.runs[key] = runs
+            out.routes[key] = Self.points(runs)
+        }
+        for (key, runs) in kept {
+            out.runs[key] = runs
+            out.routes[key] = before?.routes[key]
         }
         return out
+    }
+
+    /// Whether a run of the way passes through any of the boxes.
+    private static func passes(_ way: [CGPoint], _ boxes: [CGRect]) -> Bool {
+        guard !boxes.isEmpty else { return false }
+        return zip(way, way.dropFirst()).contains { p, q in
+            // A little thick: a run has no width of its own to meet a box with.
+            let run = CGRect(x: min(p.x, q.x), y: min(p.y, q.y), width: abs(q.x - p.x) + 0.01, height: abs(q.y - p.y) + 0.01)
+            return boxes.contains { $0.intersects(run) }
+        }
     }
 
     // MARK: - The cells
@@ -59,12 +132,16 @@ nonisolated enum LineRouter {
     /// One run of a line, across or down: where it is (`at`, the y across or the x down) and
     /// the cells it spans along the other way. The first and the last run are across: a line
     /// leaves and reaches a card at its side.
-    struct Run {
+    struct Run: Equatable {
         var horizontal: Bool
         var at: CGFloat
         /// The first and last points along it (x across, y down), before corners are known.
         var line: Int
         var span: ClosedRange<Int>
+        /// What `span` covers, in points, and whether it is counted across (in columns): what a run
+        /// kept from an earlier search is placed by on the cells of a later one, cut elsewhere.
+        var reach: ClosedRange<CGFloat> = 0...0
+        var across = true
         /// The point the line leaves or reaches the card at, on the first and last run.
         var edge: CGFloat?
         /// How wide the gathered column (or tall the row) it runs in is, in points: the room to
@@ -276,7 +353,8 @@ nonisolated enum LineRouter {
                                       : min(first.y, last.y)...max(first.y, last.y)
                 out.append(Run(horizontal: horizontal,
                                at: horizontal ? centerY(cellAt.y) : centerX(cellAt.x),
-                               line: horizontal ? cellAt.y : cellAt.x, span: span, edge: nil,
+                               line: horizontal ? cellAt.y : cellAt.x, span: span,
+                               reach: reach(span, across: horizontal), across: horizontal, edge: nil,
                                room: horizontal ? CGFloat(ys[cellAt.y + 1] - ys[cellAt.y]) * cell.height
                                                 : CGFloat(xs[cellAt.x + 1] - xs[cellAt.x]) * cell.width))
                 i = j + 1
@@ -289,11 +367,74 @@ nonisolated enum LineRouter {
             if out.count == 1 {
                 let x = (startEdge + goalEdge) / 2
                 let one = out[0]
-                out = [Run(horizontal: true, at: tailY, line: one.line, span: one.span, edge: startEdge, room: one.room),
-                       Run(horizontal: false, at: x, line: column(x), span: one.span, edge: nil, room: cell.width),
-                       Run(horizontal: true, at: landY, line: one.line, span: one.span, edge: goalEdge, room: one.room)]
+                out = [Run(horizontal: true, at: tailY, line: one.line, span: one.span, reach: one.reach, edge: startEdge, room: one.room),
+                       Run(horizontal: false, at: x, line: column(x), span: one.span, reach: one.reach, edge: nil, room: cell.width),
+                       Run(horizontal: true, at: landY, line: one.line, span: one.span, reach: one.reach, edge: goalEdge, room: one.room)]
             }
             return out
+        }
+
+        // MARK: Ways kept from an earlier search
+
+        /// What the gathered columns (or rows) `span` cover, in points.
+        private func reach(_ span: ClosedRange<Int>, across: Bool) -> ClosedRange<CGFloat> {
+            across ? CGFloat(xs[span.lowerBound]) * cell.width...CGFloat(xs[span.upperBound + 1]) * cell.width
+                   : CGFloat(ys[span.lowerBound]) * cell.height...CGFloat(ys[span.upperBound + 1]) * cell.height
+        }
+
+        /// A run found on other cells, placed on these: where it runs and what it reaches are as
+        /// they were, in points; the column or row it is in and the ones it spans are these cells'.
+        /// The room to set lines apart in is no more than it was found with.
+        func kept(_ run: Run) -> Run {
+            var out = run
+            out.line = run.horizontal ? row(run.at) : column(run.at)
+            let (low, high) = (run.reach.lowerBound + 0.5, run.reach.upperBound - 0.5)
+            let (first, last) = run.across ? (column(low), column(high)) : (row(low), row(high))
+            out.span = min(first, last)...max(first, last)
+            let room = run.horizontal ? CGFloat(ys[out.line + 1] - ys[out.line]) * cell.height
+                                      : CGFloat(xs[out.line + 1] - xs[out.line]) * cell.width
+            out.room = min(run.room, room)
+            return out
+        }
+
+        /// The cells a way passes, corner to corner, from the cell beside the card it leaves to the
+        /// cell beside the card it reaches.
+        private func cells(_ way: [CGPoint], of request: Request) -> [Int] {
+            guard way.count >= 2 else { return [] }
+            var out: [Int] = []
+            let last = way.count - 2
+            for i in 0...last {
+                let (p, q) = (way[i], way[i + 1])
+                if p.y == q.y && (p.x != q.x || i % 2 == 0) {
+                    let east = q.x >= p.x
+                    var (from, to) = (column(p.x), column(q.x))
+                    // Not the card's own cells: a line leaves and reaches a card at its side.
+                    if i == 0 {
+                        from = east ? column(request.from.maxX - 0.5) + 1 : column(request.from.minX + 0.5) - 1
+                    }
+                    if i == last {
+                        to = east ? column(request.to.minX + 0.5) - 1 : column(request.to.maxX - 0.5) + 1
+                    }
+                    let y = row(p.y)
+                    guard east ? from <= to : from >= to else { continue }
+                    for x in min(from, to)...max(from, to) where inside(x, y) { out.append(index(x, y)) }
+                } else {
+                    let x = column(p.x)
+                    let (from, to) = (row(min(p.y, q.y)), row(max(p.y, q.y)))
+                    for y in from...to where inside(x, y) { out.append(index(x, y)) }
+                }
+            }
+            return out
+        }
+
+        /// Whether no card sits on the way now.
+        func clear(_ way: [CGPoint], of request: Request) -> Bool {
+            cells(way, of: request).allSatisfy { !blocked[$0] }
+        }
+
+        /// A way kept counted as passing where it passes, as one found here is.
+        mutating func count(_ way: [CGPoint], of request: Request) {
+            for i in Set(cells(way, of: request)) where used[i] < .max { used[i] += 1 }
         }
     }
 
@@ -301,14 +442,29 @@ nonisolated enum LineRouter {
 
     /// Runs of different lines down the same column, or across the same row, where their spans
     /// meet: each set a lane apart, the lanes centred on the cells' middle. Not the first and
-    /// last runs, which are at the rows the line leaves and lands.
-    static func spread(_ found: inout [(key: String, runs: [Run])], cell: CGSize) {
+    /// last runs, which are at the rows the line leaves and lands. `fixed`: the runs of ways kept
+    /// from an earlier search, which stay where they are — the runs of a column or row they run in
+    /// are set off them instead (`setOff`).
+    static func spread(_ found: inout [(key: String, runs: [Run])], cell: CGSize, beside fixed: [Run] = []) {
         struct Place: Hashable { var horizontal: Bool; var line: Int }
         var byPlace: [Place: [(line: Int, run: Int)]] = [:]
         for (l, item) in found.enumerated() where item.runs.count > 2 {
             for r in 1..<(item.runs.count - 1) {
                 let run = item.runs[r]
                 byPlace[Place(horizontal: run.horizontal, line: run.line), default: []].append((l, r))
+            }
+        }
+        if !fixed.isEmpty {
+            let (across, down) = (fixed.filter(\.horizontal), fixed.filter { !$0.horizontal })
+            for (place, members) in byPlace {
+                // The kept runs within the members' column or row, or a lane beside it.
+                let at = members.map { found[$0.line].runs[$0.run] }
+                let low = (at.map { $0.at - $0.room / 2 }.min() ?? 0) - laneSpacing
+                let high = (at.map { $0.at + $0.room / 2 }.max() ?? 0) + laneSpacing
+                let kept = (place.horizontal ? across : down).filter { $0.at >= low && $0.at <= high }
+                guard !kept.isEmpty else { continue }
+                Self.setOff(&found, members, from: kept)
+                byPlace[place] = nil
             }
         }
         for (_, members) in byPlace where members.count > 1 {
@@ -329,6 +485,45 @@ nonisolated enum LineRouter {
             for (line, run, lane) in assigned {
                 found[line].runs[run].at += (CGFloat(lane) - CGFloat(most) / 2) * spacing
             }
+        }
+    }
+
+    /// The runs found down a column, or across a row, where ways kept run: each put at the place
+    /// nearest its own middle — the middle, then a lane to either side, then two — that is a lane off
+    /// every kept run, and every run put before it, whose span meets its own. Where its room holds
+    /// no such place (the kept runs are closer than a lane apart), at the place furthest from them,
+    /// by half lanes: never on top of one while there is room beside it.
+    private static func setOff(_ found: inout [(key: String, runs: [Run])], _ members: [(line: Int, run: Int)], from kept: [Run]) {
+        var taken: [(span: ClosedRange<Int>, at: CGFloat)] = kept.map { ($0.span, $0.at) }
+        let sorted = members.sorted { found[$0.line].runs[$0.run].span.lowerBound < found[$1.line].runs[$1.run].span.lowerBound }
+        for member in sorted {
+            let run = found[member.line].runs[member.run]
+            let reach = max(run.room - 4, 0) / 2
+            func free(_ offset: CGFloat) -> Bool {
+                !taken.contains { $0.span.overlaps(run.span) && abs($0.at - (run.at + offset)) < laneSpacing - 0.01 }
+            }
+            var offset: CGFloat = 0
+            var step = 0
+            while !free(offset) {
+                step += 1
+                let aside = CGFloat(step) * laneSpacing
+                guard aside <= reach else {
+                    // How far the nearest run whose span meets its own is from each place.
+                    func clearance(_ offset: CGFloat) -> CGFloat {
+                        taken.filter { $0.span.overlaps(run.span) }.map { abs($0.at - (run.at + offset)) }.min() ?? .infinity
+                    }
+                    let half = laneSpacing / 2
+                    let places = (0...Int(reach / half)).flatMap { n -> [CGFloat] in
+                        n == 0 ? [0] : [CGFloat(n) * half, -CGFloat(n) * half]
+                    }
+                    // The first of the furthest: the nearest the middle of them.
+                    offset = places.reduce(0) { clearance($1) > clearance($0) + 0.01 ? $1 : $0 }
+                    break
+                }
+                if free(aside) { offset = aside } else if free(-aside) { offset = -aside } else { offset = aside }
+            }
+            found[member.line].runs[member.run].at += offset
+            taken.append((run.span, run.at + offset))
         }
     }
 
@@ -436,10 +631,11 @@ nonisolated enum LineRouting {
     }
 }
 
-/// The ways round the cards found for the diagrams seen last (`LineRouter.route`), each with what it was
+/// The ways round the cards found for the diagrams seen last (`LineRouter.find`), each with what it was
 /// found for — the lines' ends, the boxes, the cells: going back to a diagram whose boxes and lines are as
-/// they were takes its ways rather than searching again. A search is a function of those alone, so one
-/// kept is never stale: a write that moved a box or a line's end asks for another, which is not kept. The
+/// they were takes its ways rather than searching again, so it is drawn as it was left. What is kept
+/// passes no card of those boxes, whatever it was found from (a search of everything, or one from the
+/// ways before a card was put): a write that moved a box or a line's end asks for another. The
 /// most recent `diagrams` are kept, and no more than `lines` lines in all, the oldest let go first.
 struct RouteMemory {
     private struct Kept {
@@ -447,7 +643,7 @@ struct RouteMemory {
         var requests: [LineRouter.Request]
         var boxes: [String: CGRect]
         var cell: CGSize
-        var routes: [String: [CGPoint]]
+        var found: LineRouter.Found
     }
 
     let diagrams: Int
@@ -463,22 +659,22 @@ struct RouteMemory {
     /// How many diagrams are kept now.
     var count: Int { kept.count }
 
-    /// The ways found for these, if kept — then the most recent.
-    mutating func routes(_ requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) -> [String: [CGPoint]]? {
+    /// What was found for these, if kept — then the most recent.
+    mutating func found(_ requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) -> LineRouter.Found? {
         let hash = Self.hash(requests, boxes, cell)
         guard let at = kept.lastIndex(where: {
             $0.hash == hash && $0.cell == cell && $0.requests == requests && $0.boxes == boxes
         }) else { return nil }
         let found = kept.remove(at: at)
         kept.append(found)
-        return found.routes
+        return found.found
     }
 
-    /// The ways found for these, kept as the most recent; the oldest let go past the limits.
-    mutating func keep(_ routes: [String: [CGPoint]], for requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) {
+    /// What was found for these, kept as the most recent; the oldest let go past the limits.
+    mutating func keep(_ found: LineRouter.Found, for requests: [LineRouter.Request], boxes: [String: CGRect], cell: CGSize) {
         let hash = Self.hash(requests, boxes, cell)
         kept.removeAll { $0.hash == hash && $0.cell == cell && $0.requests == requests && $0.boxes == boxes }
-        kept.append(Kept(hash: hash, requests: requests, boxes: boxes, cell: cell, routes: routes))
+        kept.append(Kept(hash: hash, requests: requests, boxes: boxes, cell: cell, found: found))
         var total = kept.reduce(0) { $0 + $1.requests.count }
         while kept.count > 1, kept.count > diagrams || total > lines {
             total -= kept.removeFirst().requests.count

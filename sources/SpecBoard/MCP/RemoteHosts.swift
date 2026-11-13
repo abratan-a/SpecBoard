@@ -23,6 +23,9 @@ final class RemoteHosts {
         /// What the agent is called here, in this Mac's settings alone; empty: by its
         /// destination.
         var name: String = ""
+        /// This Mac's own agent (`LocalAgent`): put and started on this Mac, not over SSH. Not one
+        /// of the list (`RemoteHosts.local`), and not kept with it.
+        var local = false
 
         var ssh: SSH { SSH(destination: destination) }
 
@@ -60,6 +63,12 @@ final class RemoteHosts {
         var mcp: AgentMCP?
         /// Why the port asked for last was refused.
         var portRefused: String?
+        /// Where the agent stands with the hub it joined; nil until it says.
+        var hub: HubLink?
+        /// Joining or leaving the hub now.
+        var hubBusy = false
+        /// Why joining or leaving was refused last.
+        var hubRefused: String?
     }
 
     /// Where an agent's daemon listens for MCP.
@@ -76,8 +85,15 @@ final class RemoteHosts {
     }
 
     private(set) var hosts: [Host] = []
+    /// This Mac's own agent while its switch is on (this Mac's settings): reached and kept up as the
+    /// list's agents are, shown as this Mac.
+    private(set) var local: Host?
     private(set) var state: [UUID: State] = [:]
     private(set) var coreState: [UUID: CoreState] = [:]
+    /// The hubs this app reaches, and the state of the way to each (`HubCore`).
+    private(set) var hubs: [Hub] = []
+    private(set) var hubState: [UUID: HubState] = [:]
+    @ObservationIgnored private var hubWays: [UUID: HubCore] = [:]
     /// The agents' cores connected, by host, and the ways they are reached by.
     @ObservationIgnored private var cores: [UUID: CoreClient] = [:]
     @ObservationIgnored private var ways: [UUID: AgentCore] = [:]
@@ -94,10 +110,28 @@ final class RemoteHosts {
                                                           qos: .utility)
 
     private static let storageKey = "mcp.hosts"
+    private static let hubsKey = "mcp.hubs"
+    /// Where the switch of this Mac's own agent is kept (its place, while it is on), for a release's
+    /// build and for any other: the two share the app's settings, and neither takes up the other's
+    /// switch — each has its agent in a home of its own (`LocalAgent.home`).
+    static func localKey(release: Bool) -> String { release ? "mcp.localAgent" : "mcp.localAgent.dev" }
+
+    private static var localKey: String {
+        localKey(release: LocalAgent.isRelease(build: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))
+    }
+    /// Whether this is the app's own list — kept, and reaching its agents — or one only shown
+    /// (`init(showing:)`).
+    @ObservationIgnored private let live: Bool
+    /// Where this Mac's own agent is kept when it is not the app's (`LocalAgent.home`): a home of a
+    /// test's own, with which a list only shown puts and starts the agent all the same.
+    @ObservationIgnored private let localHome: URL?
 
     @ObservationIgnored private var quitting: NSObjectProtocol?
+    @ObservationIgnored private var switched: NSObjectProtocol?
 
     init() {
+        live = true
+        localHome = nil
         reload()
         // The app quitting takes its connections with it:
         // a master left up (`ControlPersist`) outlives the app, and macOS, seeing the app's
@@ -108,14 +142,45 @@ final class RemoteHosts {
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.closeOnQuit() }
         }
+        // The switch of this Mac's own agent is the app's, not a window's: thrown in one window,
+        // the others follow (each window has its own list).
+        switched = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification, object: UserDefaults.standard, queue: nil
+        ) { [weak self] _ in
+            Task { @MainActor in self?.followSwitch() }
+        }
+    }
+
+    /// This Mac's own agent taken up or let go of as the switch kept says, when another window
+    /// threw it: the way to it alone — its projects and its daemon are the thrower's to see to.
+    private func followSwitch() {
+        guard live, !Language.underTests else { return }
+        let kept = UserDefaults.standard.string(forKey: Self.localKey).flatMap(UUID.init(uuidString:))
+        guard kept != local?.id else { return }
+        if let was = local {
+            stopCore(was)
+            local = nil
+            coreState[was.id] = nil
+        }
+        if let kept {
+            let host = Self.localHost(kept)
+            local = host
+            ensureCore(host)
+        }
     }
 
     /// The list as given, kept nowhere and reaching nothing, the ways to the agents as said: what a
     /// picture of the window draws (`PictureTests`).
-    init(showing hosts: [Host], cores: [UUID: CoreState] = [:]) {
+    init(showing hosts: [Host], cores: [UUID: CoreState] = [:], hubs: [Hub] = [], hubStates: [UUID: HubState] = [:],
+         local: Host? = nil, localAgentHome: URL? = nil) {
+        live = false
+        localHome = localAgentHome
         self.hosts = hosts
+        self.local = local
         for host in hosts { state[host.id] = State() }
         coreState = cores
+        self.hubs = hubs
+        hubState = hubStates
     }
 
     /// Every host's way to its agent let go of and its master connection closed, waited for: the app
@@ -127,6 +192,12 @@ final class RemoteHosts {
             stopCore(host)
             host.ssh.disconnect()
         }
+        // This Mac's own agent's daemon runs on, as a host's does: only the way to it goes.
+        if let local { stopCore(local) }
+        for hub in hubs {
+            stopHub(hub)
+            hub.ssh.disconnect()
+        }
     }
 
     /// The list as kept.
@@ -136,10 +207,21 @@ final class RemoteHosts {
             hosts = stored.filter { Self.acceptable($0.destination) }
         }
         for host in hosts where state[host.id] == nil { state[host.id] = State() }
+        // Not under the tests: the app that hosts them shows what a test gives it, and starts no
+        // agent of the machine's user.
+        if !Language.underTests,
+           let id = UserDefaults.standard.string(forKey: Self.localKey).flatMap(UUID.init(uuidString:)) {
+            local = Self.localHost(id)
+        }
+        if let data = UserDefaults.standard.data(forKey: Self.hubsKey),
+           let stored = try? JSONDecoder().decode([Hub].self, from: data) {
+            hubs = stored.filter { Self.acceptable($0.destination) }
+        }
     }
 
     private func save() {
         UserDefaults.standard.set(try? JSONEncoder().encode(hosts), forKey: Self.storageKey)
+        UserDefaults.standard.set(try? JSONEncoder().encode(hubs), forKey: Self.hubsKey)
     }
 
     // MARK: - The list
@@ -170,6 +252,8 @@ final class RemoteHosts {
         ensureCore(host)
     }
 
+    /// The agent no longer among this app's places. It stays a member of the hub it joined: taken out
+    /// of the hub from its own settings first (「ハブ」), or from the hub's.
     func remove(_ host: Host) {
         stopCore(host)
         let ssh = host.ssh
@@ -202,11 +286,75 @@ final class RemoteHosts {
         }
     }
 
+    // MARK: - This Mac's own agent
+
+    /// The hosts whose agents are kept up: the list's, and this Mac's own.
+    var reached: [Host] { hosts + (local.map { [$0] } ?? []) }
+
+    /// This Mac's own agent as a host: named as this Mac is to the agents it connects to, which is
+    /// what a hub it joins calls it.
+    private static func localHost(_ id: UUID) -> Host {
+        var host = Host(destination: "")
+        host.id = id
+        host.name = macName
+        host.local = true
+        return host
+    }
+
+    /// This Mac's own agent switched on or off (this Mac's settings). On: put under the user's home
+    /// and started, kept up from then on (`ensureCore`). Off: the way to it let go of and its daemon
+    /// stopped — its projects are moved back first by who switches it (`AppModel.leaveLocalAgent`).
+    func setLocalAgent(_ on: Bool) {
+        if on {
+            guard local == nil else { return }
+            let host = Self.localHost(UUID())
+            local = host
+            if live { UserDefaults.standard.set(host.id.uuidString, forKey: Self.localKey) }
+            guard live || localHome != nil else { return }
+            ensureCore(host)
+        } else {
+            guard let host = local else { return }
+            stopCore(host)
+            local = nil
+            coreState[host.id] = nil
+            if live { UserDefaults.standard.removeObject(forKey: Self.localKey) }
+            guard live || localHome != nil else { return }
+            // Not behind the hosts' connections (`queue`): while it runs on, MCP still writes
+            // into a store this Mac no longer shows.
+            let home = localHome
+            DispatchQueue.global(qos: .userInitiated).async { Self.stopLocal(home) }
+        }
+    }
+
+    /// This Mac's own agent put under the user's home unless it is there already, and how it is
+    /// started: `attach`, on this Mac.
+    nonisolated private static func localLaunch(_ given: URL?) throws -> AgentDeploy.Launch {
+        guard let bundled = AgentDeploy.bundled() else {
+            throw AgentDeploy.Failure(L10n.text(.Places.errorAgentMissing(AgentDeploy.Carried.macOS.label), in: Language.current))
+        }
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+        let home = given ?? LocalAgent.home
+        // A home given is not the release's, whatever the build.
+        LocalAgent.settle(home: home, release: given == nil && LocalAgent.isRelease(build: build))
+        let placed = try LocalAgent.place(bundled, version: AgentDeploy.version(), home: home)
+        // A daemon started from the file that was replaced runs the one before: stopped, so that
+        // `attach` starts this one.
+        if placed.replaced { LocalAgent.stop(placed.agent, home: home) }
+        return LocalAgent.attach(placed.agent, home: home)
+    }
+
+    /// This Mac's own agent's daemon stopped.
+    nonisolated private static func stopLocal(_ given: URL?) {
+        let home = given ?? LocalAgent.home
+        LocalAgent.stop(LocalAgent.path(version: AgentDeploy.version(), home: home), home: home)
+    }
+
     // MARK: - The agents' cores
 
     /// Bring up the way to every enabled host's agent and keep them up. Called when the app starts.
     func start() {
-        for host in hosts where host.enabled { ensureCore(host) }
+        for host in reached where host.enabled { ensureCore(host) }
+        for hub in hubs where hub.enabled { ensureHub(hub) }
 
         // Supervision runs for as long as the app does, not just while the panel is
         // open. A host may restart often; an agent that only gets started again when
@@ -218,7 +366,8 @@ final class RemoteHosts {
     }
 
     private func superviseTick() {
-        for host in hosts where host.enabled { superviseCore(host) }
+        for host in reached where host.enabled { superviseCore(host) }
+        for hub in hubs where hub.enabled { superviseHub(hub) }
     }
 
     /// The agent this app carries for the host (macOS on Apple silicon, or Linux on x86_64) put there unless it is there
@@ -240,6 +389,7 @@ final class RemoteHosts {
     func ensureCore(_ host: Host) {
         guard host.enabled, cores[host.id] == nil, !(coreState[host.id]?.busy ?? false) else { return }
         let ssh = host.ssh
+        let localHome = localHome
         var begun = coreState[host.id] ?? CoreState()
         begun.busy = true
         begun.lastTry = Date()
@@ -249,17 +399,22 @@ final class RemoteHosts {
             var madeWay: AgentCore?
             var failure = ""
             do {
-                if !ssh.check().ok {
-                    let connected = ssh.connect()
-                    if !connected.ok {
-                        throw AgentDeploy.Failure(connected.error.isEmpty
-                                                  ? L10n.text(.Places.errorCantConnect, in: Language.current) : connected.error)
+                let launch: AgentDeploy.Launch
+                if host.local {
+                    launch = try Self.localLaunch(localHome)
+                } else {
+                    if !ssh.check().ok {
+                        let connected = ssh.connect()
+                        if !connected.ok {
+                            throw AgentDeploy.Failure(connected.error.isEmpty
+                                                      ? L10n.text(.Places.errorCantConnect, in: Language.current) : connected.error)
+                        }
                     }
+                    launch = AgentDeploy.attach(ssh, version: try Self.placeBundled(ssh))
                 }
-                let version = try Self.placeBundled(ssh)
                 let way = AgentCore()
                 let name = Self.macName
-                let client = CoreClient(agent: way, place: host.id, client: name)
+                let client = CoreClient(agent: way, place: host.id, client: name, onThisMac: host.local)
                 way.onEnd = { said in
                     Task { @MainActor in self?.coreEnded(host.id, client, said) }
                 }
@@ -271,7 +426,14 @@ final class RemoteHosts {
                         self?.coreState[host.id]?.portRefused = refused
                     }
                 }
-                try way.start(AgentDeploy.attach(ssh, version: version), client: name)
+                way.onHub = { said in
+                    let told = HubLink(said)
+                    Task { @MainActor in
+                        guard self?.cores[host.id] === client else { return }
+                        self?.coreState[host.id]?.hub = told
+                    }
+                }
+                try way.start(launch, client: name)
                 made = client
                 madeWay = way
             } catch {
@@ -283,7 +445,7 @@ final class RemoteHosts {
                 var next = self.coreState[host.id] ?? CoreState()
                 next.busy = false
                 // Let go of meanwhile, or gone already.
-                guard let client, self.hosts.contains(where: { $0.id == host.id && $0.enabled }) else {
+                guard let client, self.reached.contains(where: { $0.id == host.id && $0.enabled }) else {
                     client?.close()
                     next.connected = false
                     next.misses += 1
@@ -298,8 +460,12 @@ final class RemoteHosts {
                 next.message = ""
                 next.mcp = (way?.daemon["mcp"] as? [String: Any]).map(AgentMCP.init)
                 next.portRefused = nil
+                // What the agent before said of the hub: this one says its own.
+                next.hubRefused = nil
                 self.coreState[host.id] = next
-                let name = self.hosts.first { $0.id == host.id }?.displayName ?? host.displayName
+                // Asked once the way is this place's: what it says before that is not taken.
+                way?.tellHub()
+                let name = self.reached.first { $0.id == host.id }?.displayName ?? host.displayName
                 self.onCoreConnected?(client, name)
             }
         }
@@ -343,6 +509,214 @@ final class RemoteHosts {
         coreState[host.id]?.connected = false
         coreState[host.id]?.message = ""
         onCoreGone?(host.id, "")
+    }
+
+    // MARK: - The hubs
+
+    func addHub(destination: String) {
+        let trimmed = destination.trimmingCharacters(in: .whitespaces)
+        guard Self.acceptable(trimmed), !hubs.contains(where: { $0.destination == trimmed }) else { return }
+        let hub = Hub(destination: trimmed)
+        hubs.append(hub)
+        save()
+        ensureHub(hub)
+    }
+
+    /// The hub no longer among this app's places: it runs on, with its members.
+    func removeHub(_ hub: Hub) {
+        stopHub(hub)
+        let ssh = hub.ssh
+        queue.async { ssh.disconnect() }
+        hubs.removeAll { $0.id == hub.id }
+        hubState[hub.id] = nil
+        save()
+    }
+
+    func renameHub(_ hub: Hub, _ name: String) {
+        guard let index = hubs.firstIndex(where: { $0.id == hub.id }) else { return }
+        let given = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard hubs[index].name != given else { return }
+        hubs[index].name = given
+        save()
+    }
+
+    func setHubEnabled(_ hub: Hub, _ enabled: Bool) {
+        guard let index = hubs.firstIndex(where: { $0.id == hub.id }) else { return }
+        hubs[index].enabled = enabled
+        save()
+        if enabled {
+            ensureHub(hubs[index])
+        } else {
+            stopHub(hubs[index])
+        }
+    }
+
+    /// The way to the hub up unless it is: the connection put back, this app's build of the agent put
+    /// on the hub's host (the hub is its `hub` role), and `hub attach` started over the connection —
+    /// which starts the hub there.
+    func ensureHub(_ hub: Hub) {
+        guard hub.enabled, hubWays[hub.id] == nil, !(hubState[hub.id]?.busy ?? false) else { return }
+        let ssh = hub.ssh
+        var begun = hubState[hub.id] ?? HubState()
+        begun.busy = true
+        begun.lastTry = Date()
+        hubState[hub.id] = begun
+        queue.async { [weak self] in
+            var made: HubCore?
+            var failure = ""
+            do {
+                if !ssh.check().ok {
+                    let connected = ssh.connect()
+                    if !connected.ok {
+                        throw AgentDeploy.Failure(connected.error.isEmpty
+                                                  ? L10n.text(.Places.errorCantConnect, in: Language.current) : connected.error)
+                    }
+                }
+                let agent = try AgentDeploy.agent(for: ssh)
+                let version = AgentDeploy.version()
+                try AgentDeploy.place(ssh, agent: agent, version: version, under: AgentDeploy.hubHome)
+                let way = HubCore()
+                way.onMembers = { members in
+                    Task { @MainActor in
+                        guard self?.hubWays[hub.id] === way else { return }
+                        self?.hubState[hub.id]?.members = members
+                    }
+                }
+                way.onEnd = { said in
+                    Task { @MainActor in self?.hubEnded(hub.id, way, said) }
+                }
+                try way.start(AgentDeploy.hubAttach(ssh, version: version))
+                made = way
+            } catch {
+                failure = ErrorText.said(error)
+            }
+            let way = made, said = failure
+            Task { @MainActor in
+                guard let self else { way?.stop(); return }
+                var next = self.hubState[hub.id] ?? HubState()
+                next.busy = false
+                guard let way, self.hubs.contains(where: { $0.id == hub.id && $0.enabled }) else {
+                    way?.stop()
+                    next.connected = false
+                    next.misses += 1
+                    if !said.isEmpty { next.message = said }
+                    self.hubState[hub.id] = next
+                    return
+                }
+                self.hubWays[hub.id] = way
+                next.connected = true
+                next.misses = 0
+                next.message = ""
+                next.build = way.hub["build"] as? String
+                next.members = way.members
+                self.hubState[hub.id] = next
+            }
+        }
+    }
+
+    private func superviseHub(_ hub: Hub) {
+        let current = hubState[hub.id] ?? HubState()
+        guard hubWays[hub.id] == nil, !current.busy else { return }
+        if current.misses > 0, let last = current.lastTry {
+            let wait = TimeInterval(min(current.misses, 6) * 5)
+            if Date().timeIntervalSince(last) < wait { return }
+        }
+        ensureHub(hub)
+    }
+
+    private func hubEnded(_ id: UUID, _ way: HubCore, _ said: String) {
+        guard hubWays[id] === way else { return }
+        hubWays[id] = nil
+        var next = hubState[id] ?? HubState()
+        next.connected = false
+        next.message = said.isEmpty ? L10n[.Places.errorConnectionLost] : said
+        next.lastTry = Date()
+        hubState[id] = next
+    }
+
+    /// The way to the hub let go of (the hub runs on).
+    func stopHub(_ hub: Hub) {
+        guard let way = hubWays.removeValue(forKey: hub.id) else { return }
+        way.stop()
+        hubState[hub.id]?.connected = false
+        hubState[hub.id]?.message = ""
+    }
+
+    /// The hub an agent is a member of, among the hubs this app reaches: the one whose members have
+    /// the agent's id.
+    func hub(of host: Host) -> Hub? {
+        guard let id = coreState[host.id]?.hub?.id else { return nil }
+        return hubs.first { hubState[$0.id]?.members.contains { $0.id == id } ?? false }
+    }
+
+    /// The agent of this app's places that is the hub's member `id`, if one is.
+    func host(member id: String) -> Host? {
+        reached.first { coreState[$0.id]?.hub?.id == id }
+    }
+
+    /// The agent made a member of the hub (`join`), under the name of its place here: what the hub or
+    /// the agent refuses comes to the host's state (`hubRefused`).
+    func joinHub(_ host: Host, _ hub: Hub, to: String) {
+        guard let agent = ways[host.id], let way = hubWays[hub.id], !(coreState[host.id]?.hubBusy ?? false) else { return }
+        coreState[host.id]?.hubBusy = true
+        coreState[host.id]?.hubRefused = nil
+        let name = host.displayName
+        queue.async { [weak self] in
+            var refused: String?
+            do {
+                _ = try Self.join(agent: agent, hub: way, name: name, to: to)
+            } catch {
+                refused = ErrorText.said(error)
+            }
+            let said = refused
+            Task { @MainActor in
+                self?.coreState[host.id]?.hubBusy = false
+                self?.coreState[host.id]?.hubRefused = said
+            }
+        }
+    }
+
+    /// The agent taken out of the hub it joined (`leave`): out of the hub's members when the hub is
+    /// one this app reaches, and its own key let go either way.
+    func leaveHub(_ host: Host) {
+        guard let agent = ways[host.id], !(coreState[host.id]?.hubBusy ?? false) else { return }
+        let way = hub(of: host).flatMap { hubWays[$0.id] }
+        let id = coreState[host.id]?.hub?.id
+        coreState[host.id]?.hubBusy = true
+        coreState[host.id]?.hubRefused = nil
+        queue.async { [weak self] in
+            var refused: String?
+            do {
+                try Self.leave(agent: agent, hub: way, id: id)
+            } catch {
+                refused = ErrorText.said(error)
+            }
+            let said = refused
+            Task { @MainActor in
+                self?.coreState[host.id]?.hubBusy = false
+                self?.coreState[host.id]?.hubRefused = said
+            }
+        }
+    }
+
+    /// A member taken out of the hub from the hub's own settings (`remove`): its agent lets go of the
+    /// hub too when it is one of this app's places and reached now. One whose host is gone is out of
+    /// the hub alone; its agent, if it comes back, is turned away.
+    func removeMember(_ hub: Hub, _ member: HubMember) {
+        guard let way = hubWays[hub.id] else { return }
+        let agent = host(member: member.id).flatMap { ways[$0.id] }
+        queue.async { [weak self] in
+            var refused = ""
+            do {
+                try Self.remove(member: member.id, hub: way, agent: agent)
+            } catch {
+                refused = ErrorText.said(error)
+            }
+            let said = refused
+            Task { @MainActor in
+                if !said.isEmpty { self?.hubState[hub.id]?.message = said }
+            }
+        }
     }
 
     // MARK: - Polling

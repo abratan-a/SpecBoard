@@ -20,6 +20,7 @@
 
 mod branches;
 mod bundle;
+pub(crate) mod chunks;
 pub(crate) mod history;
 mod holds;
 mod merge;
@@ -500,7 +501,7 @@ impl<'s> Tx<'s> {
 
     /// The documents as this transaction sees them, what it has written included.
     pub fn reader(&self) -> crate::store::Reader<'_> {
-        crate::store::Reader { conn: &self.tx }
+        crate::store::Reader::of(&self.tx)
     }
 
     /// What `work` makes of the documents, kept for `key` until a row changes: asked for again with

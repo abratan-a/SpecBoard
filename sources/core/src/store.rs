@@ -40,17 +40,42 @@ pub struct Store {
     /// Which of the working directories' readings shared by the core's connections this one's
     /// tables hold (`workdir::Shared`).
     pub(crate) work_seen: std::cell::Cell<i64>,
+    /// Where the read it is held for stands among what the core keeps of its readings
+    /// (`kept::At`): set while a read holds it apart from the writes (`Core::reading`), none
+    /// otherwise — a write reads what it has written, which is no one else's yet.
+    pub(crate) at: std::cell::RefCell<Option<crate::kept::At>>,
 }
 
 /// What reads the documents, over a connection it borrows: the store's own, or a write
 /// transaction's (which sees what it has written).
 pub struct Reader<'c> {
     pub conn: &'c Connection,
+    /// Where the read stands among the readings kept (`Store::at`); none for a write's.
+    pub(crate) at: Option<crate::kept::At>,
+}
+
+impl<'c> Reader<'c> {
+    /// What reads over `conn` and keeps nothing of what it reads: a write's transaction, or a
+    /// connection of no core's.
+    pub fn of(conn: &'c Connection) -> Reader<'c> {
+        Reader { conn, at: None }
+    }
+
+    /// The same, for what is read in passing (`kept::At::passing`).
+    pub(crate) fn passing(&self) -> Reader<'c> {
+        Reader {
+            conn: self.conn,
+            at: self.at.as_ref().map(crate::kept::At::passing),
+        }
+    }
 }
 
 impl Store {
     pub fn reader(&self) -> Reader<'_> {
-        Reader { conn: &self.conn }
+        Reader {
+            conn: &self.conn,
+            at: self.at.borrow().clone(),
+        }
     }
 
     pub fn project(&self, project_id: &str) -> Result<Option<ProjectRow>, String> {
@@ -165,7 +190,11 @@ impl Store {
             .map_err(sql)?;
         conn.execute_batch("PRAGMA foreign_keys = ON;")
             .map_err(sql)?;
-        upgrade(&mut conn, path)?;
+        if upgrade(&mut conn, path)? {
+            // What the rows cut into pieces took is free inside the file: given back to the disk
+            // once. A store that cannot be rewritten now (no room, another holder) opens as it is.
+            let _ = conn.execute_batch("VACUUM; PRAGMA wal_checkpoint(TRUNCATE);");
+        }
         crate::write::guard(&conn)?;
         Ok(Store::of(conn))
     }
@@ -174,6 +203,7 @@ impl Store {
         Store {
             conn,
             work_seen: std::cell::Cell::new(0),
+            at: std::cell::RefCell::new(None),
         }
     }
 
@@ -385,7 +415,8 @@ fn kept_before(path: &Path, mark: &str) -> std::path::PathBuf {
 /// the store itself. A copy there already is left as it is (the one of before). The copy is
 /// taken over a connection of its own, which sees what is committed, what is in the WAL as
 /// well (the store's write lock, held by `upgrade`, lets no other write in meanwhile), into a
-/// file beside it that takes its name only once it is whole. Nothing deletes it.
+/// file beside it that takes its name only once it is whole. Only the newest are kept
+/// (`let_go_of_older`).
 fn keep(path: &Path, mark: &str) -> Result<(), String> {
     let kept = kept_before(path, mark);
     let refused = |reason: String| {
@@ -432,6 +463,53 @@ fn keep(path: &Path, mark: &str) -> Result<(), String> {
         let _ = std::fs::remove_file(&partial);
         return Err(refused(reason));
     }
+    let _ = let_go_of_older(path, &kept);
+    Ok(())
+}
+
+/// How many copies `keep` leaves beside a store: each is the whole store, so a store upgraded with
+/// every release would otherwise hold its size many times over beside it.
+const COPIES_KEPT: usize = 2;
+
+/// The copies beside the store at `path` removed but `just` (the one `keep` took now: the store may
+/// have been put back to a form before the copies its later upgrades took) and the newest of the
+/// others, by the mark each was kept from (`kept_before`), `COPIES_KEPT` in all. One whose name says
+/// no mark this core knows is left alone, and one that cannot be removed is left for the next
+/// upgrade: neither stops the store opening.
+fn let_go_of_older(path: &Path, just: &Path) -> std::io::Result<()> {
+    let dir = path.parent().filter(|d| !d.as_os_str().is_empty());
+    let dir = dir.unwrap_or(Path::new("."));
+    let Some(head) = path.file_name().and_then(|n| n.to_str()) else {
+        return Ok(());
+    };
+    let head = format!("{head}.before-upgrade-from-");
+    let marks = crate::schema::MARKS;
+    let mut copies: Vec<(usize, std::path::PathBuf)> = Vec::new();
+    for entry in std::fs::read_dir(dir)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let Some(done) = name
+            .to_str()
+            .and_then(|n| n.strip_prefix(&head))
+            .and_then(|n| n.strip_suffix(".db"))
+        else {
+            continue;
+        };
+        let order = if done == "none" {
+            Some(0)
+        } else {
+            marks.iter().position(|m| *m == done).map(|at| at + 1)
+        };
+        if let Some(order) = order
+            && Some(name.as_os_str()) != just.file_name()
+        {
+            copies.push((order, entry.path()));
+        }
+    }
+    copies.sort_by(|a, b| b.0.cmp(&a.0));
+    for (_, older) in copies.into_iter().skip(COPIES_KEPT - 1) {
+        let _ = std::fs::remove_file(older);
+    }
     Ok(())
 }
 
@@ -439,21 +517,22 @@ fn keep(path: &Path, mark: &str) -> Result<(), String> {
 /// it does not have yet is added, and the change marked done. Opened again, nothing is
 /// done. Such a store is in use on the owner's Mac, so nothing it holds is let go of: one
 /// that holds a project or a board is copied beside it first (`keep`), and not opened if the
-/// copy cannot be taken.
-fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
+/// copy cannot be taken. Whether rows of the history were cut into pieces (`schema::HISTORY_CHUNKS`):
+/// the file then holds room it can give back.
+fn upgrade(conn: &mut Connection, path: &Path) -> Result<bool, String> {
     use crate::schema::{
         BOARD_KEYS, BRANCH_SNAPSHOTS, CARD_GHOSTS, CONNECTIONS, CONTAINERS, HOLD_CLIENTS, LANDINGS,
         MCP_WRITES, MERGE_REQUESTS, MR_PLACES, PROJECT_TREE, WORK_BRANCH,
     };
     if first_unmarked(conn)?.is_none() {
-        return Ok(());
+        return Ok(false);
     }
     let tx = conn
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(sql)?;
     // Another opening may have done it while this one waited.
     let Some(first) = first_unmarked(&tx)? else {
-        return Ok(());
+        return Ok(false);
     };
     if in_use(&tx)? {
         keep(path, first)?;
@@ -737,6 +816,15 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
         )
         .map_err(sql)?;
     }
+    // What an agent keeps of the hub it joined (`schema::HUB`): none yet.
+    if !marked(&tx, crate::schema::HUB)? {
+        tx.execute_batch(crate::schema::HUB_TABLES).map_err(sql)?;
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::HUB],
+        )
+        .map_err(sql)?;
+    }
     // A diagram's groups, rows of `places` (`schema::MAP_GROUPS`): the table made anew, its rows kept.
     if !marked(&tx, crate::schema::MAP_GROUPS)? {
         if !has_column(&tx, "places", "look")? {
@@ -771,7 +859,21 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<(), String> {
         )
         .map_err(sql)?;
     }
-    tx.commit().map_err(sql)
+    // A long row of the history kept in pieces (`schema::HISTORY_CHUNKS`): the pieces' table, and
+    // the long rows of before cut into them — after every move above, which read the rows as text.
+    let mut packed = 0;
+    if !marked(&tx, crate::schema::HISTORY_CHUNKS)? {
+        tx.execute_batch(crate::schema::HISTORY_CHUNKS_TABLE)
+            .map_err(sql)?;
+        packed = crate::write::chunks::pack_all(&tx)?;
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::HISTORY_CHUNKS],
+        )
+        .map_err(sql)?;
+    }
+    tx.commit().map_err(sql)?;
+    Ok(packed > 0)
 }
 
 /// The columns of the history's lines kept by key (`schema::COMMIT_KEYS`), where they are not yet.

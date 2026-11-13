@@ -573,7 +573,7 @@ fn follow_doc(
     // A shape's face, its names as its fields are named now; and its rules, the fields they name.
     if let Some(card) = owner_old.filter(|c| c.kind == "entity" || c.kind == "value") {
         count += super::faces::followed(card, &mut doc, new_fields);
-        count += rules_followed(card, &mut doc, new_fields);
+        count += rules_followed(old, card, &mut doc, new_fields);
     }
     (count > 0).then_some((doc, count))
 }
@@ -967,7 +967,7 @@ pub(crate) fn follow_unscoped(
     inner_moves: &InnerMoves,
 ) -> Result<usize, String> {
     let branch = (!tree.is_empty()).then_some(tree);
-    let after = crate::model::typed(&crate::detail::read(&tx.reader(), project_id, branch)?)?;
+    let after = crate::detail::typed(&tx.reader(), project_id, branch)?;
     let old = Project::new(before);
     let new = Project::new(&after);
     let new_fields = field_names(&new);
@@ -1071,7 +1071,7 @@ pub(crate) fn follow_board(
     {
         return Ok(0);
     }
-    let after = crate::model::typed(&crate::detail::read(&tx.reader(), project_id, None)?)?;
+    let after = crate::detail::typed(&tx.reader(), project_id, None)?;
     let old = Project::new(before);
     let new = Project::new(&after);
     let new_fields = field_names(&new);
@@ -1218,38 +1218,47 @@ pub(crate) fn store_in_full(
 }
 
 /// A shape's rules, the fields their field params name (`rule_field_params`) as the fields are named
-/// now: a card's rules by its fields, a field's rules by the fields of its elements. Names stay names.
+/// now: a card's rules by its fields, a field's rules from where its names are looked for
+/// (`rule_names_base`). Names stay names. Each is walked as the inspection walks it — a name with
+/// dots a field a step, into the card a `ref` on the way embeds —, so that a name the inspection
+/// resolves is one a rename of any field on its way rewrites: walked another way here, the two fall
+/// apart, and a rename leaves behind a name the inspection then calls broken.
 fn rules_followed(
+    old: &Project,
     before: &Card,
     doc: &mut Value,
     now: &std::collections::HashMap<String, String>,
 ) -> usize {
     fn renamed(
         rules: &mut Value,
-        fields: &[crate::model::Field],
+        old: &Project,
+        before: &Card,
+        base: &[String],
         now: &std::collections::HashMap<String, String>,
     ) -> usize {
         let mut count = 0;
-        // A name with dots goes down through the fields inside, each step renamed as its field was.
         let mut one = |s: &mut String| {
-            let mut level = fields;
-            let mut steps: Vec<String> = Vec::new();
-            let mut changed = false;
-            for step in s.split('.') {
-                let Some(field) = level.iter().find(|f| f.name == step) else {
-                    return;
-                };
-                match now.get(&field.id) {
-                    Some(name) if name != step => {
-                        steps.push(name.clone());
-                        changed = true;
-                    }
-                    _ => steps.push(step.to_string()),
-                }
-                level = &field.children;
+            let steps: Vec<String> = base
+                .iter()
+                .map(String::as_str)
+                .chain(s.split('.'))
+                .map(|name| crate::pathtext::quote(name).into_owned())
+                .collect();
+            // Only a name that leads to a field, each of its steps one: any other is left as written,
+            // for the inspection to say.
+            let Ok(walked) = walk(before, &steps, old, true) else {
+                return;
+            };
+            if !matches!(walked.place, Place::Field(_)) || walked.fields.len() != steps.len() {
+                return;
             }
-            if changed {
-                *s = steps.join(".");
+            let next = walked.fields[base.len()..]
+                .iter()
+                .map(|f| now.get(&f.id).map_or(f.name.as_str(), String::as_str))
+                .collect::<Vec<_>>()
+                .join(".");
+            if next != *s {
+                *s = next;
                 count += 1;
             }
         };
@@ -1273,7 +1282,10 @@ fn rules_followed(
     }
     fn rows(
         list: &mut Value,
+        old: &Project,
+        before: &Card,
         fields: &[crate::model::Field],
+        parent: &[String],
         now: &std::collections::HashMap<String, String>,
     ) -> usize {
         let mut count = 0;
@@ -1284,21 +1296,24 @@ fn rules_followed(
             else {
                 continue;
             };
+            let mut here = parent.to_vec();
+            here.push(field.name.clone());
             if let Some(rules) = row.pointer_mut("/fields/rules") {
-                count += renamed(rules, crate::export::rule_names_under(field, fields), now);
+                let base = crate::export::rule_names_base(field, &here);
+                count += renamed(rules, old, before, base, now);
             }
             if let Some(inner) = row.pointer_mut("/rows/fields") {
-                count += rows(inner, &field.children, now);
+                count += rows(inner, old, before, &field.children, &here, now);
             }
         }
         count
     }
     let mut count = 0;
     if let Some(rules) = doc.pointer_mut("/fields/rules") {
-        count += renamed(rules, &before.fields, now);
+        count += renamed(rules, old, before, &[], now);
     }
     if let Some(inner) = doc.pointer_mut("/rows/fields") {
-        count += rows(inner, &before.fields, now);
+        count += rows(inner, old, before, &before.fields, &[], now);
     }
     count
 }

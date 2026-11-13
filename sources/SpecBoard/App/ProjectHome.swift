@@ -24,13 +24,15 @@ struct ProjectHome: View {
     /// Every place's projects, a group to a place in the places' column's order, narrowed by `query` (name and
     /// description) as one place's are.
     static func groups(projects: [ProjectSummary], hosts: [RemoteHosts.Host], reached: (UUID) -> Bool,
-                       query: String) -> [HomeGroup] {
+                       query: String, thisMac: UUID? = nil) -> [HomeGroup] {
         let needle = query.trimmingCharacters(in: .whitespaces).lowercased()
         let places: [UUID?] = [nil] + hosts.map(\.id)
         return places.map { place in
             let isReached = place.map(reached) ?? true
             let here = !isReached ? [] : projects.filter {
-                $0.place == place && (needle.isEmpty || $0.name.lowercased().contains(needle)
+                // This Mac's: the store this app holds, and its own agent's (`thisMac`).
+                ($0.place == place || (place == nil && thisMac != nil && $0.place == thisMac))
+                    && (needle.isEmpty || $0.name.lowercased().contains(needle)
                                       || $0.description.lowercased().contains(needle))
             }
             return HomeGroup(place: place, reached: isReached,
@@ -78,9 +80,15 @@ struct ProjectHome: View {
         model.homePlace.flatMap { id in hosts.hosts.contains { $0.id == id } ? id : nil }
     }
 
+    /// The hub the right shows, when the one chosen at the left is a hub: it keeps no project, so the
+    /// right is its settings.
+    private var hub: RemoteHosts.Hub? {
+        model.homeAll ? nil : model.homePlace.flatMap { id in hosts.hubs.first { $0.id == id } }
+    }
+
     /// The place's projects, narrowed by what is typed.
     private var shown: [ProjectSummary] {
-        let here = model.projects.filter { $0.place == place }
+        let here = model.projects.filter { place == nil ? model.isThisMac($0.place) : $0.place == place }
         let needle = query.trimmingCharacters(in: .whitespaces).lowercased()
         guard !needle.isEmpty else { return here }
         return here.filter {
@@ -101,10 +109,10 @@ struct ProjectHome: View {
     /// archive closed until wanted, or its settings.
     var body: some View {
         HStack(spacing: 0) {
-            PlaceColumn(model: model, hosts: hosts, selected: place, allChosen: model.homeAll,
+            PlaceColumn(model: model, hosts: hosts, selected: hub?.id ?? place, allChosen: model.homeAll,
                         onChooseAll: chooseAll,
                         onChoose: { choose($0, settings: nil) },
-                        onSettings: { choose($0, settings: PlaceSettingsTab.opening($0)) })
+                        onSettings: { choose($0, settings: PlaceSettingsTab.opening($0, localAgent: hosts.local != nil)) })
                 .frame(width: 244)
             Divider()
             VStack(spacing: 0) {
@@ -222,19 +230,41 @@ struct ProjectHome: View {
 
     /// Every place's projects, as 「すべてのプロジェクト」 shows them.
     private var allGroups: [HomeGroup] {
-        Self.groups(projects: model.projects, hosts: hosts.hosts, reached: reached, query: query)
+        Self.groups(projects: model.projects, hosts: hosts.hosts, reached: reached, query: query,
+                    thisMac: model.localAgentPlace)
     }
 
     /// What the place is called at the head of the right: this Mac, or the agent's name.
     private var headerName: String {
         if model.homeAll { return L10n[.Places.rowAll] }
+        if let hub { return hub.displayName }
         guard let place else { return L10n[.Common.wordThisMac] }
         return hosts.hosts.first { $0.id == place }?.displayName ?? model.agentNames[place] ?? L10n[.Common.wordAgent]
     }
 
-    /// The right's head: which place, its projects or its settings, and — for the projects — a
-    /// filter, reading a file in and making a project in it.
+    /// The right's head: a hub's (its name, and its settings alone), or a place's.
+    @ViewBuilder
     private var placeHeader: some View {
+        if hub != nil {
+            HStack(spacing: 10) {
+                Text(headerName).font(.app(15, weight: .semibold)).lineLimit(1).truncationMode(.middle)
+                Picker("", selection: .constant(true)) {
+                    Text(L10n[.Common.wordSettings]).tag(true)
+                }
+                .pickerStyle(.segmented).labelsHidden().fixedSize()
+                Spacer()
+            }
+            .frame(minHeight: 28)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+        } else {
+            projectsHeader
+        }
+    }
+
+    /// A place's head: which place, its projects or its settings, and — for the projects — a
+    /// filter, reading a file in and making a project in it.
+    private var projectsHeader: some View {
         HStack(spacing: 10) {
             Text(headerName).font(.app(15, weight: .semibold)).lineLimit(1).truncationMode(.middle)
             // As wide as its segments need, the name giving way (cut with …) rather than it: held to 170
@@ -243,7 +273,7 @@ struct ProjectHome: View {
             if !model.homeAll {
                 Picker("", selection: Binding(
                     get: { model.homeSettings != nil },
-                    set: { model.homeSettings = $0 ? PlaceSettingsTab.opening(place) : nil })) {
+                    set: { model.homeSettings = $0 ? PlaceSettingsTab.opening(place, localAgent: hosts.local != nil) : nil })) {
                     Text(L10n[.ProjectHome.headerProjects]).tag(false)
                     Text(L10n[.Common.wordSettings]).tag(true)
                 }
@@ -280,13 +310,23 @@ struct ProjectHome: View {
 
     /// The tab of the place's settings shown: the one asked for, when the place has it.
     private var settingsTab: PlaceSettingsTab {
-        let tabs = PlaceSettingsTab.of(place: place)
-        return model.homeSettings.flatMap { tabs.contains($0) ? $0 : nil } ?? PlaceSettingsTab.opening(place)
+        let local = hosts.local != nil
+        let tabs = PlaceSettingsTab.of(place: place, localAgent: local)
+        return model.homeSettings.flatMap { tabs.contains($0) ? $0 : nil } ?? PlaceSettingsTab.opening(place, localAgent: local)
     }
 
     @ViewBuilder
     private var placeBody: some View {
-        if model.homeAll {
+        if let hub {
+            ScrollView {
+                // Rebuilt per hub: what is typed is the hub's.
+                HubSettingsView(model: model, hosts: hosts, hub: hub)
+                    .id(hub.id)
+                    .frame(maxWidth: 860, alignment: .leading)
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        } else if model.homeAll {
             allList
         } else if model.homeSettings != nil {
             PlaceSettingsPane(model: model, hosts: hosts, place: place,
@@ -532,12 +572,14 @@ struct ProjectHome: View {
     /// Where a project can be moved: this Mac, and each connected agent but its own place.
     @ViewBuilder
     private func moveItems(_ project: ProjectSummary) -> some View {
-        let agents = model.agentNames.sorted { $0.value < $1.value }.filter { $0.key != project.place }
-        if project.place != nil {
-            Button(L10n[.ProjectHome.moveToThisMac]) { moving = (project, nil) }
+        // This Mac's own agent is this Mac: no agent to move to, and where 「この Mac へ」 goes.
+        let agents = model.agentNames.sorted { $0.value < $1.value }
+            .filter { $0.key != project.place && $0.key != model.localAgentPlace }
+        if !model.isThisMac(project.place) {
+            Button(L10n[.ProjectHome.moveToThisMac]) { moving = (project, model.thisMacPlace) }
         }
         if !agents.isEmpty {
-            Menu(project.place == nil ? L10n[.ProjectHome.moveToAgent] : L10n[.ProjectHome.moveToOtherAgent]) {
+            Menu(model.isThisMac(project.place) ? L10n[.ProjectHome.moveToAgent] : L10n[.ProjectHome.moveToOtherAgent]) {
                 ForEach(agents, id: \.key) { id, name in
                     Button(name) { moving = (project, id) }
                 }

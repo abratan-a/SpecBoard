@@ -168,6 +168,69 @@ fn a_project_moves_whole_and_what_is_the_stores_stays() {
     );
 }
 
+/// Between two stores of one machine, what the store keeps of the machine for the project goes
+/// with it: the folders its working directories and its exports' defaults are bound to. Asked for
+/// (`machine`), not otherwise — another machine's folders mean nothing there.
+#[test]
+fn between_two_stores_of_one_machine_the_folders_go_with_the_project() {
+    let here = Core::create(common::place("bundle-machine-here.sqlite")).unwrap();
+    let there = Core::create(common::place("bundle-machine-there.sqlite")).unwrap();
+    tool(&here, "project_create", json!({"project": "動く"}));
+    let mut tree =
+        tool(&here, "project_read", json!({"project": "動く"}))["json"]["projectTree"].clone();
+    tree["main_sections"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"type": "workdir", "name": "repo"}));
+    tool(
+        &here,
+        "project_update",
+        json!({"project": "動く", "value": {"project_tree": tree}}),
+    );
+    let project = ok(&here, json!({"op": "projects"}))["projects"][0]["id"].clone();
+    let folder = common::place("bundle-machine-folder");
+    std::fs::create_dir_all(&folder).unwrap();
+    let folder = folder.to_string_lossy().to_string();
+    tool(
+        &here,
+        "section_update",
+        json!({"project": "動く", "target": "repo", "value": {"folder": folder}}),
+    );
+    tool(
+        &here,
+        "export_create",
+        json!({"project": "動く", "target": "docs", "value": {"path": folder, "entries": [{"from": "Schemas", "to": "types.ts", "format": "typescript"}]}}),
+    );
+    let folders = |core: &Core| -> (Value, Value) {
+        let dirs = ok(core, json!({"op": "workdir_detail", "project": project}))["dirs"].clone();
+        let exports = tool(
+            core,
+            "export_read",
+            json!({"project": "動く", "targetdir": "[default]"}),
+        )["json"]["exports"]
+            .clone();
+        (dirs[0]["folder"].clone(), exports[0]["path"].clone())
+    };
+    assert_eq!(folders(&here), (json!(folder), json!(folder)));
+
+    let bundle = ok(
+        &here,
+        json!({"op": "project_bundle", "project": project, "machine": true}),
+    );
+    // Read in without asking for the machine's part: the project alone, as from another machine.
+    let other = Core::create(common::place("bundle-machine-other.sqlite")).unwrap();
+    ok(
+        &other,
+        json!({"op": "project_bundle_read", "bundle": bundle}),
+    );
+    assert_eq!(folders(&other), (Value::Null, Value::Null));
+    ok(
+        &there,
+        json!({"op": "project_bundle_read", "bundle": bundle, "machine": true}),
+    );
+    assert_eq!(folders(&there), (json!(folder), json!(folder)));
+}
+
 #[test]
 fn an_archived_project_moves_archived() {
     let here = Core::create(common::place("bundle-archived.sqlite")).unwrap();
@@ -197,5 +260,102 @@ fn an_archived_project_moves_archived() {
             .as_str()
             .is_some_and(|e| e.contains("アーカイブです（読むだけ）")),
         "{said}"
+    );
+}
+
+#[test]
+fn a_bundle_whose_history_names_what_it_does_not_hold_is_refused() {
+    let here = Core::create(common::place("bundle-stray-here.sqlite")).unwrap();
+    let there = Core::create(common::place("bundle-stray-there.sqlite")).unwrap();
+    // The project that is there already, with a commit and a branch of its own.
+    tool(&there, "project_create", json!({"project": "先にある"}));
+    tool(
+        &there,
+        "card_create",
+        json!({"project": "先にある", "target": "Schemas:Order", "value": {"label": "注文"}}),
+    );
+    tool(
+        &there,
+        "branch_create",
+        json!({"project": "先にある", "target": "work"}),
+    );
+    let conn = rusqlite::Connection::open(there.place()).unwrap();
+    let theirs: String = conn
+        .query_row(
+            "SELECT id FROM commits ORDER BY seq DESC LIMIT 1",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    let their_branch: String = conn
+        .query_row("SELECT id FROM branches", [], |r| r.get(0))
+        .unwrap();
+    let held = |query: &str| -> i64 { conn.query_row(query, [], |r| r.get(0)).unwrap() };
+    let before = (
+        held("SELECT count(*) FROM commit_rows"),
+        held("SELECT count(*) FROM commit_lines"),
+        held("SELECT count(*) FROM branch_prints"),
+    );
+
+    tool(&here, "project_create", json!({"project": "動く"}));
+    tool(
+        &here,
+        "card_create",
+        json!({"project": "動く", "target": "Schemas:Item", "value": {"label": "品"}}),
+    );
+    let project = ok(&here, json!({"op": "projects"}))["projects"][0]["id"].clone();
+    let bundle = ok(&here, json!({"op": "project_bundle", "project": project}));
+
+    // A row of each kind that names what the store reading it holds, not the bundle.
+    let long = format!("{{\"doc\":\"{}\"}}", "x".repeat(9_000));
+    let strays = [
+        (
+            "commit_rows",
+            json!({"commit_id": theirs, "tbl": "card_docs", "row_id": "stray", "before": long}),
+        ),
+        (
+            "commit_lines",
+            json!({"commit_id": theirs, "idx": 99, "kind": "edit", "target_type": "card", "target_id": null,
+                   "summary": "よそのコミットへの行", "text_key": null, "text_values": null}),
+        ),
+        (
+            "branch_prints",
+            json!({"branch_id": their_branch, "card_id": "stray", "print": "0"}),
+        ),
+    ];
+    for (table, row) in strays {
+        let mut hostile = bundle.clone();
+        hostile["tables"][table]
+            .as_array_mut()
+            .unwrap_or_else(|| panic!("{table} が束に無い"))
+            .push(row);
+        let said = refused(
+            &there,
+            json!({"op": "project_bundle_read", "bundle": hostile}),
+        );
+        assert!(said.contains("束に無い"), "{table}: {said}");
+        assert_eq!(
+            ok(&there, json!({"op": "projects"}))["projects"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1,
+            "{table}: 断ったのにプロジェクトが入った"
+        );
+        assert_eq!(
+            (
+                held("SELECT count(*) FROM commit_rows"),
+                held("SELECT count(*) FROM commit_lines"),
+                held("SELECT count(*) FROM branch_prints"),
+            ),
+            before,
+            "{table}: 先にあるプロジェクトの行が増えた"
+        );
+        assert_eq!(held("SELECT count(*) FROM history_chunks"), 0, "{table}");
+    }
+    // As it was bundled, it is read in.
+    ok(
+        &there,
+        json!({"op": "project_bundle_read", "bundle": bundle}),
     );
 }

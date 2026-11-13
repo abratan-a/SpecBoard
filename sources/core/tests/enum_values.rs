@@ -460,3 +460,46 @@ fn a_values_description_goes_with_the_project_file() {
     assert!(read.get("error").is_none(), "{read}");
     assert_eq!(values(&again)[1]["description"], "代金を受け取った");
 }
+
+#[test]
+fn a_value_renamed_in_a_branch_is_one_row_renamed() {
+    let core = Core::open(script_store()).unwrap();
+    ok(&core, "branch_create", json!({"target": "work"}));
+    ok(
+        &core,
+        "card_update",
+        json!({"branch": "work", "target": "Schemas:Status.shipped", "value": {"name": "dispatched"}}),
+    );
+    let read = ok(
+        &core,
+        "branch_read",
+        json!({"target": "work", "value": {"as": "diff", "path": "Schemas:Status"}}),
+    );
+    let units = read["changes"][0]["units"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{read}"));
+    assert_eq!(units.len(), 1, "{read}");
+    assert_eq!(units[0]["before"]["name"], "shipped", "{read}");
+    assert_eq!(units[0]["after"]["name"], "dispatched", "{read}");
+
+    // Main changed the same value meanwhile: one value in conflict, the renamed one on the branch's side.
+    ok(
+        &core,
+        "card_update",
+        json!({"target": "Schemas:Status.shipped", "value": {"description": "倉庫を出た"}}),
+    );
+    let preview = ok(
+        &core,
+        "branch_read",
+        json!({"target": "work", "value": {"against": "main"}}),
+    );
+    let conflicts = preview["conflicts"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{preview}"));
+    assert_eq!(conflicts.len(), 1, "{preview}");
+    assert!(!conflicts[0]["source"].is_null(), "{preview}");
+    assert!(
+        conflicts[0]["source"].to_string().contains("dispatched"),
+        "{preview}"
+    );
+}

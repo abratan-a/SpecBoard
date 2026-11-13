@@ -100,9 +100,11 @@ fn room(family: &str, name: &str) -> usize {
         // The flow's nodes and how they are joined, dispatched to and waited at, and made in a batch;
         // and what its sequence diagram draws, the gaps it shows among it; each node said by what it
         // holds, not its name again.
-        ("kinds", "flow") => 4_800,
+        ("kinds", "flow") => 4_900,
         // The formatdoc's rows, a text row's body read from a file among them, and its size.
         ("kinds", "formatdoc") => 2_700,
+        // A begin's trigger says the result an awaits line waits for.
+        ("kinds", "begin") => 2_600,
         ("kinds", _) => 2_500,
         // Where boxes go says how groups are put, made only and moved too, and the two ways of arranging.
         ("keys", "layout") => 2_600,

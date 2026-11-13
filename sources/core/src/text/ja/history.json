@@ -19,6 +19,7 @@
   "history.revert.otherCommit": "{seq}（{who}）",
   "history.revert.othersIn": "ほかの書き手のコミットを含むので戻しません: {commits}。ほかの書き手のコミットは、branch_revert の undo で 1 つずつ、request: true を付けて取り消せます",
   "history.revertIntoBranch.line": "main をコミット {seq} のすぐあとへ戻した形（{count} 件を戻す。merge で main に入る）",
+  "history.row.unreadable": "履歴の行が読めません（変える前の中身の塊が欠けているか、長さが合いません）",
   "history.undo.already": "コミット {seq} の変更は、今はもう前の形です",
   "history.undo.holderGone": "{path} の入っていた {holder} がもう無いので戻せません",
   "history.undo.line": "コミット {seq}（{who}）の変更を取り消す",

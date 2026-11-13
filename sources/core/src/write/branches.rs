@@ -291,6 +291,8 @@ impl Tx<'_> {
 
     /// A branch of the app's own let go: what it holds and its history, with no line in main's.
     pub(crate) fn drop_own_branch(&mut self, project: &str, id: &str) -> Result<(), String> {
+        // What its history points at, to let go of once it is gone.
+        let pieces = super::chunks::pointed_in(self.conn(), project, id, None)?;
         for table in [
             "card_docs",
             "section_docs",
@@ -313,6 +315,7 @@ impl Tx<'_> {
         self.conn()
             .execute("DELETE FROM branches WHERE id = ?", [id])
             .map_err(db)?;
+        super::chunks::let_go(self.conn(), project, &pieces)?;
         self.touch(project, id);
         Ok(())
     }
@@ -329,6 +332,8 @@ impl Tx<'_> {
         else {
             return Ok(());
         };
+        // What its history points at, to let go of once it is gone.
+        let pieces = super::chunks::pointed_in(self.conn(), project, id, None)?;
         for table in [
             "card_docs",
             "section_docs",
@@ -348,6 +353,7 @@ impl Tx<'_> {
         self.conn()
             .execute("DELETE FROM branches WHERE id = ?", [id])
             .map_err(db)?;
+        super::chunks::let_go(self.conn(), project, &pieces)?;
         self.touch(project, id);
         self.line(
             project,

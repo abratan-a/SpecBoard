@@ -15,12 +15,91 @@ extension CoreClient {
         var createdAt: String
         var usedAt: String?
         var grants: [String: String]
+        /// The projects other agents share with this one that the key was given, each with its owner.
+        var hubGrants: [HubGrant]?
 
         var key: AccessKey {
             AccessKey(id: id, name: name, permits: permits, createdAt: createdAt, usedAt: usedAt)
         }
 
         var levels: [String: AccessLevel] { grants.compactMapValues(AccessLevel.init(rawValue:)) }
+
+        /// What it was given of the projects other agents share with this one, by project.
+        var hubLevels: [HubProject: AccessLevel] {
+            var levels: [HubProject: AccessLevel] = [:]
+            for grant in hubGrants ?? [] {
+                levels[HubProject(owner: grant.owner, project: grant.project)] = AccessLevel(rawValue: grant.level)
+            }
+            return levels
+        }
+    }
+
+    /// A project another agent shares with this one: its owner's id in the hub, and its id there.
+    struct HubProject: Hashable, Sendable {
+        var owner: String
+        var project: String
+    }
+
+    struct HubGrant: Decodable {
+        var owner: String
+        var project: String
+        var level: String
+    }
+
+    /// What the window shows of the hub (the core's `hub_shares`).
+    struct HubShares: Decodable, Equatable {
+        struct Member: Decodable, Equatable, Identifiable {
+            var id: String
+            var name: String
+            var online: Bool
+            var build: String?
+        }
+
+        struct To: Decodable, Equatable {
+            var member: String
+            var name: String
+            var level: AccessLevel
+        }
+
+        struct Share: Decodable, Equatable {
+            var project: String
+            var name: String
+            var to: [To]
+        }
+
+        struct Shared: Decodable, Equatable, Identifiable {
+            var owner: String
+            var ownerName: String
+            var project: String
+            var name: String
+            var level: AccessLevel
+            var reachable: Bool
+            var why: String?
+
+            var id: String { "\(owner)/\(project)" }
+        }
+
+        var members: [Member] = []
+        var shares: [Share] = []
+        var shared: [Shared] = []
+    }
+
+    /// The other members of the hub, this agent's shares, and the projects shared with it.
+    func hubShares() throws -> HubShares {
+        try request(HubShares.self, "hub_shares")
+    }
+
+    /// A project of this agent's shared with a member of the hub to read or to write; nil takes the
+    /// share away.
+    func setHubShare(project: String, member: String, _ level: AccessLevel?) throws {
+        _ = try request("hub_share_set", ["project": project, "member": member, "level": level?.rawValue ?? NSNull()])
+    }
+
+    /// A key given a project another agent (`owner`, its id in the hub) shares with this one; nil
+    /// takes the grant away. It can be used only as far as the share lets it too.
+    func setGrant(keyId: String, owner: String, projectId: String, _ level: AccessLevel?) throws {
+        _ = try request("access_grant", ["key": keyId, "owner": owner, "project": projectId,
+                                         "level": level?.rawValue ?? NSNull()])
     }
 
     /// What a key may do besides the projects it was given: its items, by their ids.
@@ -107,3 +186,5 @@ private struct MadeKey: Decodable {
 }
 
 private struct MCPWrites: Decodable { var groups: [MCPWriteGroup] }
+
+extension AccessLevel: Decodable {}

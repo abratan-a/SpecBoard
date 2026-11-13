@@ -39,12 +39,42 @@ struct CommitField: View {
         return field
     }
 
+    /// One that says under it, in red, why what was written was refused (`refuse` gives that, or nil when it went
+    /// in), and goes back to `text` as `refusable` does.
+    static func refusing(_ placeholder: String, text: String, monospaced: Bool = false,
+                         refuse: @escaping (String) -> String?, leave: ((String) -> Void)? = nil) -> CommitField {
+        var field = CommitField(placeholder, text: text, monospaced: monospaced) { _ in }
+        field.refuse = refuse
+        field.leave = leave
+        field.onCommit = { _ in true }
+        return field
+    }
+
+    /// Why what was written was refused, from `refusing`.
+    private var refuse: ((String) -> String?)? = nil
+    /// What is written as the field leaves the screen still focused, where a refusal has nowhere to be said
+    /// under it: written as the window writes, the refusal in its bubble.
+    private var leave: ((String) -> Void)? = nil
+    @State private var refusal: String?
+
     var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            field
+            if let refusal {
+                Text(refusal)
+                    .font(.app(10.5))
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var field: some View {
         TextField(placeholder, text: $draft)
             .textFieldStyle(.roundedBorder)
             .font(.app(12, design: monospaced ? .monospaced : .default))
             .focused($focused)
-            .onSubmit(commit)
+            .onSubmit { commit() }
             .onChange(of: focused) { _, nowFocused in if !nowFocused { commit() } }
             // A rejected edit leaves the stored value unchanged; the draft has to
             // follow it back or the field keeps showing something that is not true. What
@@ -55,13 +85,24 @@ struct CommitField: View {
                 said = nil
                 if !focused || answered { draft = updated }
             }
-            .onDisappear(perform: commit)
+            .onDisappear { commit(leaving: true) }
+            .onChange(of: draft) { _, typed in if typed != text { refusal = nil } }
     }
 
-    private func commit() {
+    private func commit(leaving: Bool = false) {
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed != text, trimmed != said else { return }
         said = trimmed
+        if leaving, let leave {
+            leave(trimmed)
+            return
+        }
+        if let refuse, let why = refuse(trimmed) {
+            said = nil
+            draft = text
+            refusal = why
+            return
+        }
         if !onCommit(trimmed) {
             said = nil
             draft = text

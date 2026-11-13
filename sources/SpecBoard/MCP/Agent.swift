@@ -10,6 +10,8 @@ nonisolated enum AgentDeploy {
     struct Launch: Sendable {
         var executable: String
         var arguments: [String]
+        /// What is added to the environment of what is started.
+        var environment: [String: String] = [:]
     }
 
     /// What kept the agent from being put on a host, started or reached.
@@ -140,6 +142,17 @@ nonisolated enum AgentDeploy {
         return "cd \"\(root)\" && for x in */; do x=${x%/}; b=${x##*-};"
             + " case \"$b\" in ''|*[!0-9]*) continue;; esac;"
             + " [ -f \"$x/specboard-agent\" ] && [ \"$b\" -lt \(build) ] && rm -rf -- \"$x\"; done; true"
+    }
+
+    /// Where the hub's builds are put on its host: beside what the hub keeps (`~/.specboard-hub`), as
+    /// the agents' are beside the agent's.
+    static let hubHome = "$HOME/.specboard-hub/agent"
+
+    /// The way to a hub over the connection (`HubCore`): `hub attach`, which starts the hub when none
+    /// of this build runs.
+    static func hubAttach(_ ssh: SSH, version: String, language: String = Language.current) -> Launch {
+        Launch(executable: "/usr/bin/ssh",
+               arguments: ssh.arguments(running: "exec \"\(remotePath(version, under: hubHome))\" hub attach --lang \(language)"))
     }
 
     /// The way to the agent's own core over the connection (`AgentCore`): `attach`, which starts

@@ -1,0 +1,22 @@
+{
+  "hub.call.folder": "{what} は、ハブ越しにはできません（持ち主のホストのフォルダに触ります。持ち主のエージェントに繋いだセッションでします）",
+  "hub.call.folderOf": "{tool} の {key}",
+  "hub.call.local": "{tool} は、ハブ越しにはできません（自分のエージェントに繋いだセッションでします）",
+  "hub.call.unreadable": "hub_call の request（{k: \"call\", tool, arguments, key, level, build, lang}）が読めません",
+  "hub.cut": "届いたか分かりません。読んで確かめてからやり直してください",
+  "hub.cutRead": "持ち主までの繋ぎが、読んでいる途中で切れました。もう一度呼んでください",
+  "hub.down": "ハブに繋がっていません",
+  "hub.grant.noProject": "共有されたプロジェクトが見つかりません",
+  "hub.incoming.projects": "hub_incoming の projects（[{id, name, slug, level}]）が読めません",
+  "hub.noMember": "エージェント「{member}」はハブの名簿にありません",
+  "hub.otherBuild": "{owner} は別の版で動いています（アプリを両方のエージェントに繋ぐと揃います）",
+  "hub.ownerAway": "{owner} は今ハブに繋がっていません",
+  "hub.readOnly": "プロジェクト「{project}」は、ほかのエージェントからは読むだけです（持ち主の共有か、使う側のアクセスキーの許可が読むだけ）",
+  "hub.share.self": "自分のエージェントには共有しません",
+  "hub.slow": "{owner} が時間内に答えませんでした。届いたか分かりません。読んで確かめてからやり直してください",
+  "hub.state.members": "hub_state の members（[{id, name, online, build}]）が読めません",
+  "hub.twice": "共有されたプロジェクト「{name}」が {count} つあります。project には {ways} のどれかを書きます",
+  "hub.unreadable": "持ち主の答えが読めませんでした",
+  "hub.unshared": "プロジェクト「{project}」は、{owner} から共有されていません（project_list で今の一覧を読めます）",
+  "hub.what.member": "エージェントの id"
+}

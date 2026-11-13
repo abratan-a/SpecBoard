@@ -9,10 +9,60 @@ use crate::wire::{self, Obj};
 use serde_json::{Map, Value, json};
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 /// The project `project_id` as `branch` sees it: None for main, a branch's id, or the board.
 pub fn read(store: &Reader, project_id: &str, branch: Option<&str>) -> Result<Value, String> {
-    read_kept(store, project_id, branch).map(|kept| kept.raw)
+    tree(store, project_id, branch).map(|tree| Arc::unwrap_or_clone(tree.raw))
+}
+
+/// `read`, as the core's typed reading takes it (`model::typed`).
+pub(crate) fn typed(
+    store: &Reader,
+    project_id: &str,
+    branch: Option<&str>,
+) -> Result<crate::model::Detail, String> {
+    crate::model::typed(&tree(store, project_id, branch)?.raw)
+}
+
+/// A tree read whole (`read`), and each of its cards' documents as the tree sees it, by id: what
+/// the core keeps of a tree for the reads that follow while the store stands as it was read
+/// (`kept`), so shared by them all and never written to.
+#[derive(Clone)]
+pub(crate) struct Tree {
+    pub raw: Arc<Value>,
+    pub docs: Arc<HashMap<String, Obj>>,
+}
+
+/// The tree `branch` of the project: the one kept when the read stands at a moment of the store
+/// one was made at (`Reader::at`), else worked out of the documents.
+pub(crate) fn tree(store: &Reader, project_id: &str, branch: Option<&str>) -> Result<Tree, String> {
+    let make = || -> Result<(Tree, usize), String> {
+        let Kept { raw, made, .. } = read_kept(store, project_id, branch)?;
+        let docs: HashMap<String, Obj> = made.cards.into_iter().map(|i| (i.id, i.doc)).collect();
+        let weight = crate::kept::weigh(&raw)
+            + docs
+                .iter()
+                .map(|(id, doc)| id.len() + crate::kept::weigh_fields(doc))
+                .sum::<usize>();
+        let tree = Tree {
+            raw: Arc::new(raw),
+            docs: Arc::new(docs),
+        };
+        Ok((tree, weight))
+    };
+    let Some(at) = &store.at else {
+        return make().map(|(tree, _)| tree);
+    };
+    at.reading(
+        crate::kept::Kind::Tree,
+        project_id,
+        branch.unwrap_or(""),
+        || crate::workdir::kept_by(store.conn, project_id),
+        make,
+        |kept, made| crate::kept::written_alike(&kept.raw, &made.raw) && kept.docs == made.docs,
+    )
+    .map(|tree| (*tree).clone())
 }
 
 /// A tree's reading, with what it was made of — what the tree saw of the project

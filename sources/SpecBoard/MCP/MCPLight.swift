@@ -61,7 +61,7 @@ struct MCPLight: Equatable {
             } else {
                 said = L10n[.MCP.lightUnknown]
             }
-            lines.append("\(host.displayName): \(said)")
+            lines.append("\(host.local ? L10n[.Common.wordThisMac] : host.displayName): \(said)")
         }
         if lines.isEmpty {
             lines = [L10n[.MCP.lightNoAgents]]

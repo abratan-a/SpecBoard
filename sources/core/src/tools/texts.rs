@@ -5,7 +5,7 @@
 //! `card_update` that changes it is written with.
 
 use crate::export::Project;
-use crate::kinds::{Field, FieldType, Kinds};
+use crate::kinds::{Child, Field, FieldType, Kinds, Row};
 use crate::model::Card;
 use serde_json::Value;
 
@@ -189,6 +189,44 @@ fn form_words(kinds: &Kinds, card: &Card) -> Vec<(String, String)> {
             }
         }
     }
+    /// A row's fields and the rows under it (a scenario's steps, an item's rows), each at its
+    /// place from the card (`scenarios[0].steps[1].when`).
+    fn row_words<'a>(
+        row: &'a Row,
+        item: &Value,
+        at: &str,
+        lineage: &[&'a Row],
+        out: &mut Vec<(String, String)>,
+    ) {
+        fields(&row.fields, &item["fields"], at, out);
+        for child in &row.children {
+            let inner = match child {
+                Child::Row(inner) => Some(inner),
+                Child::Again { name, .. } => {
+                    lineage.iter().rev().find(|r| &r.name == name).copied()
+                }
+            };
+            let Some(inner) = inner else { continue };
+            let mut deeper = lineage.to_vec();
+            if matches!(child, Child::Row(_)) {
+                deeper.push(inner);
+            }
+            for (i, under) in item["rows"][child.name()]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+            {
+                row_words(
+                    inner,
+                    under,
+                    &format!("{at}.{}[{i}]", child.name()),
+                    &deeper,
+                    out,
+                );
+            }
+        }
+    }
     let mut out = Vec::new();
     fields(&kind.fields, &form["fields"], "", &mut out);
     for row in &kind.rows {
@@ -198,12 +236,7 @@ fn form_words(kinds: &Kinds, card: &Card) -> Vec<(String, String)> {
             .flatten()
             .enumerate()
         {
-            fields(
-                &row.fields,
-                &item["fields"],
-                &format!("{}[{i}]", row.name),
-                &mut out,
-            );
+            row_words(row, item, &format!("{}[{i}]", row.name), &[row], &mut out);
         }
     }
     out

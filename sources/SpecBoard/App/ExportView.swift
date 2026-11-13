@@ -49,6 +49,8 @@ struct ExportView: View {
             }
             .nameSheet($naming)
             .onChange(of: model.openBranch?.id) { chosenTree = nil }
+            // Another screen in front: no row is picked when this one comes back.
+            .onDisappear { model.pickExportEntry(nil) }
             .sheet(isPresented: $making) {
                 MakeExportSheet(model: model) { making = false }
             }
@@ -88,7 +90,7 @@ struct ExportView: View {
     /// The folder an export is written to by default, chosen (this Mac's panel) or typed (an agent's host
     /// path): not the project's — this machine's.
     private func chooseFolder(for export: ExportRead) {
-        if model.core?.isAgent ?? false {
+        if !(model.core?.onThisMac ?? true) {
             naming = NameAsk(title: L10n[.Export.folderAskTitle(model.openPlaceName, export.name)],
                              placeholder: "~/repo", start: export.path ?? "", confirm: L10n[.Export.folderDecide],
                              cancel: L10n[.Common.actionCancel]) { typed in
@@ -106,7 +108,7 @@ struct ExportView: View {
         let tree = Self.writeTree(chosenTree, of: model)
         let branch = tree.isEmpty ? nil : tree
         let said = Self.scope(branch: branch, names: names)
-        if model.core?.isAgent ?? false {
+        if !(model.core?.onThisMac ?? true) {
             naming = NameAsk(title: L10n[.Export.elsewhereAskTitle(model.openPlaceName, said)],
                              message: L10n[.Export.elsewhereAskMessage],
                              placeholder: "~/repo/.claude/worktrees/x", confirm: L10n[.Export.actionExport],
@@ -156,10 +158,8 @@ struct ExportView: View {
     }
 
     private func header(_ detail: ProjectDetail) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        TabHead(L10n[.Common.wordExport], about: L10n[.Export.headerAbout(model.openPlaceName)]) {
             HStack(alignment: .firstTextBaseline) {
-                Text(L10n[.Common.wordExport]).font(.app(15, weight: .semibold))
-                Spacer()
                 Button(L10n[.Export.headerNew]) { making = true }
                     .disabled(!editable)
                 Button(L10n[.Export.actionExportAll]) { model.executeExportsAndSay(detail.project.id) }
@@ -170,9 +170,6 @@ struct ExportView: View {
                     .disabled(model.isArchived || model.exports.exports.isEmpty)
                     .help(L10n[.Export.headerExportElsewhereHelp])
             }
-            Text(L10n[.Export.headerAbout(model.openPlaceName)])
-                .font(.app(11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                .readingWidth()
         }
     }
 
@@ -289,17 +286,22 @@ struct ExportView: View {
         }
     }
 
+    /// A row: what goes where and in what format. How it is narrowed is in the property panel, which shows
+    /// the row picked — here only that it is, so that a narrowed row is told from one that takes all.
     private func entryLine(_ export: ExportRead, _ entry: ExportRead.Entry, _ detail: ProjectDetail) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
+        let ref = ExportEntryRef(export: export.name, from: entry.from, to: entry.to)
+        let picked = model.pickedExportEntry == ref
+        return HStack(alignment: .firstTextBaseline, spacing: 6) {
             pathLink(entry.from, detail)
             Text("→").foregroundStyle(.tertiary)
-            Text(entry.to).font(.app(11.5, design: .monospaced)).textSelection(.enabled)
+            Text(entry.to).font(.app(11.5, design: .monospaced))
             if let format = entry.format {
                 Text(ExportWords.formatLabel(format)).font(.app(9.5)).foregroundStyle(.secondary)
             }
-            if let kinds = entry.kinds, !kinds.isEmpty {
-                Text(kinds.joined(separator: L10n[.Common.separatorList])).font(.app(9.5)).foregroundStyle(.secondary)
-                    .padding(.horizontal, 4).overlay(RoundedRectangle(cornerRadius: 3).stroke(.tertiary))
+            if let narrowing = entry.narrowing {
+                Image(systemName: "line.3.horizontal.decrease").font(.app(9.5)).foregroundStyle(.secondary)
+                    .help(L10n[.Export.entryNarrowedHelp(narrowing)])
+                    .accessibilityLabel(L10n[.Export.entryNarrowedHelp(narrowing)])
             }
             Spacer(minLength: 4)
             if editable {
@@ -309,6 +311,11 @@ struct ExportView: View {
                 .buttonStyle(.borderless).help(L10n[.Export.entryRemoveHelp])
             }
         }
+        .padding(.vertical, 1).padding(.horizontal, 4)
+        .background(RoundedRectangle(cornerRadius: 4).fill(picked ? Color.accentColor.opacity(0.28) : .clear))
+        .contentShape(Rectangle())
+        .onTapGesture { model.pickExportEntry(ref) }
+        .padding(.horizontal, -4)
     }
 
     /// A card's or a section's path: shown where it is drawn, when it is there.
@@ -460,8 +467,7 @@ private struct EntrySheet: View {
                     var entry: [String: Any] = ["from": draft.from.trimmingCharacters(in: .whitespaces),
                                                 "to": draft.to.trimmingCharacters(in: .whitespaces)]
                     if !draft.format.isEmpty { entry["format"] = draft.format }
-                    let named = draft.kinds.split(whereSeparator: { $0 == "," || $0 == "、" || $0 == " " })
-                        .map { String($0) }.filter { !$0.isEmpty }
+                    let named = ExportEntryPanel.names(in: draft.kinds)
                     if !named.isEmpty { entry["kinds"] = named }
                     if let said = model.updateExport(export, ["entries": ["add": [entry]]]) {
                         draft.problem = said

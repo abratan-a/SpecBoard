@@ -14,6 +14,7 @@
   "actions.error.notOfKind": "The actions of {kind} are {ops} (there is no {op}. Usable now: {now})",
   "actions.error.onTheBoard": "{path} is not in {name}. It is a card of the board (branch: \"_project_board_\")",
   "actions.error.oneCard": "target is the path of one card (card_action takes one card at a time)",
+  "actions.label.resume": "Continue (new branch)",
   "actions.line.cancel": "Cancelled card {path} ({changes})",
   "actions.line.done": "Marked card {path} done ({changes})",
   "actions.line.finish": "Finished card {path} ({changes})",

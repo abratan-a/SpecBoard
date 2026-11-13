@@ -239,7 +239,9 @@ impl Seen {
                 | Written::Removed { project, .. }
                     if *project != self.summary.id => {}
                 Written::Marked { at: when, .. } => {
-                    if let Some(project) = self.raw["project"].as_object_mut() {
+                    if let Some(project) =
+                        std::sync::Arc::make_mut(&mut self.raw)["project"].as_object_mut()
+                    {
                         project.insert("updatedAt".into(), when.clone().into());
                     }
                     if let Some(kept) = self.kept.as_mut() {
@@ -254,9 +256,9 @@ impl Seen {
                     ..
                 } if *tree == self.named.tree
                     && crate::detail::bring_card(
-                        &mut self.raw,
+                        std::sync::Arc::make_mut(&mut self.raw),
                         &mut self.detail,
-                        &mut self.docs,
+                        std::sync::Arc::make_mut(&mut self.docs),
                         id,
                         before,
                         after,
@@ -349,7 +351,7 @@ impl Seen {
                         kept.order = None;
                     }
                     olds.push((id.clone(), before.clone()));
-                    self.docs.insert(id.clone(), after.clone());
+                    std::sync::Arc::make_mut(&mut self.docs).insert(id.clone(), after.clone());
                     ids.insert(id.clone());
                 }
                 Written::Removed {
@@ -368,7 +370,7 @@ impl Seen {
                     fields = true;
                     refs.remove(id, before);
                     olds.push((id.clone(), Some(before.clone())));
-                    self.docs.remove(id);
+                    std::sync::Arc::make_mut(&mut self.docs).remove(id);
                     ids.insert(id.clone());
                     if let Some(order) = kept.order.as_mut() {
                         order.retain(|o| o != id);
@@ -529,7 +531,7 @@ impl Seen {
         if moved {
             // Named, placed or there otherwise: the names and the order made again of every card in
             // outline, the touched cards' entries worked out again.
-            let raw = std::mem::take(&mut self.raw);
+            let raw = std::sync::Arc::unwrap_or_clone(std::mem::take(&mut self.raw));
             let paths = std::mem::take(&mut kept.paths);
             // What a card holds: the cards that name it whose documents say they are in it.
             let held = |id: &str| -> Vec<String> {
@@ -560,7 +562,7 @@ impl Seen {
                 return false;
             };
             repathed.extend(moved_paths);
-            self.raw = raw;
+            self.raw = std::sync::Arc::new(raw);
             self.detail = detail;
             kept.paths = now;
             self.looked = std::cell::OnceCell::new();
@@ -574,7 +576,7 @@ impl Seen {
                 &kept.row,
                 &kept.made,
                 docs,
-                &mut self.raw,
+                std::sync::Arc::make_mut(&mut self.raw),
                 &kept.paths,
                 directory,
                 &dirty,

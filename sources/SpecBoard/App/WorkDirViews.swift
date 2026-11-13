@@ -93,7 +93,7 @@ struct WorkDirProperties: View {
 
     /// The folder chosen on this Mac, or typed for an agent's host (this Mac's panel shows this Mac's folders).
     private func chooseFolder(_ dir: WorkDir) {
-        if model.core?.isAgent ?? false {
+        if !(model.core?.onThisMac ?? true) {
             naming = NameAsk(title: L10n[.Export.dirsAskTitle(model.openPlaceName, dir.name)],
                              placeholder: "~/repo", start: dir.folder ?? "", confirm: L10n[.Export.dirsLink],
                              cancel: L10n[.Common.actionCancel]) {

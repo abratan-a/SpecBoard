@@ -691,15 +691,13 @@ pub(crate) fn declared_paths(
             crate::pathtext::join_names(path.iter().map(String::as_str))
         );
         // A value field's rule names the fields beside it.
-        let parent = &path[..path.len() - 1];
-        let names = if crate::export::rule_names_inside(field) {
-            at.clone()
-        } else if parent.is_empty() {
+        let base = crate::export::rule_names_base(field, path);
+        let names = if base.is_empty() {
             own.clone()
         } else {
             format!(
                 "{own}.{}",
-                crate::pathtext::join_names(parent.iter().map(String::as_str))
+                crate::pathtext::join_names(base.iter().map(String::as_str))
             )
         };
         from_rules(&at, &names, &field.rules, &mut out);
