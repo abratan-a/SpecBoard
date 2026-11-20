@@ -6,7 +6,7 @@
 //! The checks that need a kind look at the card it leads to, and what is written out names
 //! the card. Over the sample project (`見本`): Schemas holds Customer (entity), Status
 //! (enum), Orders (store) and Rule (note); Schemas/Ordering holds Order (entity) and Line
-//! (value); Docs holds Overview (freedoc) and Spec (formatdoc).
+//! (value); Docs holds Overview (freedoc) and Spec (structdoc).
 
 use crate::common;
 
@@ -309,7 +309,7 @@ fn a_ghost_points_out_of_its_section_and_never_round() {
         json!({"target": "Main:Root", "value": {"kind": "ghost", "target": "Schemas:Customer"}}),
     );
     assert!(
-        said.contains("Main は根なので、カードゴーストは置けません"),
+        said.contains("Main はルートなので、カードゴーストは置けません"),
         "{said}"
     );
     // Nor at what is not there.
@@ -1407,7 +1407,7 @@ fn a_card_ghost_goes_in_no_container_and_points_into_one() {
     arguments["branch"] = "_project_board_".into();
     let said = refused(&core, "card_create", arguments);
     assert!(
-        said.contains("カードゴーストは入れ物の中に置けません（Goals:Ship の中）"),
+        said.contains("カードゴーストはコンテナの中に置けません（Goals:Ship の中）"),
         "{said}"
     );
 }

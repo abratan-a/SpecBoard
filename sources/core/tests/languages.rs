@@ -428,12 +428,12 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
     let japanese_list = mcp_in(&core, "ja", "kind_list", json!({})).unwrap();
     let english_list = mcp_in(&core, "en", "kind_list", json!({})).unwrap();
     assert!(
-        entity(&japanese_list).to_string().contains("記録"),
+        entity(&japanese_list).to_string().contains("エンティティ"),
         "{japanese_list}"
     );
     let english_entity = entity(&english_list);
     assert!(
-        english_entity.to_string().contains("Record"),
+        english_entity.to_string().contains("Entity"),
         "{english_entity}"
     );
     assert!(!japanese(&english_entity.to_string()), "{english_entity}");
@@ -450,7 +450,7 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
         json!({"name": "guide", "arguments": {"about": "entity"}}),
     );
     let guide = guide["content"][0]["text"].as_str().unwrap().to_string();
-    assert!(guide.contains("Record"), "{guide}");
+    assert!(guide.contains("Entity"), "{guide}");
     // The window reads the kinds in its own language.
     let detail = |lang: &str| {
         let read = op(
@@ -465,8 +465,8 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
             .unwrap()["label"]
             .clone()
     };
-    assert_eq!(detail("ja"), "記録");
-    assert_eq!(detail("en"), "Record");
+    assert_eq!(detail("ja"), "エンティティ");
+    assert_eq!(detail("en"), "Entity");
 }
 
 #[test]
@@ -664,7 +664,7 @@ fn an_english_project_writes_its_own_words_in_english_and_its_cards_as_written()
     };
     let japanese_page = page("en");
     let japanese_diagram = diagram("en");
-    assert!(japanese_page.contains("きっかけ"), "{japanese_page}");
+    assert!(japanese_page.contains("トリガー"), "{japanese_page}");
     assert!(
         japanese_diagram.contains("Orders（store）"),
         "{japanese_diagram}"
@@ -678,7 +678,7 @@ fn an_english_project_writes_its_own_words_in_english_and_its_cards_as_written()
     let english_page = page("ja");
     assert_eq!(english_page, page("en"));
     assert!(english_page.contains("Trigger"), "{english_page}");
-    assert!(!english_page.contains("きっかけ"), "{english_page}");
+    assert!(!english_page.contains("トリガー"), "{english_page}");
     let english_diagram = diagram("ja");
     assert_eq!(english_diagram, diagram("en"));
     assert!(

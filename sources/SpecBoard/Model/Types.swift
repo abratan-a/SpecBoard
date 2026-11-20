@@ -68,9 +68,9 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// A document in form, in a document section: items with headings and the rows
     /// inside them — text, tables, diagrams, the diagrams of a section, a card's table
     /// (`rows`) — one file when written out. What an item points at is drawn from it.
-    case formatdoc
+    case structdoc
     /// A document of versions stacked one on another, in a document section
-    /// (`specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」): a change log, release notes — the
+    /// (`specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」): a change log, release notes — the
     /// newest on top, one read at a time by its selector (`versions`, `StackVersion`), each a
     /// path of its own. Written out whole, or one version alone.
     case stackdoc
@@ -93,7 +93,7 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// A page in HTML, its CSS in it (the same design item): drawn at its box's width and cut at its
     /// box, under a policy that lets no script run and nothing load from outside.
     case html
-    /// A frame in a ui section (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」): another
+    /// A frame in a ui section (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」): another
     /// ui section's mock put into its box at 1:1, cut at the box. Its field `target` holds that section by
     /// id, so it follows a rename or a move; MCP reads and writes the section's path.
     case frame
@@ -143,11 +143,11 @@ enum SchemaKind: String, Codable, CaseIterable, Sendable {
     /// fields on one are shown nowhere.
     var holdsFields: Bool { self == .entity || self == .value }
     /// Kinds that are writing: a note and the documents.
-    var isWriting: Bool { self == .note || self == .freedoc || self == .formatdoc || self == .stackdoc || self == .spec }
+    var isWriting: Bool { self == .note || self == .freedoc || self == .structdoc || self == .stackdoc || self == .spec }
     /// Kinds whose content is one body of Markdown.
     var hasBody: Bool { self == .note || self == .freedoc }
     /// The documents: what a document section is for.
-    var isDocument: Bool { self == .freedoc || self == .formatdoc || self == .stackdoc || self == .spec }
+    var isDocument: Bool { self == .freedoc || self == .structdoc || self == .stackdoc || self == .spec }
     /// A kind a person defines: drawn and checked by its definition (`CustomKind`).
     var isCustom: Bool { self == .goal }
     /// A kind the project defines (`custom`): drawn and written by its definition (`CardKindDef`).
@@ -584,7 +584,7 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     var next: [ActionNext] = []
     /// For a note and a freedoc: the body, in Markdown.
     var body: String = ""
-    /// For a formatdoc: its rows.
+    /// For a structdoc: its rows.
     var rows: [FormatRow] = []
     /// For an action: what starts it.
     var trigger: Trigger? = nil
@@ -607,7 +607,7 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     /// Whether `size` is not its own but the one its text gives it (a whiteboard's sketch sized by
     /// nobody): drawn at it, with nothing to reset.
     var sizedByText = false
-    /// How a formatdoc is drawn on the diagram: `rows`, `document`, or nil for
+    /// How a structdoc is drawn on the diagram: `rows`, `document`, or nil for
     /// the project's default.
     var docView: String? = nil
     static let docViews = ["rows", "document"]
@@ -666,7 +666,7 @@ struct SchemaNode: Codable, Hashable, Identifiable, Sendable {
     /// A card of a kind the project defines (`kind` is `custom`): the kind's
     /// name, its definition whole (`CardKindDef`), its fields and rows as its document keeps
     /// them (`form`), and what it holds that the definition no longer has (`strayFields`,
-    /// 「定義に無い欄」). Out of the coding keys for the same reason as `uses`.
+    /// 「定義に無いフィールド」). Out of the coding keys for the same reason as `uses`.
     var ownKind: String? = nil
     var kindDef: CardKindDef? = nil
     /// Its kind's definition, whatever the kind (a goal's too): what its rows are made of where it

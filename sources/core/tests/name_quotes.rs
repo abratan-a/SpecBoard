@@ -222,7 +222,7 @@ fn rows_nodes_and_versions_take_names_a_path_quotes() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Guide", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Guide", "value": {"kind": "structdoc", "rows": [
             {"name": "Owner's guide", "kind": "item", "heading": "持ち主", "rows": [
                 {"name": "step 1", "kind": "text", "body": "まず"}
             ]}

@@ -266,7 +266,7 @@ enum GraphEdges {
     }
 
     /// The row of the card `card` (drawn as a box) a line of `relation` leaves from: a
-    /// field's names, a formatdoc's item (`#top` for the rows at the top), a store's held row
+    /// field's names, a structdoc's item (`#top` for the rows at the top), a store's held row
     /// (by the line's place among its kind's), the card's header for the rest (a note's, whose
     /// body is drawn as one page, and a flow's rules among them).
     static func sourceRow(_ relation: Relation, of card: SchemaNode?) -> String {
@@ -276,7 +276,7 @@ enum GraphEdges {
             let index = card.connections.filter { $0.line == Line.holds && $0.from.isEmpty }
                 .firstIndex { $0.id == relation.connection }
             return index.map { "#h\($0)" } ?? ""
-        case (.formatdoc, Line.mentions):
+        case (.structdoc, Line.mentions):
             return relation.from.isEmpty ? SchemaNode.topRow : relation.from
         default:
             return relation.from

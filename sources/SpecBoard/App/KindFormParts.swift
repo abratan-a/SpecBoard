@@ -21,7 +21,7 @@ struct KindFormGroup<Content: View>: View {
     var title: String
     var count: Int? = nil
     var summary: String
-    /// A word put beside the title whether it is open or not (「置き場なし」).
+    /// A word put beside the title whether it is open or not (「配置なし」).
     var badge: String? = nil
     var open: Bool
     var toggle: () -> Void
@@ -199,7 +199,7 @@ enum KindDragItem {
 }
 
 /// The 18 types of field, as the menu that picks one groups them (`specboard://SpecBoard/Docs/Design:CardKinds`
-/// 「欄の定義」): each its word, its key and what a value of it is.
+/// 「フィールドの定義」): each its word, its key and what a value of it is.
 enum KindFieldTypes {
     struct Item: Identifiable {
         var key: String

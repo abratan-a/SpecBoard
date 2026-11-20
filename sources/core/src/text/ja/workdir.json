@@ -5,7 +5,7 @@
   "workdir.read.notGit": "作業ディレクトリ {name} のフォルダ {root} は git のリポジトリではありません（.git がありません）。readType: git の .gitignore は、そのフォルダの中のものだけを読みました",
   "workdir.read.notYet": "まだ読んでいません",
   "workdir.read.overLimit": "読む数の上限（{limit}）を超えたので、読むのを止めました。読み方の exclude で外すものを足してください",
-  "workdir.read.unbound": "この機械でフォルダが結び付いていません",
+  "workdir.read.unbound": "このマシンでフォルダが結び付いていません",
   "workdir.text.notAFile": "「{id}」は作業ディレクトリのファイルではありません",
   "workdir.text.notText": "文字のファイルではありません",
   "workdir.text.outside": "「{path}」は作業ディレクトリの中のパスではありません",

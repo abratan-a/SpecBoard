@@ -1,7 +1,7 @@
 import Foundation
 
 /// One ui part's own page, as `section_read` `{as: "mock", faces: true}` answers it
-/// (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」): the part alone at the top left of a
+/// (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」): the part alone at the top left of a
 /// transparent page its box's size, built exactly as the mock builds it — so the map and the mock never
 /// draw a part two ways.
 nonisolated struct PartFace: Equatable, Sendable {

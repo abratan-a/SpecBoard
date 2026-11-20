@@ -247,7 +247,7 @@ fn only_a_line_that_reaches_files_reaches_one_and_the_board_links_alone() {
     .unwrap_err();
     assert!(
         said.contains(
-            "実装（implementedBy）: 相手は fileの頭・関数と型 です（Schemas:Status は enum）"
+            "実装（implementedBy）: 相手は fileのヘッダー・シンボル です（Schemas:Status は enum）"
         ),
         "{said}"
     );

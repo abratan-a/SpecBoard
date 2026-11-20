@@ -1,5 +1,5 @@
 //! A body changed and read in part: `card_update`'s `body` as `{edit, append, prepend}` over
-//! what it is — a document's, a note's, a task's and a formatdoc's text row — and `card_read`'s
+//! what it is — a document's, a note's, a task's and a structdoc's text row — and `card_read`'s
 //! `find` and `lines`, which give a part of it instead of the whole.
 
 use crate::common;
@@ -116,7 +116,7 @@ fn a_task_and_a_text_row_are_changed_in_part() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Written", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Written", "value": {"kind": "structdoc", "rows": [
             {"name": "story", "heading": "ねらい", "rows": [{"name": "said", "kind": "text", "body": "前の文。続き"}]},
         ]}}),
     );
@@ -212,13 +212,13 @@ fn a_markdown_field_of_the_projects_own_kind_is_changed_in_part() {
 
 // MARK: - The words inside a document and a flow, looked for
 
-/// A formatdoc with a word in an item's heading, a text's body and a table's cell, a stackdoc
+/// A structdoc with a word in an item's heading, a text's body and a table's cell, a stackdoc
 /// with it in a version, and a flow with it in a node's step.
 fn words_inside(core: &Core) {
     ok(
         core,
         "card_create",
-        json!({"target": "Docs:Words", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Words", "value": {"kind": "structdoc", "rows": [
             {"name": "terms", "heading": "基点の言い方", "rows": [
                 {"name": "said", "kind": "text", "body": "前の文\n取得の土台はここ\n後の文"},
                 {"name": "table", "kind": "table", "columns": ["名前", "意味"],
@@ -263,7 +263,7 @@ fn place(path: &str, at: &str) -> (String, String) {
     (path.to_string(), at.to_string())
 }
 
-/// `card_list`'s `query` finds a word in a formatdoc's rows (heading, body, a table's cells), a
+/// `card_list`'s `query` finds a word in a structdoc's rows (heading, body, a table's cells), a
 /// stackdoc's version and a flow's node, each by the path of the row, version or node and
 /// where in it, whatever the case; narrowed by `kind` and `in` too.
 #[test]
@@ -290,7 +290,7 @@ fn a_query_finds_the_words_in_a_documents_rows_and_versions_and_a_flows_nodes() 
         .unwrap();
     assert_eq!(hit["where"], "cells[0][0]");
     assert_eq!(hit["card"], "Docs:Words");
-    assert_eq!(hit["kind"], "formatdoc");
+    assert_eq!(hit["kind"], "structdoc");
     assert_eq!(hit["excerpt"], "Anchor");
     assert!(
         places(&ok(
@@ -304,7 +304,7 @@ fn a_query_finds_the_words_in_a_documents_rows_and_versions_and_a_flows_nodes() 
     let docs = places(&ok(
         &core,
         "card_list",
-        json!({"value": {"query": "取得の土台", "kind": "formatdoc"}}),
+        json!({"value": {"query": "取得の土台", "kind": "structdoc"}}),
     ));
     assert!(!docs.is_empty());
     assert!(
@@ -331,7 +331,7 @@ fn a_query_finds_the_words_in_a_documents_rows_and_versions_and_a_flows_nodes() 
     );
 }
 
-/// `card_read`'s `find` on a formatdoc, an item of it, a stackdoc and a flow looks through the
+/// `card_read`'s `find` on a structdoc, an item of it, a stackdoc and a flow looks through the
 /// whole of it: each place found by its path and where, with its line and the lines around it,
 /// whatever the case. A body is looked for whatever the case too.
 #[test]
@@ -405,7 +405,7 @@ fn find_looks_through_a_whole_document_and_a_flow() {
     assert!(said.contains("Docs:Words には本文がありません"), "{said}");
 }
 
-// MARK: - A formatdoc's rows put by name, and a table's cells changed one by one
+// MARK: - A structdoc's rows put by name, and a table's cells changed one by one
 
 /// The names of the rows directly in what `target` names, in their order.
 fn row_names(core: &Core, target: &str) -> Vec<String> {
@@ -435,7 +435,7 @@ fn a_row_is_put_before_or_after_a_sibling_by_its_name() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Steps", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Steps", "value": {"kind": "structdoc", "rows": [
             {"name": "steps", "heading": "手順", "rows": [
                 {"name": "a", "kind": "text", "body": "一"},
                 {"name": "b", "kind": "text", "body": "二"}]}]}}),
@@ -535,7 +535,7 @@ fn a_tables_cells_are_changed_one_by_one_over_the_table_as_read() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Terms", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Terms", "value": {"kind": "structdoc", "rows": [
             {"name": "words", "kind": "table", "columns": ["名前", "意味", "状態"],
              "cells": [["anchor", "基点", "未"], ["ledger", "台帳", "未"], ["proof", "証跡", "未"]]},
             {"name": "said", "kind": "text", "body": "文"}]}}),

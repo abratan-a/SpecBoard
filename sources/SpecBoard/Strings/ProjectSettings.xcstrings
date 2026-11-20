@@ -14,7 +14,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最初の一文でそのカードが何かを言い、続けてカード全体にかかる決まりを書く。長い理由や経緯は note に書いて [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）"
+            "value" : "最初の一文でそのカードが何かを言い、続けてカード全体にかかるルールを書く。長い理由や経緯は note に書いて [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）"
           }
         }
       }
@@ -32,7 +32,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設計書・仕様書の本文: 複数のカードにまたがる決まり、設計の理由と経緯。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）。rules・absentFields の欄や線（connections）で書けることは文章にしない"
+            "value" : "設計書・仕様書の本文: 複数のカードにまたがるルール、設計の理由と経緯。関係するカードを [[ ]] で指す（ほかのセクションのものは、セクションを付けて書くか、そのセクションにカードゴーストを置けば名前だけで書ける）。rules・absentFields のフィールドや線（connections）で書けることは文章にしない"
           }
         }
       }
@@ -50,7 +50,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "その値の決まり（形式・単位・範囲、空や null の意味、指し先の補足）。なぜそうしたか・ほかのカードにまたがる決まりは note に"
+            "value" : "その値のルール（形式・単位・範囲、空や null の意味、指し先の補足）。なぜそうしたか・ほかのカードにまたがるルールは note に"
           }
         }
       }
@@ -140,7 +140,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "その行（きっかけ・道）だけの補足"
+            "value" : "そのステップ（トリガー・経路）だけの補足"
           }
         }
       }
@@ -158,7 +158,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まわりのマスは %lld〜%lld です（%lld ではなく）"
+            "value" : "余白のマスは %lld〜%lld です（%lld ではなく）"
           }
         }
       }
@@ -194,7 +194,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の決まりが長すぎます（4000 文字まで）"
+            "value" : "%@ のルールが長すぎます（4000 文字まで）"
           }
         }
       }
@@ -212,7 +212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大きさは幅 %lld〜%lld マス、高さ %lld〜%lld マスです（%@ ではなく）"
+            "value" : "サイズは幅 %lld〜%lld マス、高さ %lld〜%lld マスです（%@ ではなく）"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エクスポート・mermaid・flow の文書に使う言語。誰がエクスポートしても同じになるよう、プロジェクトに 1 つ"
+            "value" : "エクスポート・mermaid・flow のドキュメントに使う言語。誰がエクスポートしても同じになるよう、プロジェクトに 1 つ"
           }
         }
       }
@@ -320,7 +320,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き方の決まり（アプリの既定、%@）: %@"
+            "value" : "書き方のルール（アプリの既定、%@）: %@"
           }
         }
       }
@@ -338,7 +338,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き方の決まり（プロジェクト設定、%@）: %@"
+            "value" : "書き方のルール（プロジェクト設定、%@）: %@"
           }
         }
       }
@@ -356,7 +356,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AI が main へ merge すると、MR を出さずにそのまま入ります。入るたびに、ヘッダーのベルから出る吹き出しで誰がどの branch を入れたかを知らせます（ベルの一覧と履歴にも残ります）。ロックしていない main へは、もとから承認なしで入ります。変えられるのはここだけです（MCP からは読むだけ）"
+            "value" : "AI が main へ merge すると、MR を作成せずにそのまま入ります。入るたびに、ヘッダーのベルから出る吹き出しで誰がどの branch を入れたかを通知します（ベルの一覧と履歴にも残ります）。ロックしていない main へは、もとから承認なしで入ります。変えられるのはここだけです（MCP からは読み取り専用）"
           }
         }
       }
@@ -392,7 +392,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ロック中は、main を merge でしか変えられません（画面からも MCP からも）。カードとセクションは branch で直して merge するか、「まとめて直す」で直します（閉じると 1 つの merge として main に入ります）。AI が main へ merge すると MR になり、人がダッシュボードの MR のタブで承認します。ロック中も直せるのは、セクションの中のカードの位置と並び・書くカードの大きさと見え方・flow のノードの位置・タグ・プロジェクトの設定です。ナビパネルの main の右クリックでも掛け外しできます"
+            "value" : "ロック中は、main を merge でしか変えられません（画面からも MCP からも）。カードとセクションは branch で直して merge するか、「まとめて直す」で直します（閉じると 1 つの merge として main に入ります）。AI が main へ merge すると MR になり、人がダッシュボードの MR のタブで承認します。ロック中も直せるのは、セクションの中のカードの位置と並び・書くカードのサイズと見え方・flow のノードの位置・タグ・プロジェクトの設定です。ナビパネルの main の右クリックでも掛け外しできます"
           }
         }
       }
@@ -458,13 +458,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Body of a document (a freedoc's body, the body rows of a formatdoc)"
+            "value" : "Body of a document (a freedoc's body, the body rows of a structdoc)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文書の本文（freedoc の本文、formatdoc の本文の行）"
+            "value" : "ドキュメントの本文（freedoc の本文、structdoc の本文の行）"
           }
         }
       }
@@ -608,7 +608,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "flow の処理ノードの行の説明"
+            "value" : "flow の処理ノードのステップの説明"
           }
         }
       }
@@ -680,7 +680,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "note と文書"
+            "value" : "note とドキュメント"
           }
         }
       }
@@ -734,7 +734,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自由に書く説明（description）に何を書くかを、書く場所ごとに決めます。決めていない場所は、広い場所の決まりかアプリの既定（薄い字）を使います。AI は書く前に MCP の project_read（value の as: rules）でこれを読みます"
+            "value" : "自由に書く説明（description）に何を書くかを、書く場所ごとに決めます。決めていない場所は、広い場所のルールかアプリの既定（薄い字）を使います。AI は書く前に MCP の project_read（value の as: rules）でこれを読みます"
           }
         }
       }
@@ -770,7 +770,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の決まりを使う"
+            "value" : "%@ のルールを使う"
           }
         }
       }
@@ -812,37 +812,37 @@
       }
     },
     "size.docCards" : {
-      "comment" : "Label of the picker for how formatdoc cards show in the diagram.",
+      "comment" : "Label of the picker for how structdoc cards show in the diagram.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc cards"
+            "value" : "structdoc cards"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc のカード"
+            "value" : "structdoc のカード"
           }
         }
       }
     },
     "size.docHelp" : {
-      "comment" : "Tooltip of the picker for how formatdoc cards show in the diagram.",
+      "comment" : "Tooltip of the picker for how structdoc cards show in the diagram.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Whether formatdoc cards in the diagram show the document as it is exported, or one row per item. Each card can also be changed on its own."
+            "value" : "Whether structdoc cards in the diagram show the document as it is exported, or one row per item. Each card can also be changed on its own."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc のカードを図で、エクスポートと同じ文書の絵で見るか、項目ごとの行で見るか。カードごとにも変えられます"
+            "value" : "structdoc のカードを図で、エクスポートと同じドキュメントの画像で見るか、項目ごとの行で見るか。カードごとにも変えられます"
           }
         }
       }
@@ -908,7 +908,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードのまわり %lld マス"
+            "value" : "カードの余白 %lld マス"
           }
         }
       }
@@ -944,7 +944,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードは、図で右下をドラッグすると大きさを変えられます（マスに合わせて）"
+            "value" : "カードは、図で右下をドラッグするとサイズを変えられます（マスに合わせて）"
           }
         }
       }
@@ -998,7 +998,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの大きさ（プロジェクト全体）"
+            "value" : "カードのサイズ（プロジェクト全体）"
           }
         }
       }
@@ -1106,7 +1106,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き方の決まり"
+            "value" : "書き方のルール"
           }
         }
       }

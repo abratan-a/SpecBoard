@@ -133,7 +133,7 @@ fn a_formatdocs_diagram_target_follows_its_sections_rename() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Model", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Model", "value": {"kind": "structdoc", "rows": [
             {"kind": "diagram", "name": "types", "target": "Schemas/Ordering:"}
         ]}}),
     );

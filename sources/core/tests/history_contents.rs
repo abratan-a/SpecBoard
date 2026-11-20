@@ -580,7 +580,7 @@ fn an_undo_that_cannot_be_written_whole_is_refused_and_says_why() {
         "branch_revert",
         json!({"target": "main", "value": {"undo": settings}}),
     );
-    assert!(said.contains("文書を変えていない"), "{said}");
+    assert!(said.contains("ドキュメントを変えていない"), "{said}");
     // What is as it was already.
     ok(
         &core,

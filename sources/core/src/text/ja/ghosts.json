@@ -10,7 +10,7 @@
   "ghosts.target.none": "指す先がありません",
   "ghosts.target.sameSection": "{named} は同じセクションにあるので指せません（同じセクションの中のものは、名前だけで書けます）",
   "ghosts.target.self": "自分自身は指せません",
-  "ghosts.update.cardHint": "（中身は本物の {card} を target にして書きます）",
+  "ghosts.update.cardHint": "（中身は元の {card} を target にして書きます）",
   "ghosts.update.kindChange": "付け替えられるのは、今と同じ種類（{kind}）のカードに着く先だけです（{raw} は {reached}）",
   "ghosts.update.nameTaken": "カード「{name}」は既にあります",
   "ghosts.update.noTarget": "{raw} の指す先がありません",

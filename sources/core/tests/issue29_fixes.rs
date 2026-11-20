@@ -110,12 +110,12 @@ fn what_goes_inside_a_refused_container_says_the_container_was_not_made() {
             "Charts/Shop:Bad.done": {"kind": "end", "outcome": "success"},
         }}),
     );
-    assert!(said.starts_with("3 件の誤り"), "{said}");
+    assert!(said.starts_with("3 件のエラー"), "{said}");
     assert!(said.contains("wrongkey"), "{said}");
     for node in ["start", "done"] {
         assert!(
             said.contains(&format!(
-                "入れ物 Charts/Shop:Bad が作れなかったので、中の Charts/Shop:Bad.{node} は作っていません"
+                "コンテナ Charts/Shop:Bad が作れなかったので、中の Charts/Shop:Bad.{node} は作っていません"
             )),
             "{said}"
         );
@@ -168,7 +168,7 @@ fn the_lines_a_process_row_may_draw_are_those_its_kind_of_row_writes() {
     assert!(mcp_write(&core, 2, "reads", "Schemas:Orders").is_ok());
     let problems = common::checked(&core, "main")["lineProblems"].to_string();
     assert!(
-        problems.contains("send の行は読む（reads）の線を取りません"),
+        problems.contains("send のステップは読む（reads）の線を取りません"),
         "{problems}"
     );
 }
@@ -423,7 +423,11 @@ fn the_guide_tells_how_a_batch_a_dispatch_and_a_wait_are_written() {
     let core = core();
     let guide = |about: &str| call(&core, "guide", json!({"about": about})).1;
     // A step may point at what an earlier step made, not a later one.
-    assert!(guide("batch").contains("前の手"), "{}", guide("batch"));
+    assert!(
+        guide("batch").contains("前のステップ"),
+        "{}",
+        guide("batch")
+    );
     let flow = guide("flow");
     // Dispatch inside the process is a run; "until" of a wait is written in its timeout.
     assert!(flow.contains("run ノードと runs の線"), "{flow}");

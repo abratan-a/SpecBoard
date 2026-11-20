@@ -1,6 +1,6 @@
 //! Tables (`table`; `specboard://SpecBoard/Docs/Design:CardKinds`「表（table）」): the data cards of a shape — the
 //! entity or value the table's line `of` goes to — gathered by its rules into a table, to put in a
-//! document (`![[…]]`, a formatdoc's row `card`), on the diagram, written out and read by MCP.
+//! document (`![[…]]`, a structdoc's row `card`), on the diagram, written out and read by MCP.
 //!
 //! The rules are the table's fields: `within` (a section: its data and that of the sections in
 //! it), `where` (`[{path, op, value}]`, every one met), `unnest` (an array: a row an element),

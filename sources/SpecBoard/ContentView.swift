@@ -235,7 +235,7 @@ struct ContentView: View {
     private var theme: GraphTheme { colorScheme == .dark ? .dark : .light }
 
     /// The nav panel on the left (a project's branches, sections and cards), from the top of the
-    /// window down: open unless it was shut, and kept (overview §13 「窓の形」).
+    /// window down: open unless it was shut, and kept (overview §13 「ウィンドウの形」).
     @AppStorage("navigator.open") private var navPanelVisible = true
     /// The window's top: in full screen or not, how far its own buttons reach (`WindowChrome`).
     @State private var chrome = WindowChrome()
@@ -301,7 +301,7 @@ struct ContentView: View {
                         // dragged ones, kept for when the window grows.
                         GeometryReader { window in
                             let widths = panelWidths(in: window.size.width)
-                            // The nav panel up to the top of the window, the top bar beside it (overview §13 「窓の形」).
+                            // The nav panel up to the top of the window, the top bar beside it (overview §13 「ウィンドウの形」).
                             WindowFrame(
                                 pane: navPanelVisible ? .open(width: widths.nav) : .shut,
                                 chrome: chrome,
@@ -359,7 +359,7 @@ struct ContentView: View {
                 SettingsScreen(page: $settingsPage, model: model, hosts: hosts, updater: updater)
             }
         }
-        // No title bar: the rows at the top are where it was (overview §13 「窓の形」).
+        // No title bar: the rows at the top are where it was (overview §13 「ウィンドウの形」).
         .ignoresSafeArea(.container, edges: .top)
         // How small the window may be: said here, not by what it holds (`WindowLeast`).
         .frame(minWidth: WindowLeast.width, minHeight: WindowLeast.height)
@@ -642,7 +642,7 @@ struct ContentView: View {
             FlowEditor(model: model, flow: card, detail: detail, editable: !model.isReadOnly)
         case .note, .freedoc, .task:
             NoteEditor(model: model, note: card, editable: !model.isReadOnly) { model.open(path: $0, from: $1) }
-        case .formatdoc:
+        case .structdoc:
             FormatDocEditor(model: model, doc: card, editable: !model.isReadOnly)
         case .stackdoc:
             StackDocEditor(model: model, doc: card, editable: !model.isReadOnly) { model.open(path: $0, from: $1) }

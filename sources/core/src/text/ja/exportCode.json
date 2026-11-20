@@ -15,7 +15,7 @@
   "exportCode.zod.enumOpen": "開いた列挙型: 未知の値も受け付ける。既知の値は {cname}Known",
   "exportCode.zod.fixed": "常に {value}",
   "exportCode.zod.headerGetters": "循環参照・相互参照は Zod 4 のゲッター記法で表現しています。\n型推論はそのまま効くので、追加の型注釈は要りません。",
-  "exportCode.zod.headerRecorded": "「未生成の rule」は、他文書を参照するか式を含むため、この生成器では検証コードに\nできないものです。コメントとしてのみ残しています。機械可読な定義が必要な場合は\nJSON Schema 出力の x-rules を参照してください。",
+  "exportCode.zod.headerRecorded": "「未生成の rule」は、他ドキュメントを参照するか式を含むため、この生成器では検証コードに\nできないものです。コメントとしてのみ残しています。機械可読な定義が必要な場合は\nJSON Schema 出力の x-rules を参照してください。",
   "exportCode.zod.headerStrict": "オブジェクトは z.strictObject です。未知のフィールドは strip されず拒否されます\n（JSON Schema 出力の additionalProperties: false と一致させています）。",
   "exportCode.zod.notGenerated": "未生成の rule: {rule}",
   "exportCode.zod.primaryKey": "主キー",

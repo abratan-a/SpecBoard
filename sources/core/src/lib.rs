@@ -67,6 +67,7 @@ mod hub;
 mod ids;
 mod kept;
 mod key_move;
+mod kind_move;
 pub mod kinds;
 mod line_move;
 pub mod mcp;
@@ -722,14 +723,14 @@ mod tests {
         );
         assert_eq!(
             parse(&core.call(r#"{}"#)),
-            json!({ "error": "頼みに op がありません" })
+            json!({ "error": "リクエストに op がありません" })
         );
         let broken = parse(&core.call("{"));
         assert!(
             broken["error"]
                 .as_str()
                 .unwrap()
-                .starts_with("頼みの JSON が読めません")
+                .starts_with("リクエストの JSON が読めません")
         );
         assert_eq!(
             parse(&core.call(r#"{"op":"project_detail","project":"none"}"#)),
@@ -779,7 +780,7 @@ mod tests {
         assert!(
             of_another_form
                 .to_string()
-                .starts_with("コアの形のデータベースではありません")
+                .starts_with("コアのスキーマのデータベースではありません")
         );
     }
 
@@ -819,7 +820,7 @@ mod tests {
             [
                 "main のロックを外した",
                 "main をロックした",
-                "プロジェクトのファイル（版 34）から読み込んだ"
+                "プロジェクトのファイル（バージョン 35）からインポートした"
             ]
         );
         let heard = heard.0.lock().unwrap();
@@ -852,7 +853,7 @@ mod tests {
         );
         assert_eq!(
             call(json!({"op": "revert", "project": project, "to": 9}))["error"],
-            "コミット 9 はありません（無い番号か、足を切ったより前です）"
+            "コミット 9 はありません（無い番号か、履歴を切り詰めたより前です）"
         );
         assert_eq!(
             call(json!({"op": "name_commit", "project": project, "seq": 1, "name": "はじまり"})),
@@ -1122,7 +1123,7 @@ mod tests {
             call(json!({"op": "main_lock", "project": archived, "on": true}))["error"]
                 .as_str()
                 .unwrap()
-                .ends_with("はアーカイブです（読むだけ）")
+                .ends_with("はアーカイブです（読み取り専用）")
         );
         assert_eq!(
             call(json!({"op": "project_delete", "project": archived})),

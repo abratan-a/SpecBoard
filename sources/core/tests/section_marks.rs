@@ -1,4 +1,4 @@
-//! A section's own mark (`icon`, `specboard://SpecBoard/Docs/Design:Overview` §9「セクションの印」): any
+//! A section's own mark (`icon`, `specboard://SpecBoard/Docs/Design:Overview` §9「セクションのアイコン」): any
 //! section but a working directory's may carry one, written and checked as a kind's mark is, each part
 //! it leaves out taken from its kind's — an actor's by what it is.
 
@@ -63,7 +63,7 @@ fn a_section_keeps_its_own_mark_and_takes_its_kinds_for_what_it_leaves_out() {
     );
     assert_eq!(
         history["commits"][0]["lines"][0],
-        "セクション Charts/注文サーバ/受付 を更新（印を変更）"
+        "セクション Charts/注文サーバ/受付 を更新（アイコンを変更）"
     );
 }
 
@@ -81,7 +81,7 @@ fn a_section_mark_is_checked_as_a_kinds_mark_is() {
     assert_eq!(
         wrong(json!("key")),
         format!(
-            "{at}: icon は {{name, color}} の形です（前の書き方の icon: \"<名前>\" と color は、icon: {{\"name\": \"<名前>\", \"color\": \"#RRGGBB\"}} に書き直します）"
+            "{at}: icon は {{name, color}} の形式です（前の書き方の icon: \"<名前>\" と color は、icon: {{\"name\": \"<名前>\", \"color\": \"#RRGGBB\"}} に書き直します）"
         )
     );
     assert_eq!(
@@ -134,7 +134,7 @@ fn a_working_directory_section_takes_no_mark() {
             json!({"target": target, "value": {"icon": {"name": "key"}}}),
         );
         assert!(
-            said.starts_with("作業ディレクトリのセクションの印は種類の定義で変えます"),
+            said.starts_with("作業ディレクトリのセクションのアイコンは種類の定義で変えます"),
             "{target}: {said}"
         );
     }

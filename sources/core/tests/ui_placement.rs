@@ -1,4 +1,4 @@
-//! Where parts sit in a ui section (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」
+//! Where parts sit in a ui section (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」
 //! 「置き方」): a mock needs parts edge to edge and one over another, so a ui section keeps a
 //! position as written, with no margin and no jump, while every other section keeps its margin.
 

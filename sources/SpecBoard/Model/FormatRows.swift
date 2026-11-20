@@ -1,6 +1,6 @@
 import Foundation
 
-/// One row of a formatdoc (`specboard://SpecBoard/Docs/Design:DesignActions`「formatdoc」): an item — a heading
+/// One row of a structdoc (`specboard://SpecBoard/Docs/Design:DesignActions`「structdoc」): an item — a heading
 /// and the rows inside it — or text, a table, a diagram, the diagrams of a section, or
 /// the table of a card's contents.
 ///
@@ -123,7 +123,7 @@ nonisolated struct FormatRow: Codable, Hashable, Sendable {
     }
 }
 
-/// A formatdoc's rows as a tree: walked, read and changed by path.
+/// A structdoc's rows as a tree: walked, read and changed by path.
 enum FormatRows {
     /// How deep items go: the export writes the top ones as `##` and the deepest as
     /// `######`, `#` being the document's own title.
@@ -290,7 +290,7 @@ enum FormatRows {
 
     // MARK: - From the clauses of a note
 
-    /// A note's clauses, as the project kept them before formatdocs: each clause an
+    /// A note's clauses, as the project kept them before structdocs: each clause an
     /// item with its heading, its text a text row inside it named `text` (or the first
     /// free name after it), and the clauses inside it items after that. The names do not
     /// change, so a path to a clause is a path to its item.
@@ -423,11 +423,11 @@ extension Validate {
     }
 }
 
-/// A row of a formatdoc, or a note or freedoc taken whole, as the list of what is
+/// A row of a structdoc, or a note or freedoc taken whole, as the list of what is
 /// connected to an item shows it (`specboard://SpecBoard/Docs/Design:DesignActions`「影響」).
 struct RowLink: Hashable {
     var note: SchemaNode
-    /// The item's names in the formatdoc; empty for a card taken whole.
+    /// The item's names in the structdoc; empty for a card taken whole.
     var path: [String]
     /// As the project writes it, from the top: `Docs:Spec.auth.login`.
     var written: String
@@ -447,7 +447,7 @@ enum RowLinks {
         func link(_ holder: SchemaNode, _ at: [String]) -> RowLink? {
             let written = directory.full(holder, at)
             if at.isEmpty {
-                let text = holder.kind == .formatdoc ? FormatRows.markdown(holder.rows)
+                let text = holder.kind == .structdoc ? FormatRows.markdown(holder.rows)
                     : holder.kind == .stackdoc ? holder.openVersion?.body ?? "" : holder.body
                 return RowLink(note: holder, path: [], written: written,
                                title: holder.label.isEmpty ? holder.name : holder.label,
@@ -463,7 +463,7 @@ enum RowLinks {
             guard let landed = landing(raw, from: directory.sectionId(of: holder), in: directory),
                   landed.schema.kind.isWriting else { return nil }
             let at = PathText.names(landed.row)
-            guard landed.schema.kind == .formatdoc, !at.isEmpty else { return (landed.schema, []) }
+            guard landed.schema.kind == .structdoc, !at.isEmpty else { return (landed.schema, []) }
             let (found, _) = FormatRows.deepest(at, in: landed.schema.rows)
             let item = FormatRows.item(of: found, in: landed.schema.rows)
             return item.isEmpty ? (landed.schema, []) : (landed.schema, item)
@@ -489,7 +489,7 @@ enum RowLinks {
             }
         }
         for other in detail.schemas where other.kind.isWriting {
-            guard other.kind == .formatdoc else {
+            guard other.kind == .structdoc else {
                 let text = other.kind == .stackdoc ? other.versions.map(\.body).joined(separator: "\n") : other.body
                 if other.id != note.id, points(text, from: other),
                    let found = link(other, []), cited.insert(found.written).inserted {

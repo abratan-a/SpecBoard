@@ -89,7 +89,8 @@ fn found(own: &Map<String, Value>, name: &str) -> Vec<Found> {
 fn one(own: &Map<String, Value>, name: &str) -> Result<Found, String> {
     let mut all = found(own, name);
     match all.len() {
-        0 => Err(text!("kindTools.none", names = name)),
+        0 => Err(crate::kinds::kind_named_before(name)
+            .unwrap_or_else(|| text!("kindTools.none", names = name))),
         1 => Ok(all.remove(0)),
         _ => {
             let join = text!("kindTools.bothJoin");
@@ -352,6 +353,12 @@ pub(crate) fn kind_read(
             }
             None => missing.push(n.clone()),
         }
+    }
+    if let Some(why) = missing
+        .iter()
+        .find_map(|n| crate::kinds::kind_named_before(n))
+    {
+        return Err(why);
     }
     if !missing.is_empty() {
         let join = text!("kindTools.read.nameJoin");

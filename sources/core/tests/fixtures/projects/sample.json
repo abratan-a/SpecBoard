@@ -1,6 +1,6 @@
 {
   "format": "specboard/project",
-  "version": 34,
+  "version": 35,
   "project": {
     "id": "d9cbe0d0-d9b3-4ba8-8c72-72248757e527",
     "name": "見本",
@@ -304,7 +304,7 @@
   "cards": [
     {
       "id": "143c8393-d17b-4307-a55e-fc109ef2bea0",
-      "kind": "formatdoc",
+      "kind": "structdoc",
       "name": "Spec",
       "section": "b797fe7c-9d56-42d3-a55e-dbeb0de0042e",
       "v": 7,

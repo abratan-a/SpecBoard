@@ -155,7 +155,7 @@ fn the_list_gives_what_to_fix_by_default_and_counts_the_whole_tree() {
         json!({
             "brokenPaths": {"kind": "fix", "label": "壊れたパス", "count": 3, "accepted": 0},
             "peerMismatches": {"kind": "fix", "label": "flow のやり取りの食い違い", "count": 2, "accepted": 0},
-            "missingStores": {"kind": "fix", "label": "置き場が書かれていない", "count": 1, "accepted": 0},
+            "missingStores": {"kind": "fix", "label": "ストアが書かれていない", "count": 1, "accepted": 0},
             "freeCards": {"kind": "info", "label": "フリーセクションのカード", "count": 1, "accepted": 0}
         })
     );
@@ -228,7 +228,7 @@ fn the_list_is_kept_to_groups_and_to_a_section_or_a_card() {
         json!({"value": {"group": "nope"}}),
     );
     assert!(
-        said.starts_with("組 nope はありません。あるのは: brokenPaths"),
+        said.starts_with("グループ nope はありません。あるのは: brokenPaths"),
         "{said}"
     );
     // A section holds what is in the sections under it.
@@ -438,14 +438,14 @@ fn an_item_is_read_whole_with_how_to_fix_it() {
                 "at": "Free:Memo",
                 "problem": "フリーセクション Free に置いたままです",
                 "section": "Free",
-                "fix": "置き場が決まったら、種類の合うセクションへ移します"
+                "fix": "置く場所が決まったら、種類の合うセクションへ移します"
             }
         ])
     );
     assert_eq!(read["notFound"], json!(["brokenPaths-0000000000"]));
     assert_eq!(
         read["hint"],
-        "見つからない id は、直ったか、ほかの木の件です（inspection_list で読み直します）"
+        "見つからない id は、直ったか、ほかのツリーの件です（inspection_list で読み直します）"
     );
     assert_eq!(
         refused(
@@ -453,7 +453,7 @@ fn an_item_is_read_whole_with_how_to_fix_it() {
             "inspection_read",
             json!({"target": "brokenPaths-0000000000"})
         ),
-        "brokenPaths-0000000000 は見つかりません（直ったか、ほかの木の件です。inspection_list で読み直します）"
+        "brokenPaths-0000000000 は見つかりません（直ったか、ほかのツリーの件です。inspection_list で読み直します）"
     );
     refused(
         &core,
@@ -517,7 +517,7 @@ fn a_mark_is_refused_whole_when_any_of_it_is_wrong() {
     );
     assert_eq!(
         said,
-        "brokenPaths-0000000000 は見つかりません（直ったか、ほかの木の件です。inspection_list で読み直します）"
+        "brokenPaths-0000000000 は見つかりません（直ったか、ほかのツリーの件です。inspection_list で読み直します）"
     );
     assert!(accepted_ids(&core, "main").is_empty());
     for value in [
@@ -548,7 +548,7 @@ fn a_mark_is_refused_whole_when_any_of_it_is_wrong() {
         json!({"target": broken, "value": {"accept": false}}),
     );
     assert!(
-        said.starts_with(&format!("{broken} には印がありません")),
+        said.starts_with(&format!("{broken} にはマークがありません")),
         "{said}"
     );
     accept(&core, json!(broken), "見本の壊れたパス");
@@ -761,7 +761,7 @@ fn the_marks_go_with_the_project_file_and_a_file_of_before_has_none() {
     let peer = first_of(&core, "peerMismatches");
     accept(&core, json!([peer, broken]), "見本のまま");
     let written = file(&core);
-    assert_eq!(written["version"], 34);
+    assert_eq!(written["version"], 35);
     let marks = written["inspectionMarks"].as_array().unwrap();
     // In the order of their ids.
     let mut order = vec![broken.clone(), peer.clone()];
@@ -875,7 +875,10 @@ fn a_project_that_denies_the_marks_to_mcp_reads_them_still() {
         "inspection_update",
         json!({"target": broken, "value": {"accept": "理由"}}),
     );
-    assert!(said.contains("点検の件に印を付ける"), "{said}");
+    assert!(
+        said.contains("インスペクションの件にマークを付ける"),
+        "{said}"
+    );
     // Read as before: listed, counted, and read one by one.
     let listed = list(&core, json!({}));
     assert_eq!(listed["counts"]["fix"], 6);
@@ -980,7 +983,7 @@ fn a_row_keeping_a_shape_no_store_holds_is_a_missing_store() {
     );
     let read = ok(&core, "inspection_read", json!({"target": items[0]["id"]}))["items"][0].clone();
     assert_eq!(read["kind"], "fix", "{read}");
-    assert_eq!(read["label"], "置き場が書かれていない");
+    assert_eq!(read["label"], "ストアが書かれていない");
     assert_eq!(
         read["problem"],
         "Receipt を置く store がありません（write Receipt.number）"
@@ -1145,7 +1148,7 @@ fn a_program_named_like_a_flow_or_an_actor_is_an_unlinked_partner() {
     assert_eq!(sent["flows"], json!(["Charts/決済サービス:Charge"]));
     assert!(sent.get("actor").is_none(), "{sent}");
     let fix = sent["fix"].as_str().unwrap();
-    for said in ["partner の線", "実行ノード", "send と receive の行"] {
+    for said in ["partner の線", "実行ノード", "send と receive のステップ"] {
         assert!(fix.contains(said), "{said}: {fix}");
     }
     // A name an actor with flows in it has: the actor is told, and no flow.

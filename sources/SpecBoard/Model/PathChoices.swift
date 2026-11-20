@@ -4,7 +4,7 @@ import Foundation
 struct PathWanted: Hashable {
     /// Cards of these kinds, whole.
     var cards: Set<SchemaKind>
-    /// What is inside the cards listed: fields, a formatdoc's rows, a flow's nodes.
+    /// What is inside the cards listed: fields, a structdoc's rows, a flow's nodes.
     var inside: Bool = false
     /// Sections, written with the `:` that says so: a section's diagram, or a link to its map.
     var sections: Bool = false
@@ -19,9 +19,9 @@ struct PathWanted: Hashable {
     static let embed = PathWanted(cards: [.flow, .action, .entity, .value, .enum, .store], sections: true)
     /// A row's place: the cards that hold data and their fields.
     static let data = PathWanted(cards: [.entity, .value, .enum, .store], inside: true)
-    /// An action's notes: a note, a document, and the items of a formatdoc.
-    static let writing = PathWanted(cards: [.note, .freedoc, .formatdoc], inside: true)
-    /// A formatdoc's card table: a shape, whole.
+    /// An action's notes: a note, a document, and the items of a structdoc.
+    static let writing = PathWanted(cards: [.note, .freedoc, .structdoc], inside: true)
+    /// A structdoc's card table: a shape, whole.
     static let shapes = PathWanted(cards: [.entity, .value, .enum])
 
     /// What a card ghost may be pointed at instead (`card_update`'s `target`): a card, or
@@ -90,7 +90,7 @@ enum PathChoices {
             guard wanted.inside else { return [] }
             if card.isCodeFile, let outlines { return symbols(card, written: written, outlines) }
             switch card.kind {
-            case .formatdoc:
+            case .structdoc:
                 func rows(_ list: [FormatRow], _ trail: [String]) -> [PathChoice] {
                     list.map { row in
                         let at = trail + [row.name]

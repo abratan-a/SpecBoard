@@ -60,7 +60,7 @@ enum DiagramRows {
 
     /// What a press on `hit` picks: a field, an enum's value — on its enum, though it is
     /// held in place in another card — a store's hold, a flow's node or a process node's
-    /// row, a formatdoc's item, a custom card's row; the card for its header and for a row
+    /// row, a structdoc's item, a custom card's row; the card for its header and for a row
     /// with nothing of its own; on a section ghost, the card or field a row stands for. On
     /// a card ghost's box, its header picks the ghost, and a row the card's own row — the
     /// box draws the card it leads to (`specboard://SpecBoard/Docs/Design:DesignSections` §2).
@@ -86,7 +86,7 @@ enum DiagramRows {
         }
         if let index = holdIndex(row, on: card) { return .row(card.id, .hold(index)) }
         if let node = nodeRow(row, on: card) { return .row(card.id, node) }
-        if card.kind == .formatdoc, row.path != SchemaNode.topRow,
+        if card.kind == .structdoc, row.path != SchemaNode.topRow,
            FormatRows.row(at: PathText.names(row.path), in: card.rows) != nil {
             return .row(card.id, .formatRow(row.path))
         }
@@ -224,7 +224,7 @@ enum DiagramRows {
 
     /// Where a line drawn from `hit` leaves: the card that holds it and its place there — a
     /// field's names (a value object's field, held in place, as its own card has it), a
-    /// formatdoc's item, a flow's node (its own card) or a process node's row (`steps[0]`), a
+    /// structdoc's item, a flow's node (its own card) or a process node's row (`steps[0]`), a
     /// goal's row (the card it is); the card's head for its header and for a row with no
     /// place of its own (an enum's value, a store's hold, a note's line). A card ghost's rows
     /// and header are the card's it leads to (a ghost holds no lines). None for a section
@@ -285,7 +285,7 @@ enum DiagramRows {
     }
 
     /// What a line drawn to `hit` reaches, as a path: the card (a card ghost's header the
-    /// ghost; a row through it, the ghost's path on into the card), a field, a formatdoc's
+    /// ghost; a row through it, the ghost's path on into the card), a field, a structdoc's
     /// item, a flow's node (a process node's row is its node), a goal's row (the card it
     /// is). None for a section ghost's header.
     static func lineTarget(_ hit: CardCanvasView.RowHit, in detail: ProjectDetail) -> String? {
@@ -800,9 +800,9 @@ enum DiagramMenus {
         if graph.documentMoved(schema.id) {
             menu.addItem(ActionMenuItem(L10n[.Diagram.menuFitCardContents]) { graph.showWholeDocument(schema.id) })
         }
-        // How a formatdoc of this section is drawn: as its rows or as the document it reads as.
+        // How a structdoc of this section is drawn: as its rows or as the document it reads as.
         // How it looks, so a locked main takes it too.
-        if schema.kind == .formatdoc, !model.isArchived, !model.isOutside(schema.id) {
+        if schema.kind == .structdoc, !model.isArchived, !model.isOutside(schema.id) {
             let document = drawnAsDocument(schema, docView: model.defaultSettings.docView)
             menu.addItem(ActionMenuItem(document ? L10n[.Diagram.menuViewRows] : L10n[.Diagram.menuViewDocument]) {
                 model.setDocView(schema.id, document ? "rows" : "document")
@@ -890,7 +890,7 @@ enum DiagramMenus {
         return item
     }
 
-    /// A card's own size, how it looks (so a locked main takes it too): 「大きさを既定に戻す」 when it
+    /// A card's own size, how it looks (so a locked main takes it too): 「サイズを既定に戻す」 when it
     /// has one, and 「中身に合わせて幅を決める」 on a card drawn as rows. None for a card that
     /// cannot carry a size or is not this section's own.
     static func sizeItems(_ schema: SchemaNode, _ model: AppModel) -> [NSMenuItem] {

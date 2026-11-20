@@ -57,7 +57,7 @@ pub const LANDINGS: &str = "core_0007_landings";
 
 /// The mark of a goal's fields named in English (Japanese keys were confusing to use): `状態`・`優先度`・`期限` moved to `status`・`priority`・`due`, their values as
 /// they were (`key_move`). What the board's kinds no longer have (a goal's and a task's `担当`, a
-/// task's `優先度`, `branch` and `PR`) stays with a card that has a value in it, 「定義に無い欄」.
+/// task's `優先度`, `branch` and `PR`) stays with a card that has a value in it, 「定義に無いフィールド」.
 /// Nothing of the tables changes; the documents do, once.
 pub const BOARD_KEYS: &str = "core_0008_board_keys";
 
@@ -265,6 +265,10 @@ CREATE TABLE IF NOT EXISTS hub_grants (
 /// rows of before cut into them (`write::chunks`).
 pub const HISTORY_CHUNKS: &str = "core_0030_history_chunks";
 
+/// The mark of the built-in structured document by its name of now (`kind_move`): `formatdoc`
+/// named `structdoc`, wherever a card or the project names it.
+pub const STRUCT_DOC: &str = "core_0031_struct_doc";
+
 /// The table of the pieces, made where a store has none (`core_0030_history_chunks`). A piece is its
 /// project's: it goes when the project goes, and one project's rows never point at another's.
 pub const HISTORY_CHUNKS_TABLE: &str = "
@@ -299,7 +303,7 @@ DROP TABLE places;
 ALTER TABLE places_new RENAME TO places;";
 
 /// Every mark a store of the form has now, in the order they came.
-pub const MARKS: [&str; 30] = [
+pub const MARKS: [&str; 31] = [
     MARK,
     MCP_WRITES,
     CARD_GHOSTS,
@@ -330,6 +334,7 @@ pub const MARKS: [&str; 30] = [
     IMAGES,
     HUB,
     HISTORY_CHUNKS,
+    STRUCT_DOC,
 ];
 
 /// Every table of the form, created empty.

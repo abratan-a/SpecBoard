@@ -373,7 +373,7 @@ private struct Window {
         out["field"] = model.selectedField.map { location in
             OJSON.string(directory?.full(location.schema, location.path) ?? location.dotted)
         } ?? .null
-        // A row of the card picked, as a press on it picks it — a formatdoc's item, a flow's node,
+        // A row of the card picked, as a press on it picks it — a structdoc's item, a flow's node,
         // a goal's task — by its path: the card alone does not say which.
         if let row = model.selectedRow, let card = model.selectedSchema, let directory,
            let path = Self.rowPath(row, of: card, in: directory) {

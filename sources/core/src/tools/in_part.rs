@@ -1,5 +1,5 @@
 //! A body changed or read in part: `card_update` takes, for a body (a Markdown or long text field — a document's, a note's, a
-//! goal's or a task's — and a formatdoc's text row), what to replace in it and what to put
+//! goal's or a task's — and a structdoc's text row), what to replace in it and what to put
 //! before or after it, over the text as it is; `card_read` gives the lines where a text is, or
 //! the lines asked for, instead of the whole of it. Neither reads a pattern: what is written is
 //! what is looked for, character for character — `find` whatever the case, as `card_list`'s

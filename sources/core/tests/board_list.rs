@@ -59,17 +59,20 @@ fn cards_are_picked_by_the_values_of_their_fields() {
     );
     let refused = list(&core, json!({"fields": {"status": {"is": "done"}}})).unwrap_err();
     assert!(
-        refused.contains("fields は {欄の名前: 値} です"),
+        refused.contains("fields は {フィールドの名前: 値} です"),
         "{refused}"
     );
     // A name of before is said as it is now, and one taken out as gone.
     let before = list(&core, json!({"fields": {"状態": "進行中"}})).unwrap_err();
     assert!(
-        before.contains("goal の欄「状態」は今は status です"),
+        before.contains("goal のフィールド「状態」は今は status です"),
         "{before}"
     );
     let gone = list(&core, json!({"fields": {"担当": "Claude"}})).unwrap_err();
-    assert!(gone.contains("goal の欄「担当」は外しました"), "{gone}");
+    assert!(
+        gone.contains("goal のフィールド「担当」は外しました"),
+        "{gone}"
+    );
 }
 
 #[test]
@@ -87,7 +90,7 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
     let ship = read("Goals:Ship");
     assert_eq!(ship["status"], "inProgress");
     assert_eq!(ship["due"], "2026-10-10");
-    // Who had it is no field of a goal's: its value stays with the card, as 「定義に無い欄」, and
+    // Who had it is no field of a goal's: its value stays with the card, as 「定義に無いフィールド」, and
     // goes when it is let go of.
     assert!(ship.get("担当").is_none() && ship.get("状態").is_none());
     assert_eq!(ship["strayFields"], json!({"担当": "Claude"}));
@@ -133,13 +136,16 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
     for (value, said) in [
         (
             json!({"状態": "完了"}),
-            "goal の欄「状態」は今は status です",
+            "goal のフィールド「状態」は今は status です",
         ),
         (
             json!({"期限": "2026-11-01"}),
-            "goal の欄「期限」は今は due です",
+            "goal のフィールド「期限」は今は due です",
         ),
-        (json!({"担当": "Claude"}), "goal の欄「担当」は外しました"),
+        (
+            json!({"担当": "Claude"}),
+            "goal のフィールド「担当」は外しました",
+        ),
     ] {
         let (failed, text) = call(
             &core,
@@ -154,7 +160,7 @@ fn a_goal_reads_its_fields_in_english_and_keeps_what_was_taken_out() {
         json!({"project": "見本", "branch": "_project_board_", "target": "Goals:Ship.t3", "value": {"kind": "task", "label": "急ぐ", "優先度": "高"}}),
     );
     assert!(
-        failed && text.contains("task の欄「優先度」は外しました"),
+        failed && text.contains("task のフィールド「優先度」は外しました"),
         "{text}"
     );
     let (failed, text) = call(
@@ -179,7 +185,7 @@ fn what_a_goal_holds_is_read_all_the_way_down() {
     assert_eq!(paths(&left), ["Goals:Ship.t2"]);
     let refused = list(&core, json!({"in": "Goals:Ship.t2"})).unwrap_err();
     assert!(
-        refused.contains("in は入れ物（goal・flow）のパスです（Goals:Ship.t2 は task）"),
+        refused.contains("in はコンテナ（goal・flow）のパスです（Goals:Ship.t2 は task）"),
         "{refused}"
     );
     // A goal in it: what that holds too, below it.
@@ -279,7 +285,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 34);
+    assert_eq!(file["version"], 35);
     // As 13 wrote it.
     file["version"] = 13.into();
     let ship = file["board"]["cards"]
@@ -321,9 +327,9 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
     assert_eq!(
         said,
         [
-            "1 枚の組み込みの線の名前・列挙の値のキー・goal の値を今の名前にした（Ship）",
-            "goal 1 枚の欄 状態・優先度・期限 を status・priority・due にした（値はそのまま。Ship）",
-            "プロジェクトのファイル（版 13）から読み込んだ"
+            "1 枚の組み込みの線の名前・enum の値のキー・goal の値を今の名前にした（Ship）",
+            "goal 1 枚のフィールド 状態・優先度・期限 を status・priority・due にした（値はそのまま。Ship）",
+            "プロジェクトのファイル（バージョン 13）からインポートした"
         ]
     );
     let again: Value = serde_json::from_str(
@@ -332,7 +338,7 @@ fn a_project_file_before_14_has_its_goals_fields_named_in_english() {
             .unwrap(),
     )
     .unwrap();
-    assert_eq!(again["version"], 34);
+    assert_eq!(again["version"], 35);
     let ship = again["board"]["cards"]
         .as_array()
         .unwrap()
@@ -412,8 +418,8 @@ fn a_project_file_before_15_has_its_goals_merge_request_by_mr() {
     assert_eq!(
         said,
         [
-            "goal 1 枚の欄 PR を MR にした（値はそのまま。Ship）",
-            "プロジェクトのファイル（版 14）から読み込んだ"
+            "goal 1 枚のフィールド PR を MR にした（値はそのまま。Ship）",
+            "プロジェクトのファイル（バージョン 14）からインポートした"
         ]
     );
     // Written by the name of before, refused with how it is written now.

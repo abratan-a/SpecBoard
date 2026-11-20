@@ -1,7 +1,7 @@
 import AppKit
 
-/// The right-click menu of a row of a formatdoc read as a document
-/// (`specboard://SpecBoard/Docs/Design:UI` §5「formatdoc の文書の見え方」).
+/// The right-click menu of a row of a structdoc read as a document
+/// (`specboard://SpecBoard/Docs/Design:UI` §5「structdoc のドキュメントの見え方」).
 enum FormatDocMenus {
 
     /// What WebKit's own menu keeps beside the row's: the selection copied and the word looked up. The rest

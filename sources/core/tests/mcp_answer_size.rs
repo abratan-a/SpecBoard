@@ -305,7 +305,7 @@ fn the_window_reads_lists_and_bodies_whole() {
     mcp(
         &core,
         "card_create",
-        json!({"project": SAMPLE, "target": "Docs:Written", "value": {"kind": "formatdoc", "rows": [
+        json!({"project": SAMPLE, "target": "Docs:Written", "value": {"kind": "structdoc", "rows": [
             {"name": "said", "kind": "text", "body": body},
         ]}}),
     );
@@ -727,11 +727,11 @@ fn a_body_changed_in_part_is_answered_with_where_it_changed() {
         json!({"project": SAMPLE, "target": "Docs:Big", "value": {"body": "丸ごと"}}),
     );
     assert!(whole.get("body").is_none(), "{whole}");
-    // A formatdoc's text row and a stackdoc's version.
+    // A structdoc's text row and a stackdoc's version.
     mcp(
         &core,
         "card_create",
-        json!({"project": SAMPLE, "target": "Docs:Written", "value": {"kind": "formatdoc", "rows": [
+        json!({"project": SAMPLE, "target": "Docs:Written", "value": {"kind": "structdoc", "rows": [
             {"name": "story", "heading": "ねらい", "rows": [{"name": "said", "kind": "text", "body": body}]},
         ]}}),
     );
@@ -796,7 +796,7 @@ fn big_table(core: &Core, rows: usize) -> usize {
     mcp(
         core,
         "card_create",
-        json!({"project": SAMPLE, "target": "Docs:Api", "value": {"kind": "formatdoc", "rows": [
+        json!({"project": SAMPLE, "target": "Docs:Api", "value": {"kind": "structdoc", "rows": [
             {"name": "ops", "kind": "table", "columns": ["op", "引数", "答え"], "cells": cells},
         ]}}),
     );

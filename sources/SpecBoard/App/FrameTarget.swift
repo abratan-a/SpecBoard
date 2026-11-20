@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The ui section a frame holds (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」), chosen
+/// The ui section a frame holds (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」), chosen
 /// from the ui sections of the tree open by their paths: in the property panel for a frame's `target`, and
 /// when a frame is made. The frame's own section is not offered; a choice that would come back round to it
 /// the core refuses, its reason said as any refusal is.

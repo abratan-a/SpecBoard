@@ -356,7 +356,9 @@ fn a_database_a_newer_core_moved_on_is_not_opened_and_the_app_is_told_why() {
     assert_eq!(said["t"], "failed", "{said}");
     let message = said["message"].as_str().unwrap();
     assert!(
-        message.contains("新しい版の SpecBoard で更新されていて、この版では開けません"),
+        message.contains(
+            "新しいバージョンの SpecBoard で更新されていて、このバージョンでは開けません"
+        ),
         "{message}"
     );
     assert!(message.contains(&place.display().to_string()), "{message}");

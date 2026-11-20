@@ -922,7 +922,7 @@ fn split_doc(doc: &Obj, ctx: &Ctx) -> Option<(Obj, Moved)> {
 // MARK: - A tree
 
 /// A tree's record: one commit `name` of lines, after the last.
-fn record(
+pub(crate) fn record(
     conn: &Connection,
     project: &str,
     tree: &str,

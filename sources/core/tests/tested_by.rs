@@ -13,7 +13,7 @@ fn a_spec_item_is_tied_to_its_tests_by_a_built_in_line() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:LoginSpec": {"kind": "formatdoc", "rows": [{"name": "login", "kind": "item", "heading": "ログイン"}]},
+            "Docs:LoginSpec": {"kind": "structdoc", "rows": [{"name": "login", "kind": "item", "heading": "ログイン"}]},
             "Docs:LoginTest": {"kind": "note", "body": "ログインのテスト"}
         }}),
     );

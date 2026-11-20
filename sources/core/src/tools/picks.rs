@@ -336,7 +336,7 @@ mod tests {
         assert!(pick("g[=web]").fits(&json!("web")));
         assert_eq!(
             not_one(&Found::Many(vec![1, 2]), "ports").unwrap(),
-            "2 つに当たります（ports[1]・ports[2]）"
+            "2 つに一致します（ports[1]・ports[2]）"
         );
         // Written again with the values an element has now.
         let again =

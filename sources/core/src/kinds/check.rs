@@ -23,7 +23,7 @@ pub struct Problem {
     /// they are said (`tools::inspection`).
     pub message: Keyed,
     /// A field or a kind of row the document holds that its kind does not (any more): what
-    /// a project's own kind leaves behind when its definition changes (「定義に無い欄」),
+    /// a project's own kind leaves behind when its definition changes (「定義に無いフィールド」),
     /// kept and not refused for one of those (`strays`).
     pub stray: bool,
 }
@@ -190,7 +190,7 @@ pub fn check_card(kinds: &Kinds, doc: &Value) -> Vec<Problem> {
 
 // MARK: - What the definition no longer has
 
-/// The fields and kinds of row a card's document holds that its kind does not (「定義に無い欄」):
+/// The fields and kinds of row a card's document holds that its kind does not (「定義に無いフィールド」):
 /// each by where it is (`old`, `items`, `items.a.memo` — as
 /// a problem says it) and its value as MCP reads it (a row's fields and the rows under it by
 /// name, no ids). What a project's own kind leaves behind when a field is taken out of its

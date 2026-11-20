@@ -288,7 +288,7 @@ fn a_card_of_the_projects_own_kind_is_made_read_changed_and_listed_as_any() {
     );
     assert_eq!(
         commits["result"]["commits"][0]["lines"][0]["summary"],
-        "カード Risks:Outage を更新（欄 severity・due）"
+        "カード Risks:Outage を更新（フィールド severity・due）"
     );
     let said = refused(
         &core,
@@ -296,7 +296,7 @@ fn a_card_of_the_projects_own_kind_is_made_read_changed_and_listed_as_any() {
         json!({"target": "Risks:Outage", "value": {"body": "x"}}),
     );
     assert!(
-        said.contains("body は risk の欄にも行にもありません"),
+        said.contains("body は risk のフィールドにも行にもありません"),
         "{said}"
     );
     // Its fields are no target of their own.
@@ -305,7 +305,10 @@ fn a_card_of_the_projects_own_kind_is_made_read_changed_and_listed_as_any() {
         "card_update",
         json!({"target": "Risks:Outage.severity", "value": {"label": "x"}}),
     );
-    assert!(said.contains("欄と行はカードの value に書きます"), "{said}");
+    assert!(
+        said.contains("フィールドと行はカードの value に書きます"),
+        "{said}"
+    );
     // Listed by its kind and by what its fields hold.
     let listed = ok(&core, "card_list", json!({"value": {"kind": "risk"}}));
     let names: Vec<&str> = listed["cards"]
@@ -483,7 +486,7 @@ fn a_definition_changed_leaves_its_values_and_a_rename_takes_them_along() {
             "card_update",
             json!({"target": "Risks:A", "value": {"strayFields": {"x": null}}})
         )
-        .contains("A に定義に無い欄「x」はありません（あるのは sev）")
+        .contains("A に定義に無いフィールド「x」はありません（あるのは sev）")
     );
     ok(
         &core,
@@ -542,7 +545,7 @@ fn a_definition_changed_leaves_its_values_and_a_rename_takes_them_along() {
         json!({"target": "risk", "value": {"renames": [{"field": "nope", "to": "level"}]}}),
     );
     assert!(
-        said.contains("risk の定義に欄 level がありません"),
+        said.contains("risk の定義にフィールド level がありません"),
         "{said}"
     );
     // A kind of card and a row's kind renamed, the definitions (the section kind that holds it too)
@@ -737,7 +740,7 @@ fn a_line_of_the_projects_own_keeps_to_the_kinds_of_row_it_names() {
         "card_update",
         json!({"target": "Risks:Outage", "value": {"connections": {"add": [{"line": "原因の文書", "from": "causes.power", "to": "Risks:Memo"}]}}}),
     );
-    for (from, there) in [("steps.backup", "行（steps）"), ("severity", "欄")] {
+    for (from, there) in [("steps.backup", "行（steps）"), ("severity", "フィールド")] {
         let said = refused(
             &core,
             "card_update",
@@ -812,7 +815,7 @@ fn a_container_of_the_projects_own_holds_cards_of_the_kinds_it_says() {
     assert!(
         dry["problems"]
             .to_string()
-            .contains("holds のある種類（入れ物）には opens"),
+            .contains("holds のある種類（コンテナ）には opens"),
         "{dry}"
     );
     common::set_kinds(&core, PROJECT, json!({"cards": [epic, story]})).unwrap();
@@ -1098,7 +1101,7 @@ fn a_kind_of_section_says_its_mark_and_its_colour() {
     );
     let said = flat["problems"].to_string();
     assert_eq!(flat["ok"], json!(false));
-    assert!(said.contains("icon は {name, color} の形です"), "{said}");
+    assert!(said.contains("icon は {name, color} の形式です"), "{said}");
     assert!(said.contains("color は icon の中に書きます"), "{said}");
 }
 
@@ -1301,13 +1304,13 @@ fn a_kind_of_the_projects_own_opens_as_a_note_with_a_body_to_write() {
     let no_body = json!({ "kind": "page", "opens": "markdown", "fields": [{ "name": "text", "fieldtype": "markdown" }] });
     let said = common::set_kinds(&core, PROJECT, json!({"cards": [no_body]})).unwrap_err();
     assert!(
-        said.contains("opens の markdown には、longtext か markdown の欄 body が要ります"),
+        said.contains("opens の markdown には、longtext か markdown のフィールド body が要ります"),
         "{said}"
     );
     let lonely_map = json!({ "kind": "lonely", "opens": "card-map" });
     let said = common::set_kinds(&core, PROJECT, json!({"cards": [lonely_map]})).unwrap_err();
     assert!(
-        said.contains("opens の card-map は、holds のある種類（入れ物）だけです"),
+        said.contains("opens の card-map は、holds のある種類（コンテナ）だけです"),
         "{said}"
     );
 }

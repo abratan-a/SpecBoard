@@ -36,7 +36,7 @@ fn normal(project: &crate::export::Project, path: &str) -> Option<String> {
 }
 
 /// Where a `bodyFrom` may stand in a card of `kind`: on the card when its kind has a body, in its
-/// rows (a formatdoc's) and in its versions (a stackdoc's).
+/// rows (a structdoc's) and in its versions (a stackdoc's).
 fn holds_of_kind(project: &crate::export::Project, kind: &str) -> super::body_from::Holds {
     super::body_from::Holds {
         body: project
@@ -44,12 +44,12 @@ fn holds_of_kind(project: &crate::export::Project, kind: &str) -> super::body_fr
             .cards()
             .get(kind)
             .map(|def| def.field("body").is_some()),
-        rows: kind == "formatdoc",
+        rows: kind == "structdoc",
         versions: kind == "stackdoc",
     }
 }
 
-/// Where a `bodyFrom` may stand in a row of a formatdoc of `kind` (a text row has a body; an item
+/// Where a `bodyFrom` may stand in a row of a structdoc of `kind` (a text row has a body; an item
 /// holds rows).
 fn holds_of_row(kind: Option<&str>) -> super::body_from::Holds {
     super::body_from::Holds {
@@ -67,7 +67,7 @@ fn create_holds(
 ) -> super::body_from::Holds {
     let kind = value.get("kind").and_then(Value::as_str);
     match inner::card_holding(project, path).map(|holder| holder.kind.as_str()) {
-        Some("formatdoc") => holds_of_row(kind),
+        Some("structdoc") => holds_of_row(kind),
         Some("stackdoc") => super::body_from::Holds {
             body: Some(true),
             rows: false,
@@ -323,7 +323,7 @@ fn known_kind(value: &Map<String, Value>, project: &crate::export::Project) -> R
 // MARK: - card_create
 
 /// What a path of `card_create` makes: a card — inside a container when the path goes on
-/// from one (its full path) —, a field, a formatdoc's row, a stackdoc's version.
+/// from one (its full path) —, a field, a structdoc's row, a stackdoc's version.
 enum Makes {
     Card(Option<String>),
     Field,
@@ -410,7 +410,7 @@ fn makes(
         }
         if let Some(holder) = inner::card_holding(project, path) {
             match holder.kind.as_str() {
-                "formatdoc" => {
+                "structdoc" => {
                     super::check(value, "card_create", "row")?;
                     return Ok(Makes::Row);
                 }

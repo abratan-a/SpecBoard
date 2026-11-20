@@ -194,7 +194,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物を開く"
+            "value" : "元のカードを開く"
           }
         }
       }
@@ -284,7 +284,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開いている版"
+            "value" : "開いているバージョン"
           }
         }
       }
@@ -326,7 +326,7 @@
       }
     },
     "docView.document" : {
-      "comment" : "How a formatdoc looks on the diagram: as the exported document.",
+      "comment" : "How a structdoc looks on the diagram: as the exported document.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -338,7 +338,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文書で見る"
+            "value" : "ドキュメントで見る"
           }
         }
       }
@@ -362,7 +362,7 @@
       }
     },
     "docView.rows" : {
-      "comment" : "How a formatdoc looks on the diagram: as one row per item.",
+      "comment" : "How a structdoc looks on the diagram: as one row per item.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -716,7 +716,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ほかにも受ける型。string・integer・number・boolean・object。array は、この型の配列も受ける（「1 つか、その並び」）。, で区切る"
+            "value" : "ほかにも受ける型。string・integer・number・boolean・object。array は、この型の配列も受ける（「1 つか、その配列」）。, で区切る"
           }
         }
       }
@@ -770,7 +770,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード名。パスに使う（セクション:カード名。空白や . などの区切りの字を含む名前は、パスでは 'release notes.md' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+            "value" : "カード名。パスに使う（セクション:カード名。空白や . などの区切り文字を含む名前は、パスでは 'release notes.md' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
           }
         }
       }
@@ -788,7 +788,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セクション付きのパス。ほかのカードや文書からこの名前で指す"
+            "value" : "セクション付きのパス。ほかのカードやドキュメントからこの名前で指す"
           }
         }
       }
@@ -806,7 +806,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "図のカードの大きさ（マス。幅だけか、幅×高さ）。図でカードの右下をドラッグして変える。高さを動かさなければ幅だけが決まり、高さは中身に合う。見かけなので履歴に残らない"
+            "value" : "図のカードのサイズ（マス。幅だけか、幅×高さ）。図でカードの右下をドラッグして変える。高さを動かさなければ幅だけが決まり、高さは中身に合う。見かけなので履歴に残らない"
           }
         }
       }
@@ -866,7 +866,7 @@
       }
     },
     "help.docView" : {
-      "comment" : "Help of the view row in the properties panel of a formatdoc.",
+      "comment" : "Help of the view row in the properties panel of a structdoc.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -878,7 +878,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "図のカードでの見え方。文書で見る（エクスポートと同じ文書の絵。線はカードの頭から）か行で見る（項目ごとの行。線は項目の行から）。決めなければプロジェクトの設定に従う"
+            "value" : "図のカードでの見え方。ドキュメントで見る（エクスポートと同じドキュメントの画像。線はカードのヘッダーから）か行で見る（項目ごとの行。線は項目の行から）。決めなければプロジェクトの設定に従う"
           }
         }
       }
@@ -968,7 +968,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フィールド名。パスに使う（セクション:カード.フィールド。区切りの字を含む名前は、パスでは 'e mail' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+            "value" : "フィールド名。パスに使う（セクション:カード.フィールド。区切り文字を含む名前は、パスでは 'e mail' のように一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
           }
         }
       }
@@ -1022,7 +1022,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "図の形の既定。開いたとき・エクスポート・文書への埋め込みはこの形で描く（flowchart: コンテンツマップ、sequence: シーケンス図）"
+            "value" : "図の形の既定。開いたとき・エクスポート・ドキュメントへの埋め込みはこの形で描く（flowchart: コンテンツマップ、sequence: シーケンス図）"
           }
         }
       }
@@ -1040,7 +1040,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "たどり着く本物の種類"
+            "value" : "たどり着く元のカードの種類"
           }
         }
       }
@@ -1058,7 +1058,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードゴーストの名前。置いたセクションの中ではこの名前だけで書け、ほかからは セクション:名前 で書ける（区切りの字を含む名前は、パスでは一重引用符で囲む）"
+            "value" : "カードゴーストの名前。置いたセクションの中ではこの名前だけで書け、ほかからは セクション:名前 で書ける（区切り文字を含む名前は、パスでは一重引用符で囲む）"
           }
         }
       }
@@ -1076,7 +1076,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードゴーストのパス。カードゴーストを通したパスはこの頭で書く"
+            "value" : "カードゴーストのパス。カードゴーストを通したパスはこの先頭で書く"
           }
         }
       }
@@ -1274,7 +1274,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "主キー。このカードの行を指す鍵"
+            "value" : "主キー。このカードの行を指すキー"
           }
         }
       }
@@ -1310,7 +1310,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "指す先をたどって着く本物のカード"
+            "value" : "指す先をたどって着く元のカード"
           }
         }
       }
@@ -1400,7 +1400,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一意。値がほかの行と重ならない"
+            "value" : "一意。値がほかの行と重複しない"
           }
         }
       }
@@ -1418,7 +1418,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "並びの何番目か。並べ替えと削除は、真ん中の行の右クリック"
+            "value" : "配列の何番目か。並べ替えと削除は、真ん中の行の右クリック"
           }
         }
       }
@@ -1436,7 +1436,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版の見出し。省くと版（key）。例 1.2.0 (2026-01-15)"
+            "value" : "バージョンの見出し。省くとバージョン（key）。例 1.2.0 (2026-01-15)"
           }
         }
       }
@@ -1454,7 +1454,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セレクタに出す版の名前（カードの中で 1 つずつ。例 1.2.0）"
+            "value" : "セレクタに出すバージョンの名前（カードの中で 1 つずつ。例 1.2.0）"
           }
         }
       }
@@ -1472,7 +1472,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版の名前。パスに使う（<カード>.<版の name>。区切りの字を含む名前は、パスでは一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
+            "value" : "バージョンの名前。パスに使う（<カード>.<バージョンの name>。区切り文字を含む名前は、パスでは一重引用符で囲む）。改名すると、プロジェクトに書かれたパスもついてくる"
           }
         }
       }
@@ -1580,7 +1580,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行の › で下に開く欄。"
+            "value" : "行の › で下に開くフィールド。"
           }
         }
       }
@@ -1598,7 +1598,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの頭に、名前のあとに出す欄。"
+            "value" : "カードのヘッダーに、名前のあとに出すフィールド。"
           }
         }
       }
@@ -1616,7 +1616,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この形のデータのカードで、要素を 1 行ずつにする並びの欄。"
+            "value" : "この形のデータのカードで、要素を 1 行ずつにする配列のフィールド。"
           }
         }
       }
@@ -1634,7 +1634,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行の頭の印（✓ ✗ – ○）を読む欄と、値ごとの印。"
+            "value" : "行の先頭のマーク（✓ ✗ – ○）を読むフィールドと、値ごとのマーク。"
           }
         }
       }
@@ -1652,7 +1652,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行の字の後ろに小さく灰色で出す欄。"
+            "value" : "行の字の後ろに小さく灰色で出すフィールド。"
           }
         }
       }
@@ -1670,7 +1670,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行の字にする欄。値が無ければ要素の鍵。"
+            "value" : "行の字にするフィールド。値が無ければ要素のキー。"
           }
         }
       }
@@ -1724,7 +1724,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この値の JSON は %@ の形です"
+            "value" : "この値の JSON は %@ の形式です"
           }
         }
       }
@@ -1778,7 +1778,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "steps の行があるので、この欄は影響と線に使われていません。MCP の card_update の value に uses: [] を渡すと消えます"
+            "value" : "steps の行があるので、このフィールドは影響と線に使われていません。MCP の card_update の value に uses: [] を渡すと消えます"
           }
         }
       }
@@ -1814,7 +1814,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ファイルから読み込む"
+            "value" : "ファイルからインポート"
           }
         }
       }
@@ -2012,7 +2012,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "見出し（省くと版）"
+            "value" : "見出し（省くとバージョン）"
           }
         }
       }
@@ -2030,7 +2030,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版（例 1.2.0）"
+            "value" : "バージョン（例 1.2.0）"
           }
         }
       }
@@ -2048,7 +2048,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版の名前"
+            "value" : "バージョンの名前"
           }
         }
       }
@@ -2084,7 +2084,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "指す先を選びます。今たどり着く本物と同じ種類のカードかカードゴーストだけが出ます（名前は変わりません）"
+            "value" : "指す先を選びます。今たどり着く元のカードと同じ種類のカードかカードゴーストだけが出ます（名前は変わりません）"
           }
         }
       }
@@ -2210,7 +2210,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "言及している note と文書"
+            "value" : "言及している note とドキュメント"
           }
         }
       }
@@ -2336,7 +2336,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読み書きする場所（古い欄・使われていません）"
+            "value" : "読み書きする場所（古いフィールド・使われていません）"
           }
         }
       }

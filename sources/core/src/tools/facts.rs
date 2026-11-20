@@ -9,7 +9,7 @@ use crate::model::{Card, CustomRow, FlowNode, FormatRow, Step};
 use crate::notetext;
 use std::collections::HashSet;
 
-/// The row a formatdoc's rows at the top draw from: the card itself.
+/// The row a structdoc's rows at the top draw from: the card itself.
 pub(crate) const TOP_ROW: &str = "#top";
 
 /// What a link is (`SchemaLink.Kind`, without an action's keys and what follows it).
@@ -17,7 +17,7 @@ pub(crate) const TOP_ROW: &str = "#top";
 pub(crate) enum LinkKind {
     /// A note, a document or an item of one that sets a flow's rules.
     Rules,
-    /// A place a note's or a document's text names, or a formatdoc's row draws.
+    /// A place a note's or a document's text names, or a structdoc's row draws.
     Mentions,
     /// A custom card's row joined to another card.
     Connects,
@@ -57,7 +57,7 @@ fn link(kind: LinkKind, row: String, path: String) -> Link {
 /// In the order the card draws them (`SchemaNode.links`): a flow's notes, from its head
 /// (a flow has no row for a rule); for a note, every place its body names, once each, from
 /// the line of the body that names it first (`#b<line>`); for a freedoc, the same from a row each
-/// (`#m<n>`); for a formatdoc, what each item's rows name and draw, from the item's row
+/// (`#m<n>`); for a structdoc, what each item's rows name and draw, from the item's row
 /// (`#top` for the rows at the top); for a stackdoc, what each version's body names, from the
 /// version; for a spec, what its story names from its head and each scenario from it; for a custom card, what each row is joined to.
 pub(crate) fn links(card: &Card) -> Vec<Link> {
@@ -67,7 +67,7 @@ pub(crate) fn links(card: &Card) -> Vec<Link> {
             .iter()
             .map(|path| link(LinkKind::Rules, String::new(), path.clone()))
             .collect(),
-        "formatdoc" => {
+        "structdoc" => {
             let mut out = Vec::new();
             let from = |item: &[String], row: String, out: &mut Vec<Link>| {
                 let mut seen = HashSet::new();
@@ -188,7 +188,7 @@ fn lines_before(text: &str, at: usize) -> usize {
     count
 }
 
-// MARK: - A formatdoc's rows
+// MARK: - A structdoc's rows
 
 /// Every row, an item before what is inside it, with its path from the top and how
 /// deep it is (`FormatRows.walk`).

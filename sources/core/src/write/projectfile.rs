@@ -472,6 +472,10 @@ impl Tx<'_> {
         if version < 33 {
             crate::name_move::move_project(self.conn(), &project_id)?;
         }
+        // Before 35, the built-in structured document was `formatdoc`: `structdoc` now.
+        if version < 35 {
+            crate::kind_move::move_project(self.conn(), &project_id)?;
+        }
         // Each said by its card, and its tree when that is not main.
         let problems: Vec<String> = crate::line_move::problems(self.conn(), Some(&project_id))?
             .into_iter()

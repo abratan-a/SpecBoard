@@ -274,7 +274,7 @@ fn what_cannot_be_undone_is_refused_with_its_reason_and_nothing_written() {
         said["error"]
             .as_str()
             .unwrap()
-            .contains("文書を変えていない"),
+            .contains("ドキュメントを変えていない"),
         "{said}"
     );
     // Undone once, a second time is the form it already is.

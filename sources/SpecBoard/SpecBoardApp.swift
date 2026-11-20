@@ -19,7 +19,7 @@ struct SpecBoardApp: App {
         .handlesExternalEvents(matching: ["*"])
         // No title bar: the nav panel reaches the top of the window, the
         // window's buttons over its first row, and the rows there are where the window is taken
-        // hold of (overview §13 「窓の形」). The title is only hidden: the Window menu and
+        // hold of (overview §13 「ウィンドウの形」). The title is only hidden: the Window menu and
         // Mission Control still name the window.
         .windowStyle(.hiddenTitleBar)
         // Only those rows' empty parts move the window (`WindowGrip`), not any empty part of it.

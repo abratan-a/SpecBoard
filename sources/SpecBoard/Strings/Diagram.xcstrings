@@ -158,7 +158,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（%@ に覚えた）"
+            "value" : "%@（%@ に記録した）"
           }
         }
       }
@@ -500,7 +500,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分かれる"
+            "value" : "分岐"
           }
         }
       }
@@ -554,7 +554,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当たる"
+            "value" : "一致する"
           }
         }
       }
@@ -680,7 +680,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "印ごとの行の数:"
+            "value" : "マークごとの行の数:"
           }
         }
       }
@@ -806,7 +806,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物のパスをコピー"
+            "value" : "元のカードのパスをコピー"
           }
         }
       }
@@ -986,7 +986,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物を開く"
+            "value" : "元のカードを開く"
           }
         }
       }
@@ -1034,7 +1034,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大きさを既定に戻す"
+            "value" : "サイズを既定に戻す"
           }
         }
       }
@@ -1112,7 +1112,7 @@
       }
     },
     "menu.viewDocument" : {
-      "comment" : "Context menu item on a formatdoc drawn as rows.",
+      "comment" : "Context menu item on a structdoc drawn as rows.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1124,13 +1124,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文書で見る"
+            "value" : "ドキュメントで見る"
           }
         }
       }
     },
     "menu.viewRows" : {
-      "comment" : "Context menu item on a formatdoc drawn as a document.",
+      "comment" : "Context menu item on a structdoc drawn as a document.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1220,7 +1220,7 @@
       }
     },
     "row.item" : {
-      "comment" : "Label of a formatdoc card's row for one item.",
+      "comment" : "Label of a structdoc card's row for one item.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1250,13 +1250,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（まだ版がありません）"
+            "value" : "（まだバージョンがありません）"
           }
         }
       }
     },
     "row.outsideItems" : {
-      "comment" : "Text of a formatdoc card's row for the rows above its items.",
+      "comment" : "Text of a structdoc card's row for the rows above its items.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1303,132 +1303,6 @@
         }
       }
     },
-    "spec.addScenario" : {
-      "comment" : "Button in a spec's editor that adds a scenario at the end.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add scenario"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scenario を足す"
-          }
-        }
-      }
-    },
-    "spec.addStep" : {
-      "comment" : "Button under a scenario's steps in a spec's editor that adds a step.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+ Step"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+ 段を足す"
-          }
-        }
-      }
-    },
-    "spec.noTest" : {
-      "comment" : "Badge of a spec's scenario that no test line (testedBy) reaches.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No test"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テスト無し"
-          }
-        }
-      }
-    },
-    "spec.scenarios" : {
-      "comment" : "Heading of the scenarios in a spec's editor.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SCENARIOS"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SCENARIOS"
-          }
-        }
-      }
-    },
-    "spec.story" : {
-      "comment" : "Heading of a spec's story (As, I want, So that) in its editor, its document and its card.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Story"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ねらい"
-          }
-        }
-      }
-    },
-    "spec.tests" : {
-      "comment" : "Badge of a spec's scenario: how many test lines (testedBy) reach it. The argument is the count.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld tests"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テスト %lld"
-          }
-        }
-      }
-    },
-    "spec.about" : {
-      "comment" : "Label of the field written after a spec's story (Markdown).",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "補足"
-          }
-        }
-      }
-    },
     "row.summary" : {
       "comment" : "Label of a stackdoc card's row that shows the first line of its description.",
       "extractionState" : "manual",
@@ -1460,7 +1334,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版"
+            "value" : "バージョン"
           }
         }
       }
@@ -1496,7 +1370,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ドラッグで範囲（⌥ で全部入るものだけ）・選んだカードの頭のドラッグでまとめて動かす"
+            "value" : "ドラッグで範囲（⌥ で全部入るものだけ）・選んだカードのヘッダーのドラッグでまとめて動かす"
           }
         }
       }
@@ -1550,7 +1424,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "呼び手は問わない"
+            "value" : "呼び出し元は問わない"
           }
         }
       }
@@ -1789,6 +1663,132 @@
         }
       }
     },
+    "spec.about" : {
+      "comment" : "Label of the field written after a spec's story (Markdown).",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "補足"
+          }
+        }
+      }
+    },
+    "spec.addScenario" : {
+      "comment" : "Button in a spec's editor that adds a scenario at the end.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add scenario"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scenario を追加"
+          }
+        }
+      }
+    },
+    "spec.addStep" : {
+      "comment" : "Button under a scenario's steps in a spec's editor that adds a step.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ Step"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ ステップを追加"
+          }
+        }
+      }
+    },
+    "spec.noTest" : {
+      "comment" : "Badge of a spec's scenario that no test line (testedBy) reaches.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト無し"
+          }
+        }
+      }
+    },
+    "spec.scenarios" : {
+      "comment" : "Heading of the scenarios in a spec's editor.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SCENARIOS"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SCENARIOS"
+          }
+        }
+      }
+    },
+    "spec.story" : {
+      "comment" : "Heading of a spec's story (As, I want, So that) in its editor, its document and its card.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Story"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ねらい"
+          }
+        }
+      }
+    },
+    "spec.tests" : {
+      "comment" : "Badge of a spec's scenario: how many test lines (testedBy) reach it. The argument is the count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tests"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト %lld"
+          }
+        }
+      }
+    },
     "workDir.caption" : {
       "comment" : "Said at the top of a working directory's section map.",
       "extractionState" : "manual",
@@ -1802,7 +1802,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この Mac のフォルダ。どの branch でも同じ（読むだけ。メモは置ける）"
+            "value" : "この Mac のフォルダ。どの branch でも同じ（読み取り専用。メモは置ける）"
           }
         }
       }

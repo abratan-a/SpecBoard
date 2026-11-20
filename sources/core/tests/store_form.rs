@@ -110,6 +110,9 @@ const HUB: &str = "core_0029_hub";
 /// The pieces a long history row is kept in (below): `history_chunks`.
 const HISTORY_CHUNKS: &str = "core_0030_history_chunks";
 
+/// The built-in structured document by its name of now (below): `formatdoc` named `structdoc`.
+const STRUCT_DOC: &str = "core_0031_struct_doc";
+
 /// A store of the form now named as before `core_0014_projects`: `plans`, every `plan_id`, and the
 /// mark let go. What turns a store back into one before an older mark does this too: a store of
 /// before was named so.
@@ -149,7 +152,7 @@ const REQUESTS_BEFORE: &str = "ALTER TABLE merge_requests DROP COLUMN keep;
              ALTER TABLE projects DROP COLUMN ai_merge;";
 
 /// Every mark a store of the form has now.
-const EVERY: [&str; 30] = [
+const EVERY: [&str; 31] = [
     "core_0001_kinds",
     MARK,
     GHOSTS,
@@ -180,6 +183,7 @@ const EVERY: [&str; 30] = [
     IMAGES,
     HUB,
     HISTORY_CHUNKS,
+    STRUCT_DOC,
 ];
 
 /// Where the copy of the store at `place`, as it was before it was brought up from `mark`
@@ -343,7 +347,8 @@ fn a_new_store_is_of_the_form_now() {
             FROZEN_TIMES,
             IMAGES,
             HUB,
-            HISTORY_CHUNKS
+            HISTORY_CHUNKS,
+            STRUCT_DOC
         ]
     );
     assert!(columns(&conn, "projects").ends_with(&[
@@ -536,7 +541,8 @@ fn a_store_made_before_is_brought_up_once() {
                 FROZEN_TIMES,
                 IMAGES,
                 HUB,
-                HISTORY_CHUNKS
+                HISTORY_CHUNKS,
+                STRUCT_DOC
             ]
         );
         assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -723,7 +729,8 @@ fn a_store_made_before_is_brought_up_once() {
             FROZEN_TIMES,
             IMAGES,
             HUB,
-            HISTORY_CHUNKS
+            HISTORY_CHUNKS,
+            STRUCT_DOC
         ]
     );
     assert_eq!(columns(&conn, "access_keys"), new_form);
@@ -899,7 +906,7 @@ fn the_copy_just_taken_is_kept_beside_copies_of_later_forms() {
 /// A store of the form before `core_0008_board_keys`: its goals' fields by their Japanese
 /// names, in every tree — main's free section, a branch's copy and its base, the board — and in
 /// the history. Opened, it is kept beside it first, then each goal's fields go by their names
-/// in English, their values as they were; what a goal has no more (`担当`) stays, 「定義に無い欄」; each
+/// in English, their values as they were; what a goal has no more (`担当`) stays, 「定義に無いフィールド」; each
 /// tree that had any says so in one commit. Opened again, nothing more is done.
 #[test]
 fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
@@ -1040,7 +1047,7 @@ fn a_store_before_the_board_keys_has_its_goals_fields_named_in_english_once() {
             (
                 "migrate".to_string(),
                 vec![format!(
-                    "goal 1 枚の欄 状態・優先度・期限 を status・priority・due にした（値はそのまま。{name}）"
+                    "goal 1 枚のフィールド 状態・優先度・期限 を status・priority・due にした（値はそのまま。{name}）"
                 )]
             ),
             "{tree}"
@@ -1090,11 +1097,11 @@ fn a_store_that_cannot_be_kept_is_not_opened() {
     in_use_before(&place);
     let said = not_opened(&place);
     assert!(
-        said.contains("移す前の控えを取れないので、開きません"),
+        said.contains("マイグレーションする前のバックアップを取れないので、開きません"),
         "{said}"
     );
     assert!(said.contains(&place.display().to_string()), "{said}");
-    assert!(said.contains("控えの所を見られません: "), "{said}");
+    assert!(said.contains("バックアップの所を見られません: "), "{said}");
     as_it_was(&place);
 
     // A folder that cannot be written in (one run as root writes in it all the same).
@@ -1114,11 +1121,11 @@ fn a_store_that_cannot_be_kept_is_not_opened() {
         match said {
             Some(said) => {
                 assert!(
-                    said.contains("移す前の控えを取れないので、開きません"),
+                    said.contains("マイグレーションする前のバックアップを取れないので、開きません"),
                     "{said}"
                 );
                 assert!(said.contains(&place.display().to_string()), "{said}");
-                assert!(said.contains("控えを書けません"), "{said}");
+                assert!(said.contains("バックアップを書けません"), "{said}");
                 as_it_was(&place);
             }
             None => eprintln!(
@@ -1136,10 +1143,10 @@ fn a_store_that_cannot_be_kept_is_not_opened() {
     std::fs::create_dir(&partial).unwrap();
     let said = not_opened(&place);
     assert!(
-        said.contains("移す前の控えを取れないので、開きません"),
+        said.contains("マイグレーションする前のバックアップを取れないので、開きません"),
         "{said}"
     );
-    assert!(said.contains("取りかけの控え"), "{said}");
+    assert!(said.contains("取りかけのバックアップ"), "{said}");
     assert!(said.contains("を消せません"), "{said}");
     as_it_was(&place);
 }
@@ -1161,7 +1168,7 @@ fn a_store_a_newer_core_moved_on_is_not_opened_and_left_as_it_is() {
     assert_eq!(
         said,
         format!(
-            "{} のデータは新しい版の SpecBoard で更新されていて、この版では開けません。SpecBoard を新しくしてください",
+            "{} のデータは新しいバージョンの SpecBoard で更新されていて、このバージョンでは開けません。SpecBoard をアップデートしてください",
             place.display()
         )
     );
@@ -1245,7 +1252,7 @@ fn a_store_before_merge_requests_has_its_table_and_goals_named_once() {
     );
     assert_eq!(
         commits["result"]["commits"][0]["lines"][0]["summary"],
-        "goal 1 枚の欄 PR を MR にした（値はそのまま。Ship）"
+        "goal 1 枚のフィールド PR を MR にした（値はそのまま。Ship）"
     );
     let (refused, said) = common::call(
         &core,
@@ -1380,7 +1387,7 @@ fn a_store_before_work_branch_has_its_goals_named_once() {
     );
     assert_eq!(
         commits["result"]["commits"][0]["lines"][0]["summary"],
-        "goal 1 枚の欄 branch を workBranch にした（値はそのまま。Ship）"
+        "goal 1 枚のフィールド branch を workBranch にした（値はそのまま。Ship）"
     );
     // Opened again: nothing more.
     core.close();

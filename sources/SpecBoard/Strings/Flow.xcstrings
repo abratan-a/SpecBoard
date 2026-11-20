@@ -140,7 +140,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ノードや処理ノードの行を選ぶとプロパティパネルで直せます。右クリックで足す・並べ替え・消す。ダブルクリックで実行するものを開きます"
+            "value" : "ノードや処理ノードのステップを選ぶとプロパティパネルで直せます。右クリックで足す・並べ替え・消す。ダブルクリックで実行するものを開きます"
           }
         }
       }
@@ -194,7 +194,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行を追加"
+            "value" : "ステップを追加"
           }
         }
       }
@@ -212,7 +212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "後ろに行を追加"
+            "value" : "後ろにステップを追加"
           }
         }
       }
@@ -248,7 +248,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この行を削除"
+            "value" : "このステップを削除"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行を下へ"
+            "value" : "ステップを下へ"
           }
         }
       }
@@ -284,7 +284,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行を上へ"
+            "value" : "ステップを上へ"
           }
         }
       }
@@ -338,7 +338,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エクスポートと同じ mermaid の描き方です。直すときは「mermaid」を切って、コンテンツマップかシーケンス図で"
+            "value" : "エクスポートと同じ mermaid の描き方です。直すときは「mermaid」をオフにして、コンテンツマップかシーケンス図で"
           }
         }
       }
@@ -680,7 +680,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の targets は使いません。並列は、前のノードの next を配列（[\"a\", \"b\"]）にして分かれ、kind: join のノードで合わせます（形は guide の about: flow）"
+            "value" : "%@ の targets は使いません。並列は、前のノードの next を配列（[\"a\", \"b\"]）にして分かれ、kind: join のノードで合わせます（形式は guide の about: flow）"
           }
         }
       }
@@ -698,7 +698,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "矢印・メモ・枠を押すと、そのノードか処理ノードの行を選んでプロパティパネルで直せます（呼んだ flow の中のものは、その flow の行）。カードと呼んだ flow の見出しはダブルクリックで開きます。ノードを足す・動かすのは「コンテンツマップ」で"
+            "value" : "矢印・メモ・枠を押すと、そのノードか処理ノードのステップを選んでプロパティパネルで直せます（呼んだ flow の中のものは、その flow のステップ）。カードと呼んだ flow の見出しはダブルクリックで開きます。ノードを足す・動かすのは「コンテンツマップ」で"
           }
         }
       }
@@ -842,7 +842,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（[{when, next}] で分かれ道を書く）"
+            "value" : "（[{when, next}] で分岐を書く）"
           }
         }
       }
@@ -860,7 +860,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（どの branches にも当たらないときの行き先。必須です）"
+            "value" : "（どの branches にも一致しないときの行き先。必須です）"
           }
         }
       }
@@ -950,7 +950,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算するを行で並べる）"
+            "value" : "（read・write・sign・verify・call・send・receive・compute のステップを並べる）"
           }
         }
       }

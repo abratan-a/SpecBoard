@@ -295,7 +295,7 @@ mod tests {
             ("<svg><rect width=10/></svg>", "属性"),
             ("<svg><rect a='1' a='2'/></svg>", "a"),
             ("<svg>a & b</svg>", "&"),
-            ("<svg></svg><svg></svg>", "根の要素"),
+            ("<svg></svg><svg></svg>", "ルート要素"),
             ("<svg><!-- open</svg>", "コメント"),
             ("<svg", "タグ"),
         ];

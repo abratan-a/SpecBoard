@@ -1,6 +1,6 @@
 {
   "id": "kind_preview:made",
-  "name": "見本",
+  "name": "サンプル",
   "label": "",
   "kind": "risk",
   "description": "",
@@ -38,7 +38,7 @@
         {
           "id": "kind_preview:made:0",
           "fields": {
-            "name": "見本の文",
+            "name": "サンプルの文",
             "done": false
           }
         }

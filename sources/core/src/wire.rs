@@ -362,7 +362,7 @@ pub fn step(v: &Value) -> Read<Value> {
 
 const ROW_KINDS: [&str; 6] = ["item", "text", "table", "diagram", "diagrams", "card"];
 
-/// A formatdoc's row (`FormatRow`).
+/// A structdoc's row (`FormatRow`).
 pub fn format_row(v: &Value) -> Read<Value> {
     let o = object(v)?;
     let name = req_string(o, "name")?;

@@ -77,7 +77,7 @@ pub(crate) const MADE_KINDS: [&str; 27] = [
     "flow",
     "store",
     "freedoc",
-    "formatdoc",
+    "structdoc",
     "stackdoc",
     "spec",
     "instance",
@@ -108,6 +108,9 @@ pub(crate) fn made_kind(raw: &str, project: &Project) -> Result<String, String> 
     let raw = if raw == "custom_goal" { "goal" } else { raw };
     if MADE_KINDS.contains(&raw) || project.is_own_kind(raw) {
         return Ok(raw.to_string());
+    }
+    if let Some(why) = crate::kinds::kind_named_before(raw) {
+        return Err(why);
     }
     let own: Vec<String> = project
         .defs

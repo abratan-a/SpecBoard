@@ -132,7 +132,7 @@ pub(crate) const CARD_KINDS: [&str; 20] = [
     "flow",
     "note",
     "freedoc",
-    "formatdoc",
+    "structdoc",
     "stackdoc",
     "spec",
     "svg",
@@ -166,8 +166,8 @@ const KIND_KEYS: [(&str, &[&str]); 38] = [
     ("unnest", &["table"]),
     ("diagram", &["flow"]),
     ("body", &["note", "freedoc", "svg", "html", "goal", "task"]),
-    ("rows", &["formatdoc"]),
-    ("view", &["formatdoc"]),
+    ("rows", &["structdoc"]),
+    ("view", &["structdoc"]),
     ("versions", &["stackdoc"]),
     ("version", &["stackdoc"]),
     ("places", &["goal"]),
@@ -190,11 +190,11 @@ const KIND_KEYS: [(&str, &[&str]); 38] = [
 ];
 
 /// The forms beside the card's that only some kinds take: a field's (a target written down to a
-/// field), a formatdoc's row's, a stackdoc's version's, a data card's value's, an enum's value's,
+/// field), a structdoc's row's, a stackdoc's version's, a data card's value's, an enum's value's,
 /// a process node's step's and a spec's scenario's.
 const KIND_FORMS: [(&str, &[&str]); 7] = [
     ("field", &["entity", "value"]),
-    ("row", &["formatdoc"]),
+    ("row", &["structdoc"]),
     ("version", &["stackdoc"]),
     ("value", &["instance"]),
     ("enumValue", &["enum"]),
@@ -364,6 +364,20 @@ fn unknown(about: &str) -> String {
 
 /// `unknown`, of several names at once.
 fn unknown_names(names: &[String]) -> String {
+    // A kind by its name of before: its name of now is what was meant.
+    let before: Vec<String> = names
+        .iter()
+        .filter_map(|n| crate::kinds::kind_named_before(n))
+        .collect();
+    if !before.is_empty() && before.len() == names.len() {
+        return before.join("\n");
+    }
+    let names: Vec<String> = names
+        .iter()
+        .filter(|n| crate::kinds::kind_named_before(n).is_none())
+        .cloned()
+        .collect();
+    let names = names.as_slice();
     let mut said = text!("mcp.guide.unknownAbout", about = crate::text::list(names));
     for name in names {
         let close = close_topics(name);
@@ -378,6 +392,10 @@ fn unknown_names(names: &[String]) -> String {
         if !takers.is_empty() {
             said += &text!("mcp.guide.valueOf", name, keys = crate::text::list(&takers));
         }
+    }
+    for why in before {
+        said += "\n";
+        said += &why;
     }
     said
 }

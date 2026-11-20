@@ -14,7 +14,7 @@ struct BranchInfo: Codable, Hashable, Identifiable, Sendable {
 }
 
 /// What the open branch did to its cards and sections against main, and what main did since
-/// (`specboard://SpecBoard/Docs/Design:DesignBranches` §11, `specboard://SpecBoard/Docs/Design:UI` §2「変更の印」):
+/// (`specboard://SpecBoard/Docs/Design:DesignBranches` §11, `specboard://SpecBoard/Docs/Design:UI` §2「変更のマーク」):
 /// what the screen marks, by id, as `branch_read` counts it (`branch_marks`).
 struct BranchMarks: Equatable {
     var changed: Set<String> = []
@@ -63,7 +63,7 @@ struct BranchMarks: Equatable {
 }
 
 /// A mark the screen puts on what a branch changed, git's way (`specboard://SpecBoard/Docs/Design:UI` §2
-/// 「変更の印」): A, M, D, ↓, M↓ on a thing itself, ● on what holds things that changed.
+/// 「変更のマーク」): A, M, D, ↓, M↓ on a thing itself, ● on what holds things that changed.
 enum ChangeMark: Hashable, Sendable {
     /// Made in the branch.
     case made

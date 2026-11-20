@@ -188,7 +188,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作業ディレクトリを足す…"
+            "value" : "作業ディレクトリを追加…"
           }
         }
       }
@@ -242,7 +242,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物のパスをコピー"
+            "value" : "元のカードのパスをコピー"
           }
         }
       }
@@ -458,7 +458,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物を開く"
+            "value" : "元のカードを開く"
           }
         }
       }
@@ -710,7 +710,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "印"
+            "value" : "アイコン"
           }
         }
       }
@@ -764,7 +764,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "やること（目標と小目標・作業の文書）を置く所。main・branch の外にあり、merge もロックもしない"
+            "value" : "やること（目標と小目標・作業のドキュメント）を置く所。main・branch の外にあり、merge もロックもしない"
           }
         }
       }
@@ -854,7 +854,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "木ごとのインスペクション（直すもの・情報・設計どおりにしたもの）。見る木は開いた画面で選ぶ"
+            "value" : "ツリーごとのインスペクション（直すもの・情報・設計どおりにしたもの）。見るツリーは開いた画面で選ぶ"
           }
         }
       }
@@ -908,7 +908,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトに 1 つの設定（説明・カードの大きさ・書き方の決まり・作業ディレクトリ）。branch では変わりません"
+            "value" : "プロジェクトに 1 つの設定（説明・カードのサイズ・書き方のルール・作業ディレクトリ）。branch では変わりません"
           }
         }
       }
@@ -926,7 +926,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き方の決まり・エクスポート"
+            "value" : "書き方のルール・エクスポート"
           }
         }
       }
@@ -1016,7 +1016,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当たるものがありません"
+            "value" : "一致するものがありません"
           }
         }
       }
@@ -1352,7 +1352,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作ったあと main で %lld 枚変わった（main を取り込むと入る）"
+            "value" : "作ったあと main で %lld 枚変わった（main をマージすると入る）"
           }
         }
       }
@@ -1442,7 +1442,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作業ディレクトリ: この Mac のフォルダから読むだけで、どの branch でも同じ。置けるのはメモだけ"
+            "value" : "作業ディレクトリ: この Mac のフォルダから読み取り専用で読み込み、どの branch でも同じ。置けるのはメモだけ"
           }
         }
       }
@@ -1568,7 +1568,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作業ディレクトリを足す"
+            "value" : "作業ディレクトリを追加"
           }
         }
       }

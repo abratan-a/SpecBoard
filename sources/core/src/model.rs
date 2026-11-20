@@ -131,7 +131,7 @@ pub struct Card {
     pub pinned: bool,
     /// The card's own size, in grid units: a width, and a height when one is written.
     pub size: Option<GridSize>,
-    /// How a formatdoc is drawn: `rows` or `document`; none for the project's default.
+    /// How a structdoc is drawn: `rows` or `document`; none for the project's default.
     pub doc_view: Option<String>,
     /// A stackdoc's version open (how it looks), by its name; none for the one on top.
     pub version: Option<String>,
@@ -237,12 +237,12 @@ impl Card {
     pub fn is_writing(&self) -> bool {
         matches!(
             self.kind.as_str(),
-            "note" | "freedoc" | "formatdoc" | "stackdoc" | "spec"
+            "note" | "freedoc" | "structdoc" | "stackdoc" | "spec"
         )
     }
 
     /// A stackdoc's versions, in its order (the newest on top; `specboard://SpecBoard/Docs/Design:CardKinds`
-    /// 「積み重ね文書」): none for any other kind.
+    /// 「スタックドキュメント」): none for any other kind.
     pub fn versions(&self) -> Vec<Version> {
         if self.kind != "stackdoc" {
             return Vec::new();
@@ -593,7 +593,7 @@ impl ExportSetting {
                 }
                 None
             }
-            "freedoc" | "formatdoc" | "stackdoc" | "spec" => {
+            "freedoc" | "structdoc" | "stackdoc" | "spec" => {
                 if !folder && !markdown {
                     return Some(keyed!("model.problem.docTarget"));
                 }

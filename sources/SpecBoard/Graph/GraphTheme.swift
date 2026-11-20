@@ -66,7 +66,7 @@ struct GraphTheme {
         // A picture or a page: drawn as a document is, in a freedoc's colour. A frame, the box such pages
         // are put into, the same.
         case .freedoc, .svg, .html, .frame, .sketch, .image: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.26 : 0.14)
-        case .formatdoc: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.40 : 0.24)
+        case .structdoc: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.40 : 0.24)
         // The versions stacked: between the two.
         case .stackdoc, .spec: return EdgeInk.blue.color(dark: isDark).withAlphaComponent(isDark ? 0.33 : 0.19)
         // A flow is the way through a chart: the chart section's red, so it is not
@@ -115,7 +115,7 @@ struct GraphTheme {
         case .value: return teal
         case .enum: return brass
         case .action: return EdgeInk.violet.color(dark: isDark)
-        case .note, .freedoc, .formatdoc, .stackdoc, .spec, .svg, .html, .frame, .sketch, .image: return EdgeInk.blue.color(dark: isDark)
+        case .note, .freedoc, .structdoc, .stackdoc, .spec, .svg, .html, .frame, .sketch, .image: return EdgeInk.blue.color(dark: isDark)
         case .flow: return EdgeInk.red.color(dark: isDark)
         case .store: return EdgeInk.green.color(dark: isDark)
         case .instance, .table: return Self.instanceInk(dark: isDark)

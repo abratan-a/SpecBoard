@@ -2,7 +2,7 @@
   {
     "name": "project_list",
     "title": "プロジェクト一覧",
-    "description": "このアクセスキーから見えるプロジェクトを、カード数・セクションの数・最終更新日つきで名前の順に返します（答えは projects。access は read（読むだけ）か write（読み書き）。archived はアーカイブで、読むだけ）。ほかのエージェントがハブ越しに共有しているプロジェクトは、owner（持ち主のエージェントの名前）と access だけで並びます。project には名前を渡し、同じ名前がほかにもあれば <名前>@<owner> で指します。reachable: false は、今は持ち主に渡せません（わけは why）。ほかのツールの project に渡す名前を確かめるために、まずこれを呼びます。100 件までで切ります（続きは value の after）。",
+    "description": "このアクセスキーから見えるプロジェクトを、カード数・セクションの数・最終更新日つきで名前の順に返します（レスポンスは projects。access は read（読み取り専用）か write（読み書き）。archived はアーカイブで、読み取り専用）。ほかのエージェントがハブ越しに共有しているプロジェクトは、owner（オーナーのエージェントの名前）と access だけで並びます。project には名前を渡し、同じ名前がほかにもあれば <名前>@<owner> で指します。reachable: false は、今はオーナーに渡せません（わけは why）。ほかのツールの project に渡す名前を確かめるために、まずこれを呼びます。100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -17,7 +17,7 @@
           "properties": {
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -40,7 +40,7 @@
   {
     "name": "project_read",
     "title": "プロジェクトの情報と設定",
-    "description": "プロジェクトそのもの（説明・設定・main の種類ごとのカードの数・タグ・根の直下のセクションの並び・カードの大きさ・使っている大きさ）を返します。archived は読むだけのプロジェクト、locked は main のロック、aiMerge はロック中の main への自動 merge、access はこのアクセスキーでの access、mcpAsk・mcpDenied は、このプロジェクトで MCP からは都度承認（request: true で画面に許可を求める）・拒否の項目（ツール名。人がプロジェクト設定の「MCP」のタブで決める）で、無ければ出ません。counts は main の種類ごとのカードの数（ghost はカードゴースト）、tags・tagGroups はタグとタググループ（declaredTags はグループにあって、まだどのカードにも付いていないタグ）、projectTree は根の直下のセクションの並び（main_sections・board_sections。変えるのは project_update の project_tree）、layout はカードの大きさ（変えるのは project_update の layout）、size はプロジェクトが DB の中で使っている大きさ（バイト。content は中身、history は履歴、historyByBranch は木ごと）、exportLanguage は書き出し・mermaid・flow の文書でアプリが作る文の言語（ja・en。変えるのは project_update の exportLanguage）です。value の as: rules で、書く場所ごとの説明（description）の決まり（プロジェクトの決まりか、無ければアプリの既定）を、決まりの文がある場所だけ返します（card.<種類>.description のように広い場所の決まりに従う所は、place で名指すと、その決まりと setAt）。書く前に読みます。木ごとの点検（壊れたパスなど）は inspection_list、全体の図は branch_read の value の as: diagram、セクションは section_list、種類の定義は kind_list・kind_read、branch は branch_list で読みます。",
+    "description": "プロジェクトそのもの（説明・設定・main の種類ごとのカードの数・タグ・ルートの直下のセクションの並び・カードのサイズ・使っているサイズ）を返します。archived は読み取り専用のプロジェクト、locked は main のロック、aiMerge はロック中の main への自動 merge、access はこのアクセスキーでの access、mcpAsk・mcpDenied は、このプロジェクトで MCP からは都度承認（request: true で画面に許可を求める）・拒否の項目（ツール名。人がプロジェクト設定の「MCP」のタブで決める）で、無ければ出ません。counts は main の種類ごとのカードの数（ghost はカードゴースト）、tags・tagGroups はタグとタググループ（declaredTags はグループにあって、まだどのカードにも付いていないタグ）、projectTree はルートの直下のセクションの並び（main_sections・board_sections。変えるのは project_update の project_tree）、layout はカードのサイズ（変えるのは project_update の layout）、size はプロジェクトが DB の中で使っているサイズ（バイト。content は中身、history は履歴、historyByBranch はツリーごと）、exportLanguage はエクスポート・mermaid・flow のドキュメントでアプリが作る文の言語（ja・en。変えるのは project_update の exportLanguage）です。value の as: rules で、書く場所ごとの説明（description）のルール（プロジェクトのルールか、無ければアプリの既定）を、ルールの文がある場所だけ返します（card.<種類>.description のように広い場所のルールに従う所は、place で指定すと、そのルールと setAt）。書く前に読みます。ツリーごとのインスペクション（壊れたパスなど）は inspection_list、全体の図は branch_read の value の as: diagram、セクションは section_list、種類の定義は kind_list・kind_read、branch は branch_list で読みます。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -58,7 +58,7 @@
               "enum": [
                 "rules"
               ],
-              "description": "rules で、書く場所ごとの説明（description）の決まり"
+              "description": "rules で、書く場所ごとの説明（description）のルール"
             }
           }
         }
@@ -73,7 +73,7 @@
               "enum": [
                 "rules"
               ],
-              "description": "rules で、書く場所ごとの説明（description）の決まり"
+              "description": "rules で、書く場所ごとの説明（description）のルール"
             },
             "place": {
               "type": "string",
@@ -92,7 +92,7 @@
         },
         "value": {
           "type": "object",
-          "description": "{as: \"rules\"} で書く場所ごとの説明の決まり（place でその場所だけ）。省くとプロジェクトの要約"
+          "description": "{as: \"rules\"} で書く場所ごとの説明のルール（place でその場所だけ）。省くとプロジェクトの要約"
         }
       },
       "required": [
@@ -103,7 +103,7 @@
   {
     "name": "project_create",
     "title": "プロジェクトの作成",
-    "description": "プロジェクトを作ります（project に新しい名前。日本語可）。main の根の直下に Docs・Schemas・Definitions・Charts・Free、ボードの根の直下に Goals のセクションが付き（project_tree の既定。あとから project_update の value の project_tree で変える）、画面は切り替わりません。書き出しのファイル名になる slug は自動で作ります。アクセスキーの項目 project_create が許可（都度承認なら request: true）のときに作れ、作ったプロジェクトは非公開、このアクセスキーで読み書きできます。書き出しの言語（project_read の exportLanguage）は、English で始まります（MCP の答えは英語のため）。改名は project_update の name、削除はアプリ側だけです。",
+    "description": "プロジェクトを作ります（project に新しい名前。日本語可）。main のルートの直下に Docs・Schemas・Definitions・Charts・Free、ボードのルートの直下に Goals のセクションが付き（project_tree の既定。あとから project_update の value の project_tree で変える）、画面は切り替わりません。エクスポートのファイル名になる slug は自動で作ります。アクセスキーの項目 project_create が許可（都度承認なら request: true）のときに作れ、作ったプロジェクトは非公開、このアクセスキーで読み書きできます。エクスポートの言語（project_read の exportLanguage）は、English で始まります（MCP のレスポンスは英語のため）。改名は project_update の name、削除はアプリ側だけです。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -137,7 +137,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -148,7 +148,7 @@
   {
     "name": "project_update",
     "title": "プロジェクトの設定を変える",
-    "description": "プロジェクトの名前・説明・カードの大きさ・書き方の決まり・根の直下のセクションの並び・slug・書き出しの言語を変えます。layout と rules は渡したものだけを変えます（guide の about: layout）。project_tree は、根の直下のセクションを名前で突き合わせ、残す・作る・外す・名前を変えるを main・各 branch とボードに当てます。main のロック中は、main・branch の分は項目 project_update.main_tree（プロジェクト設定の「MCP」）が通すときだけ書けます。種類（kind_*）はプロジェクトに 1 組で、branch では変わりません。",
+    "description": "プロジェクトの名前・説明・カードのサイズ・書き方のルール・ルートの直下のセクションの並び・slug・エクスポートの言語を変えます。layout と rules は渡したものだけを変えます（guide の about: layout）。project_tree は、ルートの直下のセクションを名前で突き合わせ、残す・作る・外す・名前を変えるを main・各 branch とボードに当てます。main のロック中は、main・branch の分は項目 project_update.main_tree（プロジェクト設定の「MCP」）が通すときだけ書けます。種類（kind_*）はプロジェクトに 1 組で、branch では変わりません。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -167,7 +167,7 @@
             },
             "slug": {
               "type": "string",
-              "description": "新しい slug。小文字にして、文字と数字のほかはダッシュでつなぐ（ほかのプロジェクトの slug は断る）。書き出しごとの既定の先の記録が付いて行き、前の slug は MCP で使えなくなる"
+              "description": "新しい slug。小文字にして、文字と数字のほかはダッシュでつなぐ（ほかのプロジェクトの slug はエラーにする）。エクスポートごとの既定の先の記録が付いて行き、前の slug は MCP で使えなくなる"
             },
             "description": {
               "type": "string",
@@ -189,7 +189,7 @@
                 },
                 "margin": {
                   "type": "integer",
-                  "description": "カードのまわりにあけるマスの数。0〜10、既定 1"
+                  "description": "カードの余白にするマスの数。0〜10、既定 1"
                 },
                 "docView": {
                   "type": "string",
@@ -197,7 +197,7 @@
                     "rows",
                     "document"
                   ],
-                  "description": "セクションマップでの formatdoc のカード（カードが view で決めていないとき）: document（既定）か rows"
+                  "description": "セクションマップでの structdoc のカード（カードが view で決めていないとき）: document（既定）か rows"
                 }
               }
             },
@@ -244,7 +244,7 @@
                   "to"
                 ]
               },
-              "description": "根の直下のセクションの名前を変える: [{top_section, to}]"
+              "description": "ルートの直下のセクションの名前を変える: [{top_section, to}]"
             },
             "dryRun": {
               "type": "boolean",
@@ -256,11 +256,11 @@
                 "ja",
                 "en"
               ],
-              "description": "書き出し・mermaid・flow の文書でアプリが作る文の言語。プロジェクトに 1 つ（書いた文は訳さない）"
+              "description": "エクスポート・mermaid・flow のドキュメントでアプリが作る文の言語。プロジェクトに 1 つ（書いた文は訳さない）"
             },
             "rev": {
               "type": "string",
-              "description": "読んだときの版（変わっていれば断る）"
+              "description": "読んだときのバージョン（変わっていればエラーにする）"
             }
           }
         }
@@ -279,7 +279,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -290,7 +290,7 @@
   {
     "name": "kind_list",
     "title": "種類の一覧",
-    "description": "プロジェクトで使える種類（カード・セクション・線）を 1 つ 1 行で返します（カードやセクションを書く前に読みます）。組み込みはこのプロジェクトに置き場のあるものだけ、そのあとにプロジェクトの種類（own: true。置き場の無いものは noPlace: true）。1 つは名前・表示名（label）・何のためか（purpose。最初の一文）と、置ける所: カードの種類は置けるセクションと入れ物の種類（in。free のセクションは、flow のノードとコアだけが作る種類を除いてどれでも置ける）、セクションの種類は中に作れる親（in）・根の直下に置ける木（trees）、線の種類は出る種類（from）と着く種類（to）。コアだけが作る種類（作業ディレクトリのファイルなど。card_create・section_create では作れない）は systemOnly: true。組み込みの使う場面（セクションの種類は印も）をプロジェクトで書き換えたものは contextChanged: true（印は iconChanged: true、flow の via の値を足したものは viasChanged: true）。使うとき・使わないとき・置けるカードと定義の全部は kind_read。",
+    "description": "プロジェクトで使える種類（カード・セクション・線）を 1 つ 1 行で返します（カードやセクションを書く前に読みます）。組み込みはこのプロジェクトに配置のあるものだけ、そのあとにプロジェクトの種類（own: true。配置の無いものは noPlace: true）。1 つは名前・表示名（label）・何のためか（purpose。最初の一文）と、置ける所: カードの種類は置けるセクションとコンテナの種類（in。free のセクションは、flow のノードとコアだけが作る種類を除いてどれでも置ける）、セクションの種類は中に作れる親（in）・ルートの直下に置けるツリー（trees）、線の種類は出る種類（from）と着く種類（to）。コアだけが作る種類（作業ディレクトリのファイルなど。card_create・section_create では作れない）は systemOnly: true。組み込みの使う場面（セクションの種類はアイコンも）をプロジェクトで書き換えたものは contextChanged: true（アイコンは iconChanged: true、flow の via の値を足したものは viasChanged: true）。使うとき・使わないとき・置けるカードと定義の全部は kind_read。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -313,7 +313,7 @@
   {
     "name": "kind_read",
     "title": "種類の定義を読む",
-    "description": "種類の定義の全部を返します（target に種類の名前、配列で複数、省けば全部をカード・セクション・線の並びで）。of は種類の別（card・section・line）、組み込みは builtin: true（プロジェクトが使う場面を書き換えたものは、その context と contextChanged: true。組み込みのセクションの種類は icon（ナビの印。{name, color}）も持ち、書き換えたものは iconChanged: true。flow は vias（ノードの via に使える値の全部。プロジェクトが足したら viasChanged: true）も持つ）、置き場の無いものは noPlace: true。名前はカード・セクション・線を通して 1 つの種類にだけ付くので、名前だけで読めます。target を省いて全部を読むときは、カード・セクション・線の種類を合わせて 100 件までで切ります（続きは value の after）。",
+    "description": "種類の定義の全部を返します（target に種類の名前、配列で複数、省けば全部をカード・セクション・線の並びで）。of は種類の別（card・section・line）、組み込みは builtin: true（プロジェクトが使う場面を書き換えたものは、その context と contextChanged: true。組み込みのセクションの種類は icon（ナビのアイコン。{name, color}）も持ち、書き換えたものは iconChanged: true。flow は vias（ノードの via に使える値の全部。プロジェクトが足したら viasChanged: true）も持つ）、配置の無いものは noPlace: true。名前はカード・セクション・線を通して 1 つの種類にだけ付くので、名前だけで読めます。target を省いて全部を読むときは、カード・セクション・線の種類を合わせて 100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -328,7 +328,7 @@
           "properties": {
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -368,7 +368,7 @@
   {
     "name": "kind_create",
     "title": "種類を作る",
-    "description": "プロジェクトの種類（カード・セクション・線）を作ります（target に名前、value の of に種類の別: card・section・line、ほかは定義）。名前は組み込みとほかの種類に重ねられません（カード・セクション・線を通して 1 つ）。定義は組み込みと並べて確かめ、誤りを全部挙げて断ります。dryRun: true で書かずに確かめ、ok と problems を返します。定義の形は guide の about: kind_create。プロジェクトに 1 つで、branch では変わらず、main のロックも受けません。答えは {created: [名前]}。",
+    "description": "プロジェクトの種類（カード・セクション・線）を作ります（target に名前、value の of に種類の別: card・section・line、ほかは定義）。名前は組み込みとほかの種類に重ねられません（カード・セクション・線を通して 1 つ）。定義は組み込みと並べて確かめ、エラーを全部挙げて返します。dryRun: true で書かずに確かめ、ok と problems を返します。定義の形式は guide の about: kind_create。プロジェクトに 1 つで、branch では変わらず、main のロックも受けません。レスポンスは {created: [名前]}。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -380,7 +380,7 @@
         "label": "kind",
         "spec": {
           "type": "object",
-          "description": "ほかのキーは種類の別ごとの定義（カードの種類は fields・rows・holds・face など、セクションの種類は holds・sections・trees など、線の種類は base・look・from・to など）。形は guide の about: kind_create",
+          "description": "ほかのキーは種類の別ごとの定義（カードの種類は fields・rows・holds・face など、セクションの種類は holds・sections・trees など、線の種類は base・look・from・to など）。形式は guide の about: kind_create",
           "properties": {
             "of": {
               "type": "string",
@@ -444,7 +444,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -457,7 +457,7 @@
   {
     "name": "kind_update",
     "title": "種類を変える",
-    "description": "種類を変えます（target に名前）。プロジェクトの種類は、value に書いた定義のキーだけを置き換え（null で外す）、name で名前を変え（カードの種類だけ。その種類のカードも付いて行く）、renames で欄・行の種類・行の欄の名前を変えて値も移します（定義の中の名前も変わる）。組み込みの種類は context（purpose・use_when・not_for）と、セクションの種類は icon（ナビの印。{name, color}）だけを書き換えられ、書いたキーが組み込みの文と印に代わります（context: null・icon: null で組み込みに戻す）。flow は vias でノード（begin・処理の行・run）の via に使える値を足せます（名前は英小文字・数字・-。使われている値は外せない）。直して合わなくなるカードは inspection_list の組 cardProblems・lineProblems・sectionProblems に出ます。dryRun: true で書かずに確かめます。答えは変えた種類の定義（kind_read と同じ形）。",
+    "description": "種類を変えます（target に名前）。プロジェクトの種類は、value に書いた定義のキーだけを置き換え（null で外す）、name で名前を変え（カードの種類だけ。その種類のカードも付いて行く）、renames でフィールド・行の種類・行のフィールドの名前を変えて値も移します（定義の中の名前も変わる）。組み込みの種類は context（purpose・use_when・not_for）と、セクションの種類は icon（ナビのアイコン。{name, color}）だけを書き換えられ、書いたキーが組み込みの文とアイコンに代わります（context: null・icon: null で組み込みに戻す）。flow は vias でノード（begin・処理のステップ・run）の via に使える値を足せます（名前は英小文字・数字・-。使われている値は外せない）。直して合わなくなるカードは inspection_list の組 cardProblems・lineProblems・sectionProblems に出ます。dryRun: true で書かずに確かめます。レスポンスは変えた種類の定義（kind_read と同じ形式）。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -469,7 +469,7 @@
         "label": "kind",
         "spec": {
           "type": "object",
-          "description": "ほかのキーは定義のキー（書いたものだけを置き換え、null で外す。形は guide の about: kind_create）。組み込みの種類は context だけ（セクションの種類は icon、flow は vias も）",
+          "description": "ほかのキーは定義のキー（書いたものだけを置き換え、null で外す。形式は guide の about: kind_create）。組み込みの種類は context だけ（セクションの種類は icon、flow は vias も）",
           "properties": {
             "name": {
               "type": "string",
@@ -482,7 +482,7 @@
                 "properties": {
                   "field": {
                     "type": "string",
-                    "description": "前の欄の名前（row があれば、その行の欄）"
+                    "description": "前のフィールドの名前（row があれば、その行のフィールド）"
                   },
                   "row": {
                     "type": "string",
@@ -497,7 +497,7 @@
                   "to"
                 ]
               },
-              "description": "欄・行の種類・行の欄の名前を変えて値も移す（カードの種類だけ）: {field, to}・{row, to}・{row, field, to}"
+              "description": "フィールド・行の種類・行のフィールドの名前を変えて値も移す（カードの種類だけ）: {field, to}・{row, to}・{row, field, to}"
             },
             "context": {
               "type": [
@@ -533,11 +533,11 @@
               "items": {
                 "type": "string"
               },
-              "description": "flow だけ: ノードの via に足す値の名前（並びで入れ替え、{add, remove} で足す・外す）。null で組み込みの値だけに戻す"
+              "description": "flow だけ: ノードの via に足す値の名前（配列で入れ替え、{add, remove} で足す・外す）。null で組み込みの値だけに戻す"
             },
             "rev": {
               "type": "string",
-              "description": "読んだときの版（変わっていれば断る）"
+              "description": "読んだときのバージョン（変わっていればエラーにする）"
             }
           }
         }
@@ -560,7 +560,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -573,7 +573,7 @@
   {
     "name": "kind_delete",
     "title": "種類を消す",
-    "description": "プロジェクトの種類を消します（target に名前、配列で複数）。使われている種類（その種類のカード・線・セクション）は、どこで使っているかを添えて断ります。組み込みの種類は消せません。dryRun: true で書かずに確かめます。答えは {deleted: [名前]}。",
+    "description": "プロジェクトの種類を消します（target に名前、配列で複数）。使われている種類（その種類のカード・線・セクション）は、どこで使っているかを添えてエラーにします。組み込みの種類は消せません。dryRun: true で書かずに確かめます。レスポンスは {deleted: [名前]}。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -592,7 +592,7 @@
             },
             "rev": {
               "type": "string",
-              "description": "読んだときの版（変わっていれば断る）"
+              "description": "読んだときのバージョン（変わっていればエラーにする）"
             }
           }
         }
@@ -617,11 +617,11 @@
         },
         "value": {
           "type": "object",
-          "description": "{dryRun, rev}。rev は読んだときの版（変わっていれば断る）"
+          "description": "{dryRun, rev}。rev は読んだときのバージョン（変わっていればエラーにする）"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -633,7 +633,7 @@
   {
     "name": "section_list",
     "title": "セクションの一覧",
-    "description": "プロジェクトのセクションを木の順に、種類（type。アクターは actor と figure）・印（icon。持つものだけ）・カード数（カードゴーストは数えず、あれば ghostCount）つきで返します。最上位は main の根で、main: true が付きます。その直下はプロジェクトの project_tree のとおりのセクション（並べた順。退避のセクション _evacuation_ があれば最後）で、ほかのセクションはその中にあります。作業ディレクトリは根の直下の種類 workdir のセクション（読んだファイルの数 files とディレクトリの数 directories が付きます）で、中のディレクトリは value の section にそのセクションかその中を渡したときだけ並べます。Rules はセクションではなくプロジェクトの設定です（project_read）。カードの名前はセクションの中で一意です。branch は branch_list で見ます。100 件までで切ります（続きは value の after）。",
+    "description": "プロジェクトのセクションをツリーの順に、種類（type。アクターは actor と figure）・アイコン（icon。持つものだけ）・カード数（カードゴーストは数えず、あれば ghostCount）つきで返します。最上位は main のルートで、main: true が付きます。その直下はプロジェクトの project_tree のとおりのセクション（並べた順。退避のセクション _evacuation_ があれば最後）で、ほかのセクションはその中にあります。作業ディレクトリはルートの直下の種類 workdir のセクション（読んだファイルの数 files とディレクトリの数 directories が付きます）で、中のディレクトリは value の section にそのセクションかその中を渡したときだけ並べます。Rules はセクションではなくプロジェクトの設定です（project_read）。カードの名前はセクションの中で一意です。branch は branch_list で見ます。100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -648,7 +648,7 @@
           "properties": {
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -686,7 +686,7 @@
   {
     "name": "section_read",
     "title": "セクションの中身",
-    "description": "セクション 1 つの中身（種類・説明・カード（カードゴーストはカードのあと）・中のセクション）を返します。value の include: [\"places\"] で、図に出る箱（ほかのセクションのカードを置いたものも）の位置が places に付きます（キーは section_update の places に書くパスと同じ: カードのパス、セクションゴーストはセクションのパス）。value の as: diagram で、そのセクションと、それが指す・それを指すほかのセクションのカードのセクションマップの図を mermaid に返します（データ（instance）を持ち entity・value・enum・store を持たないセクションは、データと線の flowchart。中のセクションは subgraph、線は着く所の条件の値をラベルに。本文の `![[…]]` と同じ図。そのセクションのカードは線が無くても描く。roots・depth・kinds・tags・fields・direction・revisionOnly と、4 万字を超えたときの答え方は card_read の as: diagram と同じ）。as: picture は同じ図を画面の描き方で PNG に（アプリが描く）。アクターのセクションは shape: sequence で、提供する flow ごとの枠のシーケンス図（as: diagram は mermaid、as: picture は PNG。lifelines で生命線の深さを変える）。答えに、アクターは figure、印を持つセクションは icon が付きます。UI のセクションは as: mock でモックの HTML（{html, width, height, parts, frames}。切らない）、as: picture はモックの絵（view: map で図）。カードと中のセクション（と places）は合わせて 100 件までで切ります（続きは value の after）。",
+    "description": "セクション 1 つの中身（種類・説明・カード（カードゴーストはカードのあと）・中のセクション）を返します。value の include: [\"places\"] で、図に出る箱（ほかのセクションのカードを置いたものも）の位置が places に付きます（キーは section_update の places に書くパスと同じ: カードのパス、セクションゴーストはセクションのパス）。value の as: diagram で、そのセクションと、それが指す・それを指すほかのセクションのカードのセクションマップの図を mermaid に返します（データ（instance）を持ち entity・value・enum・store を持たないセクションは、データと線の flowchart。中のセクションは subgraph、線は着く所の条件の値をラベルに。本文の `![[…]]` と同じ図。そのセクションのカードは線が無くても描く。roots・depth・kinds・tags・fields・direction・revisionOnly と、4 万字を超えたときのレスポンスの返し方は card_read の as: diagram と同じ）。as: picture は同じ図を画面の描き方で PNG に（アプリが描く）。アクターのセクションは shape: sequence で、提供する flow ごとの枠のシーケンス図（as: diagram は mermaid、as: picture は PNG。lifelines で生命線の深さを変える）。レスポンスに、アクターは figure、アイコンを持つセクションは icon が付きます。UI のセクションは as: mock でモックの HTML（{html, width, height, parts, frames}。切らない）、as: picture はモックの画像（view: map で図）。カードと中のセクション（と places）は合わせて 100 件までで切ります（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -721,7 +721,7 @@
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -786,7 +786,7 @@
             },
             "field": {
               "type": "string",
-              "description": "データ（instance）の図のとき、箱にデータの名前と並べて出す欄（値のパス。本文の `![[…|欄]]` と同じ）"
+              "description": "データ（instance）の図のとき、箱にデータの名前と並べて出すフィールド（値のパス。本文の `![[…|フィールド]]` と同じ）"
             },
             "shape": {
               "type": "string",
@@ -878,7 +878,7 @@
             },
             "margin": {
               "type": "integer",
-              "description": "cards・area のまわりのマス。既定 2"
+              "description": "cards・area の余白のマス。既定 2"
             },
             "view": {
               "type": "string",
@@ -886,7 +886,7 @@
                 "mock",
                 "map"
               ],
-              "description": "UI のセクションの絵: mock（モック。既定）か map（セクションマップ）"
+              "description": "UI のセクションの画像: mock（モック。既定）か map（セクションマップ）"
             },
             "notes": {
               "type": "boolean"
@@ -923,7 +923,7 @@
             },
             "notes": {
               "type": "boolean",
-              "description": "false でノートと見直しの印を外す"
+              "description": "false でノートとレビューのマークを外す"
             },
             "faces": {
               "type": "boolean",
@@ -946,7 +946,7 @@
         },
         "target": {
           "type": "string",
-          "description": "セクションのパス（Store/Ordering のように頭から）"
+          "description": "セクションのパス（Store/Ordering のように先頭から）"
         },
         "value": {
           "type": "object",
@@ -962,7 +962,7 @@
   {
     "name": "section_create",
     "title": "セクションを作る",
-    "description": "セクションを作ります（target に作るセクションのパス。Store/Ordering なら main の Store の中に Ordering）。根の直下には作れません（main・branch とボードの根の直下はプロジェクトの project_tree で決まり、project_update の value の project_tree で書きます）。作るセクションは親の種類になります（value の type で、親の種類の定義の sections にある種類を選べます。組み込みでは、チャートとアクターのセクションの中に actor（アクター）か chart。アクターは figure で姿を、どのセクションも icon で自分の印を書けます）。前後を _ で挟んだ名前はアプリが使います。名前は 255 文字までで日本語・空白・記号も使え（パスの中では区切りの字を含む名前を一重引用符で囲みます: repo/'.claude'）、兄弟の中で一意です（ASCII の大文字小文字は区別しません）。作業ディレクトリのセクションは project_update の project_tree に {\"type\": \"workdir\", \"name\": …} を足して作り、その中にはセクションを作れません。branch を作るのは branch_create です。",
+    "description": "セクションを作ります（target に作るセクションのパス。Store/Ordering なら main の Store の中に Ordering）。ルートの直下には作れません（main・branch とボードのルートの直下はプロジェクトの project_tree で決まり、project_update の value の project_tree で書きます）。作るセクションは親の種類になります（value の type で、親の種類の定義の sections にある種類を選べます。組み込みでは、チャートとアクターのセクションの中に actor（アクター）か chart。アクターは figure で姿を、どのセクションも icon で自分のアイコンを書けます）。前後を _ で挟んだ名前はアプリが使います。名前は 255 文字までで日本語・空白・記号も使え（パスの中では区切り文字を含む名前を一重引用符で囲みます: repo/'.claude'）、兄弟の中で一意です（ASCII の大文字小文字は区別しません）。作業ディレクトリのセクションは project_update の project_tree に {\"type\": \"workdir\", \"name\": …} を足して作り、その中にはセクションを作れません。branch を作るのは branch_create です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -981,7 +981,7 @@
             },
             "type": {
               "type": "string",
-              "description": "作るセクションの種類: 親の種類の定義の sections にあるもの（組み込みでは、チャートとアクターの中に actor か chart）。省けばその最初。プロジェクトの種類なら根の直下にも作れます"
+              "description": "作るセクションの種類: 親の種類の定義の sections にあるもの（組み込みでは、チャートとアクターの中に actor か chart）。省けばその最初。プロジェクトの種類ならルートの直下にも作れます"
             },
             "figure": {
               "type": "string",
@@ -990,11 +990,11 @@
                 "person",
                 "outside"
               ],
-              "description": "アクターの姿: system（作る部品。既定）・person（人）・outside（中を書かない外部）。actor だけ"
+              "description": "アクターの figure: system（作る部品。既定）・person（人）・outside（中を書かない外部）。actor だけ"
             },
             "icon": {
               "type": "object",
-              "description": "セクションの印 {name, color}（種類の定義の icon と同じ形。name は SF Symbols の名前で小文字・数字・. の 80 字まで、color は #RRGGBB。省いた方は種類の印）",
+              "description": "セクションのアイコン {name, color}（種類の定義の icon と同じ形式。name は SF Symbols の名前で小文字・数字・. の 80 字まで、color は #RRGGBB。省いた方は種類のアイコン）",
               "properties": {
                 "name": {
                   "type": "string",
@@ -1037,7 +1037,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -1048,7 +1048,7 @@
   {
     "name": "section_update",
     "title": "セクションを変える",
-    "description": "セクションの名前・説明・並び（position）・親（parent）・種類（type。チャートとアクターの切り替えなど）・姿（figure）・印（icon）を変えます。作業ディレクトリのセクションは readType・exclude・parsers・description（プロジェクトの設定）と folder（この機械のフォルダ。項目 section_update.folder）も書け、読み直して section_read の形で返します（batch では書けません）。根の直下のセクション（project_tree のもの）は名前と説明だけを変えられます（名前を変えると、project_tree と、main・各 branch の同じセクションの名前も変わるので、branch を名指すと断る。並べ替えと外すのは project_tree で）。名前や親を変えると、プロジェクトに書かれたパスのうちこのセクションを指すもの（線・flow のノード・rules・`[[ ]]` と `{{ }}`。説明に書いたものも。コードの中は除く）を書き換え、その数を rewrittenPaths で返します。",
+    "description": "セクションの名前・説明・並び（position）・親（parent）・種類（type。チャートとアクターの切り替えなど）・姿（figure）・アイコン（icon）を変えます。作業ディレクトリのセクションは readType・exclude・parsers・description（プロジェクトの設定）と folder（このマシンのフォルダ。項目 section_update.folder）も書け、再読み込みして section_read の形式で返します（batch では書けません）。ルートの直下のセクション（project_tree のもの）は名前と説明だけを変えられます（名前を変えると、project_tree と、main・各 branch の同じセクションの名前も変わるので、branch を指定すとエラーにする。並べ替えと外すのは project_tree で）。名前や親を変えると、プロジェクトに書かれたパスのうちこのセクションを指すもの（線・flow のノード・rules・`[[ ]]` と `{{ }}`。説明に書いたものも。コードの中は除く）を書き換え、その数を rewrittenPaths で返します。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -1067,7 +1067,7 @@
             },
             "parent": {
               "type": "string",
-              "description": "移す先の親（根の直下へは移せません）"
+              "description": "移す先の親（ルートの直下へは移せません）"
             },
             "description": {
               "type": "string",
@@ -1079,7 +1079,7 @@
             },
             "places": {
               "type": "object",
-              "description": "このセクションの図の箱をまとめて置く（section_read の include places で読んだ形。bottomRight は読むだけで無視する）。キーはカードのパス（カードゴーストも）かセクションゴーストのセクションのパス、値は {topLeft: {x, y}, size: {w, h}}（size は {w} か {w, h}。枠のあるカード（flow のノードとカードゴーストは除く）とセクションゴースト。null で既定に）。全部を置いてから重なりを見て、重なるものだけ一番近い空いたマスへ飛ばし、jumped に飛んだ先を返す（UI のセクションは書いたとおりに置き、飛ばさない）"
+              "description": "このセクションの図の箱をまとめて置く（section_read の include places で読んだ形式。bottomRight は読み取り専用なので無視する）。キーはカードのパス（カードゴーストも）かセクションゴーストのセクションのパス、値は {topLeft: {x, y}, size: {w, h}}（size は {w} か {w, h}。枠のあるカード（flow のノードとカードゴーストは除く）とセクションゴースト。null で既定に）。全部を置いてから重なりを見て、重なるものだけ一番近い空いたマスへ飛ばし、jumped に飛んだ先を返す（UI のセクションは書いたとおりに置き、飛ばさない）"
             },
             "move": {
               "type": "object",
@@ -1283,7 +1283,7 @@
             },
             "tidy": {
               "type": "boolean",
-              "description": "true で整える: 箱を置いた所に保ち、重なりと、行を開いて伸びるカードの伸びる分（プロジェクトの行数で描く高さまで）のために、上から順に下へだけずらす。グループは枠ごと 1 つの箱。動いた先は tidied（UI と作業ディレクトリのセクションは断る）"
+              "description": "true で整える: 箱を置いた所に保ち、重なりと、行を開いて伸びるカードの伸びる分（プロジェクトの行数で描く高さまで）のために、上から順に下へだけずらす。グループは枠ごと 1 つの箱。動いた先は tidied（UI と作業ディレクトリのセクションはエラーにする）"
             },
             "readType": {
               "type": "string",
@@ -1306,7 +1306,7 @@
                 "string",
                 "null"
               ],
-              "description": "作業ディレクトリを読むこの機械のフォルダ（null で外す）"
+              "description": "作業ディレクトリを読むこのマシンのフォルダ（null で外す）"
             },
             "parsers": {
               "type": [
@@ -1317,11 +1317,11 @@
             },
             "groups": {
               "type": "object",
-              "description": "この図のグループ（名前の付いた枠）を書く。キーはグループの名前、値は {topLeft: {x, y}, size: {w, h}, around: [パス], label, headerPlace, color, fill, name, carry, new} か null（消す。中のカードは残る）。名前は大文字小文字を区別せずに 1 つのグループを指す。無い名前は作る（topLeft か around が要る。size を省けば 6×4）。new: true は作るときだけ: 同じ名前のグループがもうあれば、動かさずに断る（ほかのセッションが先に作ったグループを、作るつもりで動かさないため。画面の「グループを追加」「選んだカードをグループにする」はこれを付ける）。topLeft を変えると、左上のマスが枠の中にある箱（中のグループも）を同じだけ動かし（carry: false なら枠だけ）、中に無い箱に重なればまとまりのまま近い空いた所へずらす（moved・shifted）。around はパスの箱を囲む枠（左・右・下に 1 マス、上に 2 マス）。color は blue・green・amber・violet・red、fill は none・check・stripes・diagonal・dots・zebra・zebraDiagonal、headerPlace は topLeft・topRight・bottomLeft・bottomRight・hidden。大きさは横 6〜1000・縦 3〜1000。UI と作業ディレクトリのセクションは断る"
+              "description": "この図のグループ（名前の付いた枠）を書く。キーはグループの名前、値は {topLeft: {x, y}, size: {w, h}, around: [パス], label, headerPlace, color, fill, name, carry, new} か null（消す。中のカードは残る）。名前は大文字小文字を区別せずに 1 つのグループを指す。無い名前は作る（topLeft か around が要る。size を省けば 6×4）。new: true は作るときだけ: 同じ名前のグループがもうあれば、動かさずにエラーにする（ほかのセッションが先に作ったグループを、作るつもりで動かさないため。画面の「グループを追加」「選んだカードをグループにする」はこれを付ける）。topLeft を変えると、左上のマスが枠の中にある箱（中のグループも）を同じだけ動かし（carry: false なら枠だけ）、中に無い箱に重なればまとまりのまま近い空いた所へずらす（moved・shifted）。around はパスの箱を囲む枠（左・右・下に 1 マス、上に 2 マス）。color は blue・green・amber・violet・red、fill は none・check・stripes・diagonal・dots・zebra・zebraDiagonal、headerPlace は topLeft・topRight・bottomLeft・bottomRight・hidden。サイズは横 6〜1000・縦 3〜1000。UI と作業ディレクトリのセクションはエラーにする"
             },
             "type": {
               "type": "string",
-              "description": "種類を変える: 親の種類の定義の sections にあり、中のカードが入るもの（チャートとアクターの切り替えなど）。根の直下のセクションは変えられません。中のセクションは、自分の種類が新しい種類の sections にあればそのまま"
+              "description": "種類を変える: 親の種類の定義の sections にあり、中のカードが入るもの（チャートとアクターの切り替えなど）。ルートの直下のセクションは変えられません。中のセクションは、自分の種類が新しい種類の sections にあればそのまま"
             },
             "figure": {
               "type": "string",
@@ -1330,11 +1330,11 @@
                 "person",
                 "outside"
               ],
-              "description": "アクターの姿（actor だけ）。チャートに変えると外れます"
+              "description": "アクターの figure（actor だけ）。チャートに変えると外れます"
             },
             "icon": {
               "type": "object",
-              "description": "セクションの印 {name, color}（種類の定義の icon と同じ形。name は SF Symbols の名前で小文字・数字・. の 80 字まで、color は #RRGGBB。省いた方は種類の印）。null で外します（種類の印に戻る）。作業ディレクトリのセクションには書けません",
+              "description": "セクションのアイコン {name, color}（種類の定義の icon と同じ形式。name は SF Symbols の名前で小文字・数字・. の 80 字まで、color は #RRGGBB。省いた方は種類のアイコン）。null で外します（種類のアイコンに戻る）。作業ディレクトリのセクションには書けません",
               "properties": {
                 "name": {
                   "type": "string",
@@ -1348,7 +1348,7 @@
             },
             "rev": {
               "type": "string",
-              "description": "読んだときの版（変わっていれば断る）"
+              "description": "読んだときのバージョン（変わっていればエラーにする）"
             }
           }
         }
@@ -1381,7 +1381,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -1392,7 +1392,7 @@
   {
     "name": "section_delete",
     "title": "セクションを消す",
-    "description": "空のセクションを消します（target にセクションのパス）。カードか中のセクションが残っていれば断ります（card_update の value の section で移すか、消してから）。根の直下のセクション（project_tree のもの）は消せません（project_tree から外すと、空なら消え、中身があれば _evacuation_ へ退避します）。空になった _evacuation_ は消せます。branch を消すのは branch_delete です。",
+    "description": "空のセクションを消します（target にセクションのパス）。カードか中のセクションが残っていればエラーにします（card_update の value の section で移すか、消してから）。ルートの直下のセクション（project_tree のもの）は消せません（project_tree から外すと、空なら消え、中身があれば _evacuation_ へ退避します）。空になった _evacuation_ は消せます。branch を消すのは branch_delete です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -1422,11 +1422,11 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         },
         "value": {
           "type": "object",
-          "description": "{rev}（読んだときの版。変わっていれば断る）"
+          "description": "{rev}（読んだときのバージョン。変わっていればエラーにする）"
         }
       },
       "required": [
@@ -1438,7 +1438,7 @@
   {
     "name": "card_list",
     "title": "カードを集める",
-    "description": "value のキーで絞ったカードを集めます（作業ディレクトリのファイルは section か kind: file で、その中の関数と型は kind: symbol で。of・name で絞る）（AND。何も無ければプロジェクト全体を limit まで）。query は並べる代わりに探します。カードゴーストはカードのあとに、入れ物の中のカードは in かノードの種類の kind のとき入れ物のすぐあとに並びます。goal・task は issue の一覧のように fields と in で絞れ、goal は番号の順に progress（done・of）を添えます。implementation で、実装に結んでいない仕様と関数（none）、コードが変わった・覚えていない、作業ディレクトリへ引いた線（実装・テストの関数など）のあるカード（changed・unrecorded。body: false で data と本文を省く）を集めます。",
+    "description": "value のキーで絞ったカードを集めます（作業ディレクトリのファイルは section か kind: file で、その中のシンボルは kind: symbol で。of・name で絞る）（AND。何も無ければプロジェクト全体を limit まで）。query は並べる代わりに探します。カードゴーストはカードのあとに、コンテナの中のカードは in かノードの種類の kind のときコンテナのすぐあとに並びます。goal・task は issue の一覧のように fields と in で絞れ、goal は番号の順に progress（done・of）を添えます。implementation で、実装に結んでいない仕様と関数（none）、コードが変わった・記録していない、作業ディレクトリへ引いた線（実装・テストの関数など）のあるカード（changed・unrecorded。body: false で data と本文を省く）を集めます。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -1525,7 +1525,7 @@
                 "flow",
                 "store",
                 "freedoc",
-                "formatdoc",
+                "structdoc",
                 "stackdoc",
                 "spec",
                 "sketch",
@@ -1558,7 +1558,7 @@
                   "flow",
                   "store",
                   "freedoc",
-                  "formatdoc",
+                  "structdoc",
                   "stackdoc",
                   "spec",
                   "sketch",
@@ -1582,15 +1582,15 @@
                   "ghost"
                 ]
               },
-              "description": "種別で絞る（ノードの種類を渡すと flow の中のノードも）。プロジェクトの種類の名前でも絞れる。並びで渡すと、そのどれか"
+              "description": "種類で絞る（ノードの種類を渡すと flow の中のノードも）。プロジェクトの種類の名前でも絞れる。配列で渡すと、そのどれか"
             },
             "fields": {
               "type": "object",
-              "description": "欄の値で絞る: {欄の名前: 値}（全部が合うもの。値を並びにするとそのどれか）。例: goal の {\"status\": \"inProgress\"}、task の {\"done\": false}"
+              "description": "フィールドの値で絞る: {フィールドの名前: 値}（全部が合うもの。値を配列にするとそのどれか）。例: goal の {\"status\": \"inProgress\"}、task の {\"done\": false}"
             },
             "in": {
               "type": "string",
-              "description": "入れ物（goal・flow）のパス。その中（中の入れ物の中も）のカードだけ"
+              "description": "コンテナ（goal・flow）のパス。その中（中のコンテナの中も）のカードだけ"
             },
             "roots": {
               "type": "array",
@@ -1623,7 +1623,7 @@
                   "used_by"
                 ]
               },
-              "description": "返す項目（省略でカードが自分で持つもの。at・ref_by・used_by は名指したときだけ。[] でパス・種類・表示名だけ）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy、used_by は響く flow と言及しているノート、at は場所（マス）、actions は goal・task のアクション"
+              "description": "返す項目（省略でカードが自分で持つもの。at・ref_by・used_by は指定したときだけ。[] でパス・種類・表示名だけ）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy、used_by は影響する flow と言及しているノート、at は場所（マス）、actions は goal・task のアクション"
             },
             "limit": {
               "type": "integer",
@@ -1631,19 +1631,19 @@
             },
             "query": {
               "type": "string",
-              "description": "部分一致で探す語（大文字小文字は区別しない）。名前・説明・タグ・本文・文書の行と版・データの値（where: data.status）・入れ物の中のカードから"
+              "description": "部分一致で探す語（大文字小文字は区別しない）。名前・説明・タグ・本文・ドキュメントの行とバージョン・データの値（where: data.status）・コンテナの中のカードから"
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "recursive": {
               "type": "boolean",
-              "description": "true で section の下のセクションのカードも集める（セクションの木の順に並ぶ）"
+              "description": "true で section の下のセクションのカードも集める（セクションのツリーの順に並ぶ）"
             },
             "body": {
               "type": "boolean",
-              "description": "false で本文を返さない（パス・rev・欄だけ。大きな本文のカードが並ぶ一覧で件数が削られるのを避ける）。データ（instance）の data も本文として返さない（implementation で codeReview だけを読むとき）。既定は本文つき。query と一緒なら、当たった所の抜き出し（excerpt）を外す（at・where だけ）"
+              "description": "false で本文を返さない（パス・rev・フィールドだけ。大きな本文のカードが並ぶ一覧で件数が削られるのを避ける）。データ（instance）の data も本文として返さない（implementation で codeReview だけを読むとき）。既定は本文つき。query と一緒なら、当たった所の抜き出し（excerpt）を外す（at・where だけ）"
             },
             "of": {
               "type": "string",
@@ -1679,7 +1679,7 @@
                   "unrecorded"
                 ]
               },
-              "description": "実装の線（作業ディレクトリのファイルへ引く線）で絞る: none は線の出ていないカード（一部の行から出ていれば、線の出ていない行を unlinked に）と、kind: symbol・file なら線の着いていない関数と型・ファイル。changed（覚えたあとでコードが変わった）・unrecorded（コードを覚えていない）はその線を持つカードで、codeReview を添える。並びで渡すとそのどれか"
+              "description": "実装の線（作業ディレクトリのファイルへ引く線）で絞る: none は線の出ていないカード（一部の行から出ていれば、線の出ていない行を unlinked に）と、kind: symbol・file なら線の着いていないシンボル・ファイル。changed（記録したあとでコードが変わった）・unrecorded（コードを記録していない）はその線を持つカードで、codeReview を添える。配列で渡すとそのどれか"
             }
           }
         }
@@ -1698,7 +1698,7 @@
         },
         "value": {
           "type": "object",
-          "description": "{section, recursive, kind, tags, fields:{<欄>: <値>}, in（入れ物）, region, roots, depth, query, include, body, limit, after, implementation}（kind: symbol は section・of・name）。条件は AND。query は名前・説明・本文・データの値から探す。どのカードにも rev"
+          "description": "{section, recursive, kind, tags, fields:{<フィールド>: <値>}, in（コンテナ）, region, roots, depth, query, include, body, limit, after, implementation}（kind: symbol は section・of・name）。条件は AND。query は名前・説明・本文・データの値から探す。どのカードにも rev"
         }
       },
       "required": [
@@ -1709,7 +1709,7 @@
   {
     "name": "card_read",
     "title": "カードを読む",
-    "description": "カード・フィールド・行・ノード・データの値を返します（target にパス、配列で複数）。答えの form（card・field・enumValue・datum・row）が書き方で、読んだキーのまま書けます。fields は入れ子まで点でつないだ名前の平らな並び、入れ物は中のカードのパス（cards）です。読んだ値をもとに書くときは、カードごとの rev を添えます。本文は 400 行で切ります。value の include で項目を絞り、find・lines で本文の一部を、as で別の読み方をします（as: picture は画面の図を PNG に。アプリが描く。as: context はボードの goal か task の材料: 指している仕様の行・その形・実装の関数の本文を、goal の workBranch の branch で解いて 1 回で）。そこを指す済んでいないボードのカードは fromBoard。ファイルは language と関数と型（symbols）、その先の関数と型（repo/src:'a.rs'.Order.total）はコード（行はファイルの番号）。実装の線の先のコードが覚えたあとで変わったか、覚えていなければ codeReview。",
+    "description": "カード・フィールド・行・ノード・データの値を返します（target にパス、配列で複数）。レスポンスの form（card・field・enumValue・datum・row）が書き方で、読んだキーのまま書けます。fields は入れ子まで点でつないだ名前の平らな配列、コンテナは中のカードのパス（cards）です。読んだ値をもとに書くときは、カードごとの rev を添えます。本文は 400 行で切ります。value の include で項目を絞り、find・lines で本文の一部を、as で別の読み方をします（as: picture は画面の図を PNG に。アプリが描く。as: context はボードの goal か task の材料: 指している仕様の行・その形・実装の関数の本文を、goal の workBranch の branch で解いて 1 回で）。そこを指す済んでいないボードのカードは fromBoard。ファイルは language とシンボル（symbols）、その先のシンボル（repo/src:'a.rs'.Order.total）はコード（行はファイルの番号）。実装の線の先のコードが記録したあとで変わったか、記録していなければ codeReview。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -1739,7 +1739,7 @@
             },
             "find": {
               "type": "string",
-              "description": "本文の中で探す文字（大文字小文字は区別しない）。本文の代わりに、当たった行（found。50 まで）と lineCount を返す。formatdoc・stackdoc・flow は中の全部から"
+              "description": "本文の中で探す文字（大文字小文字は区別しない）。本文の代わりに、当たった行（found。50 まで）と lineCount を返す。structdoc・stackdoc・flow は中の全部から"
             },
             "context": {
               "type": "integer",
@@ -1747,7 +1747,7 @@
             },
             "lines": {
               "type": "object",
-              "description": "本文のこの範囲の行だけを返す（行の番号は 1 から。関数と型はファイルの行の番号）",
+              "description": "本文のこの範囲の行だけを返す（行の番号は 1 から。シンボルはファイルの行の番号）",
               "properties": {
                 "from": {
                   "type": "integer",
@@ -1785,7 +1785,7 @@
                   "groups"
                 ]
               },
-              "description": "返す項目（省略で全部）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy（指している所）、used_by は響く flow と言及しているノート、at は場所（topLeft・bottomRight・size（描く箱）と、書いた大きさがあれば ownSize（{w} か {w, h}）。マス）、places は goal のコンテンツマップの箱、groups は goal・入れ物のカードマップのグループ（section_read の groups と同じ形）、from_board は fromBoard、actions は goal・task のアクション（今使えるか）"
+              "description": "返す項目（省略で全部）。ref_to は refersTo（線が出る所 → 指す先）、ref_by は referencedBy（指している所）、used_by は影響する flow と言及しているノート、at は場所（topLeft・bottomRight・size（描く箱）と、書いたサイズがあれば ownSize（{w} か {w, h}）。マス）、places は goal のコンテンツマップの箱、groups は goal・コンテナのカードマップのグループ（section_read の groups と同じ形式）、from_board は fromBoard、actions は goal・task のアクション（今使えるか）"
             }
           }
         }
@@ -1872,11 +1872,11 @@
                 "flowchart",
                 "sequence"
               ],
-              "description": "描き方。省けばカードの diagram の形"
+              "description": "描き方。省けばカードの diagram の形式"
             },
             "field": {
               "type": "string",
-              "description": "データ（instance）の図で、箱に出す欄（`![[…|欄]]` と同じ）"
+              "description": "データ（instance）の図で、箱に出すフィールド（`![[…|フィールド]]` と同じ）"
             },
             "lifelines": {
               "type": "array",
@@ -1928,11 +1928,11 @@
             },
             "to": {
               "type": "string",
-              "description": "線の相手のパス（カード・欄・行・ノード）。省けば、出せる線の種類とそれぞれが着ける相手（reaches）"
+              "description": "線の相手のパス（カード・フィールド・行・ノード）。省けば、出せる線の種類とそれぞれが着ける相手（reaches）"
             },
             "from": {
               "type": "string",
-              "description": "target の中の線の出元（処理の行は steps[0] など）。省けば頭"
+              "description": "target の中の線の出元（処理のステップは steps[0] など）。省けばヘッダー"
             },
             "section": {
               "type": "string",
@@ -1951,7 +1951,7 @@
               "enum": [
                 "markdown"
               ],
-              "description": "文書（版・項目のパスならその版・項目）・note・flow（ノードまで）・表を Markdown 1 本で返す（本文の [[ ]] と図の ![[ ]] は書いたまま、表の ![[ ]] だけ表に開く）"
+              "description": "ドキュメント（バージョン・項目のパスならそのバージョン・項目）・note・flow（ノードまで）・表を Markdown 1 本で返す（本文の [[ ]] と図の ![[ ]] は書いたまま、表の ![[ ]] だけ表に開く）"
             },
             "lines": {
               "type": "object",
@@ -1983,7 +1983,7 @@
               "enum": [
                 "picture"
               ],
-              "description": "PNG: flow はノードの図、goal と入れ物はコンテンツマップ、ほかはコネクションマップ"
+              "description": "PNG: flow はノードの図、goal とコンテナはコンテンツマップ、ほかはコネクションマップ"
             },
             "section": {
               "type": "string",
@@ -2053,7 +2053,7 @@
             },
             "margin": {
               "type": "integer",
-              "description": "cards・area のまわりのマス。既定 2"
+              "description": "cards・area の余白のマス。既定 2"
             }
           }
         }
@@ -2068,7 +2068,7 @@
               "enum": [
                 "context"
               ],
-              "description": "ボード（branch: _project_board_）の goal か task 1 枚の材料を、goal の workBranch の branch（無ければ main）で解いて返す: work（本文）・refs（指している仕様の行と文書）・shapes（その形）・code（implementedBy の先の関数の本文）。4 万字まで、入らないものは left に読む呼び出しを添えて"
+              "description": "ボード（branch: _project_board_）の goal か task 1 枚の材料を、goal の workBranch の branch（無ければ main）で解いて返す: work（本文）・refs（指している仕様の行とドキュメント）・shapes（その形）・code（implementedBy の先の関数の本文）。4 万字まで、入らないものは left に読む呼び出しを添えて"
             }
           }
         }
@@ -2093,11 +2093,11 @@
           "items": {
             "type": "string"
           },
-          "description": "カードかフィールドか行かノードのパス（配列で複数）。例: Core:User / Core:User.email / Docs:Spec.auth / Behavior:Checkout.review / repo/src:'a.rs'.Order.total（ファイルの中の関数と型）"
+          "description": "カードかフィールドか行かノードのパス（配列で複数）。例: Core:User / Core:User.email / Docs:Spec.auth / Behavior:Checkout.review / repo/src:'a.rs'.Order.total（ファイルの中のシンボル）"
         },
         "value": {
           "type": "object",
-          "description": "読み方。省くと書くときと同じ形（fields は入れ子まで点でつないだ名前）と form・rev。{include:[fields|connections|ref_to|ref_by|used_by|at|places|…]} で返す項目、{find, context} で本文を探す、{lines:{from, to}} で本文の一部。{as: \"markdown\"} 文書（項目のパスならその項目）・note・flow を Markdown 1 つ（markdown）、{as: \"impact\"} 変えたときに響く所、{as: \"diagram\", depth, direction, …} 図（mermaid）、{as: \"picture\"} その PNG、{as: \"lineKinds\", to, from} 引ける線の種類、{as: \"exists\"} パスが解決するか、{as: \"context\"} goal か task の材料（仕様・形・コード）。target は配列や、enum の値（Schemas:Status.paid）・process の手（….save.steps[1]）でもよい"
+          "description": "読み方。省くと書くときと同じ形式（fields は入れ子まで点でつないだ名前）と form・rev。{include:[fields|connections|ref_to|ref_by|used_by|at|places|…]} で返す項目、{find, context} で本文を探す、{lines:{from, to}} で本文の一部。{as: \"markdown\"} ドキュメント（項目のパスならその項目）・note・flow を Markdown 1 つ（markdown）、{as: \"impact\"} 変えたときに影響する所、{as: \"diagram\", depth, direction, …} 図（mermaid）、{as: \"picture\"} その PNG、{as: \"lineKinds\", to, from} 引ける線の種類、{as: \"exists\"} パスが解決するか、{as: \"context\"} goal か task の材料（仕様・形・コード）。target は配列や、enum の値（Schemas:Status.paid）・process のステップ（….save.steps[1]）でもよい"
         }
       },
       "required": [
@@ -2109,7 +2109,7 @@
   {
     "name": "card_create",
     "title": "カードを作る",
-    "description": "カードを作ります（target にカードのパス。例: Core:User）。target をカードの中まで書くと、その中に作ります: フィールド（Core:User.email）、formatdoc の行（Docs:Spec.auth。value の before・after で置く所）、stackdoc の版、データ（instance）の並びの要素（Data:Host1.ports[number=443,protocol=tcp]。value の value と position。並びを書き直さずに足す）、入れ物の中のカード（Behavior:Checkout.review は flow のノード、Goals:Launch.Design は goal の中の goal・task）。value には kind と、その種類のキー（fields・values・steps・body・rows など）と線（connections）をまとめて書きます。target を省いて value をパスごとにすると 1 回でいくつも作り（flow とノードは guide の about: flow）、同じ card_create の value に入れたカードは順不同に互いを線で指せます（batch の別の手で作るカードは、前の手のものだけ指せます）。kind: ghost と target でカードゴーストを作ります。名前は日本語・空白・記号も使えます（1〜255 字）。解決しないパスの warnings は、全部を書き終えてから数えます。前の形（ref・pointsAt・holds・notes・links・payloads、flow の nodes・goal の items・value の in）は書き方を添えて断ります。",
+    "description": "カードを作ります（target にカードのパス。例: Core:User）。target をカードの中まで書くと、その中に作ります: フィールド（Core:User.email）、structdoc の行（Docs:Spec.auth。value の before・after で置く所）、stackdoc のバージョン、データ（instance）の配列の要素（Data:Host1.ports[number=443,protocol=tcp]。value の value と position。配列を書き直さずに足す）、コンテナの中のカード（Behavior:Checkout.review は flow のノード、Goals:Launch.Design は goal の中の goal・task）。value には kind と、その種類のキー（fields・values・steps・body・rows など）と線（connections）をまとめて書きます。target を省いて value をパスごとにすると 1 回でいくつも作り（flow とノードは guide の about: flow）、同じ card_create の value に入れたカードは順不同に互いを線で指せます（batch の別のステップで作るカードは、前のステップのものだけ指せます）。kind: ghost と target でカードゴーストを作ります。名前は日本語・空白・記号も使えます（1〜255 字）。解決しないパスの warnings は、全部を書き終えてから数えます。以前の形式（ref・pointsAt・holds・notes・links・payloads、flow の nodes・goal の items・value の in）は書き方を添えてエラーにします。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -2132,7 +2132,7 @@
                 "flow",
                 "store",
                 "freedoc",
-                "formatdoc",
+                "structdoc",
                 "stackdoc",
                 "spec",
                 "sketch",
@@ -2212,7 +2212,7 @@
                   },
                   "array": {
                     "type": "boolean",
-                    "description": "並び"
+                    "description": "配列"
                   },
                   "unique": {
                     "type": "boolean",
@@ -2230,7 +2230,7 @@
                         "kind"
                       ]
                     },
-                    "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
+                    "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule ならエラーにする）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象のフィールド。省けばこのフィールド・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べるフィールドの名前の配列）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無いフィールド））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分けるフィールドの名前の配列））、chainedBy（field*（前の世代の digest のフィールド））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。フィールドの名前を書く引数（field・then・by・keys）は、ルールを置いたフィールドが中にフィールドを持つ（object と、ref が埋め込むカード）ならその中、持たなければそのフィールドと並ぶフィールドから引きます（カードのルールはカードのフィールドから）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中のフィールドを改名すると、名前も付いて行きます"
                   },
                   "variants": {
                     "type": "array",
@@ -2284,7 +2284,7 @@
                   "name"
                 ]
               },
-              "description": "enum の値（{name, label, description} の並び）"
+              "description": "enum の値（{name, label, description} の配列）"
             },
             "tags": {
               "type": "array",
@@ -2308,7 +2308,7 @@
                   },
                   "from": {
                     "type": "string",
-                    "description": "線が出る欄や行のパス（カードの中の名前。例: buyer_id・profile.owner。省けば頭）"
+                    "description": "線が出るフィールドや行のパス（カードの中の名前。例: buyer_id・profile.owner。省けばヘッダー）"
                   },
                   "to": {
                     "type": [
@@ -2319,22 +2319,22 @@
                   },
                   "at": {
                     "type": "string",
-                    "description": "相手の中の着く所（欄や行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
+                    "description": "相手の中の着く所（フィールドや行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
                   },
                   "description": {
                     "type": "string",
-                    "description": "この線の説明（書き出しに載る。無ければ線の種類の名前）"
+                    "description": "この線の説明（エクスポートに載る。無ければ線の種類の名前）"
                   },
                   "fields": {
                     "type": "object",
-                    "description": "線の種類が決める欄（points は cardinality・when・discriminatedBy・discriminatorField）"
+                    "description": "線の種類が決めるフィールド（points は cardinality・when・discriminatedBy・discriminatorField）"
                   }
                 },
                 "required": [
                   "line"
                 ]
               },
-              "description": "カードの線の並び（あとで足す・外すのは card_update の connections の add・remove）"
+              "description": "カードの線の配列（あとで足す・外すのは card_update の connections の add・remove）"
             },
             "diagram": {
               "type": "string",
@@ -2342,7 +2342,7 @@
                 "flowchart",
                 "sequence"
               ],
-              "description": "flow の図の形の既定: flowchart（省けば）/ sequence。書き出し・文書の `![[パス]]`・card_read の as: diagram はこの形で描く"
+              "description": "flow の図の形式の既定: flowchart（省けば）/ sequence。エクスポート・ドキュメントの `![[パス]]`・card_read の as: diagram はこの形式で描く"
             },
             "body": {
               "type": "string",
@@ -2382,7 +2382,7 @@
                     "items": {
                       "type": "object"
                     },
-                    "description": "item の中の行（同じ形。項目は 5 段まで）"
+                    "description": "item の中の行（同じ形式。項目は 5 段まで）"
                   },
                   "columns": {
                     "type": "array",
@@ -2402,7 +2402,7 @@
                   },
                   "bodyFrom": {
                     "type": "object",
-                    "description": "text の body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文に写す（{directory, path}）",
+                    "description": "text の body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文にコピーする（{directory, path}）",
                     "properties": {
                       "directory": {
                         "type": "string"
@@ -2421,7 +2421,7 @@
                   "name"
                 ]
               },
-              "description": "formatdoc の行（丸ごと置き換え）。item は見出しと中の行を持ち、5 段まで。行 1 つは target を行のパス（Docs:Spec.auth.login）に"
+              "description": "structdoc の行（丸ごと置き換え）。item は見出しと中の行を持ち、5 段まで。行 1 つは target を行のパス（Docs:Spec.auth.login）に"
             },
             "versions": {
               "type": "array",
@@ -2430,11 +2430,11 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "版の名前（パスに使う。例 v1_2_0）"
+                    "description": "バージョンの名前（パスに使う。例 v1_2_0）"
                   },
                   "key": {
                     "type": "string",
-                    "description": "セレクタに出す版の名前（カードの中で一意、80 字まで。例 1.2.0）"
+                    "description": "セレクタに出すバージョンの名前（カードの中で一意、80 字まで。例 1.2.0）"
                   },
                   "heading": {
                     "type": "string",
@@ -2446,7 +2446,7 @@
                   },
                   "bodyFrom": {
                     "type": "object",
-                    "description": "body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文に写す（{directory, path}）",
+                    "description": "body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文にコピーする（{directory, path}）",
                     "properties": {
                       "directory": {
                         "type": "string"
@@ -2466,7 +2466,7 @@
                   "key"
                 ]
               },
-              "description": "stackdoc の版（丸ごと置き換え。新しい版が上）。版 1 つだけなら target を版のパス（Docs:Changelog.v1_2_0）にする"
+              "description": "stackdoc のバージョン（丸ごと置き換え。新しいバージョンが上）。バージョン 1 つだけなら target をバージョンのパス（Docs:Changelog.v1_2_0）にする"
             },
             "of": {
               "type": "string",
@@ -2474,7 +2474,7 @@
             },
             "data": {
               "type": "object",
-              "description": "データ（instance）の値: 形と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）。形の型・固定の値・列挙と rules の pattern で確かめ、合わない値は断る。必須の値が無ければ warnings"
+              "description": "データ（instance）の値: 形と同じ入れ子の JSON（キーはフィールドの名前、配列のフィールドは配列）。形の型・固定の値・列挙と rules の pattern で確かめ、合わない値はエラーにする。必須の値が無ければ warnings"
             },
             "rules": {
               "type": "array",
@@ -2484,7 +2484,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule ならエラーにする）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象のフィールド。省けばこのフィールド・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べるフィールドの名前の配列）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無いフィールド））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分けるフィールドの名前の配列））、chainedBy（field*（前の世代の digest のフィールド））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。フィールドの名前を書く引数（field・then・by・keys）は、ルールを置いたフィールドが中にフィールドを持つ（object と、ref が埋め込むカード）ならその中、持たなければそのフィールドと並ぶフィールドから引きます（カードのルールはカードのフィールドから）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中のフィールドを改名すると、名前も付いて行きます"
             },
             "absentFields": {
               "type": "array",
@@ -2520,7 +2520,7 @@
             },
             "topLeft": {
               "type": "object",
-              "description": "カードの左上を置くマス。例: {\"x\": 11, \"y\": 0}。ほかのカードかその周りの余白に重なれば、一番近い空いたマスに置き、warnings で知らせる（UI のセクションは書いたとおりに置く）",
+              "description": "カードの左上を置くマス。例: {\"x\": 11, \"y\": 0}。ほかのカードかその周りの余白に重なれば、一番近い空いたマスに置き、warnings で通知する（UI のセクションは書いたとおりに置く）",
               "properties": {
                 "x": {
                   "type": "integer"
@@ -2540,25 +2540,25 @@
             },
             "standalone": {
               "type": "boolean",
-              "description": "true で自分のセクションの図に 1 枚で出し、false・null で持ち主に畳む（見かけ）"
+              "description": "true で自分のセクションの図に 1 枚で出し、false・null で親のカードに畳む（見かけ）"
             },
             "within": {
               "type": "string",
-              "description": "表（table）が読むデータのセクション（そのセクションと中のセクション）。省けば木の中の全部。null で外す"
+              "description": "表（table）が読むデータのセクション（そのセクションと中のセクション）。省けばツリーの中の全部。null で外す"
             },
             "where": {
               "type": "array",
               "items": {
                 "type": "object"
               },
-              "description": "表（table）の絞り込み（丸ごと置き換え）: [{path, op, value}]。path は形の欄の名前で書く（[] は全部の要素、@name・@label はデータの名前と表示名）、op は eq・ne・lt・le・gt・ge・contains・exists、value は JSON。全部に合うデータが行になる"
+              "description": "表（table）の絞り込み（丸ごと置き換え）: [{path, op, value}]。path は形のフィールドの名前で書く（[] は全部の要素、@name・@label はデータの名前と表示名）、op は eq・ne・lt・le・gt・ge・contains・exists、value は JSON。全部に合うデータが行になる"
             },
             "columns": {
               "type": "array",
               "items": {
                 "type": "object"
               },
-              "description": "表（table）の列（丸ごと置き換え）: [{path, label?, show?}]。省けば @name と形の一番上の欄。[] のパス（ports[].number）は要素の値を「, 」でつなぐ。show: \"label\" は列挙の値を表示名で、\"link\" は値をカードのパスとして `[[パス]]` に"
+              "description": "表（table）の列（丸ごと置き換え）: [{path, label?, show?}]。省けば @name と形の一番上のフィールド。[] のパス（ports[].number）は要素の値を「, 」でつなぐ。show: \"label\" は列挙の値を表示名で、\"link\" は値をカードのパスとして `[[パス]]` に"
             },
             "sort": {
               "type": "array",
@@ -2569,11 +2569,11 @@
             },
             "unnest": {
               "type": "string",
-              "description": "表（table）で要素ごとの行にする並びの欄（値のパス。[ ] は付けない）。要素の無いデータは行にならない。null で外す"
+              "description": "表（table）で要素ごとの行にする配列のフィールド（値のパス。[ ] は付けない）。要素の無いデータは行にならない。null で外す"
             },
             "bodyFrom": {
               "type": "object",
-              "description": "body の代わりに、登録した作業ディレクトリ（directory）の中のファイル（path）の UTF-8 の文字を本文に写す（rows・versions の要素の中でも）",
+              "description": "body の代わりに、登録した作業ディレクトリ（directory）の中のファイル（path）の UTF-8 の文字を本文にコピーする（rows・versions の要素の中でも）",
               "properties": {
                 "directory": {
                   "type": "string"
@@ -2611,11 +2611,11 @@
                 "bottomRight",
                 "hidden"
               ],
-              "description": "html・svg・frame: マップで見出しの札を出す角（既定 topLeft。hidden で出さない）"
+              "description": "html・svg・frame: マップで見出しのバッジを出す角（既定 topLeft。hidden で出さない）"
             },
             "size": {
               "type": "object",
-              "description": "カードの大きさ（マス）。作ると同時に決める。{w} は幅だけ（高さは中身から）、{w, h} は両方。例: {\"w\": 20}・{\"w\": 20, \"h\": 12}。枠のあるカードはどれも持てる（flow のノードとカードゴーストは断る）。入れ物の中のカードは、入れ物のコンテンツマップでの大きさ",
+              "description": "カードのサイズ（マス）。作ると同時に決める。{w} は幅だけ（高さは中身から）、{w, h} は両方。例: {\"w\": 20}・{\"w\": 20, \"h\": 12}。枠のあるカードはどれも持てる（flow のノードとカードゴーストはエラーにする）。コンテナの中のカードは、コンテナのコンテンツマップでのサイズ",
               "properties": {
                 "w": {
                   "type": "integer"
@@ -2631,34 +2631,34 @@
             },
             "face": {
               "type": "object",
-              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（キーごとの書き方は guide の about: entity）",
+              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は配列の要素の形に書く（キーごとの書き方は guide の about: entity）",
               "properties": {
                 "list": {
                   "type": "string",
-                  "description": "行にする一番上の並びの欄"
+                  "description": "行にする一番上の配列のフィールド"
                 },
                 "header": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "頭に字で出す一番上の欄"
+                  "description": "ヘッダーに文字で出す一番上のフィールド"
                 },
                 "text": {
                   "type": "string",
-                  "description": "行の字にする要素の欄"
+                  "description": "行の字にする要素のフィールド"
                 },
                 "note": {
                   "type": "string",
-                  "description": "行の後ろに小さく灰色で出す要素の欄"
+                  "description": "行の後ろに小さく灰色で出す要素のフィールド"
                 },
                 "mark": {
                   "type": "object",
-                  "description": "行の頭の印: {field, values, none}",
+                  "description": "行の先頭のマーク: {field, values, none}",
                   "properties": {
                     "field": {
                       "type": "string",
-                      "description": "印を決める列挙か bool の欄"
+                      "description": "マークを決める列挙か bool のフィールド"
                     },
                     "values": {
                       "description": "値から役（ok・bad・muted・hollow）への対応"
@@ -2674,7 +2674,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "› で開くと下に出す要素の欄"
+                  "description": "› で開くと下に出す要素のフィールド"
                 }
               }
             },
@@ -2705,7 +2705,7 @@
                   },
                   "heading": {
                     "type": "string",
-                    "description": "題（200 字まで）"
+                    "description": "タイトル（200 字まで）"
                   },
                   "steps": {
                     "type": "array",
@@ -2729,11 +2729,11 @@
                         }
                       }
                     },
-                    "description": "段の並び。1 つの段は given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
+                    "description": "ステップの配列。1 つのステップは given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
                   },
                   "note": {
                     "type": "string",
-                    "description": "段のあとの本文（Markdown）"
+                    "description": "ステップのあとの本文（Markdown）"
                   }
                 },
                 "required": [
@@ -2768,7 +2768,7 @@
             },
             "alt": {
               "type": "string",
-              "description": "image が何の絵か"
+              "description": "image が何の画像か"
             }
           }
         }
@@ -2818,7 +2818,7 @@
             },
             "array": {
               "type": "boolean",
-              "description": "並び"
+              "description": "配列"
             },
             "unique": {
               "type": "boolean",
@@ -2836,7 +2836,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule ならエラーにする）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象のフィールド。省けばこのフィールド・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べるフィールドの名前の配列）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無いフィールド））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分けるフィールドの名前の配列））、chainedBy（field*（前の世代の digest のフィールド））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。フィールドの名前を書く引数（field・then・by・keys）は、ルールを置いたフィールドが中にフィールドを持つ（object と、ref が埋め込むカード）ならその中、持たなければそのフィールドと並ぶフィールドから引きます（カードのルールはカードのフィールドから）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中のフィールドを改名すると、名前も付いて行きます"
             },
             "variants": {
               "type": "array",
@@ -2896,7 +2896,7 @@
               "items": {
                 "type": "object"
               },
-              "description": "item の中の行（同じ形。項目は 5 段まで）"
+              "description": "item の中の行（同じ形式。項目は 5 段まで）"
             },
             "columns": {
               "type": "array",
@@ -2932,7 +2932,7 @@
           "properties": {
             "key": {
               "type": "string",
-              "description": "セレクタに出す版の名前（カードの中で一意、80 字まで。例 1.2.0）"
+              "description": "セレクタに出すバージョンの名前（カードの中で一意、80 字まで。例 1.2.0）"
             },
             "heading": {
               "type": "string",
@@ -2954,11 +2954,11 @@
           "type": "object",
           "properties": {
             "value": {
-              "description": "足す要素の値（target は並びの要素のパス。鍵のある並びは鍵の条件 Data:Host1.ports[number=443,protocol=tcp]、鍵の無い並びは差し込む所の添字 Data:Host1.tags[1]、値そのものの並びは groups[=api]）。鍵の欄はパスから入るので省いてよく、書けばパスと同じでないと断る。もうある鍵は断る（直すのは card_update）"
+              "description": "足す要素の値（target は配列の要素のパス。キーのある配列はキーの条件 Data:Host1.ports[number=443,protocol=tcp]、キーの無い配列は差し込む所の添字 Data:Host1.tags[1]、値そのものの配列は groups[=api]）。キーのフィールドはパスから入るので省いてよく、書けばパスと同じでないとエラーにする。もうあるキーはエラーにする（直すのは card_update）"
             },
             "position": {
               "type": "integer",
-              "description": "並びの何番目に置くか（0 から。省くと最後。添字のパスでは添字が置く所）"
+              "description": "配列の何番目に置くか（0 から。省くと最後。添字のパスでは添字が置く所）"
             }
           }
         }
@@ -2998,7 +2998,7 @@
                 "schedule",
                 "startup"
               ],
-              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
+              "description": "begin のトリガー（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
             },
             "every": {
               "type": "string",
@@ -3006,7 +3006,7 @@
             },
             "program": {
               "type": "string",
-              "description": "begin（receive）の相手のうち、プロジェクトに無いプログラム（相手のフローは partner の線で何本でも。program と一緒にも書ける。どちらも省くのは穴（相手が書かれていない）。呼び手を問わないなら anyCaller）"
+              "description": "begin（receive）の相手のうち、プロジェクトに無いプログラム（相手のフローは partner の線で何本でも。program と一緒にも書ける。どちらも省くのは穴（相手が書かれていない）。呼び出し元を問わないなら anyCaller）"
             },
             "carries": {
               "type": "array",
@@ -3051,7 +3051,7 @@
                       "receive",
                       "compute"
                     ],
-                    "description": "何をする行か: read・write（置き場所）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
+                    "description": "何をするステップか: read・write（ストア）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
                   },
                   "paths": {
                     "type": "array",
@@ -3092,14 +3092,14 @@
                   },
                   "description": {
                     "type": "string",
-                    "description": "この行の補足"
+                    "description": "このステップの補足"
                   }
                 },
                 "required": [
                   "do"
                 ]
               },
-              "description": "process の行（丸ごと置き換え）。上から順にする。行の線（reads・writes・partner・key）は from に行（steps[0] など）"
+              "description": "process のステップ（丸ごと置き換え）。上から順にする。ステップの線（reads・writes・partner・key）は from にステップ（steps[0] など）"
             },
             "value": {
               "type": "string",
@@ -3116,7 +3116,7 @@
             },
             "timeout": {
               "type": "string",
-              "description": "wait の期限（文章。期限切れの行き先は onTimeout の線）"
+              "description": "wait のタイムアウト（文章。タイムアウトしたときの行き先は onTimeout の線）"
             },
             "join": {
               "type": "string",
@@ -3172,7 +3172,7 @@
                   },
                   "from": {
                     "type": "string",
-                    "description": "線が出る行（process の steps[0] など。省けば頭）"
+                    "description": "線が出るステップ（process の steps[0] など。省けばヘッダー）"
                   },
                   "to": {
                     "type": [
@@ -3183,7 +3183,7 @@
                   },
                   "at": {
                     "type": "string",
-                    "description": "相手の中の着く所（欄や行の名前。省けばカード）"
+                    "description": "相手の中の着く所（フィールドや行の名前。省けばカード）"
                   },
                   "description": {
                     "type": "string",
@@ -3191,14 +3191,14 @@
                   },
                   "fields": {
                     "type": "object",
-                    "description": "線の種類が決める欄（branch は when、event は outcome、key は use）"
+                    "description": "線の種類が決めるフィールド（branch は when、event は outcome、key は use）"
                   }
                 },
                 "required": [
                   "line"
                 ]
               },
-              "description": "カードの線の並び（あとで足す・外すのは card_update の connections の add・remove）"
+              "description": "カードの線の配列（あとで足す・外すのは card_update の connections の add・remove）"
             },
             "topLeft": {
               "type": "object",
@@ -3220,7 +3220,7 @@
             },
             "anyCaller": {
               "type": "boolean",
-              "description": "begin（receive）だけ: 呼び手を問わない受け口（どの flow・program から呼ばれてもよい。シーケンス図の生命線は「誰からでも」）。partner の線・program とは一緒に書けない"
+              "description": "begin（receive）だけ: 呼び出し元を問わないエンドポイント（どの flow・program から呼ばれてもよい。シーケンス図の生命線は「誰からでも」）。partner の線・program とは一緒に書けない"
             }
           },
           "required": [
@@ -3269,11 +3269,11 @@
                 "receive",
                 "compute"
               ],
-              "description": "何をする行か: read・write（置き場所）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
+              "description": "何をするステップか: read・write（ストア）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
             },
             "description": {
               "type": "string",
-              "description": "この行の補足"
+              "description": "このステップの補足"
             },
             "paths": {
               "type": "array",
@@ -3325,7 +3325,7 @@
           "properties": {
             "heading": {
               "type": "string",
-              "description": "題（200 字まで）"
+              "description": "タイトル（200 字まで）"
             },
             "steps": {
               "type": "array",
@@ -3349,11 +3349,11 @@
                   }
                 }
               },
-              "description": "段の並び（丸ごと置き換え）。1 つの段は given・when・then・and・but のどれか 1 つのキーと字"
+              "description": "ステップの配列（丸ごと置き換え）。1 つのステップは given・when・then・and・but のどれか 1 つのキーと字"
             },
             "note": {
               "type": "string",
-              "description": "段のあとの本文（Markdown）"
+              "description": "ステップのあとの本文（Markdown）"
             },
             "before": {
               "type": "string",
@@ -3390,11 +3390,11 @@
         },
         "value": {
           "type": "object",
-          "description": "target ごとに。カード（Docs:Spec）: {kind, label, description, tags, metadata, connections:[{line, from, to, at, description, fields}], topLeft} と種類のキー（entity・value: fields・rules、enum: values、instance: of・data、table: of・where・columns、note・freedoc・svg・html・goal・task: body、formatdoc: rows、stackdoc: versions、spec: as・iWant・soThat・about・scenarios、ghost: target。guide の about: <種類>）。フィールド（Core:User.email）: {type, required, label, …}。formatdoc の行: {kind, heading, body, rows, cells, …}。版: {key, heading, body}。ノード: {kind, label, …}。enum の値（Schemas:Status.cancelled）: {label, description, position}。process の手（Charts:Pay.save.steps[1]。そこに入り、後ろの手と線は 1 つずれる）: {do, description, …}。target を省くと、value をパスごとにしていくつも作る"
+          "description": "target ごとに。カード（Docs:Spec）: {kind, label, description, tags, metadata, connections:[{line, from, to, at, description, fields}], topLeft} と種類のキー（entity・value: fields・rules、enum: values、instance: of・data、table: of・where・columns、note・freedoc・svg・html・goal・task: body、structdoc: rows、stackdoc: versions、spec: as・iWant・soThat・about・scenarios、ghost: target。guide の about: <種類>）。フィールド（Core:User.email）: {type, required, label, …}。structdoc の行: {kind, heading, body, rows, cells, …}。バージョン: {key, heading, body}。ノード: {kind, label, …}。enum の値（Schemas:Status.cancelled）: {label, description, position}。process のステップ（Charts:Pay.save.steps[1]。そこに入り、後ろのステップと線は 1 つずれる）: {do, description, …}。target を省くと、value をパスごとにしていくつも作る"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -3405,7 +3405,7 @@
   {
     "name": "card_update",
     "title": "カードを変える",
-    "description": "カード・フィールド・行・版・ノード・データの値（target のパス）を変えます。value に渡したキーだけが変わり、配列は丸ごと置き換え、線は connections の {add, remove} です。name で改名すると、そのパスが書かれた所も書き換えます。section でほかのセクションへ、in で入れ物（flow・goal）の中のカードをほかの入れ物へ移し、position で並べます。topLeft・size・view・version・standalone・places は見かけでコミットになりません。カードゴーストを通したパス（Orders:User.id）は本物を変えます。プロジェクトの種類のカードは欄と行を名前で書きます。kind を変えるときは、新しい種類が持てないものを先に空にします（カードとカードゴーストは互いに変えられない）。前の形（flow の nodes・goal の items など）は書き方を添えて断ります。",
+    "description": "カード・フィールド・行・バージョン・ノード・データの値（target のパス）を変えます。value に渡したキーだけが変わり、配列は丸ごと置き換え、線は connections の {add, remove} です。name で改名すると、そのパスが書かれた所も書き換えます。section でほかのセクションへ、in でコンテナ（flow・goal）の中のカードをほかのコンテナへ移し、position で並べます。topLeft・size・view・version・standalone・places は見かけでコミットになりません。カードゴーストを通したパス（Orders:User.id）は元のカードを変えます。プロジェクトの種類のカードはフィールドと行を名前で書きます。kind を変えるときは、新しい種類が持てないものを先に空にします（カードとカードゴーストは互いに変えられない）。以前の形式（flow の nodes・goal の items など）は書き方を添えてエラーにします。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -3432,7 +3432,7 @@
                 "flow",
                 "store",
                 "freedoc",
-                "formatdoc",
+                "structdoc",
                 "stackdoc",
                 "spec",
                 "sketch",
@@ -3465,7 +3465,7 @@
             },
             "topLeft": {
               "type": "object",
-              "description": "カードの左上を置くマス。例: {\"x\": 11, \"y\": 0}。ほかのカードかその周りの余白に重なれば、一番近い空いたマスに置き、warnings で知らせる（UI のセクションは書いたとおりに置く）",
+              "description": "カードの左上を置くマス。例: {\"x\": 11, \"y\": 0}。ほかのカードかその周りの余白に重なれば、一番近い空いたマスに置き、warnings で通知する（UI のセクションは書いたとおりに置く）",
               "properties": {
                 "x": {
                   "type": "integer"
@@ -3484,7 +3484,7 @@
                 "object",
                 "null"
               ],
-              "description": "カードの大きさ（マス）。{w} は幅だけを決め、高さは中身から（行の数・本文の高さ・文書のカードはプロジェクトの行数ぶん）。{w, h} は両方を決め、入らない行はカードの中でスクロールする。送った形がそのまま大きさになる（{w} は前の h を外す）。例: {\"w\": 20}・{\"w\": 20, \"h\": 12}。幅 4〜60・高さ 2〜120。枠のあるカードはどれも持てる（flow のノードとカードゴーストは断る）。入れ物の中のカードは、入れ物のコンテンツマップでの大きさ。見かけでコミットにならない。ほかのカードかまわりのマスに新しく重なれば、動かさずに warnings で言う。null で既定（プロジェクトの幅、高さは中身から）に戻す",
+              "description": "カードのサイズ（マス）。{w} は幅だけを決め、高さは中身から（行の数・本文の高さ・ドキュメントのカードはプロジェクトの行数ぶん）。{w, h} は両方を決め、入らない行はカードの中でスクロールする。送った形式がそのままサイズになる（{w} は前の h を外す）。例: {\"w\": 20}・{\"w\": 20, \"h\": 12}。幅 4〜60・高さ 2〜120。枠のあるカードはどれも持てる（flow のノードとカードゴーストはエラーにする）。コンテナの中のカードは、コンテナのコンテンツマップでのサイズ。見かけでコミットにならない。ほかのカードか余白のマスに新しく重なれば、動かさずに warnings で言う。null で既定（プロジェクトの幅、高さは中身から）に戻す",
               "properties": {
                 "w": {
                   "type": "integer"
@@ -3508,18 +3508,18 @@
                 "document",
                 null
               ],
-              "description": "セクションマップでの見せ方: document（文書の形）・rows（項目を行で）。null でプロジェクトの既定"
+              "description": "セクションマップでの見せ方: document（ドキュメントの形）・rows（項目を行で）。null でプロジェクトの既定"
             },
             "version": {
               "type": [
                 "string",
                 "null"
               ],
-              "description": "stackdoc のカードで開いている版（版の name）。見かけで、コミットにならず、ロック中の main でも書ける。null で一番上の版に戻す"
+              "description": "stackdoc のカードで開いているバージョン（バージョンの name）。見かけで、コミットにならず、ロック中の main でも書ける。null で一番上のバージョンに戻す"
             },
             "places": {
               "type": "object",
-              "description": "goal のコンテンツマップの箱をまとめて置く。キーは goal の中のカードのパス、値は {topLeft: {x, y}}（マス。goal の大きさはプロジェクトのカードの大きさ、task は本文に合わせた高さ（プロジェクトのカードの高さまで）か、size で決めた大きさ）。全部を置いてから重なりを見て、重なるものだけ一番近い空いたマスへ飛ばし、jumped に飛んだ先を返す"
+              "description": "goal のコンテンツマップの箱をまとめて置く。キーは goal の中のカードのパス、値は {topLeft: {x, y}}（マス。goal のサイズはプロジェクトのカードのサイズ、task は本文に合わせた高さ（プロジェクトのカードの高さまで）か、size で決めたサイズ）。全部を置いてから重なりを見て、重なるものだけ一番近い空いたマスへ飛ばし、jumped に飛んだ先を返す"
             },
             "tags": {
               "type": [
@@ -3550,7 +3550,7 @@
                       },
                       "from": {
                         "type": "string",
-                        "description": "線が出る欄や行のパス（カードの中の名前。例: buyer_id・profile.owner。省けば頭）"
+                        "description": "線が出るフィールドや行のパス（カードの中の名前。例: buyer_id・profile.owner。省けばヘッダー）"
                       },
                       "to": {
                         "type": [
@@ -3561,15 +3561,15 @@
                       },
                       "at": {
                         "type": "string",
-                        "description": "相手の中の着く所（欄や行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
+                        "description": "相手の中の着く所（フィールドや行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
                       },
                       "description": {
                         "type": "string",
-                        "description": "この線の説明（書き出しに載る。無ければ線の種類の名前）"
+                        "description": "この線の説明（エクスポートに載る。無ければ線の種類の名前）"
                       },
                       "fields": {
                         "type": "object",
-                        "description": "線の種類が決める欄（points は cardinality・when・discriminatedBy・discriminatorField）"
+                        "description": "線の種類が決めるフィールド（points は cardinality・when・discriminatedBy・discriminatorField）"
                       }
                     },
                     "required": [
@@ -3589,7 +3589,7 @@
                       },
                       "from": {
                         "type": "string",
-                        "description": "線が出る欄や行のパス（カードの中の名前。例: buyer_id・profile.owner。省けば頭）"
+                        "description": "線が出るフィールドや行のパス（カードの中の名前。例: buyer_id・profile.owner。省けばヘッダー）"
                       },
                       "to": {
                         "type": [
@@ -3600,15 +3600,15 @@
                       },
                       "at": {
                         "type": "string",
-                        "description": "相手の中の着く所（欄や行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
+                        "description": "相手の中の着く所（フィールドや行の名前。例: id。省けばカード）。値を指す線（base が designate。points など）は相手の中だけ。ほかの線は相手の外に着くならフルパス"
                       },
                       "description": {
                         "type": "string",
-                        "description": "この線の説明（書き出しに載る。無ければ線の種類の名前）"
+                        "description": "この線の説明（エクスポートに載る。無ければ線の種類の名前）"
                       },
                       "fields": {
                         "type": "object",
-                        "description": "線の種類が決める欄（points は cardinality・when・discriminatedBy・discriminatorField）"
+                        "description": "線の種類が決めるフィールド（points は cardinality・when・discriminatedBy・discriminatorField）"
                       }
                     }
                   },
@@ -3621,30 +3621,30 @@
                     "properties": {
                       "line": {
                         "type": "string",
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "from": {
                         "type": "string",
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "to": {
                         "type": [
                           "string",
                           "null"
                         ],
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "at": {
                         "type": "string",
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "description": {
                         "type": "string",
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "fields": {
                         "type": "object",
-                        "description": "remove と同じ（選ぶ鍵）"
+                        "description": "remove と同じ（選ぶキー）"
                       },
                       "set": {
                         "type": "object",
@@ -3659,7 +3659,7 @@
                           },
                           "fields": {
                             "type": "object",
-                            "description": "変える線の欄（書いた欄だけを変え、null で外す）"
+                            "description": "変える線のフィールド（書いたフィールドだけを変え、null で外す）"
                           }
                         }
                       }
@@ -3685,7 +3685,7 @@
                 "string",
                 "object"
               ],
-              "description": "note・freedoc（Markdown）・svg・html の本文（20 万文字まで）。goal・task とプロジェクトの種類の Markdown・長い文の欄も同じ形。文字なら丸ごと置き換え。一部を変えるなら {edit, append, prepend}（書いたとおりの文字で当てる。正規表現は使わない）",
+              "description": "note・freedoc（Markdown）・svg・html の本文（20 万文字まで）。goal・task とプロジェクトの種類の Markdown・長い文のフィールドも同じ形。文字なら丸ごと置き換え。一部を変えるなら {edit, append, prepend}（書いたとおりの文字で当てる。正規表現は使わない）",
               "properties": {
                 "edit": {
                   "type": "array",
@@ -3710,7 +3710,7 @@
                       "new"
                     ]
                   },
-                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずに断る。全部なら all: true）"
+                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずにエラーにする。全部なら all: true）"
                 },
                 "append": {
                   "type": "string",
@@ -3718,7 +3718,7 @@
                 },
                 "prepend": {
                   "type": "string",
-                  "description": "頭に足す行（間に改行を入れる）"
+                  "description": "先頭に足す行（間に改行を入れる）"
                 }
               }
             },
@@ -3756,7 +3756,7 @@
                     "items": {
                       "type": "object"
                     },
-                    "description": "item の中の行（同じ形。項目は 5 段まで）"
+                    "description": "item の中の行（同じ形式。項目は 5 段まで）"
                   },
                   "columns": {
                     "type": "array",
@@ -3776,7 +3776,7 @@
                   },
                   "bodyFrom": {
                     "type": "object",
-                    "description": "text の body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文に写す（{directory, path}）",
+                    "description": "text の body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文にコピーする（{directory, path}）",
                     "properties": {
                       "directory": {
                         "type": "string"
@@ -3795,7 +3795,7 @@
                   "name"
                 ]
               },
-              "description": "formatdoc の行（丸ごと置き換え）。item は見出しと中の行を持ち、5 段まで。行 1 つは target を行のパス（Docs:Spec.auth.login）に"
+              "description": "structdoc の行（丸ごと置き換え）。item は見出しと中の行を持ち、5 段まで。行 1 つは target を行のパス（Docs:Spec.auth.login）に"
             },
             "versions": {
               "type": "array",
@@ -3804,11 +3804,11 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "版の名前（パスに使う。例 v1_2_0）"
+                    "description": "バージョンの名前（パスに使う。例 v1_2_0）"
                   },
                   "key": {
                     "type": "string",
-                    "description": "セレクタに出す版の名前（カードの中で一意、80 字まで。例 1.2.0）"
+                    "description": "セレクタに出すバージョンの名前（カードの中で一意、80 字まで。例 1.2.0）"
                   },
                   "heading": {
                     "type": "string",
@@ -3820,7 +3820,7 @@
                   },
                   "bodyFrom": {
                     "type": "object",
-                    "description": "body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文に写す（{directory, path}）",
+                    "description": "body の代わりに、作業ディレクトリのファイルの UTF-8 の文字を本文にコピーする（{directory, path}）",
                     "properties": {
                       "directory": {
                         "type": "string"
@@ -3840,7 +3840,7 @@
                   "key"
                 ]
               },
-              "description": "stackdoc の版（丸ごと置き換え。新しい版が上）。版 1 つだけなら target を版のパス（Docs:Changelog.v1_2_0）にする"
+              "description": "stackdoc のバージョン（丸ごと置き換え。新しいバージョンが上）。バージョン 1 つだけなら target をバージョンのパス（Docs:Changelog.v1_2_0）にする"
             },
             "of": {
               "type": "string",
@@ -3861,7 +3861,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule ならエラーにする）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象のフィールド。省けばこのフィールド・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べるフィールドの名前の配列）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無いフィールド））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分けるフィールドの名前の配列））、chainedBy（field*（前の世代の digest のフィールド））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。フィールドの名前を書く引数（field・then・by・keys）は、ルールを置いたフィールドが中にフィールドを持つ（object と、ref が埋め込むカード）ならその中、持たなければそのフィールドと並ぶフィールドから引きます（カードのルールはカードのフィールドから）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中のフィールドを改名すると、名前も付いて行きます"
             },
             "absentFields": {
               "type": "array",
@@ -3904,11 +3904,11 @@
                 "string",
                 "null"
               ],
-              "description": "入れ物（flow・goal）の中のカードを移す先の入れ物のパス（中のカードも付いて行く）。null で入れ物のセクションへ出す（flow のノードは flow から出せない）"
+              "description": "コンテナ（flow・goal）の中のカードを移す先のコンテナのパス（中のカードも付いて行く）。null でコンテナのセクションへ出す（flow のノードは flow から出せない）"
             },
             "position": {
               "type": "integer",
-              "description": "並びの何番目に置くか（0 から。セクションの中、入れ物の中のカードは入れ物の中）"
+              "description": "並びの何番目に置くか（0 から。セクションの中、コンテナの中のカードはコンテナの中）"
             },
             "values": {
               "type": "array",
@@ -3935,28 +3935,28 @@
             },
             "target": {
               "type": "string",
-              "description": "カードゴーストの指す先を付け替える（カードかカードゴーストのパス）。たどった本物が今と同じ種類のときだけ通す。名前は変わらない"
+              "description": "カードゴーストの指す先を付け替える（カードかカードゴーストのパス）。たどった元のカードが今と同じ種類のときだけ通す。名前は変わらない"
             },
             "standalone": {
               "type": [
                 "boolean",
                 "null"
               ],
-              "description": "true で自分のセクションの図に 1 枚で出し、false・null で持ち主に畳む（見かけ）"
+              "description": "true で自分のセクションの図に 1 枚で出し、false・null で親のカードに畳む（見かけ）"
             },
             "strayFields": {
               "type": [
                 "object",
                 "null"
               ],
-              "description": "定義（データは形）に無い欄の値（card_read の strayFields）を消す: null で全部、{\"<所>\": null} でその所だけ"
+              "description": "定義（データは形）に無いフィールドの値（card_read の strayFields）を消す: null で全部、{\"<所>\": null} でその所だけ"
             },
             "within": {
               "type": [
                 "string",
                 "null"
               ],
-              "description": "表（table）が読むデータのセクション（そのセクションと中のセクション）。省けば木の中の全部。null で外す"
+              "description": "表（table）が読むデータのセクション（そのセクションと中のセクション）。省けばツリーの中の全部。null で外す"
             },
             "where": {
               "type": [
@@ -3966,7 +3966,7 @@
               "items": {
                 "type": "object"
               },
-              "description": "表（table）の絞り込み（丸ごと置き換え）: [{path, op, value}]。path は形の欄の名前で書く（[] は全部の要素、@name・@label はデータの名前と表示名）、op は eq・ne・lt・le・gt・ge・contains・exists、value は JSON。全部に合うデータが行になる"
+              "description": "表（table）の絞り込み（丸ごと置き換え）: [{path, op, value}]。path は形のフィールドの名前で書く（[] は全部の要素、@name・@label はデータの名前と表示名）、op は eq・ne・lt・le・gt・ge・contains・exists、value は JSON。全部に合うデータが行になる"
             },
             "columns": {
               "type": [
@@ -3976,7 +3976,7 @@
               "items": {
                 "type": "object"
               },
-              "description": "表（table）の列（丸ごと置き換え）: [{path, label?, show?}]。省けば @name と形の一番上の欄。[] のパス（ports[].number）は要素の値を「, 」でつなぐ。show: \"label\" は列挙の値を表示名で、\"link\" は値をカードのパスとして `[[パス]]` に"
+              "description": "表（table）の列（丸ごと置き換え）: [{path, label?, show?}]。省けば @name と形の一番上のフィールド。[] のパス（ports[].number）は要素の値を「, 」でつなぐ。show: \"label\" は列挙の値を表示名で、\"link\" は値をカードのパスとして `[[パス]]` に"
             },
             "sort": {
               "type": [
@@ -3993,15 +3993,15 @@
                 "string",
                 "null"
               ],
-              "description": "表（table）で要素ごとの行にする並びの欄（値のパス。[ ] は付けない）。要素の無いデータは行にならない。null で外す"
+              "description": "表（table）で要素ごとの行にする配列のフィールド（値のパス。[ ] は付けない）。要素の無いデータは行にならない。null で外す"
             },
             "rev": {
               "type": "string",
-              "description": "読んだときのカードの版。カードがそのあと変わっていれば、何も書かずに断る"
+              "description": "読んだときのカードのバージョン。カードがそのあと変わっていれば、何も書かずにエラーにする"
             },
             "bodyFrom": {
               "type": "object",
-              "description": "body の代わりに、登録した作業ディレクトリ（directory）の中のファイル（path）の UTF-8 の文字を本文に写す（rows・versions の要素の中でも）",
+              "description": "body の代わりに、登録した作業ディレクトリ（directory）の中のファイル（path）の UTF-8 の文字を本文にコピーする（rows・versions の要素の中でも）",
               "properties": {
                 "directory": {
                   "type": "string"
@@ -4039,45 +4039,45 @@
                 "bottomRight",
                 "hidden"
               ],
-              "description": "html・svg・frame: マップで見出しの札を出す角（既定 topLeft。hidden で出さない）"
+              "description": "html・svg・frame: マップで見出しのバッジを出す角（既定 topLeft。hidden で出さない）"
             },
             "groups": {
               "type": "object",
-              "description": "goal・プロジェクトの種類の入れ物のカードマップのグループを書く（section_update の groups と同じ形。around は中のカードのパス）。ほかのカードは断る"
+              "description": "goal・プロジェクトの種類のコンテナのカードマップのグループを書く（section_update の groups と同じ形。around は中のカードのパス）。ほかのカードはエラーにする"
             },
             "face": {
               "type": [
                 "object",
                 "null"
               ],
-              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く（キーごとの書き方は guide の about: entity）",
+              "description": "entity・value: データの一覧の顔（丸ごと置き換え、null で外す）。list と header はデータのカードの形に、text・note・mark・fold は配列の要素の形に書く（キーごとの書き方は guide の about: entity）",
               "properties": {
                 "list": {
                   "type": "string",
-                  "description": "行にする一番上の並びの欄"
+                  "description": "行にする一番上の配列のフィールド"
                 },
                 "header": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "頭に字で出す一番上の欄"
+                  "description": "ヘッダーに文字で出す一番上のフィールド"
                 },
                 "text": {
                   "type": "string",
-                  "description": "行の字にする要素の欄"
+                  "description": "行の字にする要素のフィールド"
                 },
                 "note": {
                   "type": "string",
-                  "description": "行の後ろに小さく灰色で出す要素の欄"
+                  "description": "行の後ろに小さく灰色で出す要素のフィールド"
                 },
                 "mark": {
                   "type": "object",
-                  "description": "行の頭の印: {field, values, none}",
+                  "description": "行の先頭のマーク: {field, values, none}",
                   "properties": {
                     "field": {
                       "type": "string",
-                      "description": "印を決める列挙か bool の欄"
+                      "description": "マークを決める列挙か bool のフィールド"
                     },
                     "values": {
                       "description": "値から役（ok・bad・muted・hollow）への対応"
@@ -4093,7 +4093,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "› で開くと下に出す要素の欄"
+                  "description": "› で開くと下に出す要素のフィールド"
                 }
               }
             },
@@ -4124,7 +4124,7 @@
                   },
                   "heading": {
                     "type": "string",
-                    "description": "題（200 字まで）"
+                    "description": "タイトル（200 字まで）"
                   },
                   "steps": {
                     "type": "array",
@@ -4148,11 +4148,11 @@
                         }
                       }
                     },
-                    "description": "段の並び。1 つの段は given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
+                    "description": "ステップの配列。1 つのステップは given・when・then・and・but のどれか 1 つのキーと字（{\"given\": \"…\"}）"
                   },
                   "note": {
                     "type": "string",
-                    "description": "段のあとの本文（Markdown）"
+                    "description": "ステップのあとの本文（Markdown）"
                   }
                 },
                 "required": [
@@ -4187,7 +4187,7 @@
             },
             "alt": {
               "type": "string",
-              "description": "image が何の絵か"
+              "description": "image が何の画像か"
             }
           }
         }
@@ -4241,7 +4241,7 @@
             },
             "array": {
               "type": "boolean",
-              "description": "並び"
+              "description": "配列"
             },
             "unique": {
               "type": "boolean",
@@ -4259,7 +4259,7 @@
                   "kind"
                 ]
               },
-              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule なら断る）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象の欄。省けばこの欄・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べる欄の名前の並び）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無い欄））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分ける欄の名前の並び））、chainedBy（field*（前の世代の digest の欄））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。欄の名前を書く引数（field・then・by・keys）は、規則を置いた欄が中に欄を持つ（object と、ref が埋め込むカード）ならその中、持たなければその欄と並ぶ欄から引きます（カードの規則はカードの欄から）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中の欄を改名すると、名前も付いて行きます"
+              "description": "検証ルール [{kind, …}]。既知の kind は引数を確かめ（要る引数が無いもの・書けない引数は、書き込みで新しく入る rule ならエラーにする）、未知の kind はそのまま保存して生成物のコメントに落とします。式（when など）は解釈しません。既知の kind と引数（* は要る。どれも field（対象のフィールド。省けばこのフィールド・要素そのもの）と note（説明）を書ける）: sortedBy（by か keys（比べるフィールドの名前の配列）・order: asc / desc）、uniqueBy（by か keys）、requiredIf・absentIf（when*（条件の式）・then*（そのときある・無いフィールド））、derivedFrom（from*（再計算の元のパス））、monotonicPerKey（keys*（系列を分けるフィールドの名前の配列））、chainedBy（field*（前の世代の digest のフィールド））、memberOf（target*（集合のパス））、lteRef・gteRef（target*（比べる相手のパス））、pattern（regex*）。フィールドの名前を書く引数（field・then・by・keys）は、ルールを置いたフィールドが中にフィールドを持つ（object と、ref が埋め込むカード）ならその中、持たなければそのフィールドと並ぶフィールドから引きます（カードのルールはカードのフィールドから）。a.b は 1 段ずつたどり、ref が埋め込むカードの中へも入ります。途中のフィールドを改名すると、名前も付いて行きます"
             },
             "variants": {
               "type": "array",
@@ -4341,7 +4341,7 @@
                       "new"
                     ]
                   },
-                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずに断る。全部なら all: true）"
+                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずにエラーにする。全部なら all: true）"
                 },
                 "append": {
                   "type": "string",
@@ -4349,7 +4349,7 @@
                 },
                 "prepend": {
                   "type": "string",
-                  "description": "頭に足す行（間に改行を入れる）"
+                  "description": "先頭に足す行（間に改行を入れる）"
                 }
               }
             },
@@ -4358,7 +4358,7 @@
               "items": {
                 "type": "object"
               },
-              "description": "item の中の行（同じ形。項目は 5 段まで）"
+              "description": "item の中の行（同じ形式。項目は 5 段まで）"
             },
             "columns": {
               "type": "array",
@@ -4463,7 +4463,7 @@
                   }
                 }
               },
-              "description": "table の行。配列なら丸ごと置き換え（1 行がセル（Markdown）の配列）。一部だけなら {set, add, remove}。行は 0 からの番号か列の値の一致（{\"<列の見出し>\": \"<値>\"}）で、どれも読んだときの表で指す（番号なら old に今の中身を添え、違えば何も書かずに断る）。列は見出しで指す",
+              "description": "table の行。配列なら丸ごと置き換え（1 行がセル（Markdown）の配列）。一部だけなら {set, add, remove}。行は 0 からの番号か列の値の一致（{\"<列の見出し>\": \"<値>\"}）で、どれも読んだときの表で指す（番号なら old に今の中身を添え、違えば何も書かずにエラーにする）。列は見出しで指す",
               "properties": {
                 "set": {
                   "type": "array",
@@ -4575,11 +4575,11 @@
           "properties": {
             "name": {
               "type": "string",
-              "description": "新しい名前。パスに書かれたこの版も書き換える"
+              "description": "新しい名前。パスに書かれたこのバージョンも書き換える"
             },
             "key": {
               "type": "string",
-              "description": "セレクタに出す版の名前（カードの中で一意、80 字まで。例 1.2.0）"
+              "description": "セレクタに出すバージョンの名前（カードの中で一意、80 字まで。例 1.2.0）"
             },
             "heading": {
               "type": "string",
@@ -4615,7 +4615,7 @@
                       "new"
                     ]
                   },
-                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずに断る。全部なら all: true）"
+                  "description": "置き換え。上から順に当て、old は本文のちょうど 1 か所に合うこと（合わない・2 か所以上なら何も書かずにエラーにする。全部なら all: true）"
                 },
                 "append": {
                   "type": "string",
@@ -4623,17 +4623,17 @@
                 },
                 "prepend": {
                   "type": "string",
-                  "description": "頭に足す行（間に改行を入れる）"
+                  "description": "先頭に足す行（間に改行を入れる）"
                 }
               }
             },
             "before": {
               "type": "string",
-              "description": "この名前の版の前へ動かす（並びの上が新しい）"
+              "description": "この名前のバージョンの前へ動かす（並びの上が新しい）"
             },
             "after": {
               "type": "string",
-              "description": "この名前の版の後ろへ動かす"
+              "description": "この名前のバージョンの後ろへ動かす"
             }
           }
         }
@@ -4644,7 +4644,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "description": "データ（instance）の値 1 つ（target は値のパス。例 Data:Order1.customer.name。並びの要素は欄の値の条件か添字で選ぶ: Data:Host1.ports[number=8200,protocol=tcp].number・Data:Host1.ports[0]。値そのものの並びは groups[=web]。要素を足すのは、要素のパスへの card_create）。形のフィールドの型で書く（null も値。消すのは card_delete）。主キーのある並びは、鍵の欠けと重なりを断る"
+              "description": "データ（instance）の値 1 つ（target は値のパス。例 Data:Order1.customer.name。配列の要素はフィールドの値の条件か添字で選ぶ: Data:Host1.ports[number=8200,protocol=tcp].number・Data:Host1.ports[0]。値そのものの配列は groups[=web]。要素を足すのは、要素のパスへの card_create）。形のフィールドの型で書く（null も値。消すのは card_delete）。主キーのある配列は、キーの欠けと重なりをエラーにする"
             }
           },
           "required": [
@@ -4672,7 +4672,7 @@
                 "join",
                 "end"
               ],
-              "description": "ノードの種類: begin（開始。flow に 1 つ）/ process（処理）/ run（実行）/ eval（判断）/ wait（待つ）/ join（合流）/ end（終了）。変えるときは、新しい種類が持てない欄と線を先に外す"
+              "description": "ノードの種類: begin（開始。flow に 1 つ）/ process（処理）/ run（実行）/ eval（判断）/ wait（待つ）/ join（合流）/ end（終了）。変えるときは、新しい種類が持てないフィールドと線を先に外す"
             },
             "label": {
               "type": "string",
@@ -4691,7 +4691,7 @@
                 "schedule",
                 "startup"
               ],
-              "description": "begin のきっかけ（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
+              "description": "begin のトリガー（必須）: manual / receive（受ける）/ event（ほかのフローの終わり。awaits の線で、待つ結果を線の fields.outcome に: success / failure / cancelled）/ schedule / startup（起動のたび）"
             },
             "every": {
               "type": "string",
@@ -4699,7 +4699,7 @@
             },
             "program": {
               "type": "string",
-              "description": "begin（receive）の相手のうち、プロジェクトに無いプログラム（相手のフローは partner の線で何本でも。program と一緒にも書ける。どちらも省くのは穴（相手が書かれていない）。呼び手を問わないなら anyCaller）"
+              "description": "begin（receive）の相手のうち、プロジェクトに無いプログラム（相手のフローは partner の線で何本でも。program と一緒にも書ける。どちらも省くのは穴（相手が書かれていない）。呼び出し元を問わないなら anyCaller）"
             },
             "carries": {
               "type": "array",
@@ -4744,7 +4744,7 @@
                       "receive",
                       "compute"
                     ],
-                    "description": "何をする行か: read・write（置き場所）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
+                    "description": "何をするステップか: read・write（ストア）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
                   },
                   "paths": {
                     "type": "array",
@@ -4785,14 +4785,14 @@
                   },
                   "description": {
                     "type": "string",
-                    "description": "この行の補足"
+                    "description": "このステップの補足"
                   }
                 },
                 "required": [
                   "do"
                 ]
               },
-              "description": "process の行（丸ごと置き換え）。上から順にする。行の線（reads・writes・partner・key）は from に行（steps[0] など）"
+              "description": "process のステップ（丸ごと置き換え）。上から順にする。ステップの線（reads・writes・partner・key）は from にステップ（steps[0] など）"
             },
             "value": {
               "type": "string",
@@ -4809,7 +4809,7 @@
             },
             "timeout": {
               "type": "string",
-              "description": "wait の期限（文章。期限切れの行き先は onTimeout の線）"
+              "description": "wait のタイムアウト（文章。タイムアウトしたときの行き先は onTimeout の線）"
             },
             "join": {
               "type": "string",
@@ -4869,7 +4869,7 @@
                       },
                       "from": {
                         "type": "string",
-                        "description": "線が出る行（process の steps[0] など。省けば頭）"
+                        "description": "線が出るステップ（process の steps[0] など。省けばヘッダー）"
                       },
                       "to": {
                         "type": [
@@ -4880,7 +4880,7 @@
                       },
                       "at": {
                         "type": "string",
-                        "description": "相手の中の着く所（欄や行の名前。省けばカード）"
+                        "description": "相手の中の着く所（フィールドや行の名前。省けばカード）"
                       },
                       "description": {
                         "type": "string",
@@ -4888,7 +4888,7 @@
                       },
                       "fields": {
                         "type": "object",
-                        "description": "線の種類が決める欄（branch は when、event は outcome、key は use）"
+                        "description": "線の種類が決めるフィールド（branch は when、event は outcome、key は use）"
                       }
                     },
                     "required": [
@@ -4908,7 +4908,7 @@
                       },
                       "from": {
                         "type": "string",
-                        "description": "線が出る行（process の steps[0] など。省けば頭）"
+                        "description": "線が出るステップ（process の steps[0] など。省けばヘッダー）"
                       },
                       "to": {
                         "type": [
@@ -4919,7 +4919,7 @@
                       },
                       "at": {
                         "type": "string",
-                        "description": "相手の中の着く所（欄や行の名前。省けばカード）"
+                        "description": "相手の中の着く所（フィールドや行の名前。省けばカード）"
                       },
                       "description": {
                         "type": "string",
@@ -4927,7 +4927,7 @@
                       },
                       "fields": {
                         "type": "object",
-                        "description": "線の種類が決める欄（branch は when、event は outcome、key は use）"
+                        "description": "線の種類が決めるフィールド（branch は when、event は outcome、key は use）"
                       }
                     }
                   },
@@ -4959,7 +4959,7 @@
             },
             "anyCaller": {
               "type": "boolean",
-              "description": "begin（receive）だけ: 呼び手を問わない受け口（どの flow・program から呼ばれてもよい。シーケンス図の生命線は「誰からでも」）。partner の線・program とは一緒に書けない"
+              "description": "begin（receive）だけ: 呼び出し元を問わないエンドポイント（どの flow・program から呼ばれてもよい。シーケンス図の生命線は「誰からでも」）。partner の線・program とは一緒に書けない"
             }
           }
         }
@@ -4971,7 +4971,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "description": "新しい名前（80 字まで）。同じ木のデータカードでその値を持つ所と、値を指すパスも書き換える"
+              "description": "新しい名前（80 字まで）。同じツリーのデータカードでその値を持つ所と、値を指すパスも書き換える"
             },
             "label": {
               "type": [
@@ -5011,14 +5011,14 @@
                 "receive",
                 "compute"
               ],
-              "description": "何をする行か: read・write（置き場所）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
+              "description": "何をするステップか: read・write（ストア）、sign・verify（署名する・署名を確かめる。業務の確かめではない）、call（プロジェクトに無いプログラムを呼んで待つ）、send（待たない）、receive、compute（業務の検証・計算のような中だけの処理。description に何をするか）"
             },
             "description": {
               "type": [
                 "string",
                 "null"
               ],
-              "description": "この行の補足"
+              "description": "このステップの補足"
             },
             "paths": {
               "type": [
@@ -5094,7 +5094,7 @@
             },
             "heading": {
               "type": "string",
-              "description": "題（200 字まで）"
+              "description": "タイトル（200 字まで）"
             },
             "steps": {
               "type": "array",
@@ -5118,11 +5118,11 @@
                   }
                 }
               },
-              "description": "段の並び（丸ごと置き換え）。1 つの段は given・when・then・and・but のどれか 1 つのキーと字"
+              "description": "ステップの配列（丸ごと置き換え）。1 つのステップは given・when・then・and・but のどれか 1 つのキーと字"
             },
             "note": {
               "type": "string",
-              "description": "段のあとの本文（Markdown）"
+              "description": "ステップのあとの本文（Markdown）"
             },
             "before": {
               "type": "string",
@@ -5159,11 +5159,11 @@
         },
         "value": {
           "type": "object",
-          "description": "target ごとに、渡したキーだけ変わる。カード: {name, label, description, tags（{add, remove} も）, metadata, connections:{add, remove}, section, in, position, topLeft, rev, strayFields} と種類のキー（guide の about: <種類>）。フィールド: {name, type, required, …}。行: {name, heading, body, cells:{set, add, remove}, …}。版: {name, key, heading, body}。ノード: {name, label, connections, …}。データの中の値（Data:Order1.total）: {value}。enum の値（Schemas:Status.paid）: {name（データも付いて行く）, label, description, position}。process の手（….save.steps[1]）: {do, description, …, position}（null でキーを外す。線とパスは手に付いて行く）。body は文字列で置き換え、{edit:[{old, new}], append, prepend} で一部を直し。配列は丸ごと置き換え"
+          "description": "target ごとに、渡したキーだけ変わる。カード: {name, label, description, tags（{add, remove} も）, metadata, connections:{add, remove}, section, in, position, topLeft, rev, strayFields} と種類のキー（guide の about: <種類>）。フィールド: {name, type, required, …}。行: {name, heading, body, cells:{set, add, remove}, …}。バージョン: {name, key, heading, body}。ノード: {name, label, connections, …}。データの中の値（Data:Order1.total）: {value}。enum の値（Schemas:Status.paid）: {name（データも付いて行く）, label, description, position}。process のステップ（….save.steps[1]）: {do, description, …, position}（null でキーを外す。線とパスは手に付いて行く）。body は文字列で置き換え、{edit:[{old, new}], append, prepend} で一部を直し。配列は丸ごと置き換え"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5173,8 +5173,8 @@
   },
   {
     "name": "card_delete",
-    "title": "カードを消す",
-    "description": "カードかフィールドか行かノードを消します（target にパス）。カードはフィールドごと、フィールドと項目は中も消えます。ノードを消すと、同じ flow のノードからそこへの線も外れます。入れ物（flow・goal）を消すと、flow のノードは一緒に消え、goal の中のカードは goal のあった所（goal の入れ物か、セクション）へ出ます（warnings に出したもの）。value の rev（card_update と同じ）を添えると、読んだあとに変わっていれば何も消さずに断ります。ほかのカードからの線・本文のパス・カードゴーストは指す先なしになり、それを warnings に 1 つずつ、danglingRefs にその数を返します（main のカードを消すと、それを指していたボードのカードの分も）。カードゴーストを消すのも同じで（danglingRefs はゴーストを通して指していたもの）、本物を消すと、それを指すゴーストは指す先の無いゴーストとして残ります（brokenPaths に出る）。データ（instance）の値のパス（Data:Order1.note）なら、その値を外します（並びの要素のパス Data:Host1.ports[0] なら、その要素を並びから抜き、その要素とその中から出る線も外し（linesRemoved）、ほかのカードからその要素に着く線は指す先なしにして warnings と danglingRefs で言い、後ろの要素を添字で選んでいる線はずれて付いて行きます）。",
+    "title": "カードを削除",
+    "description": "カードかフィールドか行かノードを消します（target にパス）。カードはフィールドごと、フィールドと項目は中も消えます。ノードを消すと、同じ flow のノードからそこへの線も外れます。コンテナ（flow・goal）を消すと、flow のノードは一緒に消え、goal の中のカードは goal のあった所（goal のコンテナか、セクション）へ出ます（warnings に出したもの）。value の rev（card_update と同じ）を添えると、読んだあとに変わっていれば何も消さずにエラーを返します。ほかのカードからの線・本文のパス・カードゴーストは指す先なしになり、それを warnings に 1 つずつ、danglingRefs にその数を返します（main のカードを消すと、それを指していたボードのカードの分も）。カードゴーストを消すのも同じで（danglingRefs はゴーストを通して指していたもの）、元のカードを消すと、それを指すゴーストは指す先の無いゴーストとして残ります（brokenPaths に出る）。データ（instance）の値のパス（Data:Order1.note）なら、その値を外します（配列の要素のパス Data:Host1.ports[0] なら、その要素を配列から抜き、その要素とその中から出る線も外し（linesRemoved）、ほかのカードからその要素に着く線は指す先なしにして warnings と danglingRefs で言い、後ろの要素を添字で選んでいる線はずれて付いて行きます）。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -5204,11 +5204,11 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         },
         "value": {
           "type": "object",
-          "description": "{rev}（読んだときのカードの版。変わっていれば断る）。target はフィールド・行・enum の値・手（出る線も消す）でもよい。省くとパスごとに {rev}"
+          "description": "{rev}（読んだときのカードのバージョン。変わっていればエラー）。target はフィールド・行・enum の値・ステップ（出る線も消す）でもよい。省くとパスごとに {rev}"
         }
       },
       "required": [
@@ -5218,8 +5218,8 @@
   },
   {
     "name": "export_create",
-    "title": "書き出しを作る",
-    "description": "書き出し（何をどこに書くかの組）を作ります（target に名前）。value の entries（{from, to, format, kinds, lines} の並び。to は書き出し先からの相対パスで、書き出し先は書くときに export_execute の targetdir で渡す。from のセクションは下のセクションまでの、書ける種類のカード全部で、kinds を省けば flow は入らず note はスキーマのセクションだけ。1 枚のカードは、それに一番近い from の行で書かれる。json-connections の行（カードの線）だけは別で、from の下の全部を書く）・exclude（上のセクションの行から外すカードかセクションのパス）・path（この機械での既定の書き出し先のフォルダ。export_execute の targetdir が [default] のとき書く先。項目 export.dir）。プロジェクトの設定で、branch では変わらず、main のロックも受けません。書くのは export_execute。",
+    "title": "エクスポートを作る",
+    "description": "エクスポート（何をどこに書くかのペア）を作ります（target に名前）。value の entries（{from, to, format, kinds, lines} の配列。to はエクスポート先からの相対パスで、エクスポート先は書くときに export_execute の targetdir で渡す。from のセクションは下のセクションまでの、書ける種類のカード全部で、kinds を省けば flow は入らず note はスキーマのセクションだけ。1 枚のカードは、それに一番近い from の行で書かれる。json-connections の行（カードの線）だけは別で、from の下の全部を書く）・exclude（上のセクションの行から外すカードかセクションのパス）・path（このマシンでの既定のエクスポート先のフォルダ。export_execute の targetdir が [default] のとき書く先。項目 export.dir）。プロジェクトの設定で、branch では変わらず、main のロックも受けません。書くのは export_execute。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5236,7 +5236,7 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "{from（カードかセクションのパス）, to（書き出し先の中のファイル。/ で終わればフォルダで、文書・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。カードの線は json-connections（.json 1 つに {cards: [{card, kind, scenarios?, connections}]}。connections は card_read と同じ形、scenarios は spec のシナリオの名前と見出し。from の下の、線のあるカードと spec を、カードの中のカードも全部。1 つのファイルに 1 行）。文書（freedoc・formatdoc・stackdoc・spec）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）, lines（json-connections の行が書く線の種類で絞る）}"
+                "description": "{from（カードかセクションのパス）, to（エクスポート先の中のファイル。/ で終わればフォルダで、ドキュメント・svg・html は 1 枚 1 ファイル）, format（スキーマ（entity・value・enum）と、コードのファイルに注釈で書く note は typescript・zod・json-schema で、省けば拡張子（.zod.ts・.ts・.json）から。データ（instance）は json-data（.json に。拡張子からは決まらないので書く）。カードの線は json-connections（.json 1 つに {cards: [{card, kind, scenarios?, connections}]}。connections は card_read と同じ形式、scenarios は spec のシナリオの名前と見出し。from の下の、線のあるカードと spec を、カードの中のカードも全部。1 つのファイルに 1 行）。ドキュメント（freedoc・structdoc・stackdoc・spec）・flow・.md かフォルダに書く note は Markdown で、format は書かない。svg・html は本文のまま .svg・.html に）, kinds（セクションから書く種類で絞る）, lines（json-connections の行が書く線の種類で絞る）}"
               },
               "description": "何をどこへ。{from, to, format, kinds, lines}"
             },
@@ -5249,7 +5249,7 @@
             },
             "path": {
               "type": "string",
-              "description": "この機械での既定の書き出し先のフォルダ（/ か ~/ から。export_execute の targetdir が [default] のとき書く先。項目 export.dir）"
+              "description": "このマシンでの既定のエクスポート先のフォルダ（/ か ~/ から。export_execute の targetdir が [default] のとき書く先。項目 export.dir）"
             }
           }
         }
@@ -5264,7 +5264,7 @@
         },
         "target": {
           "type": "string",
-          "description": "作る書き出しの名前"
+          "description": "作るエクスポートの名前"
         },
         "value": {
           "type": "object",
@@ -5272,7 +5272,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5284,8 +5284,8 @@
   },
   {
     "name": "export_read",
-    "title": "書き出しを読む",
-    "description": "書き出しを返します。targetdir を必ず付けます（書き出しごとの既定の先なら [default]、ほかのフォルダならそのパス。そこに書いたとしたときの状況を見るので、パスを渡しても書かず、項目も持ちません）。target を省くと、書き出しごとにファイルの数と、書いた時から変わったもの（changed）・手で変えられたもの（edited）・無くなったもの（missing）・まだ書いていないもの（unwritten）・次に書くと消すもの（removing）の数と、全部の書き出しの書けない理由（problems）。target に名前（配列で複数）で、その設定（entries・exclude を名前とパスで）と、書く先 path、書くファイルごとの path・content・cards・status（current・changed・edited・missing・unwritten）・changedCards（書いた時から変わったカード）・rows（そのファイルを書く行の番号。1 から）、removing と、その書き出しの書けない理由（problems）。value の files（ファイルのパスの並び）で、そのファイルごとの path と中身 text を返します（target は 1 つ）。書いた記録とフォルダを見るのは、書き出し先が決まっているときだけです（[default] で既定の先が決まっていなければ、そう言います）。引数 branch で、その branch のカードで書くものと、その状況を返します（書いた記録とはカードの中身で比べます）。target を省いた一覧は書き出しを、target を付けたときは書くファイルを（書き出しを通して）100 件までで切ります（続きは value の after）。",
+    "title": "エクスポートを読む",
+    "description": "エクスポートを返します。targetdir を必ず付けます（エクスポートごとの既定の先なら [default]、ほかのフォルダならそのパス。そこに書いたとしたときの状況を見るので、パスを渡しても書かず、項目も持ちません）。target を省くと、エクスポートごとにファイルの数と、書いた時から変わったもの（changed）・手で変えられたもの（edited）・無くなったもの（missing）・まだ書いていないもの（unwritten）・次に書くと消すもの（removing）の数と、全部のエクスポートの書けない理由（problems）。target に名前（配列で複数）で、その設定（entries・exclude を名前とパスで）と、書く先 path、書くファイルごとの path・content・cards・status（current・changed・edited・missing・unwritten）・changedCards（書いた時から変わったカード）・rows（そのファイルを書く行の番号。1 から）、removing と、そのエクスポートの書けない理由（problems）。value の files（ファイルのパスの配列）で、そのファイルごとの path と中身 text を返します（target は 1 つ）。書いた記録とフォルダを見るのは、エクスポート先が決まっているときだけです（[default] で既定の先が決まっていなければ、そう言います）。引数 branch で、その branch のカードで書くものと、その状況を返します（書いた記録とはカードの中身で比べます）。target を省いた一覧はエクスポートを、target を付けたときは書くファイルを（エクスポートを通して）100 件までに切り詰めます（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -5303,11 +5303,11 @@
               "items": {
                 "type": "string"
               },
-              "description": "中身を読むファイルのパス（書き出し先からの）"
+              "description": "中身を読むファイルのパス（エクスポート先からの）"
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -5330,7 +5330,7 @@
         },
         "targetdir": {
           "type": "string",
-          "description": "書き出し先。[default]（書き出しごとの既定の先）か、フォルダのパス（/ か ~/ から）。必ず付ける"
+          "description": "エクスポート先。[default]（エクスポートごとの既定の先）か、フォルダのパス（/ か ~/ から）。必ず付ける"
         },
         "target": {
           "type": [
@@ -5340,7 +5340,7 @@
           "items": {
             "type": "string"
           },
-          "description": "書き出しの名前（配列で複数。省けば一覧）"
+          "description": "エクスポートの名前（配列で複数。省けば一覧）"
         },
         "value": {
           "type": "object",
@@ -5355,8 +5355,8 @@
   },
   {
     "name": "export_update",
-    "title": "書き出しを直す",
-    "description": "書き出しを直します（target に名前）。value の name（新しい名前）・path（この機械での既定の書き出し先のフォルダ。null で外す。項目 export.dir）・entries と exclude（どちらも {add: [...], remove: [...]}。entries の remove は {from, to} か from の字だけで、to を省けばその from の行全部。entries は change: [{from, to, set: {to, format, kinds, lines}}] で、合う 1 行を並びの場所のまま変えられる。null で外し、remove・change・add の順）。答えは export_read と同じ形の設定です。",
+    "title": "エクスポートを編集",
+    "description": "エクスポートを直します（target に名前）。value の name（新しい名前）・path（このマシンでの既定のエクスポート先のフォルダ。null で外す。項目 export.dir）・entries と exclude（どちらも {add: [...], remove: [...]}。entries の remove は {from, to} か from の字だけで、to を省けばその from の行全部。entries は change: [{from, to, set: {to, format, kinds, lines}}] で、合う 1 行を配列の場所のまま変えられる。null で外し、remove・change・add の順）。レスポンスは export_read と同じ形式の設定です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5378,11 +5378,11 @@
                 "string",
                 "null"
               ],
-              "description": "この機械での既定の書き出し先のフォルダ（/ か ~/ から。null で外す。項目 export.dir）"
+              "description": "このマシンでの既定のエクスポート先のフォルダ（/ か ~/ から。null で外す。項目 export.dir）"
             },
             "entries": {
               "type": "object",
-              "description": "{add: [{from, to, format, kinds, lines}], remove: [{from, to} か from の字], change: [{from, to, set: {to, format, kinds, lines}}]}（行の並びを丸ごと渡す形は無い。remove の to を省けばその from の行全部。change は合う 1 行を並びの場所のまま変え、null で外す）"
+              "description": "{add: [{from, to, format, kinds, lines}], remove: [{from, to} か from の字], change: [{from, to, set: {to, format, kinds, lines}}]}（行の配列を丸ごと渡す形式は無い。remove の to を省けばその from の行全部。change は合う 1 行を配列の場所のまま変え、null で外す）"
             },
             "exclude": {
               "type": "object",
@@ -5401,7 +5401,7 @@
         },
         "target": {
           "type": "string",
-          "description": "直す書き出しの名前"
+          "description": "直すエクスポートの名前"
         },
         "value": {
           "type": "object",
@@ -5409,7 +5409,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5421,8 +5421,8 @@
   },
   {
     "name": "export_delete",
-    "title": "書き出しを消す",
-    "description": "書き出しを消します（target に名前、配列で複数）。書いたファイルは消さず、書いた記録（書き出し先の .specboard/<プロジェクト>/<書き出し>.json）だけを外します。",
+    "title": "エクスポートを削除",
+    "description": "エクスポートを消します（target に名前、配列で複数）。書いたファイルは消さず、書いた記録（エクスポート先の .specboard/<プロジェクト>/<書き出し>.json）だけを外します。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -5444,11 +5444,11 @@
           "items": {
             "type": "string"
           },
-          "description": "消す書き出しの名前（配列で複数）"
+          "description": "消すエクスポートの名前（配列で複数）"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5459,8 +5459,8 @@
   },
   {
     "name": "export_execute",
-    "title": "書き出す",
-    "description": "main（引数 branch でその branch）を、書き出しのとおりに、targetdir のフォルダへ書きます（target に名前、配列で複数、省けば全部）。targetdir を必ず付けます: [default] なら書き出しごとのこの機械の既定の先（export_create・export_update の path。決まっていなければ書けない理由。branch とは一緒に渡せません）、フォルダのパスならそこへ（パスを渡して書くのは項目 export.dir。作業木など、どのフォルダでもよく、フォルダは作りません）。書く前に、書く書き出しのすべてを確かめ、その書けない理由が 1 つでもあれば何も書きません（書かない書き出しの理由では止めません。理由は export_read）。その書き出しが前にその先へ書いて今回書かないファイルだけを消し、書いた記録を先の .specboard/<プロジェクト>/<書き出し>.json に置きます（branch から書いたら branch の名前も）。印は書いた木の履歴に付きます。value の dryRun: true で、書くもの・消すものを返して何も書きません。",
+    "title": "エクスポートする",
+    "description": "main（引数 branch でその branch）を、エクスポートのとおりに、targetdir のフォルダへ書きます（target に名前、配列で複数、省けば全部）。targetdir を必ず付けます: [default] ならエクスポートごとのこのマシンの既定の先（export_create・export_update の path。決まっていなければ書けない理由。branch とは一緒に渡せません）、フォルダのパスならそこへ（パスを渡して書くのは項目 export.dir。ワークツリーなど、どのフォルダでもよく、フォルダは作りません）。書く前に、書くエクスポートのすべてを確かめ、その書けない理由が 1 つでもあれば何も書きません（書かないエクスポートの理由では止めません。理由は export_read）。そのエクスポートが前にその先へ書いて今回書かないファイルだけを消し、書いた記録を先の .specboard/<プロジェクト>/<書き出し>.json に置きます（branch から書いたら branch の名前も）。マークは書いたツリーの履歴に付きます。value の dryRun: true で、書くもの・消すものを返して何も書きません。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5496,11 +5496,11 @@
           "items": {
             "type": "string"
           },
-          "description": "書く書き出しの名前（配列で複数。省けば全部）"
+          "description": "書くエクスポートの名前（配列で複数。省けば全部）"
         },
         "targetdir": {
           "type": "string",
-          "description": "書き出し先。[default]（書き出しごとの既定の先）か、フォルダのパス（/ か ~/ から）。必ず付ける"
+          "description": "エクスポート先。[default]（エクスポートごとの既定の先）か、フォルダのパス（/ か ~/ から）。必ず付ける"
         },
         "value": {
           "type": "object",
@@ -5508,7 +5508,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         },
         "branch": {
           "type": "string",
@@ -5524,7 +5524,7 @@
   {
     "name": "tag_list",
     "title": "タグの一覧",
-    "description": "このプロジェクトのタグを使用件数つきで、タググループと一緒に返します。グループに宣言したが、まだどのカードにも付いていないタグは declared に出ます。タグ・グループ・declared・ungrouped は合わせて 100 件までで切ります（続きは value の after）。",
+    "description": "このプロジェクトのタグを使用件数つきで、タググループと一緒に返します。グループに宣言したが、まだどのカードにも付いていないタグは declared に出ます。タグ・グループ・declared・ungrouped は合わせて 100 件までに切り詰めます（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -5539,7 +5539,7 @@
           "properties": {
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -5573,7 +5573,7 @@
   {
     "name": "tag_update",
     "title": "タグを付け外す",
-    "description": "タグを付け外しします（target にタグ、value に {add: [カードのパス], remove: [カードのパス]}。付いているほかのタグは保たれる）。target を group:名前 にすると、タググループを作る・変える・消します（value の add・remove にタグ（ほかのグループ名も可）、exclusive: true で「タグの付いたカードは、この束からちょうど 1 つ」、delete: true でグループを消す。タグは消えない）。無いグループ名なら作ります。グループ名とタグ名は同じ名前空間です。exclusive の違反は tagGroupViolations に返り、inspection_list（組 tagGroupViolations）にも出ます。",
+    "description": "タグを付け外しします（target にタグ、value に {add: [カードのパス], remove: [カードのパス]}。付いているほかのタグは保たれる）。target を group:名前 にすると、タググループを作る・変える・消します（value の add・remove にタグ（ほかのグループ名も可）、exclusive: true で「タグの付いたカードは、このグループからちょうど 1 つ」、delete: true でグループを消す。タグは消えない）。無いグループ名なら作ります。グループ名とタグ名は同じ名前空間です。exclusive の違反は tagGroupViolations に返り、inspection_list（グループ tagGroupViolations）にも出ます。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5624,7 +5624,7 @@
             },
             "exclusive": {
               "type": "boolean",
-              "description": "true で「タグの付いたカードは、この束からちょうど 1 つ」、false で解除"
+              "description": "true で「タグの付いたカードは、このグループからちょうど 1 つ」、false で解除"
             },
             "delete": {
               "type": "boolean",
@@ -5661,7 +5661,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5672,7 +5672,7 @@
   {
     "name": "branch_list",
     "title": "branch の一覧",
-    "description": "branch（main から作る変更の計画）の一覧を返します。changes は branch で変えた・作った・消したカードとセクションの数、mainMoved は branch を作ったあと main で変わった・増えた・消えたカードの数、merged は main に merge したあと branch で何も書いていなければ、その merge の時刻です。無い項目は出ません。中身は branch_read（value の as: diff で差分）で、点検は inspection_list で読みます。100 件までで切ります（続きは value の after）。",
+    "description": "branch（main から作る変更の計画）の一覧を返します。changes は branch で変えた・作った・消したカードとセクションの数、mainMoved は branch を作ったあと main で変わった・増えた・消えたカードの数、merged は main に merge したあと branch で何も書いていなければ、その merge の時刻です。無い項目は出ません。中身は branch_read（value の as: diff で差分）で、インスペクションは inspection_list で読みます。100 件までに切り詰めます（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -5687,7 +5687,7 @@
           "properties": {
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -5716,8 +5716,8 @@
   },
   {
     "name": "branch_read",
-    "title": "木の差分・図・履歴",
-    "description": "木（main・branch・プロジェクトボード）を読みます（target に木の名前、value の as で読み方: diff・diagram・history。木の点検は inspection_list）。as: diff は、branch が main に対して変えたことと、branch を作ったあとに main が動いたことです（target は branch）。changed・made・removed は branch で変えた（変更を 1 行に 1 つ添える）・作った・消したカード、sections* はセクションの同じもの、main* は branch を作ったあとに main でされた同じこと、overlaps は同じパスに main にもできたもの、elsewhere はほかの branch も同じパスで変えたもの、merged は何も書いていなければ main に merge した時刻です。value の path にカードかセクションのパス（配列で複数。変えたものの今のパスか、消した・移したものの前のパス）を渡すと、それぞれの前（branch が写したときの形）と後（branch の今）の中身を、as: history の seq と同じ形の changes で返します（main も変えていれば mainChanged: true。full: true で長い文の全文。4 万字で切って next）。value の against に branch（main も可）を名指すと、target をそこへ merge したときの下見を返します（places: branch_merge の places: true で入れると増えて変わる位置の数。target に main を書けば main を取り込む下見）。as: diagram は、その木の全体のセクションマップの図を mermaid に返します（指定と rev は card_read の as: diagram と同じ）。as: history は、その木のコミットを新しい順に返します（seq は branch_revert の to・undo に渡す。kind は edit 以外のとき（merge・revert・batch・export・record・form。最後の 2 つはそこより前には戻せない）、lines は何をしたか。1 コミット 10 行までで、残りは moreLines に数）。as: history に seq を渡すと、そのコミット 1 つの前後の中身を返します: changes に変えたセクションとカード（change は add・change・remove、from は前のパス）、直したものは units に変わった所ごとの before・after（card_read と同じ形）、作った・消したカードは after・before にカードの全部（card_create の value の形）、2,000 字を超える文の一部の変更は key と lines（後の文の何行目と前後。full: true で全文）、later は同じものを書いたあとのコミット（undo がぶつかりうる）。path でカードかセクションだけ（配列で複数）。位置は入りません。",
+    "title": "ツリーの差分・図・履歴",
+    "description": "ツリー（main・branch・プロジェクトボード）を読みます（target にツリーの名前、value の as で読み方: diff・diagram・history。ツリーのインスペクションは inspection_list）。as: diff は、branch が main に対して変えたことと、branch を作ったあとに main が動いたことです（target は branch）。changed・made・removed は branch で変えた（変更を 1 行に 1 つ添える）・作った・消したカード、sections* はセクションの同じもの、main* は branch を作ったあとに main でされた同じこと、overlaps は同じパスに main にもできたもの、elsewhere はほかの branch も同じパスで変えたもの、merged は何も書いていなければ main に merge した時刻です。value の path にカードかセクションのパス（配列で複数。変えたものの今のパスか、消した・移したものの前のパス）を渡すと、それぞれの前（branch がコピーしたときの状態）と後（branch の今）の中身を、as: history の seq と同じ形式の changes で返します（main も変えていれば mainChanged: true。full: true で長い文の全文。4 万字で切り詰めて next）。value の against に branch（main も可）を名指すと、target をそこへ merge したときのプレビューを返します（places: branch_merge の places: true で入れると増えて変わる位置の数。target に main を書けば main をマージするプレビュー）。as: diagram は、そのツリーの全体のセクションマップの図を mermaid に返します（指定と rev は card_read の as: diagram と同じ）。as: history は、そのツリーのコミットを新しい順に返します（seq は branch_revert の to・undo に渡す。kind は edit 以外のとき（merge・revert・batch・export・record・form。最後の 2 つはそこより前には戻せない）、lines は何をしたか。1 コミット 10 行までで、残りは moreLines に数）。as: history に seq を渡すと、そのコミット 1 つの前後の中身を返します: changes に変えたセクションとカード（change は add・change・remove、from は前のパス）、直したものは units に変わった所ごとの before・after（card_read と同じ形式）、作った・消したカードは after・before にカードの全部（card_create の value の形式）、2,000 字を超える文の一部の変更は key と lines（後の文の何行目と前後。full: true で全文）、later は同じものを書いたあとのコミット（undo がぶつかりうる）。path でカードかセクションだけ（配列で複数）。位置は入りません。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -5743,7 +5743,7 @@
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next（path と一緒なら、そのパスの次の変更から）"
+              "description": "前のレスポンスの next（path と一緒なら、そのパスの次の変更から）"
             },
             "limit": {
               "type": "integer",
@@ -5822,7 +5822,7 @@
               "enum": [
                 "history"
               ],
-              "description": "その木のコミットを新しい順に"
+              "description": "そのツリーのコミットを新しい順に"
             },
             "limit": {
               "type": "integer",
@@ -5830,7 +5830,7 @@
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next。一覧はコミットの seq で、それより前から返す。seq と一緒ならパスで、その次の変更から返す"
+              "description": "前のレスポンスの next。一覧はコミットの seq で、それより前から返す。seq と一緒ならパスで、その次の変更から返す"
             },
             "seq": {
               "type": "integer",
@@ -5863,7 +5863,7 @@
         },
         "target": {
           "type": "string",
-          "description": "木の名前（branch の名前・main・_project_board_。as: diff は branch で、against を付けるときは main も可）"
+          "description": "ツリーの名前（branch の名前・main・_project_board_。as: diff は branch で、against を付けるときは main も可）"
         },
         "value": {
           "type": "object",
@@ -5879,7 +5879,7 @@
   {
     "name": "branch_create",
     "title": "branch を作る",
-    "description": "branch を作ります（target に名前）。branch は作ったときの main の全部を見て、branch で書いたものだけが branch のものになります（git と同じく、作ったあとの main の変更は、main を取り込む（branch_merge の target に main、into にこの branch）まで映りません）。名前はセクションと同じ決まりで、main は使えず、プロジェクトの中で一意です。branch の中は、ほかのツールの引数 branch で名指して読み書きします。",
+    "description": "branch を作ります（target に名前）。branch は作ったときの main の全部を見て、branch で書いたものだけが branch のものになります（git と同じく、作ったあとの main の変更は、main をマージする（branch_merge の target に main、into にこの branch）まで映りません）。名前はセクションと同じルールで、main は使えず、プロジェクトの中で一意です。branch の中は、ほかのツールの引数 branch で名指して読み書きします。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5912,7 +5912,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5924,7 +5924,7 @@
   {
     "name": "branch_update",
     "title": "branch の名前を変える",
-    "description": "branch の名前を変えます（target にいまの名前、value の name に新しい名前）。名前はセクションと同じ決まりで、main は使えず、プロジェクトの中で一意です。",
+    "description": "branch の名前を変えます（target にいまの名前、value の name に新しい名前）。名前はセクションと同じルールで、main は使えず、プロジェクトの中で一意です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -5965,7 +5965,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -5977,7 +5977,7 @@
   {
     "name": "branch_merge",
     "title": "branch を merge する",
-    "description": "target の branch（merge 元。main も可）で変えたこと全部を、value の into（merge 先。省けば main）に入れます。片側だけが変えた所はそちらを、両側が違うように変えた所は衝突として、value の take で単位ごとに選びます（3 点での比べ方と MR は guide の about: branch）。単位は行のパス（rows.<親>.<名前>・versions.<名前>）で、行は入れ子も 1 本ずつ、flow のノードの行 steps は欄ごと 1 単位です。片方が消した項目の中をもう片方が変えていれば、その項目の衝突になります。main を取り込むときは target に main、into に branch（branch は作ったときの main を見ているので、そのあと main で変わったものも入ります。places: true は使えません）。main へ入れると、merge 元の branch は退けます（一覧から外れて名前が空き、その merge を取り消す revert で戻ります）。答えの places は、places: true で入れたことで増えて変わった位置の数です。places: true を付けなかったときに入れなかった位置があれば、答えの placesLeft にその数と、取り込む hint が出ます（MR の result も同じ）。main がロック中（project_read の locked）なら、代わりに MR を出します。同じ branch でもう一度呼ぶと、前の MR は取り下げになります。project_read の aiMerge: true なら MR を出さずにそのまま main に入れ、said にそう書きます。",
+    "description": "target の branch（merge 元。main も可）で変えたこと全部を、value の into（merge 先。省けば main）に入れます。片側だけが変えた所はそちらを、両側が違うように変えた所は衝突として、value の take で単位ごとに選びます（3 点での比べ方と MR は guide の about: branch）。単位は行のパス（rows.<親>.<名前>・versions.<名前>）で、行は入れ子も 1 本ずつ、flow のノードの行 steps はフィールドごと 1 単位です。片方が消した項目の中をもう片方が変えていれば、その項目の衝突になります。main をマージするときは target に main、into に branch（branch は作ったときの main を見ているので、そのあと main で変わったものも入ります。places: true は使えません）。main へ入れると、merge 元の branch は退けます（一覧から外れて名前が空き、その merge を取り消す revert で戻ります）。レスポンスの places は、places: true で入れたことで増えて変わった位置の数です。places: true を付けなかったときに入れなかった位置があれば、レスポンスの placesLeft にその数と、取り込む hint が出ます（MR の result も同じ）。main がロック中（project_read の locked）なら、代わりに MR を出します。同じ branch でもう一度呼ぶと、前の MR は取り下げになります。project_read の aiMerge: true なら MR を出さずにそのまま main に入れ、said にそう書きます。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -6004,7 +6004,7 @@
             },
             "title": {
               "type": "string",
-              "description": "MR の題。省けば branch の名前"
+              "description": "MR のタイトル。省けば branch の名前"
             },
             "description": {
               "type": "string",
@@ -6035,7 +6035,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6047,7 +6047,7 @@
   {
     "name": "branch_revert",
     "title": "branch を戻す",
-    "description": "target の branch（main・プロジェクトボードも可）を、value の to のコミットのすぐあとの形に戻すか、value の undo のコミット 1 つだけを取り消します。main は書き換えず、戻した形の branch（value の name、省けば revert-<to> か undo-<undo>）を作って made で返します。それを branch_merge で main に入れます（ロック中は MR になり、ロック中でも作れます）。その merge で、戻した範囲の merge が退けた branch も戻ります。to は、それより新しいコミットを新しい順に取り消し、取り消した結果を「戻す」の 1 コミットとして積みます（git の revert）。undo は、そのコミットが変えた所だけを前の形へ戻し、あとのコミットが変えた所は今のまま残します。両方が変えた所が 1 つでもあれば、何も書かずに conflicts（path・unit・before・after・now）と later を返して断ります。取り消したコミットは履歴に残り、戻したことも、また戻せます。番号と中身は branch_read の value の as: history（seq で 1 つの前後）で見ます。to の範囲に、このアクセスキー以外の書き手（画面・ほかのアクセスキー）のコミットがあれば、何も書かずにそのコミットを並べて断ります。ほかの書き手のコミットは undo で 1 つずつ、MCP にさせることの項目 branch_revert.others（既定は都度承認。request: true で画面に聞く）を通ったときだけ取り消せます。カードの位置は戻りません。",
+    "description": "target の branch（main・プロジェクトボードも可）を、value の to のコミットのすぐあとの状態に戻すか、value の undo のコミット 1 つだけを取り消します。main は書き換えず、戻した状態の branch（value の name、省けば revert-<to> か undo-<undo>）を作って made で返します。それを branch_merge で main に入れます（ロック中は MR になり、ロック中でも作れます）。その merge で、戻した範囲の merge が退けた branch も戻ります。to は、それより新しいコミットを新しい順に取り消し、取り消した結果を「戻す」の 1 コミットとして積みます（git の revert）。undo は、そのコミットが変えた所だけを前の状態へ戻し、あとのコミットが変えた所は今のまま残します。両方が変えた所が 1 つでもあれば、何も書かずに conflicts（path・unit・before・after・now）と later を返してエラーにします。取り消したコミットは履歴に残り、戻したことも、また戻せます。番号と中身は branch_read の value の as: history（seq で 1 つの前後）で見ます。to の範囲に、このアクセスキー以外の書き手（画面・ほかのアクセスキー）のコミットがあれば、何も書かずにそのコミットを並べてエラーにします。ほかの書き手のコミットは undo で 1 つずつ、MCP にさせることの項目 branch_revert.others（既定は都度承認。request: true で画面に聞く）を通ったときだけ取り消せます。カードの位置は戻りません。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -6085,7 +6085,7 @@
         },
         "target": {
           "type": "string",
-          "description": "木の名前（branch の名前・main・_project_board_）"
+          "description": "ツリーの名前（branch の名前・main・_project_board_）"
         },
         "value": {
           "type": "object",
@@ -6093,7 +6093,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6104,8 +6104,8 @@
   },
   {
     "name": "branch_delete",
-    "title": "branch を消す",
-    "description": "branch を消します（target に名前）。branch で変えたもの（カード・セクション）が残っていれば、その数を返して断ります。変えたものごと捨てて消すときは value に discard: true（git の branch -D）。",
+    "title": "branch を削除",
+    "description": "branch を消します（target に名前）。branch で変えたもの（カード・セクション）が残っていれば、その数を返してエラーにします。変えたものごと捨てて消すときは value に discard: true（git の branch -D）。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -6143,7 +6143,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6155,7 +6155,7 @@
   {
     "name": "mr_list",
     "title": "MR の一覧",
-    "description": "プロジェクトの MR（merge request。ロック中の main へ branch_merge したときに出る、merge してほしいという頼み）を新しい順に返します（答えは mrs）。番号・題・merge 元の branch（from）・出した AI・時刻・状態（open 出ている・stale 出ているが branch が動いたか、main の変更で入るものが変わって古くなった・merged・rejected 拒否・withdrawn 取り下げ）と拒否の理由で、value の state で絞れます。100 件までで切ります（続きは value の after）。",
+    "description": "プロジェクトの MR（merge request。ロック中の main へ branch_merge したときに出る、merge してほしいというリクエスト）を新しい順に返します（レスポンスは mrs）。番号・題・merge 元の branch（from）・出した AI・時刻・状態（open 出ている・stale 出ているが branch が動いたか、main の変更で入るものが変わって古くなった・merged・rejected 拒否・withdrawn 取り下げ）と拒否の理由で、value の state で絞れます。100 件までに切り詰めます（続きは value の after）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6181,7 +6181,7 @@
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -6211,7 +6211,7 @@
   {
     "name": "mr_read",
     "title": "MR を読む",
-    "description": "MR（merge request）1 つを返します（target に番号）。題・説明・状態・拒否の理由・位置も入れるよう頼んだか（places: true）と、出したときに試した merge の結果（add・change・remove のパス、conflicts は衝突ごとの基点・merge 元・merge 先の値と選んだ側（took）、warnings は merge で壊れるパス、places は branch で動かした位置も入れると、入れないときより増えて変わる位置の数）。",
+    "description": "MR（merge request）1 つを返します（target に番号）。タイトル・説明・状態・拒否の理由・位置も入れるようリクエストしたか（places: true）と、出したときに試した merge の結果（add・change・remove のパス、conflicts は衝突ごとの基点・merge 元・merge 先の値と選んだ側（took）、warnings は merge で壊れるパス、places は branch で動かした位置も入れると、入れないときより増えて変わる位置の数）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6265,7 +6265,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6277,7 +6277,7 @@
   {
     "name": "app_control",
     "title": "画面を読む・動かす",
-    "description": "アプリの画面を読む・動かします（op）。state は開いているプロジェクトと branch・セクション・選んでいるカードとフィールド・行（row は formatdoc の項目・flow のノード・goal の task のパス。コネクションマップを開いていれば connections にそのカードと段数）、セクションマップの見え方（倍率・見えている範囲・描かれているカード。sectionGhost はセクションゴーストのセクションのパス、ghost はカードゴーストのパス。選んでいるのがカードゴーストなら card に着く本物（着かなければ null））。select は project を開いている窓で branch の木（省くと main）を開き、target のセクションかカード・フィールドを選んでセクションマップを寄せる（その木に無いパスは、窓を動かさずに断る）。view はセクションマップの見え方を変える（target: fit / cards / area / topLeft / center / zoom）。capture は画面を PNG で返す（target: window / view）。windows はこのキーで読めるプロジェクトを開いている窓を返す。state・select・view・capture は value の window で窓を指す（省くと project を開いている窓の一番前、project も省くと一番前の窓）。データを読み書きするだけなら要りません。state・select・view・windows は項目 app_control、capture は app_control.capture が許可のときに動きます（既定は都度承認）。",
+    "description": "アプリの画面を読む・動かします（op）。state は開いているプロジェクトと branch・セクション・選んでいるカードとフィールド・行（row は structdoc の項目・flow のノード・goal の task のパス。コネクションマップを開いていれば connections にそのカードと段数）、セクションマップの見え方（倍率・見えている範囲・描かれているカード。sectionGhost はセクションゴーストのセクションのパス、ghost はカードゴーストのパス。選んでいるのがカードゴーストなら card に着く元のカード（着かなければ null））。select は project を開いているウィンドウで branch のツリー（省くと main）を開き、target のセクションかカード・フィールドを選んでセクションマップを寄せる（そのツリーに無いパスは、ウィンドウを動かさずにエラーにする）。view はセクションマップの見え方を変える（target: fit / cards / area / topLeft / center / zoom）。capture は画面を PNG で返す（target: window / view）。windows はこのキーで読めるプロジェクトを開いているウィンドウを返す。state・select・view・capture は value の window でウィンドウを指す（省くと project を開いているウィンドウの一番前、project も省くと一番前のウィンドウ）。データを読み書きするだけなら要りません。state・select・view・windows は項目 app_control、capture は app_control.capture が許可のときに動きます（既定は都度承認）。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6296,7 +6296,7 @@
             },
             "window": {
               "type": "string",
-              "description": "窓（op: windows の window。省くと一番前の窓）"
+              "description": "ウィンドウ（op: windows の window。省くと一番前のウィンドウ）"
             }
           }
         }
@@ -6319,7 +6319,7 @@
             },
             "window": {
               "type": "string",
-              "description": "窓（op: windows の window。省くと一番前の窓）"
+              "description": "ウィンドウ（op: windows の window。省くと一番前のウィンドウ）"
             },
             "view": {
               "type": "string",
@@ -6327,7 +6327,7 @@
                 "map",
                 "sequence"
               ],
-              "description": "アクターのセクションを開くとき、map（マップ）か sequence（シーケンス）か。省けばこの Mac で最後に選んだ方。答えの view にどちらで開いたかが出る"
+              "description": "アクターのセクションを開くとき、map（マップ）か sequence（シーケンス）か。省けばこの Mac で最後に選んだ方。レスポンスの view にどちらで開いたかが出る"
             }
           }
         }
@@ -6402,7 +6402,7 @@
             },
             "window": {
               "type": "string",
-              "description": "窓（op: windows の window。省くと一番前の窓）"
+              "description": "ウィンドウ（op: windows の window。省くと一番前のウィンドウ）"
             }
           }
         }
@@ -6418,7 +6418,7 @@
             },
             "window": {
               "type": "string",
-              "description": "窓（op: windows の window。省くと一番前の窓）"
+              "description": "ウィンドウ（op: windows の window。省くと一番前のウィンドウ）"
             }
           }
         }
@@ -6443,15 +6443,15 @@
             "capture",
             "windows"
           ],
-          "description": "state（読む）/ select（選ぶ）/ view（見え方を変える）/ capture（画像で返す）/ windows（窓の一覧）"
+          "description": "state（読む）/ select（選ぶ）/ view（見え方を変える）/ capture（画像で返す）/ windows（ウィンドウの一覧）"
         },
         "project": {
           "type": "string",
-          "description": "プロジェクト（select は必須。state・view・capture は、そのプロジェクトを開いている窓で）"
+          "description": "プロジェクト（select は必須。state・view・capture は、そのプロジェクトを開いているウィンドウで）"
         },
         "branch": {
           "type": "string",
-          "description": "select で窓がプロジェクトを開く木（省くか main で main、_project_board_ でプロジェクトボード、branch の名前でその branch）。state・view・capture は、窓が開いている木でなければ断る"
+          "description": "select でウィンドウがプロジェクトを開くツリー（省くか main で main、_project_board_ でプロジェクトボード、branch の名前でその branch）。state・view・capture は、ウィンドウが開いているツリーでなければエラー"
         },
         "target": {
           "type": [
@@ -6469,7 +6469,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6480,7 +6480,7 @@
   {
     "name": "batch",
     "title": "まとめて書く",
-    "description": "書くツールの手をまとめて試してから、1 つのトランザクションで流します。手は value の steps に [{tool, arguments}]（arguments はそのツールを直接呼ぶときと同じ。200 手まで）。手が大きいときは、steps の代わりに stepsFrom: {directory, path} で、登録した作業ディレクトリの中の JSON ファイル（手の配列）から読みます（手の中の bodyFrom も、受けたときに 1 度だけ読みます）。execute を付けずに project（と branch。省けば main）と手を渡すと、手を試しに流すだけで、何も書かず、バッチも開かず、木も押さえません。value に open: true を付けるとバッチを開いて、その id（batch）を返します。バッチはその木を押さえ、押さえている間は画面からその木を直せません（画面の帯から人が取り消せます）。target にバッチの id を渡すと、value の steps で手を足し、remove で手を 1 つ外し、discard: true で捨てます。どれも全部の手を試しに流し直し、通らなければ何も変えずに理由を返します。前の手で作ったものを後の手で使えます。試しに流した答えの said に、書いていないことと流し方が出ます。execute: true で流します（全部通るか、何も変わらないか。target を省いて手を渡せばその場で流し、バッチの id を渡せば積んだ手を流して押さえを外します。失敗したときバッチは残ります）。警告の壊れたパスは、全部の手を流し終えた形で確かめ直すので、途中の手で壊れてあとの手で直ったものは出ません。バッチは 7 日触らなければ片付けられます。",
+    "description": "書くツールのステップをまとめて試してから、1 つのトランザクションで実行します。ステップは value の steps に [{tool, arguments}]（arguments はそのツールを直接呼ぶときと同じ。200 ステップまで）。ステップが大きいときは、steps の代わりに stepsFrom: {directory, path} で、登録した作業ディレクトリの中の JSON ファイル（ステップの配列）から読みます（ステップの中の bodyFrom も、受けたときに 1 度だけ読みます）。execute を付けずに project（と branch。省けば main）とステップを渡すと、ステップを試しに実行するだけで、何も書かず、バッチも開かず、ツリーもロックしません。value に open: true を付けるとバッチを開いて、その id（batch）を返します。バッチはそのツリーをロックし、ロックしている間は画面からそのツリーを直せません（画面のバナーから人が取り消せます）。target にバッチの id を渡すと、value の steps でステップを足し、remove でステップを 1 つ外し、discard: true で捨てます。どれも全部のステップを試しに再実行し、通らなければ何も変えずに理由を返します。前のステップで作ったものを後のステップで使えます。試しに実行したレスポンスの said に、書いていないことと実行のしかたが出ます。execute: true で実行します（全部通るか、何も変わらないか。target を省いてステップを渡せばその場で実行し、バッチの id を渡せば積んだステップを実行してロックを外します。失敗したときバッチは残ります）。警告の壊れたパスは、全部のステップを実行し終えた形で確かめ直すので、途中のステップで壊れてあとのステップで直ったものは出ません。バッチは 7 日触らなければ片付けられます。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -6513,7 +6513,7 @@
                       "branch_update",
                       "branch_delete"
                     ],
-                    "description": "手のツール"
+                    "description": "ステップのツール"
                   },
                   "arguments": {
                     "type": "object",
@@ -6524,23 +6524,23 @@
                   "tool"
                 ]
               },
-              "description": "手の並び。全部が通るときだけ積む（流す）"
+              "description": "ステップの配列。全部が通るときだけ積む（実行する）"
             },
             "remove": {
               "type": "integer",
-              "description": "外す手の番号（0 から）"
+              "description": "外すステップの番号（0 から）"
             },
             "discard": {
               "type": "boolean",
-              "description": "true でバッチを捨てる（押さえを外す）"
+              "description": "true でバッチを捨てる（ロックを外す）"
             },
             "open": {
               "type": "boolean",
-              "description": "true でバッチを開く（木を押さえ、id を返す）。省けば手を試しに流すだけ"
+              "description": "true でバッチを開く（ツリーをロックし、id を返す）。省けばステップを試しに実行するだけ"
             },
             "stepsFrom": {
               "type": "object",
-              "description": "steps の代わりに、登録した作業ディレクトリ（directory）の中の JSON ファイル（path。手の配列）から手を読む",
+              "description": "steps の代わりに、登録した作業ディレクトリ（directory）の中の JSON ファイル（path。ステップの配列）からステップを読む",
               "properties": {
                 "directory": {
                   "type": "string"
@@ -6563,35 +6563,35 @@
       "properties": {
         "project": {
           "type": "string",
-          "description": "プロジェクト（名前 / slug / id）。バッチを開くときと、手をその場で流すとき"
+          "description": "プロジェクト（名前 / slug / id）。バッチを開くときと、ステップをその場で実行するとき"
         },
         "branch": {
           "type": "string",
-          "description": "手が書き込む木（branch の名前・main・_project_board_。省けば main）。バッチを開くときと、手をその場で流すとき"
+          "description": "ステップが書き込むツリー（branch の名前・main・_project_board_。省けば main）。バッチを開くときと、ステップをその場で実行するとき"
         },
         "target": {
           "type": "string",
-          "description": "バッチの id（open: true で開いた答えの batch）"
+          "description": "バッチの id（open: true で開いたレスポンスの batch）"
         },
         "value": {
           "type": "object",
-          "description": "{steps:[{tool, arguments}] か stepsFrom:{directory, path}, open?}（arguments はそのツールのとおりで project と branch を書かない。stepsFrom は作業ディレクトリの JSON ファイルの手の配列）。open: true でバッチを開く（省けば試すだけ）。開いた batch には {remove: <番号>} か {discard: true}。execute: true で流す。その id を target にすると足す"
+          "description": "{steps:[{tool, arguments}] か stepsFrom:{directory, path}, open?}（arguments はそのツールのとおりで project と branch を書かない。stepsFrom は作業ディレクトリの JSON ファイルのステップの配列）。open: true でバッチを開く（省けば試すだけ）。開いた batch には {remove: <番号>} か {discard: true}。execute: true で実行する。その id を target にすると足す"
         },
         "execute": {
           "type": "boolean",
-          "description": "true で流す（1 つのトランザクション）。省けば試しに流すだけで、何も書かず、木も押さえない"
+          "description": "true で実行する（1 つのトランザクション）。省けば試しに実行するだけで、何も書かず、ツリーもロックしない"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、execute: true と一緒に true で、画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、execute: true と一緒に true で、画面に許可を求めて回答を待つ（2 分まで）"
         }
       }
     }
   },
   {
     "name": "guide",
-    "title": "詳しい説明と value の形",
-    "description": "ツール・種類・キーの書き方を返します（一覧に載るのは説明の最初の一文と、引数と value の要約まで）。about にツール名で、そのツールが何をするか・target ごとの value のキー・答え・例・断られやすいこと。種類の名前（entity・flow など）でその種類だけのキーと例、キーや仕組みの名前（connections・body・layout・rev・paging・paths・branch・board・kinds）でその書き方、sdd で仕様を先に書いて実装する進め方。about を名前の配列にすると、1 回でいくつも読めます。プロジェクトの種類は、about にその名前と project で。glossary で画面と共通の語。省くと、名前と答えの字数の一覧。",
+    "title": "詳しい説明と value の形式",
+    "description": "ツール・種類・キーの書き方を返します（一覧に載るのは説明の最初の一文と、引数と value の要約まで）。about にツール名で、そのツールが何をするか・target ごとの value のキー・レスポンス・例・エラーになりやすいこと。種類の名前（entity・flow など）でその種類だけのキーと例、キーや仕組みの名前（connections・body・layout・rev・paging・paths・branch・board・kinds）でその書き方、sdd で仕様を先に書いて実装する進め方。about を名前の配列にすると、1 回でいくつも読めます。プロジェクトの種類は、about にその名前と project で。glossary で画面と共通の語。省くと、名前とレスポンスの文字数の一覧。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6620,8 +6620,8 @@
   },
   {
     "name": "inspection_list",
-    "title": "点検の一覧",
-    "description": "木の点検で見つかったものを 1 件ずつ id で返します（branch に木。省けば main）。hint は壊れたパスの近いものです。件は組の順、組の中は見つかった順に並びます。済んだカード（完了・打ち切りの goal、済みの task）とその中のカードで見つかった件は、記録なので直すものの組でも情報（info）に数え、kind: info が付きます。counts は木の全体の fix（直すもの）・info（設計どおりでも出る情報）・accepted（設計どおりの印を付けたもの）の数、groups は件のある組ごとの kind（fix か info）・label（見出し）・count（印の無い件の数）・info（count のうち情報に数えた件の数。直すものの組）・accepted（印の付いた件の数）で、どちらも絞る前の全体です。直すものの組は brokenPaths（解決しないパス）・missingFolders（作業ディレクトリのセクションの、この機械で読んだ中に無いフォルダに置いたメモ）・ambiguousPointers（候補が 2 つ以上で、選ぶ手がかり when・discriminatedBy が無い指し先）・unresolvedPointers（判別で指す欄で選べる候補が無いもの）・lineProblems（線の種類に合わない線）・sectionProblems（セクションの種類に合わないカード）・cardProblems（種類の定義やデータの形に合わないカード）・strayFields（定義に無い欄の値）・flowProblems（flow の未完成な所・どこからも来ないノード）・peerMismatches（やり取りする flow が合わない所）・missingPartners（受けて始まるのに受ける相手が書かれていない begin と、begin が受けない flow で相手を書かない receive の行・終了。シーケンス図の「相手が書かれていない」）・missingStores（置く store が 1 つに決まらない形を読み書きする行。図の「置き場が書かれていない」）・unlinkedPartners（相手を program の文字で書いたが、プロジェクトの flow の名前・見出し・パスかアクターの名前と同じ所。partner の線にする）・tagGroupViolations（排他のタググループの違反）、情報の組は freeCards（フリーセクションに置いたままのカード）・unreferenced（どこからも指されていない value と enum。flow のノードが運ぶもの・返すもの、行が読み書きする所は指すうちに数える）・uncheckedPatterns（pattern の読めない正規表現）・overlaps（セクションの図でほかのカードに重なっているカード）・review（線でつないだ先が、あとで直していないのに変わった UI の部品）・codeChanged（作業ディレクトリへ引いた線（実装・テストの関数など）の先のコードが、覚えたあとで変わったカード。件の文は線の種類の名前で言う）です。1 件の中身と直し方は inspection_read、設計どおりの印は inspection_update です。印を付けた件の中身が変わると（hint・moveTo のほか）、件はまた元の組に出て、acceptedBefore に前の印（reason・by・at）が付きます。",
+    "title": "インスペクションの一覧",
+    "description": "ツリーのインスペクションで見つかったものを 1 件ずつ id で返します（branch にツリー。省けば main）。hint は壊れたパスの近いものです。件はグループの順、グループの中は見つかった順に並びます。済んだカード（完了・打ち切りの goal、済みの task）とその中のカードで見つかった件は、記録なので直すもののグループでも情報（info）に数え、kind: info が付きます。counts はツリーの全体の fix（直すもの）・info（設計どおりでも出る情報）・accepted（設計どおりのマークを付けたもの）の数、groups は件のあるグループごとの kind（fix か info）・label（見出し）・count（マークの無い件の数）・info（count のうち情報に数えた件の数。直すもののグループ）・accepted（マークの付いた件の数）で、どちらも絞る前の全体です。直すもののグループは brokenPaths（解決しないパス）・missingFolders（作業ディレクトリのセクションの、このマシンで読んだ中に無いフォルダに置いたメモ）・ambiguousPointers（候補が 2 つ以上で、選ぶ手がかり when・discriminatedBy が無い指し先）・unresolvedPointers（判別で指すフィールドで選べる候補が無いもの）・lineProblems（線の種類に合わない線）・sectionProblems（セクションの種類に合わないカード）・cardProblems（種類の定義やデータの形に合わないカード）・strayFields（定義に無いフィールドの値）・flowProblems（flow の未完成な所・どこからも来ないノード）・peerMismatches（やり取りする flow が合わない所）・missingPartners（受けて始まるのに受ける相手が書かれていない begin と、begin が受けない flow で相手を書かない receive の行・終了。シーケンス図の「相手が書かれていない」）・missingStores（置く store が 1 つに決まらない形を読み書きする行。図の「ストアが書かれていない」）・unlinkedPartners（相手を program の文字で書いたが、プロジェクトの flow の名前・見出し・パスかアクターの名前と同じ所。partner の線にする）・tagGroupViolations（排他のタググループの違反）、情報のグループは freeCards（フリーセクションに置いたままのカード）・unreferenced（どこからも指されていない value と enum。flow のノードが運ぶもの・返すもの、行が読み書きする所は指すうちに数える）・uncheckedPatterns（pattern の読めない正規表現）・overlaps（セクションの図でほかのカードに重なっているカード）・review（線でつないだ先が、あとで直していないのに変わった UI の部品）・codeChanged（作業ディレクトリへ引いた線（実装・テストの関数など）の先のコードが、覚えたあとで変わったカード。件の文は線の種類の名前で言う）です。1 件の中身と直し方は inspection_read、設計どおりのマークは inspection_update です。マークを付けた件の中身が変わると（hint・moveTo のほか）、件はまた元のグループに出て、acceptedBefore に前のマーク（reason・by・at）が付きます。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6642,7 +6642,7 @@
                 "accepted",
                 "all"
               ],
-              "description": "返す件: 直すもの（既定）・情報・設計どおりの印を付けたもの（accepted）・全部"
+              "description": "返す件: 直すもの（既定）・情報・設計どおりのマークを付けたもの（accepted）・全部"
             },
             "group": {
               "type": [
@@ -6652,7 +6652,7 @@
               "items": {
                 "type": "string"
               },
-              "description": "この組の件だけ（名前か並び）"
+              "description": "このグループの件だけ（名前か配列）"
             },
             "in": {
               "type": "string",
@@ -6660,7 +6660,7 @@
             },
             "after": {
               "type": "string",
-              "description": "前の答えの next"
+              "description": "前のレスポンスの next"
             },
             "limit": {
               "type": "integer",
@@ -6679,7 +6679,7 @@
         },
         "branch": {
           "type": "string",
-          "description": "点検する木（branch の名前・_project_board_）。省くか main で main"
+          "description": "インスペクションするツリー（branch の名前・_project_board_）。省くか main で main"
         },
         "value": {
           "type": "object",
@@ -6693,8 +6693,8 @@
   },
   {
     "name": "inspection_read",
-    "title": "点検の件を読む",
-    "description": "点検の件を、中身と直し方まで返します（target に inspection_list の id。配列で複数。branch に木で、省けば main）。1 件は id・group（組）・kind（fix か info。済んだカード（完了・打ち切りの goal、済みの task）とその中のカードで見つかった件は、直すものの組でも info）・label（組の見出し）・at・problem と、組ごとの中身（brokenPaths は via（書き方）・path（書いたパス）・hint（近いもの）、ambiguousPointers は candidates（候補の数）、unresolvedPointers は by（判別に使う欄）、strayFields は fields（定義に無い欄の所）、peerMismatches は peer（相手の flow）・carries（運ぶもの）、missingPartners は callers（今これを実行する・送る flow）か op（相手を書かない行・終了の語）、missingStores は shapes（置く store が決まらない形）・candidates（2 つ以上の store に着いた形ごとの、その store のパス。木の順。そういう形があるときだけ）・op・data、unlinkedPartners は op（行・開始・終了の語）・program（書いた字）・flows（同じ名前の flow のパス）か actor（同じ名前のアクターのセクションのパス）、tagGroupViolations は tagGroup・count（付いているタグの数）、freeCards は section、uncheckedPatterns は regex、overlaps は section・over（重なっている相手）・moveTo（片付けるならずらす先）、review は changed（変わったカードの path・at））、fix（直し方）で、印があれば accepted（reason・by・at）、印を付けたあとで中身が変わったものは acceptedBefore（前の印）が付きます。その木で見つからない id は notFound に並びます（直ったか、ほかの木の件）。1 つも見つからなければ断ります。",
+    "title": "インスペクションの件を読む",
+    "description": "インスペクションの件を、中身と直し方まで返します（target に inspection_list の id。配列で複数。branch にツリーで、省けば main）。1 件は id・group（グループ）・kind（fix か info。済んだカード（完了・打ち切りの goal、済みの task）とその中のカードで見つかった件は、直すもののグループでも info）・label（グループの見出し）・at・problem と、グループごとの中身（brokenPaths は via（書き方）・path（書いたパス）・hint（近いもの）、ambiguousPointers は candidates（候補の数）、unresolvedPointers は by（判別に使うフィールド）、strayFields は fields（定義に無いフィールドの所）、peerMismatches は peer（相手の flow）・carries（運ぶもの）、missingPartners は callers（今これを実行する・送る flow）か op（相手を書かない行・終了の語）、missingStores は shapes（置く store が決まらない形）・candidates（2 つ以上の store に着いた形ごとの、その store のパス。ツリーの順。そういう形があるときだけ）・op・data、unlinkedPartners は op（行・開始・終了の語）・program（書いた字）・flows（同じ名前の flow のパス）か actor（同じ名前のアクターのセクションのパス）、tagGroupViolations は tagGroup・count（付いているタグの数）、freeCards は section、uncheckedPatterns は regex、overlaps は section・over（重なっている相手）・moveTo（片付けるならずらす先）、review は changed（変わったカードの path・at））、fix（直し方）で、マークがあれば accepted（reason・by・at）、マークを付けたあとで中身が変わったものは acceptedBefore（前のマーク）が付きます。そのツリーで見つからない id は notFound に並びます（直ったか、ほかのツリーの件）。1 つも見つからなければエラーを返します。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6710,7 +6710,7 @@
         },
         "branch": {
           "type": "string",
-          "description": "点検する木（branch の名前・_project_board_）。省くか main で main"
+          "description": "インスペクションするツリー（branch の名前・_project_board_）。省くか main で main"
         },
         "target": {
           "type": [
@@ -6731,8 +6731,8 @@
   },
   {
     "name": "inspection_update",
-    "title": "点検の件に印を付ける",
-    "description": "点検の件に「設計どおり」の印を付け、外します（target に inspection_list の id。配列で複数。branch は件を探す木で、省けば main）。value の accept に理由の文を渡すと印を付け（あれば書き換える）、件は直すもの・情報から外れて inspection_list の show: accepted に出ます。accept: false で印を外します（件が今の木に無くても外せる）。見つからない id・空の文・true・印の無い id への false は断り、1 つでも断れば何も書きません。印はプロジェクトに 1 つの表で、組と場所と中身が同じ件なら、どの木でも効きます（branch で付けた印は、merge したあとの main でも効く）。木の中身ではないので履歴に残らず、ロック中の main でも付け外しできます。アーカイブしたプロジェクトでは断ります。答えの updated は id ごとの印（reason・by（付けた人。MCP はアクセスキーの名前）・at。外したら null）です。",
+    "title": "インスペクションの件にマークを付ける",
+    "description": "インスペクションの件に「設計どおり」のマークを付け、外します（target に inspection_list の id。配列で複数。branch は件を探すツリーで、省けば main）。value の accept に理由の文を渡すとマークを付け（あれば書き換える）、件は直すもの・情報から外れて inspection_list の show: accepted に出ます。accept: false でマークを外します（件が今のツリーに無くても外せる）。見つからない id・空の文・true・マークの無い id への false はエラーにし、1 つでもエラーなら何も書きません。マークはプロジェクトに 1 つの表で、グループと場所と中身が同じ件なら、どのツリーでも効きます（branch で付けたマークは、merge したあとの main でも効く）。ツリーの中身ではないので履歴に残らず、ロック中の main でも付け外しできます。アーカイブしたプロジェクトではエラーを返します。レスポンスの updated は id ごとのマーク（reason・by（付けた人。MCP はアクセスキーの名前）・at。外したら null）です。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": false,
@@ -6750,7 +6750,7 @@
                 "string",
                 "boolean"
               ],
-              "description": "設計どおりとする理由（文）。false で印を外す"
+              "description": "設計どおりとする理由（文）。false でマークを外す"
             }
           }
         }
@@ -6765,7 +6765,7 @@
         },
         "branch": {
           "type": "string",
-          "description": "点検する木（branch の名前・_project_board_）。省くか main で main"
+          "description": "インスペクションするツリー（branch の名前・_project_board_）。省くか main で main"
         },
         "target": {
           "type": [
@@ -6779,11 +6779,11 @@
         },
         "value": {
           "type": "object",
-          "description": "{accept: \"<理由>\"} で設計どおりの印、false で外す"
+          "description": "{accept: \"<理由>\"} で設計どおりのマーク、false で外す"
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6795,7 +6795,7 @@
   {
     "name": "card_action",
     "title": "カードのアクション",
-    "description": "goal・task と UI の部品（html・svg・frame）のアクション（op）と、実装の線を持つカードの見直しを 1 回で行います（target にカード 1 枚）。goal の start は branch を作って進行中に、finish は完了にしてボードの完了のセクションへ、cancel は打ち切りにして打ち切りのセクションへ移し、task の done は済みにし、reviewed は部品の見直しの印を消し、作業ディレクトリのファイルへ引いた線（implementedBy など）のコードを今の形で覚え直します（どの種類のカードでも。覚え直しはコミットにならず、ロック中の main でも使えます）。branch の作成・削除と欄と移動を 1 つのトランザクションで書きます。今使えるかは card_read の include: [\"actions\"]、op ごとの中身は guide の about: goal・task。",
+    "description": "goal・task と UI の部品（html・svg・frame）のアクション（op）と、実装の線を持つカードのレビューを 1 回で行います（target にカード 1 枚）。goal の start は branch を作って進行中に、finish は完了にしてボードの完了のセクションへ、cancel は打ち切りにして打ち切りのセクションへ移し、task の done は済みにし、reviewed は部品のレビューのマークを消し、作業ディレクトリのファイルへ引いた線（implementedBy など）のコードを今の状態で覚え直します（どの種類のカードでも。覚え直しはコミットにならず、ロック中の main でも使えます）。branch の作成・削除とフィールドと移動を 1 つのトランザクションで書きます。今使えるかは card_read の include: [\"actions\"]、op ごとの中身は guide の about: goal・task。",
     "annotations": {
       "readOnlyHint": false,
       "destructiveHint": true,
@@ -6858,7 +6858,7 @@
         },
         "branch": {
           "type": "string",
-          "description": "カードのある木。goal・task はボードなので _project_board_、部品と実装の線を持つカードは main か branch"
+          "description": "カードのあるツリー。goal・task はボードなので _project_board_、部品と実装の線を持つカードは main か branch"
         },
         "target": {
           "type": "string",
@@ -6881,7 +6881,7 @@
         },
         "request": {
           "type": "boolean",
-          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて答えを待つ（2 分まで）"
+          "description": "都度承認の項目に当たるとき、true で画面に許可を求めて回答を待つ（2 分まで）"
         }
       },
       "required": [
@@ -6894,7 +6894,7 @@
   {
     "name": "section_action",
     "title": "セクションのアクション",
-    "description": "セクションのアクション（op）を行います（target にセクション 1 つ）。今あるのは作業ディレクトリのセクションの read（読み込む）で、この機械で結び付けたフォルダを読み直し、中のディレクトリとファイルを今の姿にして、section_read と同じ形（folder・readType・exclude・files・directories・problem・actions）で返します。プロジェクトの中身は変えないので、読むだけのキーでも使えます。フォルダが結び付いていないときと読み方が none のときは使えません（今使えるかは section_read の actions）。ほかのセクションと、種類に無い op は、その種類のアクションを並べて断ります。",
+    "description": "セクションのアクション（op）を行います（target にセクション 1 つ）。今あるのは作業ディレクトリのセクションの read（再読み込み）で、このマシンで結び付けたフォルダを再読み込みし、中のディレクトリとファイルを今の姿にして、section_read と同じ形式（folder・readType・exclude・files・directories・problem・actions）で返します。プロジェクトの中身は変えないので、読み取り専用のキーでも使えます。フォルダが結び付いていないときと読み方が none のときは使えません（今使えるかは section_read の actions）。ほかのセクションと、種類に無い op は、その種類のアクションを並べてエラーにします。",
     "annotations": {
       "readOnlyHint": true,
       "destructiveHint": false,
@@ -6930,7 +6930,7 @@
           "enum": [
             "read"
           ],
-          "description": "アクション: read（作業ディレクトリを読み込む）"
+          "description": "アクション: read（作業ディレクトリを再読み込みする）"
         },
         "value": {
           "type": "object",

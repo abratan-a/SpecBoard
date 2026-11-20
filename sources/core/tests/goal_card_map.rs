@@ -341,7 +341,7 @@ fn what_is_not_on_a_goals_map_is_refused() {
     );
     assert_eq!(
         said,
-        "places の「Goals:Ship.t2」: コンテンツマップの places に書くのは topLeft だけです（task の大きさは、そのカードの card_update の value の size で変えます）"
+        "places の「Goals:Ship.t2」: コンテンツマップの places に書くのは topLeft だけです（task のサイズは、そのカードの card_update の value の size で変えます）"
     );
     board(
         &core,
@@ -356,7 +356,7 @@ fn what_is_not_on_a_goals_map_is_refused() {
     );
     assert_eq!(
         said,
-        "places の「Goals:Ship.Inner」: コンテンツマップの places に書くのは topLeft だけです（goal の大きさは、そのカードの card_update の value の size で変えます）"
+        "places の「Goals:Ship.Inner」: コンテンツマップの places に書くのは topLeft だけです（goal のサイズは、そのカードの card_update の value の size で変えます）"
     );
     let said = update(
         "Goals:Ship",

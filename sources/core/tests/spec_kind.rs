@@ -1,7 +1,7 @@
 //! The specification (`spec`; `specboard://SpecBoard/Docs/Design:CardKinds`「仕様（spec）」): one card of a
 //! story and scenarios, each scenario a heading and its steps (given, when, then, and, but), with a
 //! path of its own to change, move, rename and draw lines from; written out as the spec documents
-//! read; a scenario no test is tied to said by the inspection; a formatdoc made one in place.
+//! read; a scenario no test is tied to said by the inspection; a structdoc made one in place.
 
 use crate::common;
 
@@ -193,7 +193,7 @@ fn a_spec_is_markdown_as_the_spec_documents_are() {
     ] {
         assert!(markdown.contains(wanted), "wanted「{wanted}」:\n{markdown}");
     }
-    // Drawn as its document, as a formatdoc may be.
+    // Drawn as its document, as a structdoc may be.
     ok(
         &core,
         "card_update",
@@ -224,7 +224,7 @@ fn a_scenario_without_a_test_is_inspected() {
         "card_create",
         json!({"value": {
             "Docs:LinesTest": {"kind": "note", "body": "線のテスト"},
-            "Docs:Plain": {"kind": "formatdoc", "rows": [{"name": "untested", "kind": "item", "heading": "テストの無い項目"}]}
+            "Docs:Plain": {"kind": "structdoc", "rows": [{"name": "untested", "kind": "item", "heading": "テストの無い項目"}]}
         }}),
     );
     ok(
@@ -259,7 +259,7 @@ fn a_formatdoc_becomes_a_spec_keeping_its_id_and_lines() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:Old": {"kind": "formatdoc", "rows": [{"name": "addRemove", "kind": "item", "heading": "Scenario: 足し外し"}]},
+            "Docs:Old": {"kind": "structdoc", "rows": [{"name": "addRemove", "kind": "item", "heading": "Scenario: 足し外し"}]},
             "Docs:OldTest": {"kind": "note", "body": "テスト"}
         }}),
     );

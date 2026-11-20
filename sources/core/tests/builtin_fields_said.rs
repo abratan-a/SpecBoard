@@ -52,7 +52,7 @@ fn a_process_steps_are_named_in_the_history_line() {
     );
     assert_eq!(
         latest(&core, "main"),
-        "カード Free:Flow.read を更新（欄 steps）"
+        "カード Free:Flow.read を更新（フィールド steps）"
     );
 }
 
@@ -69,12 +69,12 @@ fn a_goals_status_and_a_tasks_done_are_named_in_the_history_line() {
     put(&core, BOARD, "Goals:Plan", json!({"status": "inProgress"}));
     assert_eq!(
         latest(&core, BOARD),
-        "カード Goals:Plan を更新（欄 status）"
+        "カード Goals:Plan を更新（フィールド status）"
     );
     put(&core, BOARD, "Goals:Plan.Step", json!({"done": true}));
     assert_eq!(
         latest(&core, BOARD),
-        "カード Goals:Plan.Step を更新（欄 done）"
+        "カード Goals:Plan.Step を更新（フィールド done）"
     );
 }
 
@@ -93,7 +93,7 @@ fn a_batch_tried_first_lists_the_change_of_a_built_in_field() {
     .unwrap();
     assert_eq!(
         tried["steps"][0]["changes"],
-        json!(["カード Free:Flow.read を更新（欄 steps）"]),
+        json!(["カード Free:Flow.read を更新（フィールド steps）"]),
         "{tried}"
     );
 }

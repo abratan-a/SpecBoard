@@ -10,7 +10,7 @@
 //! `priority` and `due` now, their labels (the names people read) Japanese as before. Each goal's
 //! document is moved, its values as they were (`kinds::GOAL_KEYS_BEFORE`). A field the board's
 //! kinds no longer have (a goal's and a task's `担当`, a task's `優先度`, `branch` and `PR`, held
-//! to one person's use) is not moved: a value written in one stays where it is, as 「定義に無い欄」
+//! to one person's use) is not moved: a value written in one stays where it is, as 「定義に無いフィールド」
 //! (`strayFields`), to be let go of by hand. A name of now a document holds already is left as
 //! it is, and the one of before beside it then stays too.
 //!
@@ -89,7 +89,7 @@ pub fn move_all(conn: &Connection) -> Result<(), String> {
 }
 
 /// One project's goals moved, in every tree; each tree that had any says how many in a commit of
-/// one record 「goal の欄の名前を英語にした」.
+/// one record 「goal のフィールドの名前を英語にした」.
 pub fn move_project(conn: &Connection, project: &str) -> Result<(), String> {
     let said = |cards: &[String]| {
         let mut names: Vec<&str> = Vec::new();
@@ -266,7 +266,7 @@ mod tests {
         assert_eq!(moved["v"], crate::kinds::builtin().version);
         // Moved once: nothing more the second time.
         assert!(move_doc(&moved).is_none());
-        // A task keeps what it had (a field it no longer has stays, 「定義に無い欄」).
+        // A task keeps what it had (a field it no longer has stays, 「定義に無いフィールド」).
         let task = obj(
             json!({ "id": "t", "kind": "task", "name": "a", "section": "s", "v": 3,
             "fields": { "done": true, "優先度": "高", "担当": "Claude" } }),
@@ -291,7 +291,7 @@ mod tests {
         assert_eq!(keys, ["status", "branch", "MR", "body"]);
         assert_eq!(moved["fields"]["MR"], 3);
         assert!(move_mr_doc(&moved).is_none());
-        // A task's PR of before stays as it was, 「定義に無い欄」.
+        // A task's PR of before stays as it was, 「定義に無いフィールド」.
         let task = obj(
             json!({ "id": "t", "kind": "task", "name": "a", "section": "s", "v": 4, "fields": { "PR": 2 } }),
         );

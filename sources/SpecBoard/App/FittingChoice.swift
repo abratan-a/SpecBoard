@@ -93,7 +93,7 @@ extension Array where Element == FittingChoice.Option {
 }
 
 /// A choice among values of any kind, drawn as `FittingChoice` draws one (`specboard://SpecBoard/Docs/Design:UI`
-/// 「値を選ぶ欄」): a pull-down whose button says the value chosen, on one line cut short with … where it is long,
+/// 「値を選ぶフィールド」): a pull-down whose button says the value chosen, on one line cut short with … where it is long,
 /// and whose menu says each option, the one chosen checked. A value no option has is said as it is.
 struct ChoiceMenu<Value: Hashable>: View {
     var options: [(value: Value, text: String)]

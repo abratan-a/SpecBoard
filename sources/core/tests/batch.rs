@@ -58,7 +58,7 @@ fn what_is_broken_is_said_once_as_it_stands_when_the_steps_are_done() {
     assert_eq!(
         tried["said"],
         format!(
-            "書いていません。流すのは batch の target に {token}、execute: true（捨てるのは value の discard: true）"
+            "書いていません。実行するのは batch の target に {token}、execute: true（捨てるのは value の discard: true）"
         )
     );
     let warnings = tried["warnings"].to_string();
@@ -116,7 +116,7 @@ fn steps_given_alone_are_only_tried_and_keep_no_batch() {
     );
     // No steps and nothing to open: nothing to try.
     let said = refused(&core, json!({"value": {}}));
-    assert!(said.contains("stepsFrom）に 1 手以上"), "{said}");
+    assert!(said.contains("stepsFrom）に 1 ステップ以上"), "{said}");
 }
 
 #[test]
@@ -174,7 +174,7 @@ fn what_a_call_mixes_is_refused() {
         json!({"target": token, "value": {"steps": steps()}, "execute": true}),
     );
     assert!(
-        said.contains("execute: true で流すのは、積んだ手だけです"),
+        said.contains("execute: true で実行するのは、積んだステップだけです"),
         "{said}"
     );
     let said = refused(&core, json!({"value": {"remove": 0}}));
@@ -185,12 +185,15 @@ fn what_a_call_mixes_is_refused() {
     );
     assert!(said.contains("1 回に 1 つだけ"), "{said}");
     let said = refused(&core, json!({"target": token, "branch": "refunds"}));
-    assert!(said.contains("1 度だけ名指します"), "{said}");
+    assert!(said.contains("1 度だけ指定します"), "{said}");
     let said = refused(
         &core,
         json!({"value": {"steps": [{"tool": "card_update", "arguments": {"target": "Free:Memo", "branch": "refunds"}}]}}),
     );
-    assert!(said.contains("手の引数に branch は書きません"), "{said}");
+    assert!(
+        said.contains("ステップの引数に branch は書きません"),
+        "{said}"
+    );
     // Taken out and let go of.
     let removed = ok(&core, json!({"target": token, "value": {"remove": 2}}));
     assert_eq!(removed["staged"], 2, "{removed}");

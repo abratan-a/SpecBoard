@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A stackdoc opened — its card editor (`specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」): on
+/// A stackdoc opened — its card editor (`specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」): on
 /// top the selector of its versions, the one open chosen there (how it looks: no commit), with a
 /// version added on top, the one open let go of and moved up or down; under it the version open read
 /// — its heading and its body, its `![[…]]` drawn — or its body written, as a freedoc's is. The

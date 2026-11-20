@@ -53,7 +53,7 @@ enum Glossary {
     static let groups: [Group] = [
         Group("project", ["project", "main", "branch", "section", "project_tree", "free", "ui", "mock", "board", "ghost",
                           "standalone", "base", "merge", "path", "in"]),
-        Group("kinds", ["entity", "value", "enum", "flow", "store", "instance", "table", "note", "freedoc", "formatdoc",
+        Group("kinds", ["entity", "value", "enum", "flow", "store", "instance", "table", "note", "freedoc", "structdoc",
                         "stackdoc", "spec", "svg", "sketch", "image", "html", "frame", "goal", "task", "file", "workdir", "directory", "symbol",
                         "parsers"]),
         Group("nodes", ["begin", "trigger", "process", "run", "eval", "wait", "join", "end", "diagram", "topLeft"]),

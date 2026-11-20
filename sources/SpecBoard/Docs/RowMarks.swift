@@ -1,9 +1,9 @@
 import Foundation
 
-/// A formatdoc as it reads, with where each row starts marked in its text (`FormatDocEditor.document`), so
+/// A structdoc as it reads, with where each row starts marked in its text (`FormatDocEditor.document`), so
 /// that the page made of it (`MarkdownPage.html`) holds each row in a block of its own: what the right-click
 /// on a row and the brackets of the items in the margin are drawn from
-/// (`specboard://SpecBoard/Docs/Design:UI` §5「formatdoc の文書の見え方」).
+/// (`specboard://SpecBoard/Docs/Design:UI` §5「structdoc のドキュメントの見え方」).
 ///
 /// The marks are in the text rather than beside it because the text is what a card's picture is kept by
 /// (`DocumentPage`) and what the references are resolved in (`MarkdownRefs.resolve`, `DocumentParts.page`):
@@ -116,7 +116,7 @@ nonisolated enum RowMarks {
             case .row:
                 out += "<section class=\"sb-row\" data-row=\"\(row)\">" + render(block.markdown) + "</section>"
             case .tested, .untested:
-                // Not a formatdoc's row: no bracket, no row menu.
+                // Not a structdoc's row: no bracket, no row menu.
                 let badge = "<span class=\"sb-tests\(mark.kind == .untested ? " sb-none" : "")\">"
                     + attribute(mark.heading) + "</span>"
                 let said = render(block.markdown)

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A formatdoc opened — its card editor (overview §13), framed as a freedoc's: 表示 reads it as
+/// A structdoc opened — its card editor (overview §13), framed as a freedoc's: 表示 reads it as
 /// the document it is written out as; 編集 has its rows on the left — items nested and foldable,
 /// the picked row edited in the property panel (`FormatRowEditor`) with what an item is
 /// connected to — and the document as it reads on the right, as a freedoc's Markdown has its
@@ -63,7 +63,7 @@ struct FormatDocEditor: View {
         if let detail = model.detail {
             ScrollView {
                 if doc.rows.isEmpty {
-                    Text(writing ? L10n[.Docs.wordPreview] : L10n[.Docs.formatdocNothingWritten]).foregroundStyle(.tertiary)
+                    Text(writing ? L10n[.Docs.wordPreview] : L10n[.Docs.structdocNothingWritten]).foregroundStyle(.tertiary)
                         .padding(padding).frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     let margin = Self.margins(padding, outlined: doc.rows.contains { $0.kind == .item })
@@ -99,11 +99,11 @@ struct FormatDocEditor: View {
     private var rows: some View {
         if doc.rows.isEmpty {
             VStack(spacing: 10) {
-                Text(L10n[.Docs.formatdocNoRows]).foregroundStyle(.secondary)
+                Text(L10n[.Docs.structdocNoRows]).foregroundStyle(.secondary)
                 if editable {
                     HStack(spacing: 10) {
-                        Button(L10n[.Docs.formatdocAddItem]) { add(.item, inside: []) }
-                        Button(L10n[.Docs.formatdocAddBody]) { add(.text, inside: []) }
+                        Button(L10n[.Docs.structdocAddItem]) { add(.item, inside: []) }
+                        Button(L10n[.Docs.structdocAddBody]) { add(.text, inside: []) }
                     }
                 }
             }
@@ -164,11 +164,11 @@ struct FormatDocEditor: View {
 
     private var header: some View {
         let foldable = foldablePaths
-        return CardBar(kind: .formatdoc, name: doc.name, label: doc.label) {
+        return CardBar(kind: .structdoc, name: doc.name, label: doc.label) {
             EmptyView()
         } tools: {
             if !foldable.isEmpty && writing {
-                BarMenu(title: L10n[.Docs.formatdocFoldMenu], systemImage: "rectangle.expand.vertical") {
+                BarMenu(title: L10n[.Docs.structdocFoldMenu], systemImage: "rectangle.expand.vertical") {
                     Button { folded = [] } label: { Label(L10n[.Common.actionExpandAll], systemImage: "rectangle.expand.vertical") }
                         .disabled(folded.isEmpty)
                     Button { folded = foldable } label: { Label(L10n[.Common.actionCollapseAll], systemImage: "rectangle.compress.vertical") }
@@ -412,7 +412,7 @@ struct FormatDocEditor: View {
     }
 }
 
-/// A row picked in a formatdoc's card editor (overview §13). Under it, what the row
+/// A row picked in a structdoc's card editor (overview §13). Under it, what the row
 /// says (`content`): an item's heading, a text's Markdown, a table's columns and cells,
 /// what a diagram or a card table draws. In the property panel, what the row is
 /// (`properties`): its name, its kind, a diagram's or a card table's target, and for an
@@ -425,7 +425,7 @@ struct FormatRowEditor: View {
 
     var model: AppModel
     var note: SchemaNode
-    /// Dotted, in the formatdoc, as a path writes it: `auth.login`.
+    /// Dotted, in the structdoc, as a path writes it: `auth.login`.
     var path: String
     var editable: Bool
     var part: Part

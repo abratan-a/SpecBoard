@@ -3,7 +3,7 @@ import Foundation
 import os
 
 /// What changed of a project since a reading the window holds, as the core answers `project_detail` asked
-/// with that reading's digest (`since`, `specboard://SpecBoard/Docs/Design:CoreApi`「頼み」): the entries whose
+/// with that reading's digest (`since`, `specboard://SpecBoard/Docs/Design:CoreApi`「リクエスト」): the entries whose
 /// hash is not the one held — new ones among them — the ids of those no longer there, each list's order
 /// where it changed, and the hashes that changed. Put on the reading held (`WholeDetail.applying`), it gives
 /// what a whole reading gives; the digest worked out of the hashes then says whether it did. What is sent

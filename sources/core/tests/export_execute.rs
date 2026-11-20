@@ -459,7 +459,7 @@ fn how_each_file_stands_is_read_against_what_was_written() {
         json!({"targetdir": "[default]", "target": "ts"}),
     );
     assert!(
-        said.contains("既定のエクスポート先が、この機械で決まっていません"),
+        said.contains("既定のエクスポート先が、このマシンで決まっていません"),
         "{said}"
     );
     // The working directory's folder is not the export's: it is still bound.

@@ -555,7 +555,7 @@ pub(crate) fn drop_from(doc: &mut Map<String, Value>, field: &str) -> usize {
 // MARK: - Held to the kinds of line
 
 /// Where a path inside a card leads: its head (a flow's node too: a card of its own), or a
-/// row with its kind of row (a record's field, a formatdoc's item, a process node's step, a
+/// row with its kind of row (a record's field, a structdoc's item, a process node's step, a
 /// row or a field of a project's own kind); none when it does not.
 fn place_of(project: &Project, card: &Card, path: &str, through_refs: bool) -> Option<LinePlace> {
     // A process node's row, by its place: `steps[0]`.
@@ -1095,7 +1095,7 @@ pub(crate) fn drawable<'d>(
 }
 
 /// What `card_read`'s `as: lines` answers of the place `target` names (a card, or a field,
-/// a formatdoc's item, a node inside it; `from` for a process node's row, `steps[0]`): the
+/// a structdoc's item, a node inside it; `from` for a process node's row, `steps[0]`): the
 /// kinds of line it may draw — to `to` when that is given, with the card it reaches and
 /// where, as `connections` writes them — each by its definition's words, and the ones it
 /// has as many of as its kind lets it (`full`).

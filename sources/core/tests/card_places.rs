@@ -571,7 +571,7 @@ fn boxes_are_moved_together_by_or_to_and_kept_clear_as_a_group() {
     )
     .unwrap_err();
     assert!(
-        refused.contains("cards（パスの並び）か region のどちらか一方"),
+        refused.contains("cards（パスの配列）か region のどちらか一方"),
         "{refused}"
     );
 }

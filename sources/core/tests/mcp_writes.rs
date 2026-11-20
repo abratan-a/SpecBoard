@@ -36,7 +36,7 @@ fn unrequested(items: &[&str], tool: &str) -> String {
     )
 }
 
-const RULES: &str = "project_update.rules（書き方の決まり）";
+const RULES: &str = "project_update.rules（書き方のルール）";
 const CARD_UPDATE: &str = "card_update（カードを変える）";
 const CARD_CREATE: &str = "card_create（カードを作る）";
 const CARD_DELETE: &str = "card_delete（カードを削除）";
@@ -264,7 +264,7 @@ fn by_default_ten_items_are_asked_each_time_and_the_rest_allowed() {
         ),
         (
             &json!("project_update.rules"),
-            &json!("書き方の決まり"),
+            &json!("書き方のルール"),
             &json!("ask"),
             &json!("ask")
         )
@@ -475,13 +475,13 @@ fn an_item_or_a_whole_group_is_switched() {
         ask(
             json!({"op": "mcp_writes_set", "project": s.project, "group": "spec", "state": "allow"})
         ),
-        "MCP の項目の組「spec」はありません（ある: project・kind・section・card・tag・export・branch・mr・board）"
+        "MCP の項目グループ「spec」はありません（ある: project・kind・section・card・tag・export・branch・mr・board）"
     );
     assert_eq!(
         ask(
             json!({"op": "mcp_writes_set", "project": s.project, "item": "card_update", "group": "card", "state": "allow"})
         ),
-        "mcp_writes_set には item（項目の id）か group（組の id）のどちらか 1 つが要ります"
+        "mcp_writes_set には item（項目の id）か group（グループの id）のどちらか 1 つが要ります"
     );
     for state in [json!(null), json!(true), json!("yes")] {
         assert_eq!(
@@ -742,7 +742,7 @@ fn a_batch_is_held_to_it_step_by_step() {
     assert_eq!(
         tried["steps"][0]["warnings"],
         json!([format!(
-            "{CARD_UPDATE} は都度承認です（execute: true に request: true を付けると、流すときに画面で許可を求めます）"
+            "{CARD_UPDATE} は都度承認です（execute: true に request: true を付けると、実行するときに画面で許可を求めます）"
         )])
     );
     assert_eq!(
@@ -778,7 +778,7 @@ fn a_batch_is_held_to_it_step_by_step() {
     assert_eq!(
         staged["steps"][0]["warnings"],
         json!([format!(
-            "{RULES} は都度承認です（execute: true に request: true を付けると、流すときに画面で許可を求めます）"
+            "{RULES} は都度承認です（execute: true に request: true を付けると、実行するときに画面で許可を求めます）"
         )])
     );
     s.mcp("batch", json!({"target": token, "value": {"remove": 1}}))
@@ -942,7 +942,7 @@ fn a_person_is_asked_when_a_call_requests_it() {
     person.will(json!({"answer": "maybe"}));
     assert_eq!(
         write("読めない", true).unwrap_err(),
-        r#"画面の答えが読めません: {"answer":"maybe"}"#
+        r#"画面のレスポンスが読めません: {"answer":"maybe"}"#
     );
     assert_ne!(s.description("Schemas:Customer", "main"), before);
     assert_eq!(s.description("Schemas:Customer", "main"), "もう聞かない");
@@ -1148,11 +1148,11 @@ fn project_update_renames_the_project_and_sets_its_rules() {
     );
     assert_eq!(
         update(json!({"project.description": "あ".repeat(4001)})).unwrap_err(),
-        "project.description の決まりが長すぎます（4000 文字まで）"
+        "project.description のルールが長すぎます（4000 文字まで）"
     );
     assert_eq!(
         update(json!({})).unwrap_err(),
-        "rules に書く場所がありません。rules は {書く場所: 文} のオブジェクトです（空の文でアプリの既定に戻す。場所と今の決まりは project_read の as: rules）"
+        "rules に書く場所がありません。rules は {書く場所: 文} のオブジェクトです（空の文でアプリの既定に戻す。場所と今のルールは project_read の as: rules）"
     );
     assert_eq!(
         update(json!({"project.description": 3})).unwrap_err(),
@@ -1165,7 +1165,7 @@ fn project_update_renames_the_project_and_sets_its_rules() {
     );
     assert_eq!(
         commits["result"]["commits"][0]["lines"][0]["summary"],
-        "書き方の決まりを更新（0 か所）"
+        "書き方のルールを更新（0 か所）"
     );
     assert_eq!(
         s.mcp(
@@ -1227,7 +1227,7 @@ fn under_mains_lock_the_projects_settings_and_working_directories_still_go_throu
     assert_eq!(bound["folder"], "/tmp/nowhere", "{bound}");
 }
 
-const MAIN_TREE: &str = "project_update.main_tree（ロック中の main の根の直下を変える）";
+const MAIN_TREE: &str = "project_update.main_tree（ロック中の main のルートの直下を変える）";
 
 #[test]
 fn under_mains_lock_the_roots_are_an_item_of_their_own() {

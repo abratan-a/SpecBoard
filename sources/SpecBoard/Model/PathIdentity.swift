@@ -7,7 +7,7 @@ import Foundation
 struct PathIdentity: Equatable {
     var head: String?
     var steps: [String]
-    /// For a path into a formatdoc's rows — their names from the top — or to a flow's
+    /// For a path into a structdoc's rows — their names from the top — or to a flow's
     /// node, its name. Neither has an identity but its place, so one that moves or
     /// is renamed is followed by being told where it went.
     var inner: [String]? = nil

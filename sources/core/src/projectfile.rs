@@ -1,4 +1,4 @@
-//! A project as one JSON file, in the form of version 34: the project's row, main's sections in tree order
+//! A project as one JSON file, in the form of version 35: the project's row, main's sections in tree order
 //! and its cards by section, order and name, the branches as the store keeps them, the
 //! board, the diagram's settings — with the cards in their kinds' form, and last every box
 //! on a diagram (`places`), how cards look (`looks`), the check's marks (`inspectionMarks`), the
@@ -6,7 +6,9 @@
 //! name (`images`).
 //! A file's change notes (`changelog`, a
 //! table nothing wrote, gone: `schema::NO_CHANGELOG`) are let go when it is read; no
-//! version is given for it. Version 34 has the pictures of the whiteboards' image cards (`images`: each
+//! version is given for it. Version 35 has the built-in structured document as `structdoc` where a
+//! file of before has `formatdoc`; a project's own kind of card named `structdoc`, which a file of before
+//! may have, is named anew (`kind_move`, once the file is in the store). Version 34 has the pictures of the whiteboards' image cards (`images`: each
 //! once, by the sha256 of its contents, the contents in base64); a file of before has none, and an app of
 //! before refuses one of 34 as newer rather than leave the cards naming pictures it does not hold.
 //! Version 33 has the built-in names of now: the kinds of line `rules`,
@@ -58,7 +60,7 @@ use serde_json::{Map, Value};
 use std::collections::{HashMap, HashSet};
 
 pub const FORMAT: &str = "specboard/project";
-pub const VERSION: i64 = 34;
+pub const VERSION: i64 = 35;
 
 /// The form's name before a plan was called a project (versions 11 to 17), read still.
 pub const FORMAT_BEFORE: &str = "specboard/plan";

@@ -105,7 +105,7 @@ fn a_new_kind_of_card_is_drawn_with_values_made_up_by_type() {
     let card = &said["card"];
     assert_eq!(card["made"], true);
     assert_eq!(card["kind"], "risk");
-    assert_eq!(card["name"], "見本");
+    assert_eq!(card["name"], "サンプル");
     let fields = &card["form"]["fields"];
     assert_eq!(fields["severity"], "中");
     assert_eq!(fields["owner"], "Claude");
@@ -116,7 +116,7 @@ fn a_new_kind_of_card_is_drawn_with_values_made_up_by_type() {
     assert!(fields.get("label").is_none(), "{card}");
     let steps = card["form"]["rows"]["steps"].as_array().unwrap();
     assert_eq!(steps.len(), 1);
-    assert_eq!(steps[0]["fields"]["name"], "見本の文");
+    assert_eq!(steps[0]["fields"]["name"], "サンプルの文");
     assert_eq!(steps[0]["fields"]["done"], false);
     kept(
         "reads/kind_preview_made_ja.json",

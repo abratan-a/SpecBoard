@@ -2,7 +2,7 @@
 //! the text a line's `from` names a step by): added at a place, changed, moved, and let go of.
 //! A step has no name, only its place, so whatever names a step by its place is renumbered with
 //! it — the node's lines that leave a step, and the paths written elsewhere that name one — through
-//! the same following a formatdoc's moved rows take (`follow`). The node is held to its kind once
+//! the same following a structdoc's moved rows take (`follow`). The node is held to its kind once
 //! all of that is written, not between: a step moved away from its lines is not a node to check.
 
 use super::Seen;

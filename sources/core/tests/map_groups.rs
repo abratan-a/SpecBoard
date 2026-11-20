@@ -809,7 +809,7 @@ fn groups_go_with_the_project_file_and_come_back_as_they_were() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 34);
+    assert_eq!(file["version"], 35);
     let rows: Vec<&Value> = file["places"]
         .as_array()
         .unwrap()
@@ -833,7 +833,7 @@ fn groups_go_with_the_project_file_and_come_back_as_they_were() {
     assert_eq!(groups(&core, "work"), json!({}));
     // A file a newer app wrote is refused.
     let mut newer = file.clone();
-    newer["version"] = 35.into();
+    newer["version"] = 36.into();
     let refused = op(
         &core,
         json!({"op": "project_file_read", "text": newer.to_string(), "landing": "replace"}),

@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// The top of the window, now that it has no title bar (overview §13 「窓の形」).
+/// The top of the window, now that it has no title bar (overview §13 「ウィンドウの形」).
 ///
 /// The nav panel reaches the top of the window; its first row carries the window's own
 /// buttons (close, minimise, zoom) and, right of them, the button that shuts it. The top bar
@@ -326,7 +326,7 @@ enum NavPanelPane: Equatable {
     case absent
 }
 
-/// The window without a title bar (overview §13 「窓の形」): the nav panel from the top of the
+/// The window without a title bar (overview §13 「ウィンドウの形」): the nav panel from the top of the
 /// window to the bottom, its first row the window's buttons and the button that shuts it; to
 /// its right the top bar, and under the top bar everything else. Shut, the nav panel leaves the
 /// window's buttons to the top bar, which makes room for them and begins with the button that

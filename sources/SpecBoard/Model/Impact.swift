@@ -43,10 +43,10 @@ enum Impact {
         var encloses: Bool
     }
 
-    /// The card a hit is, written in full — for a formatdoc, the item that names what
+    /// The card a hit is, written in full — for a structdoc, the item that names what
     /// changed (its row, kept as the use's note), or the card when a row at the top does.
     static func written(_ hit: Hit, in directory: SchemaDirectory) -> String {
-        guard hit.action.kind == .formatdoc, let row = hit.use.note, row != SchemaNode.topRow else {
+        guard hit.action.kind == .structdoc, let row = hit.use.note, row != SchemaNode.topRow else {
             return directory.full(hit.action)
         }
         return directory.full(hit.action, row: row)
@@ -66,7 +66,7 @@ enum Impact {
         for module in detail.schemas where module.kind == .action || module.kind == .flow || module.kind.isWriting {
             let home = index.directory.sectionId(of: module)
             let uses = module.kind == .action || module.kind == .flow ? module.usesInEffect
-                // A formatdoc's: the item a mention is in, said as the use's note.
+                // A structdoc's: the item a mention is in, said as the use's note.
                 : Self.mentions(module).map { ModuleUse(path: $0.path, role: .read, note: $0.row) }
             for use in uses {
                 guard let used = index.chain(use.path, from: home, enterFinalRef: true) else { continue }
@@ -100,7 +100,7 @@ enum Impact {
     }
 
     /// What a note's or a document's text names, once each, in the order it first names
-    /// them — for a formatdoc, with the item whose rows name it (`#top` for the rows at the
+    /// them — for a structdoc, with the item whose rows name it (`#top` for the rows at the
     /// top), for a stackdoc with the version whose body names it — as the core says what it
     /// mentions (`mentions`).
     static func mentions(_ card: SchemaNode) -> [(path: String, row: String?)] {
@@ -108,7 +108,7 @@ enum Impact {
         case .note, .freedoc:
             var seen = Set<String>()
             return NoteText.refs(card.body).filter { seen.insert($0.path).inserted }.map { ($0.path, nil) }
-        case .formatdoc:
+        case .structdoc:
             var out: [(path: String, row: String?)] = []
             func from(_ item: [String], row: String) {
                 var seen = Set<String>()

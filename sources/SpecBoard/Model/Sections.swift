@@ -31,7 +31,7 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
     /// Goals does; the core alone makes them, and refuses to delete them or move them out of their
     /// Goals, so the window offers neither. Known by kind, never by name: people rename them.
     case complete, cancelled
-    /// A screen's design built of parts (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」):
+    /// A screen's design built of parts (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」):
     /// html and svg cards where they sit, frames holding other ui sections, and notes beside them. Opened
     /// on its map, which draws the parts as the page the core builds of them (`CardCanvasView.drawsParts`).
     /// Only where a project's tree puts one; the sections inside it are ui too.
@@ -77,7 +77,7 @@ enum SectionKind: String, Codable, CaseIterable, Sendable {
         case .schema: [.entity, .value, .enum, .store, .note]
         case .definition: [.entity, .value, .enum, .store, .instance, .table, .note]
         case .chart, .actor: [.flow, .note]
-        case .document: [.freedoc, .formatdoc, .stackdoc, .table, .note, .svg, .html]
+        case .document: [.freedoc, .structdoc, .stackdoc, .table, .note, .svg, .html]
         case .export, .rules: []
         // A frame goes only where a section names it: not in the free one, which holds every other kind.
         case .free: Set(SchemaKind.made).subtracting([.frame])
@@ -346,7 +346,7 @@ struct SchemaDirectory {
             let section = schema.sectionId ?? home
             schemasById[schema.id] = schema
             // A card inside a container is named in it, and is not one of its section's own
-            // (`specboard://SpecBoard/Docs/Design:CardKinds`「入れ物のカード」).
+            // (`specboard://SpecBoard/Docs/Design:CardKinds`「コンテナのカード」).
             if let container = schema.container, !container.isEmpty {
                 byKey[Self.key(container, schema.name)] = schema
                 continue

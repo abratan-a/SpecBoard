@@ -255,7 +255,7 @@ impl Core {
     }
 
     /// An MCP tool run as the window: `{"json": …}` or `{"blocks": […]}`, as the tool
-    /// answers. `moves` (the window's alone) goes with a formatdoc's rows written whole.
+    /// answers. `moves` (the window's alone) goes with a structdoc's rows written whole.
     fn screen_tool(&self, request: &Value) -> Result<Value, String> {
         let name = text(request, "name", "tool", &text!("screen.what.toolName"))?;
         let arguments = match request.get("arguments") {
@@ -771,7 +771,7 @@ fn branch_marks(reader: &Reader, project: &str, tree: &str) -> Result<Value, Str
 
 /// How the project's cards are drawn (`defaultSettings`, `LayoutSettings`): how big a card
 /// is (the rows it shows, its width in points or null for `auto`), the grid units kept
-/// clear around it, and how a formatdoc reads when it does not say.
+/// clear around it, and how a structdoc reads when it does not say.
 fn layout(layout: &super::grid::Layout) -> Value {
     json!({
         "size": { "rows": layout.rows, "width": layout.width },

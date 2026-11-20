@@ -399,8 +399,8 @@ fn projection(given: &Map<String, Value>, places: bool) -> Result<Projection, St
 
 /// One path read (`get_schema` with `path`).
 /// The words `find` looks through in what `path` names when it has no body of its own (`read`,
-/// as read): the whole of a formatdoc, a stackdoc or a flow (its nodes too), or of an item of a
-/// formatdoc. None for anything else, read in part by its body.
+/// as read): the whole of a structdoc, a stackdoc or a flow (its nodes too), or of an item of a
+/// structdoc. None for anything else, read in part by its body.
 fn find_places(
     seen: &Seen,
     path: &str,
@@ -415,7 +415,7 @@ fn find_places(
     Ok(
         match super::walk::locate(&project, path, base.as_deref())? {
             super::walk::Target::Card(card)
-                if ["formatdoc", "stackdoc", "flow"].contains(&card.kind.as_str()) =>
+                if ["structdoc", "stackdoc", "flow"].contains(&card.kind.as_str()) =>
             {
                 Some(super::texts::whole(&project, card))
             }
@@ -766,9 +766,9 @@ fn read_one(
     Ok(read)
 }
 
-/// Where a document's text is, when its read leaves it out (a formatdoc read as it is gave
+/// Where a document's text is, when its read leaves it out (a structdoc read as it is gave
 /// its items' headings and counts, and its text was found only once `as: markdown` was): a
-/// formatdoc's or an item's rows with rows inside, a stackdoc's versions.
+/// structdoc's or an item's rows with rows inside, a stackdoc's versions.
 fn body_elsewhere(
     project: &crate::export::Project,
     target: &super::walk::Target,
@@ -784,8 +784,8 @@ fn body_elsewhere(
         .and_then(Value::as_array)
         .is_some_and(|v| !v.is_empty());
     match target {
-        Target::Card(card) if card.kind == "formatdoc" && counted => {
-            Some(text!("reads.hint.formatdocBody"))
+        Target::Card(card) if card.kind == "structdoc" && counted => {
+            Some(text!("reads.hint.structdocBody"))
         }
         Target::Card(card) if card.kind == "stackdoc" && versions => {
             Some(text!("reads.hint.stackdocBody"))
@@ -1009,7 +1009,7 @@ pub(crate) fn card_read(store: &Store, args: &Args) -> Result<Output, String> {
                                 text,
                                 &card.id,
                             )
-                        // A formatdoc's item: its part of the document's Markdown alone.
+                        // A structdoc's item: its part of the document's Markdown alone.
                         } else if let Ok(super::walk::Target::FormatRow(doc, names)) =
                             super::walk::locate(&project, p, None)
                             && let Some(text) = written.in_export_language(|| {
@@ -1581,6 +1581,13 @@ pub(crate) fn card_list(store: &Store, args: &Args) -> Result<Output, String> {
     // The functions and types in the files: read from them now (`code`).
     if kinds_given(&given).is_some_and(|k| k.iter().any(|k| k == "symbol")) {
         return symbol_list(store, args, given, after);
+    }
+    if let Some(why) = kinds_given(&given)
+        .into_iter()
+        .flatten()
+        .find_map(|k| crate::kinds::kind_named_before(&k))
+    {
+        return Err(why);
     }
     // A kind the project defines is not among the form's: it is looked
     // for in the project once that is read.

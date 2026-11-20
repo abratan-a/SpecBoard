@@ -193,7 +193,7 @@ nonisolated struct CardFace: Decodable, Hashable, Sendable {
     }
 }
 
-/// One field of a kind of card (`specboard://SpecBoard/Docs/Design:CardKinds`「欄の定義」): what is written in it and how.
+/// One field of a kind of card (`specboard://SpecBoard/Docs/Design:CardKinds`「フィールドの定義」): what is written in it and how.
 nonisolated struct KindField: Decodable, Hashable, Sendable {
     var name: String
     var label: String

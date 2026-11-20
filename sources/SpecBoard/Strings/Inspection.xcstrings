@@ -14,7 +14,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設計どおりのものとして、理由を添えて印を付ける（直すもの・情報から外れる）"
+            "value" : "設計どおりのものとして、理由を添えてマークを付ける（直すもの・情報から外れる）"
           }
         }
       }
@@ -86,7 +86,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設計どおりの印を外し、元の組に戻す"
+            "value" : "設計どおりのマークを外し、元のグループに戻す"
           }
         }
       }
@@ -368,7 +368,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "インスペクションで見る木。行を押すと、その木を開いて場所を見せる"
+            "value" : "インスペクションで見るツリー。行を押すと、そのツリーを開いて場所を見せる"
           }
         }
       }
@@ -572,7 +572,7 @@
       }
     },
     "path.notAnItem" : {
-      "comment" : "Hint when a path points inside a formatdoc row that is not an item.",
+      "comment" : "Hint when a path points inside a structdoc row that is not an item.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -590,7 +590,7 @@
       }
     },
     "path.rowsInside" : {
-      "comment" : "Hint when a path points inside a formatdoc item that doesn't have the row; the arguments are where and the rows there are.",
+      "comment" : "Hint when a path points inside a structdoc item that doesn't have the row; the arguments are where and the rows there are.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

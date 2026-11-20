@@ -157,11 +157,11 @@ fn a_wait_that_goes_on_two_ways_is_drawn_with_its_time_running_out() {
         "mermaid",
     );
     let note = chart
-        .find("wait approval（期限 1日）")
+        .find("wait approval（タイムアウト 1日）")
         .unwrap_or_else(|| panic!("wait の注記が無い:\n{chart}"));
     let late = chart
-        .find("期限切れ")
-        .unwrap_or_else(|| panic!("期限切れが無い:\n{chart}"));
+        .find("✕ タイムアウト")
+        .unwrap_or_else(|| panic!("タイムアウトが無い:\n{chart}"));
     let par = chart
         .find("\n    par\n")
         .unwrap_or_else(|| panic!("par が無い:\n{chart}"));

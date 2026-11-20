@@ -1,4 +1,4 @@
-//! A part's note and its review mark (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」,
+//! A part's note and its review mark (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」,
 //! `specboard://SpecBoard/Docs/Design:CoreApi`「モックを組み上げる」): an html, svg or frame part's
 //! `note` is laid over the mock at the corner its `notePlace` names, inside a frame where the part is
 //! framed, and never in an export; a part is marked to be looked at again when a card its lines
@@ -297,7 +297,7 @@ fn reviewed_now(core: &Core, branch: &str) -> (bool, Option<String>) {
         .find(|a| a["op"] == "reviewed")
         .cloned()
         .unwrap_or_else(|| panic!("{read}"));
-    assert_eq!(action["label"], "見直した", "{action}");
+    assert_eq!(action["label"], "レビューした", "{action}");
     (
         action["available"].as_bool().unwrap(),
         action["why"].as_str().map(str::to_string),
@@ -312,13 +312,13 @@ fn a_part_is_marked_when_a_card_it_reaches_changes_after_it_and_reviewed_clears_
     assert!(review(&core, "main").is_null());
     assert!(detail_part(&core, "").get("review").is_none());
     let (usable, why) = reviewed_now(&core, "main");
-    assert!(!usable && why.unwrap().contains("見直しの印がありません"));
+    assert!(!usable && why.unwrap().contains("レビューのマークがありません"));
     let why = refused(
         &core,
         "card_action",
         json!({"target": "UI/Home:Order", "op": "reviewed"}),
     );
-    assert!(why.contains("見直しの印がありません"), "{why}");
+    assert!(why.contains("レビューのマークがありません"), "{why}");
 
     change_entity(&core, "main", "合計を足した");
     let marks = review(&core, "main");
@@ -369,7 +369,7 @@ fn a_part_is_marked_when_a_card_it_reaches_changes_after_it_and_reviewed_clears_
     assert_eq!(done["op"], "reviewed", "{done}");
     let changes = done["changes"].to_string();
     assert!(
-        changes.contains("Schemas/Ordering:Order の変更を見直した")
+        changes.contains("Schemas/Ordering:Order の変更をレビューした")
             && changes.contains("reviewedAt"),
         "{done}"
     );
@@ -392,7 +392,7 @@ fn a_part_is_marked_when_a_card_it_reaches_changes_after_it_and_reviewed_clears_
         .unwrap()
         .to_string();
     assert!(
-        line.starts_with("カード UI/Home:Order を見直した（"),
+        line.starts_with("カード UI/Home:Order をレビューした（"),
         "{line}"
     );
 
@@ -461,7 +461,7 @@ fn kind_read_says_the_parts_note_fields_and_their_action() {
         assert_eq!(place["default"], "topRight", "{place}");
         assert_eq!(place["optionLabels"]["bottomLeft"], "左下", "{place}");
         assert_eq!(read["actions"][0]["op"], "reviewed", "{read}");
-        assert_eq!(read["actions"][0]["label"], "見直した", "{read}");
+        assert_eq!(read["actions"][0]["label"], "レビューした", "{read}");
     }
 }
 

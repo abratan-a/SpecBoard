@@ -1,4 +1,4 @@
-//! UI mocks (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」,
+//! UI mocks (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」,
 //! `specboard://SpecBoard/Docs/Design:CoreApi`「モックを組み上げる」): a ui section holds html and svg parts,
 //! notes and frames; a frame puts another ui section's mock into its box, held by the section's id;
 //! the parts of a ui section make one page, which `section_read` gives as `as: mock`, the app draws as
@@ -168,7 +168,7 @@ fn a_frame_is_refused_at_what_is_not_a_ui_section_at_its_own_and_round() {
         "card_update",
         json!({"target": "UI:Loose", "value": {"section": "UI/Side"}}),
     );
-    assert!(why.contains("輪になる"), "{why}");
+    assert!(why.contains("循環する"), "{why}");
 }
 
 #[test]

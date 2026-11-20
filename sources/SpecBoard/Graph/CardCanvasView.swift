@@ -90,7 +90,7 @@ final class CardCanvasView: NSView {
     /// the card is drawn, the second argument called once a newer page is in.
     var documentText: ((SchemaNode, (() -> Void)?) -> DocumentTexts.Face)?
     /// Whether the section drawn is a ui section's (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションと
-    /// はめ込み」): its parts (html, svg, frame) drawn as the mock draws them — their faces, with no header,
+    /// フレーム」): its parts (html, svg, frame) drawn as the mock draws them — their faces, with no header,
     /// border or ground —, stacked in the section's order, never raised, and moved by any point of them.
     var drawsParts = false
     /// Whether the section drawn is a whiteboard (`specboard://SpecBoard/Docs/Design:CardKinds`「ホワイトボード（whiteboard）」):

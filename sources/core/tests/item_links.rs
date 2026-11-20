@@ -1,4 +1,4 @@
-//! A formatdoc's item read for what it is tied to (`card_read`'s `as: impact` given the item): the
+//! A structdoc's item read for what it is tied to (`card_read`'s `as: impact` given the item): the
 //! places its rows name, the items it points at and the writings pointing at it, each with its
 //! heading and the head of its text, as the property panel lists them.
 
@@ -15,9 +15,9 @@ fn an_item_says_what_it_points_at_and_what_points_at_it() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:Rules": {"kind": "formatdoc", "rows": [{"name": "limits", "kind": "item", "heading": "上限",
+            "Docs:Rules": {"kind": "structdoc", "rows": [{"name": "limits", "kind": "item", "heading": "上限",
                 "rows": [{"name": "body", "kind": "text", "body": "1 回に 10 件"}]}]},
-            "Docs:Auth": {"kind": "formatdoc", "rows": [{"name": "auth", "kind": "item", "heading": "認証",
+            "Docs:Auth": {"kind": "structdoc", "rows": [{"name": "auth", "kind": "item", "heading": "認証",
                 "rows": [{"name": "body", "kind": "text", "body": "上限は [[Docs:Rules.limits]]"}]},
                 {"name": "alone", "kind": "item", "heading": "ひとり"}]},
             "Docs:Memo": {"kind": "note", "body": "[[Docs:Auth.auth]] を読む"}

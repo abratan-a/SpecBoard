@@ -232,7 +232,7 @@ fn a_section_under_the_root_renamed_takes_its_paths_along_in_every_tree() {
     );
     assert_eq!(
         ok(&core, "card_read", json!({"target": "Guide:Spec"}))["kind"],
-        "formatdoc"
+        "structdoc"
     );
     let memo = ok(&core, "card_read", json!({"target": "Free:Pointer"}));
     assert_eq!(memo["body"], "[[Guide:Spec]] を見る", "{memo}");

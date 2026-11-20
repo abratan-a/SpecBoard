@@ -12,14 +12,14 @@
   "directory.problem.foundIn": "「{raw}」があるのは: {sections}",
   "directory.problem.ghostEmpty": "「{raw}」はカードゴーストですが、指す先がありません（指していたカードは消えました。card_update の target で付け替えるか、card_delete で消します）",
   "directory.problem.ghostEmpty.screen": "「{raw}」はカードゴーストですが、指す先がありません（指していたカードは消えました。プロパティパネルの target で付け替えるか、ゴーストを消します）",
-  "directory.problem.ghostRound": "「{raw}」はカードゴーストですが、指す先をたどると輪になっています",
+  "directory.problem.ghostRound": "「{raw}」はカードゴーストですが、指す先をたどると循環しています",
   "directory.problem.isCard": "「{raw}」はカードです",
   "directory.problem.manySections": "セクション「{name}」は {count} つあります: {sections}。親から書いてください",
   "directory.problem.noCard": "カード「{wanted}」がありません。{tail}",
   "directory.problem.noSection": "セクション「{name}」がありません。あるのは: {sections}",
   "directory.problem.noSectionBeforeCard": "「{raw}」はカードの前にセクションがありません。パスにツリーは書かず、カードの前にセクションと「:」を付けます（例: {example}:{rest}）",
-  "directory.problem.oldSectionPath": "「{name}」は前の書き方です。セクションは根の下から書きます: {rest}",
-  "directory.problem.sectionFromTop": "セクションは木の頭から書きます: {path}（セクションの最後の名前だけでは書けません）",
-  "directory.problem.treeInPath": "「{tree}@」はパスに書けません。パスにツリーは書きません（main@ は外して読みます）。branch の中は、MCP では引数 branch で名指し（省けば main）、画面では開いている branch で読み書きします",
+  "directory.problem.oldSectionPath": "「{name}」は前の書き方です。セクションはルートの下から書きます: {rest}",
+  "directory.problem.sectionFromTop": "セクションはツリーの先頭から書きます: {path}（セクションの最後の名前だけでは書けません）",
+  "directory.problem.treeInPath": "「{tree}@」はパスに書けません。パスにツリーは書きません（main@ は外して読みます）。branch の中は、MCP では引数 branch で指定（省けば main）、画面では開いている branch で読み書きします",
   "directory.problem.writeWithSection": "セクションを付けて書いてください（例: {example}:{raw}）。{detail}"
 }

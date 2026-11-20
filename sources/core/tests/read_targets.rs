@@ -1,4 +1,4 @@
-//! Reads that reach what an agent would otherwise rebuild by hand: one item of a formatdoc as
+//! Reads that reach what an agent would otherwise rebuild by hand: one item of a structdoc as
 //! Markdown, character for character its part of the document's Markdown; `card_list` finding a
 //! data card by a value it holds, and giving each card listed its rev, so a card found is written
 //! without reading it again; a card ghost read with its own name beside what it points at.

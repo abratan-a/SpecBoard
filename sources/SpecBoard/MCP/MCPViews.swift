@@ -46,7 +46,7 @@ enum MCPViews {
         case schema(SchemaNode)
         /// A field, with the card that holds it and the names from that card to it.
         case field(SchemaNode, FieldNode, [String])
-        /// A row of a formatdoc, by its names from the top.
+        /// A row of a structdoc, by its names from the top.
         case formatRow(SchemaNode, [String])
         /// A node of a flow.
         case node(SchemaNode, FlowNode)

@@ -187,7 +187,7 @@ fn a_data_card_is_put_in_a_document_as_it_and_the_cards_its_lines_meet() {
     );
     // A field the data's shape does not have: said in its place, and by the check.
     assert!(
-        text.contains("— 欄「nope」は、描くデータの形（Host）にありません"),
+        text.contains("— フィールド「nope」は、描くデータの形（Host）にありません"),
         "{text}"
     );
     let broken = checked(&core, "main")["brokenPaths"].to_string();

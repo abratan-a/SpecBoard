@@ -331,7 +331,7 @@ fn two_things_at_one_path_are_refused_and_nothing_is_written() {
 }
 
 /// The rows a card keeps by id — a record's fields, an enum's values, a stackdoc's versions, a
-/// formatdoc's rows — made with one name on both sides (made by two branches): one after a
+/// structdoc's rows — made with one name on both sides (made by two branches): one after a
 /// merge, not two.
 fn rows_made_on_both_sides() -> Core {
     let core = Core::open(script_store()).unwrap();
@@ -804,7 +804,7 @@ fn an_ai_merging_into_a_locked_main_asks_for_it() {
     assert_eq!(asked["title"], "work", "題を省けば branch の名前: {asked}");
     let said = asked["said"].as_str().unwrap();
     assert!(
-        said.starts_with("main はロック中なので、merge せずに MR 1 を出しました"),
+        said.starts_with("main はロック中なので、merge せずに MR 1 を作成しました"),
         "{said}"
     );
     assert!(said.contains("見て承認するよう伝えてください"), "{said}");
@@ -1525,7 +1525,7 @@ fn rows_versions_and_scenarios_renamed_in_a_branch_merge_as_the_same_rows() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:Fmt": {"kind": "formatdoc", "rows": [
+            "Docs:Fmt": {"kind": "structdoc", "rows": [
                 {"name": "a", "kind": "item", "heading": "見出し", "rows": [{"name": "t", "kind": "text", "body": "中の文"}]}
             ]},
             "Docs:Log": {"kind": "stackdoc", "versions": [{"name": "v1", "key": "1.0", "body": "版の本文"}]},

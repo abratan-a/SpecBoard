@@ -170,7 +170,7 @@ struct CardDetails: View {
                     }
                 }
             }
-            if schema.kind == .formatdoc || schema.kind == .spec {
+            if schema.kind == .structdoc || schema.kind == .spec {
                 PropertyRow("view", help: L10n[.CardEditor.helpDocView]) {
                     if !model.isArchived {
                         // The default's words are long ("Project default (View as document)"): the button
@@ -1150,7 +1150,7 @@ struct CardDetails: View {
 /// connected to (つながり), and what happened to it (履歴) — each in a small window. What
 /// it is — its properties — is in the property panel.
 extension CardDetails {
-    /// A formatdoc's view on the diagram, as the panel and the project's settings say it.
+    /// A structdoc's view on the diagram, as the panel and the project's settings say it.
     static func viewWord(_ view: String) -> String { view == "rows" ? L10n[.CardEditor.docViewRows] : L10n[.CardEditor.docViewDocument] }
 
     /// A card's own size as the panel's `size` row says it: none, the default; a width alone, with

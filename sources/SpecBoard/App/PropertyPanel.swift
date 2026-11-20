@@ -175,7 +175,7 @@ struct PropertyPanel: View {
         switch model.selectedRow {
         case .value?: return L10n[.Properties.kindEnumValue]
         case .hold?: return BuiltinWords.line(Line.holds)
-        case .formatRow?: return L10n[.Properties.kindFormatdocRow]
+        case .formatRow?: return L10n[.Properties.kindStructdocRow]
         case .node?: return L10n[.Properties.kindNode]
         case .nodeStep?: return L10n[.Properties.kindProcessRow]
         case .customRow? where card.kind == .custom: return L10n[.Properties.kindRowOf(card.kindDef?.label ?? card.kindName)]
@@ -193,7 +193,7 @@ struct PropertyPanel: View {
     }
 
     /// The card's rows a level down, to go to from the top: its fields, values,
-    /// holds, an action's trigger and rows, a flow's nodes, a formatdoc's rows.
+    /// holds, an action's trigger and rows, a flow's nodes, a structdoc's rows.
     /// `holds`: a store's, as paths (`AppModel.holds`).
     static func rows(of card: SchemaNode, holds: [String] = []) -> [Pick] {
         switch card.kind {
@@ -205,7 +205,7 @@ struct PropertyPanel: View {
             return holds.indices.map { index in Pick(title: holds[index]) { $0.selectRow($1.id, .hold(index)) } }
         case .flow:
             return card.nodes.map { node in Pick(title: node.name) { $0.selectRow($1.id, .node(node.name)) } }
-        case .formatdoc:
+        case .structdoc:
             return card.rows.map { row in Pick(title: row.name) { $0.selectRow($1.id, .formatRow(row.name)) } }
         case .stackdoc:
             // Its versions: one picked is the one it has open (how it looks).

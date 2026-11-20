@@ -13,6 +13,6 @@
   "enumValues.line.dataFollowed": "{card} の {count} か所の値を、改めた名前 {value} に書き直しました",
   "enumValues.line.removed": "{full} の値 {name} を消しました",
   "enumValues.line.renamed": "{full} の値 {name} を {now} に改めました",
-  "enumValues.warn.held": "{paths} のデータは {name} のままです（変えていません。点検の cardProblems に出ます）",
+  "enumValues.warn.held": "{paths} のデータは {name} のままです（変えていません。インスペクションの cardProblems に出ます）",
   "enumValues.warn.heldOpen": "{paths} のデータは {name} のままです（変えていません。この enum は open なので、知らない値として通ります）"
 }

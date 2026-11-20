@@ -42,7 +42,7 @@ struct LineRef: Hashable, Identifiable {
 
 /// Where a line is drawn from: the card that holds it (a flow's node its own card, a card
 /// ghost's row the card it leads to), as the tools name it (`path`), and its place there
-/// (`from`: a field's names, a formatdoc's item, a process node's row `steps[0]`; empty for
+/// (`from`: a field's names, a structdoc's item, a process node's row `steps[0]`; empty for
 /// its head).
 struct LineSource: Hashable {
     var card: String
@@ -330,7 +330,7 @@ extension AppModel {
         write { try tool("card_update", target: holder.path, value: ["connections": ["change": [picked]]]) }
     }
 
-    /// Where a line leaves, picked: its card's head, the field, the formatdoc's item, the
+    /// Where a line leaves, picked: its card's head, the field, the structdoc's item, the
     /// flow's node or the process node's row.
     func pickSource(of ref: LineRef) {
         guard let detail, let (holder, line) = line(ref) else { return }
@@ -351,7 +351,7 @@ extension AppModel {
         }
         if let found {
             selectField(card.id, found.id, follow: false)
-        } else if card.kind == .formatdoc {
+        } else if card.kind == .structdoc {
             selectRow(card.id, .formatRow(line.from))
         } else {
             selectSchema(card.id, follow: false)
@@ -581,7 +581,7 @@ extension AppModel {
 
 extension AppModel {
     /// Where a line drawn from what is picked in the property panel leaves: a card's head, a
-    /// formatdoc's item, a flow's node or a process node's row (its node's own card), a goal's
+    /// structdoc's item, a flow's node or a process node's row (its node's own card), a goal's
     /// row (the card it is). None for a row with no place of its own (an enum's value, a
     /// store's hold).
     func lineSource(of card: SchemaNode, row: CardRow?) -> LineSource? {

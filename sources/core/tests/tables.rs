@@ -205,7 +205,7 @@ fn a_table_is_held_to_its_shape_and_follows_it() {
         ),
         (
             json!({"kind": "table", "of": "Schemas/Ordering:Order", "unnest": "status"}),
-            "unnest は並び（配列）の欄のパスです",
+            "unnest は配列のフィールドのパスです",
         ),
         (
             json!({"kind": "table", "of": "Schemas/Ordering:Order", "sort": [{"path": "total", "up": true}]}),
@@ -298,7 +298,7 @@ fn a_table_is_put_in_a_document() {
             "columns": [{"path": "@name"}, {"path": "total"}]}}),
     );
     let rows = "| first | 12.50 |\n| third | 40.00 |";
-    // A formatdoc's row card.
+    // A structdoc's row card.
     ok(
         &core,
         "card_create",
@@ -516,7 +516,7 @@ fn a_tables_links_are_written_out_as_a_bodys_and_read_by_mcp_as_written() {
     assert!(md.contains("| first | [[Docs:Overview]] |"), "{md}");
     assert!(md.contains("| third | Docs:Nowhere |"), "{md}");
     // Written out: a link to the file the card is written to, as a body's path is — in the body's
-    // picture and in a formatdoc's row card alike.
+    // picture and in a structdoc's row card alike.
     let written = ok(
         &core,
         "export_read",

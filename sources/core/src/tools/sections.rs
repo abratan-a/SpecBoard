@@ -1400,7 +1400,7 @@ pub(super) mod tests {
         .unwrap_err();
         assert_eq!(
             refused,
-            "2 件の誤りがあるので、どれも書いていません\n1. Billing: main・branch の直下にはセクションを作れません。直下のセクション（Docs（ドキュメント）・Schemas（スキーマ）・Charts（チャート）・Free（フリー）・ts（作業ディレクトリ）・zod（作業ディレクトリ）・schema（作業ディレクトリ）・charts_2（作業ディレクトリ）・docs_2（作業ディレクトリ））はプロジェクトの project_tree で決まり（作る・外す・並べ替える・名前を変えるのは project_update の value の project_tree）、ほかのセクションはその中に作ります。種類は入れるセクションで決まります\n2. Schemas/A: セクション「A」は同じ所にもうあります"
+            "2 件のエラーがあるので、どれも書いていません\n1. Billing: main・branch の直下にはセクションを作れません。直下のセクション（Docs（ドキュメント）・Schemas（スキーマ）・Charts（チャート）・Free（フリー）・ts（作業ディレクトリ）・zod（作業ディレクトリ）・schema（作業ディレクトリ）・charts_2（作業ディレクトリ）・docs_2（作業ディレクトリ））はプロジェクトの project_tree で決まり（作る・外す・並べ替える・名前を変えるのは project_update の value の project_tree）、ほかのセクションはその中に作ります。種類は入れるセクションで決まります\n2. Schemas/A: セクション「A」は同じ所にもうあります"
         );
         assert!(!listed(&core, "main").contains(&"Schemas/A".to_string()));
         let made = call(

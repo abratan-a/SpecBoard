@@ -101,8 +101,8 @@ fn room(family: &str, name: &str) -> usize {
         // and what its sequence diagram draws, the gaps it shows among it; each node said by what it
         // holds, not its name again.
         ("kinds", "flow") => 4_900,
-        // The formatdoc's rows, a text row's body read from a file among them, and its size.
-        ("kinds", "formatdoc") => 2_700,
+        // The structdoc's rows, a text row's body read from a file among them, and its size.
+        ("kinds", "structdoc") => 2_700,
         // A begin's trigger says the result an awaits line waits for.
         ("kinds", "begin") => 2_600,
         ("kinds", _) => 2_500,
@@ -225,7 +225,7 @@ fn the_topic_list_gives_each_topics_size() {
         "flow",
         "note",
         "freedoc",
-        "formatdoc",
+        "structdoc",
         "stackdoc",
         "goal",
         "task",
@@ -417,7 +417,7 @@ fn a_kind_says_its_own_keys_an_example_and_what_it_is_for() {
         "flow",
         "note",
         "freedoc",
-        "formatdoc",
+        "structdoc",
         "stackdoc",
         "goal",
         "task",
@@ -434,7 +434,7 @@ fn a_kind_says_its_own_keys_an_example_and_what_it_is_for() {
     let entity = guide("entity");
     assert_eq!(
         entity["context"]["purpose"],
-        "単位で保存・送信される記録（ID を持つ）"
+        "単位で保存・送信されるレコード（ID を持つ）"
     );
     let fields = &entity["keys"]["card_create"]["fields"];
     for key in ["name", "type", "required", "rules"] {
@@ -520,7 +520,7 @@ fn the_topic_of_connections_says_a_line_once() {
 #[test]
 fn a_document_read_without_as_says_where_its_text_is() {
     let core = core();
-    // A formatdoc whose items hold rows: their headings and counts, and where the text is.
+    // A structdoc whose items hold rows: their headings and counts, and where the text is.
     let spec = ok(&core, "card_read", json!({"target": "Docs:Spec"}));
     assert!(spec["rows"].to_string().contains("rowCount"), "{spec}");
     assert!(
@@ -534,7 +534,7 @@ fn a_document_read_without_as_says_where_its_text_is() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Deep", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Deep", "value": {"kind": "structdoc", "rows": [
             {"name": "a", "kind": "item", "heading": "A", "rows": [
                 {"name": "b", "kind": "item", "heading": "B", "rows": [
                     {"name": "t", "kind": "text", "body": "中の文"}
@@ -563,7 +563,7 @@ fn a_document_read_without_as_says_where_its_text_is() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Flat", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Flat", "value": {"kind": "structdoc", "rows": [
             {"name": "t", "kind": "text", "body": "全部ここ"}
         ]}}),
     );

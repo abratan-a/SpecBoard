@@ -18,7 +18,7 @@ extension OJSON {
 }
 
 enum ScreenWire {
-    /// A value that codes itself as the tools write it (a formatdoc's rows, an export
+    /// A value that codes itself as the tools write it (a structdoc's rows, an export
     /// setting), as `JSONSerialization` takes it.
     static func encoded<T: Encodable>(_ value: T) throws -> Any {
         try JSONSerialization.jsonObject(with: JSONEncoder().encode(value), options: [.fragmentsAllowed])

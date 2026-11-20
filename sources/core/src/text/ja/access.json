@@ -14,7 +14,7 @@
   "access.permitsShape": "{op} の permits は {項目: allow・ask・deny} です（{other} ではなく）",
   "access.permitsState": "{op} の permits の {item} は allow・ask・deny のどれかです（{said} ではなく）",
   "access.projectNotFound": "プロジェクトが見つかりません",
-  "access.readOnly": "プロジェクト「{project}」は、このアクセスキーでは読むだけです（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）",
+  "access.readOnly": "プロジェクト「{project}」は、このアクセスキーでは読み取り専用です（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）",
   "access.what.keyId": "アクセスキーの id",
   "access.what.keyName": "アクセスキーの名前",
   "access.what.on": "公開にするか",

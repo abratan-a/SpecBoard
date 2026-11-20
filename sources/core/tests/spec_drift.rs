@@ -244,7 +244,10 @@ fn the_code_changed_marks_the_card_until_it_is_reviewed_without_a_commit() {
         "card_action",
         json!({"target": ORDER, "op": "reviewed"}),
     );
-    assert!(said.contains("reviewed") || said.contains("見直"), "{said}");
+    assert!(
+        said.contains("reviewed") || said.contains("レビュー"),
+        "{said}"
+    );
 }
 
 #[test]
@@ -501,7 +504,7 @@ fn a_project_file_carries_the_records_of_the_lines_it_holds() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 34);
+    assert_eq!(file["version"], 35);
     let marks = file["codeMarks"].as_array().unwrap();
     assert_eq!(marks.len(), 1, "{marks:?}");
     assert_eq!(marks[0]["symbol"], "helper");
@@ -727,12 +730,12 @@ fn a_card_whose_lines_of_two_kinds_reach_changed_code_has_an_item_for_each_kind_
         said,
         [
             (
-                "「実装」の線の先 repo/src:'a.rs'.helper のコードが、覚えたあとで変わりました"
+                "「実装」の線の先 repo/src:'a.rs'.helper のコードが、記録したあとで変わりました"
                     .to_string(),
                 ORDER.to_string()
             ),
             (
-                "「テストの関数」の線の先 repo/src:'a.rs'.Order.total のコードが、覚えたあとで変わりました"
+                "「テストの関数」の線の先 repo/src:'a.rs'.Order.total のコードが、記録したあとで変わりました"
                     .to_string(),
                 ORDER.to_string()
             ),

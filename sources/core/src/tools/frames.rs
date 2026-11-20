@@ -1,4 +1,4 @@
-//! Frames (`frame`; `specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」): a card of
+//! Frames (`frame`; `specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」): a card of
 //! a ui section that puts another ui section's mock into its box. What it points at is a section,
 //! held by the section's id in its field `target`, so it follows a rename or a move as a card ghost
 //! follows its card. A frame is refused when it points at a section that is not a ui one, at its own

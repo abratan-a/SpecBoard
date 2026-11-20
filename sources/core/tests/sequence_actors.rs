@@ -738,13 +738,13 @@ fn shapes_go_to_the_store_that_keeps_them_or_to_the_store_gap() {
     assert!(
         lines.contains(&format!(
             "{me}->>{}: write Receipt.number",
-            alias(&chart, "置き場が書かれていない")
+            alias(&chart, "ストアが書かれていない")
         )),
         "{chart}"
     );
     assert_eq!(
         participants(&chart).last().map(String::as_str),
-        Some("置き場が書かれていない"),
+        Some("ストアが書かれていない"),
         "{chart}"
     );
     // Without the ghost the store is a lifeline of its own.
@@ -1196,7 +1196,7 @@ fn the_chart_data_names_the_gap_roles() {
     let take = chart("TakeOrder");
     let last = take.last().unwrap();
     assert_eq!(last["role"], "noStore", "{take:?}");
-    assert_eq!(last["label"], "置き場が書かれていない");
+    assert_eq!(last["label"], "ストアが書かれていない");
     assert_eq!(last["place"], "Receipt");
     assert_eq!(
         last["origin"],
@@ -1217,7 +1217,7 @@ fn the_store_gap_names_the_stores_a_shape_reaches() {
         body(&chart).contains(&format!(
             "{}->>{}: write Receipt.number",
             alias(&chart, "受付"),
-            alias(&chart, "置き場が書かれていない")
+            alias(&chart, "ストアが書かれていない")
         )),
         "{chart}"
     );
@@ -1231,7 +1231,7 @@ fn the_store_gap_names_the_stores_a_shape_reaches() {
         .clone();
     let last = take.last().unwrap();
     assert_eq!(last["role"], "noStore", "{take:?}");
-    assert_eq!(last["label"], "置き場が書かれていない");
+    assert_eq!(last["label"], "ストアが書かれていない");
     assert_eq!(last["place"], "Receipt（ShopDB・Archive のどれか）");
 }
 
@@ -1507,7 +1507,7 @@ fn a_failure_mark_names_each_lifeline_once() {
     assert!(
         body(&chart)
             .iter()
-            .any(|l| l.ends_with("✕ 期限切れ → failure（→ ブラウザ・在庫）")),
+            .any(|l| l.ends_with("✕ タイムアウト → failure（→ ブラウザ・在庫）")),
         "{chart}"
     );
 }
@@ -1543,8 +1543,9 @@ fn a_wait_says_its_time_once_however_it_is_written() {
     let core = signing_desk();
     let chart = sequence(&core, "Charts/注文サーバ/受付:Sign", None);
     assert!(
-        body(&chart)
-            .contains(&"Note over P2: wait approval（期限 数秒（再送が来るまで））".to_string()),
+        body(&chart).contains(
+            &"Note over P2: wait approval（タイムアウト 数秒（再送が来るまで））".to_string()
+        ),
         "{chart}"
     );
 }

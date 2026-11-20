@@ -228,7 +228,7 @@ fn going_back_puts_the_rows_back_as_a_commit_of_its_own() {
         .unwrap_err();
     assert_eq!(
         refused,
-        "ほかの書き手のコミットを含むので戻しません: 2（MCP・key）、3（MCP・key）。ほかの書き手のコミットは、branch_revert の undo で 1 つずつ、request: true を付けて取り消せます"
+        "ほかの作成者のコミットを含むので戻しません: 2（MCP・key）、3（MCP・key）。ほかの作成者のコミットは、branch_revert の undo で 1 つずつ、request: true を付けて取り消せます"
     );
     assert_eq!(tx.revert(PROJECT, "", 1, None).unwrap(), 2);
     tx.commit().unwrap();
@@ -627,7 +627,7 @@ fn an_archived_project_refuses_every_write() {
     assert!(
         tx.set_main_lock(PROJECT, true)
             .unwrap_err()
-            .ends_with("はアーカイブです（読むだけ）")
+            .ends_with("はアーカイブです（読み取り専用）")
     );
     drop(tx);
     // Out of the archive, it is written again.
@@ -704,7 +704,7 @@ fn a_project_file_reads_back_as_it_was_written() {
     assert_eq!(
         commits[0].lines[0].summary,
         format!(
-            "プロジェクトのファイル（版 {}）から読み込んだ",
+            "プロジェクトのファイル（バージョン {}）からインポートした",
             crate::projectfile::VERSION
         )
     );
@@ -763,7 +763,7 @@ fn a_copy_is_a_project_of_its_own_and_an_archive_copy_is_archived() {
     let mut tx = store.write(Who::screen()).unwrap();
     assert_eq!(
         tx.set_main_lock(&copy, true).unwrap_err(),
-        format!("プロジェクト「{name}」はアーカイブです（読むだけ）")
+        format!("プロジェクト「{name}」はアーカイブです（読み取り専用）")
     );
     tx.restore_project(&copy).unwrap();
     tx.set_main_lock(&copy, true).unwrap();
@@ -795,7 +795,7 @@ fn files_that_cannot_be_read_are_refused() {
             &json!({"format": "specboard/project", "version": crate::projectfile::VERSION + 1})
                 .to_string()
         )
-        .starts_with("新しい版のアプリ")
+        .starts_with("新しいバージョンのアプリ")
     );
     // The name before a plan was called a project is read still (versions 11 to 17).
     assert!(
@@ -812,7 +812,7 @@ fn files_that_cannot_be_read_are_refused() {
     );
     assert!(
         refuse(&mut tx, r#"{"format": "specboard/project", "version": 10}"#)
-            .starts_with("版 10 のファイルは読めません")
+            .starts_with("バージョン 10 のファイルは読めません")
     );
     let wrong = json!({
         "format": "specboard/project", "version": 12,

@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "add.cardTable" : {
-      "comment" : "Button under a formatdoc being edited: add a row that shows a schema card's contents as a table.",
+      "comment" : "Button under a structdoc being edited: add a row that shows a schema card's contents as a table.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -20,7 +20,7 @@
       }
     },
     "add.diagram" : {
-      "comment" : "Button under a formatdoc being edited: add a row that draws a card or section as a diagram.",
+      "comment" : "Button under a structdoc being edited: add a row that draws a card or section as a diagram.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -38,7 +38,7 @@
       }
     },
     "add.hint" : {
-      "comment" : "Hint beside the add buttons under a formatdoc being edited.",
+      "comment" : "Hint beside the add buttons under a structdoc being edited.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -50,13 +50,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選んだ項目の中、選んだ行の後ろ、無ければ最後に足します。右クリックで並べ替え・段を変える・削除"
+            "value" : "選んだ項目の中、選んだ行の後ろ、無ければ最後に足します。右クリックで並べ替え・インデントを変える・削除"
           }
         }
       }
     },
     "add.rows" : {
-      "comment" : "Menu button and its tooltip under a formatdoc being edited: add a row of a chosen kind.",
+      "comment" : "Menu button and its tooltip under a structdoc being edited: add a row of a chosen kind.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -74,7 +74,7 @@
       }
     },
     "add.sectionDiagrams" : {
-      "comment" : "Button under a formatdoc being edited: add a row that draws every flow of a chart section.",
+      "comment" : "Button under a structdoc being edited: add a row that draws every flow of a chart section.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -127,8 +127,8 @@
         }
       }
     },
-    "formatdoc.addBody" : {
-      "comment" : "Button in the empty formatdoc that adds the first body (text) row.",
+    "structdoc.addBody" : {
+      "comment" : "Button in the empty structdoc that adds the first body (text) row.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -145,8 +145,8 @@
         }
       }
     },
-    "formatdoc.addItem" : {
-      "comment" : "Button in the empty formatdoc that adds the first item row.",
+    "structdoc.addItem" : {
+      "comment" : "Button in the empty structdoc that adds the first item row.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -163,8 +163,8 @@
         }
       }
     },
-    "formatdoc.foldMenu" : {
-      "comment" : "Title of the header menu that expands or collapses every item of a formatdoc.",
+    "structdoc.foldMenu" : {
+      "comment" : "Title of the header menu that expands or collapses every item of a structdoc.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -181,8 +181,8 @@
         }
       }
     },
-    "formatdoc.noRows" : {
-      "comment" : "Shown on the left of a formatdoc being edited when it has no rows.",
+    "structdoc.noRows" : {
+      "comment" : "Shown on the left of a structdoc being edited when it has no rows.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -199,8 +199,8 @@
         }
       }
     },
-    "formatdoc.nothingWritten" : {
-      "comment" : "Shown in a formatdoc that has no rows when it is read.",
+    "structdoc.nothingWritten" : {
+      "comment" : "Shown in a structdoc that has no rows when it is read.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -308,7 +308,7 @@
       }
     },
     "kind.diagram" : {
-      "comment" : "Name of the diagram row kind of a formatdoc.",
+      "comment" : "Name of the diagram row kind of a structdoc.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -344,7 +344,7 @@
       }
     },
     "kind.item" : {
-      "comment" : "Name of the item row kind of a formatdoc, shown on a row, in menus and in messages.",
+      "comment" : "Name of the item row kind of a structdoc, shown on a row, in menus and in messages.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -362,7 +362,7 @@
       }
     },
     "kind.text" : {
-      "comment" : "Name of the text row kind of a formatdoc.",
+      "comment" : "Name of the text row kind of a structdoc.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1004,7 +1004,7 @@
       }
     },
     "menu.addAfter" : {
-      "comment" : "Context-menu submenu of a formatdoc row: add a row of a chosen kind after it.",
+      "comment" : "Context-menu submenu of a structdoc row: add a row of a chosen kind after it.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1022,7 +1022,7 @@
       }
     },
     "menu.addInside" : {
-      "comment" : "Context-menu submenu of a formatdoc item: add a row of a chosen kind inside it.",
+      "comment" : "Context-menu submenu of a structdoc item: add a row of a chosen kind inside it.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1040,7 +1040,7 @@
       }
     },
     "menu.copyAsLink" : {
-      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the row's path written as a link, [[path]].",
+      "comment" : "Context-menu item of a row of a structdoc read as a document: copy the row's path written as a link, [[path]].",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1058,7 +1058,7 @@
       }
     },
     "menu.copyItemAsLink" : {
-      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the path of the item that holds the row, written as a link, [[path]].",
+      "comment" : "Context-menu item of a row of a structdoc read as a document: copy the path of the item that holds the row, written as a link, [[path]].",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1076,7 +1076,7 @@
       }
     },
     "menu.copyItemPath" : {
-      "comment" : "Context-menu item of a row of a formatdoc read as a document: copy the path of the item that holds the row.",
+      "comment" : "Context-menu item of a row of a structdoc read as a document: copy the path of the item that holds the row.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1094,7 +1094,7 @@
       }
     },
     "menu.deleteRow" : {
-      "comment" : "Context-menu item of a formatdoc row that deletes it.",
+      "comment" : "Context-menu item of a structdoc row that deletes it.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1112,7 +1112,7 @@
       }
     },
     "menu.editRow" : {
-      "comment" : "Context-menu item of a row of a formatdoc read as a document: switch to Edit with that row picked.",
+      "comment" : "Context-menu item of a row of a structdoc read as a document: switch to Edit with that row picked.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1130,7 +1130,7 @@
       }
     },
     "menu.indent" : {
-      "comment" : "Context-menu item of a formatdoc row: move it one level down in the nesting.",
+      "comment" : "Context-menu item of a structdoc row: move it one level down in the nesting.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1142,13 +1142,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一段下げる"
+            "value" : "インデントを増やす"
           }
         }
       }
     },
     "menu.itemHeader" : {
-      "comment" : "Context-menu section header of a row of a formatdoc read as a document: the item that holds the row, its path in the document and its heading.",
+      "comment" : "Context-menu section header of a row of a structdoc read as a document: the item that holds the row, its path in the document and its heading.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1166,7 +1166,7 @@
       }
     },
     "menu.outdent" : {
-      "comment" : "Context-menu item of a formatdoc row: move it one level up in the nesting.",
+      "comment" : "Context-menu item of a structdoc row: move it one level up in the nesting.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1178,13 +1178,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一段上げる"
+            "value" : "インデントを減らす"
           }
         }
       }
     },
     "mode.formatHelp" : {
-      "comment" : "Tooltip of the View/Edit switch in a formatdoc's card editor.",
+      "comment" : "Tooltip of the View/Edit switch in a structdoc's card editor.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1196,7 +1196,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "表示: エクスポートしたときと同じ一続きの文書として読む／編集: 左で行を足して直し、右にプレビュー"
+            "value" : "表示: エクスポートしたときと同じ一続きのドキュメントとして読む／編集: 左で行を足して直し、右にプレビュー"
           }
         }
       }
@@ -1214,13 +1214,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "表示: 開いている版を図を描いて読む／編集: 開いている版の本文を Markdown で書き、右にプレビュー（表示に戻すと保存します）"
+            "value" : "表示: 開いているバージョンを図を描いて読む／編集: 開いているバージョンの本文を Markdown で書き、右にプレビュー（表示に戻すと保存します）"
           }
         }
       }
     },
     "mode.view" : {
-      "comment" : "The segmented-control label that switches a formatdoc or stackdoc to reading mode.",
+      "comment" : "The segmented-control label that switches a structdoc or stackdoc to reading mode.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1238,7 +1238,7 @@
       }
     },
     "new.column" : {
-      "comment" : "The heading given to the n-th column of a table row when it is added to a formatdoc (becomes content).",
+      "comment" : "The heading given to the n-th column of a table row when it is added to a structdoc (becomes content).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1256,7 +1256,7 @@
       }
     },
     "new.item" : {
-      "comment" : "The heading given to an item row when it is added to a formatdoc (becomes content).",
+      "comment" : "The heading given to an item row when it is added to a structdoc (becomes content).",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1328,7 +1328,7 @@
       }
     },
     "row.gone" : {
-      "comment" : "Shown in place of a picked formatdoc row's editor when the row has been removed.",
+      "comment" : "Shown in place of a picked structdoc row's editor when the row has been removed.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1364,7 +1364,7 @@
       }
     },
     "row.kindAndId" : {
-      "comment" : "The kind property of a formatdoc row: its label and its kind name.",
+      "comment" : "The kind property of a structdoc row: its label and its kind name.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1400,7 +1400,7 @@
       }
     },
     "row.nameHelp" : {
-      "comment" : "Help of the name property of a formatdoc row in the Properties panel.",
+      "comment" : "Help of the name property of a structdoc row in the Properties panel.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1412,7 +1412,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "パスに使う名前（1〜255 字。空白や . などの区切りの字を含む名前は、パスでは一重引用符で囲む）。見出しを直してもつながりは切れない"
+            "value" : "パスに使う名前（1〜255 字。空白や . などの区切り文字を含む名前は、パスでは一重引用符で囲む）。見出しを直してもつながりは切れない"
           }
         }
       }
@@ -1490,7 +1490,7 @@
       }
     },
     "row.pathHelp" : {
-      "comment" : "Help of the path property of a formatdoc row in the Properties panel.",
+      "comment" : "Help of the path property of a structdoc row in the Properties panel.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1520,7 +1520,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この項目を指している文書と項目"
+            "value" : "この項目を指しているドキュメントと項目"
           }
         }
       }
@@ -1538,7 +1538,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この項目が指している文書と項目"
+            "value" : "この項目が指しているドキュメントと項目"
           }
         }
       }
@@ -1598,7 +1598,7 @@
       }
     },
     "row.targetPlaceholder" : {
-      "comment" : "Placeholder of the target field of a formatdoc row.",
+      "comment" : "Placeholder of the target field of a structdoc row.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1628,13 +1628,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "[[セクション:カード.欄]] や [[セクション:文書.項目]] で指し（壊れるとインスペクションの brokenPaths に出ます）、{{パス}} で値を差し込みます"
+            "value" : "[[セクション:カード.フィールド]] や [[セクション:ドキュメント.項目]] で指し（壊れるとインスペクションの brokenPaths に出ます）、{{パス}} で値を差し込みます"
           }
         }
       }
     },
     "table.glance" : {
-      "comment" : "The one-line glance at a table row of a formatdoc: how many rows it has and its column headings.",
+      "comment" : "The one-line glance at a table row of a structdoc: how many rows it has and its column headings.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1682,7 +1682,7 @@
       }
     },
     "validate.cellsWider" : {
-      "comment" : "Validation message for formatdoc rows: a line of cells wider than the columns.",
+      "comment" : "Validation message for structdoc rows: a line of cells wider than the columns.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1700,7 +1700,7 @@
       }
     },
     "validate.itemDepth" : {
-      "comment" : "Validation message for formatdoc rows: items nested too deep.",
+      "comment" : "Validation message for structdoc rows: items nested too deep.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1712,13 +1712,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: 項目は %lld 段までです（深い所は別の文書にして [[…]] でつなぎます）"
+            "value" : "%@: 項目は %lld 段までです（深い所は別のドキュメントにして [[…]] でつなぎます）"
           }
         }
       }
     },
     "validate.nameTwice" : {
-      "comment" : "Validation message for formatdoc rows: two sibling rows share a name. The first argument is where.",
+      "comment" : "Validation message for structdoc rows: two sibling rows share a name. The first argument is where.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1736,7 +1736,7 @@
       }
     },
     "validate.needsTargetCard" : {
-      "comment" : "Validation message for formatdoc rows: a card-table row without a target.",
+      "comment" : "Validation message for structdoc rows: a card-table row without a target.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1754,7 +1754,7 @@
       }
     },
     "validate.needsTargetDiagram" : {
-      "comment" : "Validation message for formatdoc rows: a diagram row without a target.",
+      "comment" : "Validation message for structdoc rows: a diagram row without a target.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1772,7 +1772,7 @@
       }
     },
     "validate.needsTargetDiagrams" : {
-      "comment" : "Validation message for formatdoc rows: a section-diagrams row without a target.",
+      "comment" : "Validation message for structdoc rows: a section-diagrams row without a target.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1790,7 +1790,7 @@
       }
     },
     "validate.rowHasNo" : {
-      "comment" : "Validation message for formatdoc rows: a row has a key its kind doesn't hold. Arguments: where, kind name, kind label, key.",
+      "comment" : "Validation message for structdoc rows: a row has a key its kind doesn't hold. Arguments: where, kind name, kind label, key.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1808,7 +1808,7 @@
       }
     },
     "validate.tableNeedsColumns" : {
-      "comment" : "Validation message for formatdoc rows: a table without columns.",
+      "comment" : "Validation message for structdoc rows: a table without columns.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1826,7 +1826,7 @@
       }
     },
     "validate.tableTooWide" : {
-      "comment" : "Validation message for formatdoc rows: a table with more than 30 columns.",
+      "comment" : "Validation message for structdoc rows: a table with more than 30 columns.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1844,7 +1844,7 @@
       }
     },
     "validate.tooManyRows" : {
-      "comment" : "Validation message for formatdoc rows: too many rows.",
+      "comment" : "Validation message for structdoc rows: too many rows.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1853,13 +1853,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A formatdoc can have at most %lld row in all"
+                  "value" : "A structdoc can have at most %lld row in all"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A formatdoc can have at most %lld rows in all"
+                  "value" : "A structdoc can have at most %lld rows in all"
                 }
               }
             }
@@ -1874,7 +1874,7 @@
       }
     },
     "validate.tooMuchText" : {
-      "comment" : "Validation message for formatdoc rows: too much text.",
+      "comment" : "Validation message for structdoc rows: too much text.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1916,7 +1916,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版を追加"
+            "value" : "バージョンを追加"
           }
         }
       }
@@ -1934,7 +1934,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一番上に新しい版を足して開きます"
+            "value" : "一番上に新しいバージョンを足して開きます"
           }
         }
       }
@@ -1952,7 +1952,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一番上に新しい版を足して開きます。版はセレクタに出す名前で、カードの中で 1 つずつです"
+            "value" : "一番上に新しいバージョンを足して開きます。バージョンはセレクタに出す名前で、カードの中で 1 つずつです"
           }
         }
       }
@@ -1970,7 +1970,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開いている版を消します"
+            "value" : "開いているバージョンを消します"
           }
         }
       }
@@ -1988,7 +1988,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本文も消えます。この版を指していたパスは壊れたパスとしてインスペクションに出ます"
+            "value" : "本文も消えます。このバージョンを指していたパスは壊れたパスとしてインスペクションに出ます"
           }
         }
       }
@@ -2006,7 +2006,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版「%@」を消しますか"
+            "value" : "バージョン「%@」を消しますか"
           }
         }
       }
@@ -2024,7 +2024,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版（例 1.2.0）"
+            "value" : "バージョン（例 1.2.0）"
           }
         }
       }
@@ -2042,7 +2042,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "版"
+            "value" : "バージョン"
           }
         }
       }
@@ -2060,7 +2060,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開いている版を 1 つ下（古い側）へ"
+            "value" : "開いているバージョンを 1 つ下（古い側）へ"
           }
         }
       }
@@ -2078,7 +2078,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開いている版を 1 つ上（新しい側）へ"
+            "value" : "開いているバージョンを 1 つ上（新しい側）へ"
           }
         }
       }
@@ -2114,7 +2114,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ版がありません"
+            "value" : "まだバージョンがありません"
           }
         }
       }
@@ -2132,7 +2132,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開く版。新しい版が上。選んだ版は見かけで、履歴に残らない"
+            "value" : "開くバージョン。新しいバージョンが上。選んだバージョンは見かけで、履歴に残らない"
           }
         }
       }
@@ -2156,7 +2156,7 @@
       }
     },
     "word.preview" : {
-      "comment" : "The heading of the live preview under a text row's editor, and the placeholder of the right pane of a formatdoc being edited while it has no rows.",
+      "comment" : "The heading of the live preview under a text row's editor, and the placeholder of the right pane of a structdoc being edited while it has no rows.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

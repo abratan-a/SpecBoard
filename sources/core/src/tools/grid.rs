@@ -25,7 +25,7 @@ const MORE_HEIGHT: f64 = 27.0;
 const ROW_HEIGHT: f64 = 27.0;
 
 /// The project's layout: how many rows a card shows, how wide it is, the margin around it,
-/// and how a formatdoc is drawn by default.
+/// and how a structdoc is drawn by default.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Layout {
     pub rows: i64,
@@ -114,12 +114,12 @@ pub(crate) fn rows_for_rows(rows: i64) -> i64 {
 }
 
 /// Whether a card is drawn as a document rather than rows: a freedoc and a stackdoc
-/// always — a table too, as the table it builds (`drawnAsDocument`) —, a formatdoc unless it, or else the project,
+/// always — a table too, as the table it builds (`drawnAsDocument`) —, a structdoc unless it, or else the project,
 /// says rows.
 fn drawn_as_document(card: &Card, doc_view: &str) -> bool {
     match card.kind.as_str() {
         "freedoc" | "stackdoc" | crate::kinds::TABLE => true,
-        "formatdoc" => card.doc_view.as_deref().unwrap_or(doc_view) == "document",
+        "structdoc" => card.doc_view.as_deref().unwrap_or(doc_view) == "document",
         // Its scenarios are what a spec is looked over by: rows unless the card itself asks otherwise.
         "spec" => card.doc_view.as_deref() == Some("document"),
         _ => false,
@@ -741,7 +741,7 @@ fn row_count(card: &Card) -> usize {
             }
             n + card.holds.len()
         }
-        "formatdoc" => {
+        "structdoc" => {
             fn items(rows: &[crate::model::FormatRow]) -> usize {
                 rows.iter()
                     .filter(|r| r.kind == "item")
@@ -857,7 +857,7 @@ fn instance_rows(card: &Card, project: &crate::export::Project) -> usize {
     )
 }
 
-/// Whether a formatdoc's rows at the top point at anything (its `#top` row).
+/// Whether a structdoc's rows at the top point at anything (its `#top` row).
 fn top_points(card: &Card) -> bool {
     card.rows.iter().filter(|r| r.kind != "item").any(|r| {
         !r.target.is_empty()

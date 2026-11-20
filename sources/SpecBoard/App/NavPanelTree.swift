@@ -38,7 +38,7 @@ enum NavPanelTree {
         /// would otherwise bury the sections around them.
         case cards(String)
         /// A card — and a container's (a goal's, a flow's), opened as a section is to the
-        /// cards inside it (`specboard://SpecBoard/Docs/Design:CardKinds`「入れ物のカード」).
+        /// cards inside it (`specboard://SpecBoard/Docs/Design:CardKinds`「コンテナのカード」).
         case card(String)
         /// A flow's node: a card inside the flow (`ProjectDetail.inner`), by its id.
         case node(String)
@@ -557,7 +557,7 @@ enum NavPanelTree {
         return out + rest.map { ($0, true) }
     }
 
-    /// The marks on the rows (`specboard://SpecBoard/Docs/Design:UI` §2「変更の印」), by the row's key: a
+    /// The marks on the rows (`specboard://SpecBoard/Docs/Design:UI` §2「変更のマーク」), by the row's key: a
     /// thing's own — what the open branch did to it, what main did since — and, on a section, a
     /// container card and the groups of a section's cards, ● for what changed inside them, the
     /// sections and containers inside too. A thing's own mark is said before what is inside it.

@@ -239,7 +239,7 @@ mod tests {
                 read(broken)
                     .err()
                     .unwrap()
-                    .starts_with("アプリの答えが読めません"),
+                    .starts_with("アプリのレスポンスが読めません"),
                 "{broken}"
             );
         }

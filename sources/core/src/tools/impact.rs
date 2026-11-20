@@ -1,6 +1,6 @@
 //! Which flows a change reaches, which notes and documents talk about what changed,
 //! and what a key can be used to write (`Impact` in the Swift app's Model) — and, for an
-//! item of a formatdoc, the documents and items connected to it (`RowLinks`).
+//! item of a structdoc, the documents and items connected to it (`RowLinks`).
 //!
 //! A flow says where it reads and writes with paths, and a change is a path too: the
 //! two meet when one lies inside the other. Containment (`ref`) is followed, designation
@@ -35,7 +35,7 @@ fn at(card: &str, path: &str) -> Location {
 pub(crate) struct Hit<'a> {
     pub card: &'a Card,
     /// What it reads or writes — a note's `[[path]]` read like a use that reads, the
-    /// item that names it as the note for a formatdoc's.
+    /// item that names it as the note for a structdoc's.
     pub used: Use,
     /// How the change reaches it: the use's own path, and the documents on the way.
     pub via: String,
@@ -43,12 +43,12 @@ pub(crate) struct Hit<'a> {
     pub encloses: bool,
 }
 
-/// The card a hit is, in full — for a formatdoc, the item that names what changed, or
+/// The card a hit is, in full — for a structdoc, the item that names what changed, or
 /// the card when a row at the top does (`Impact.written`).
 pub(crate) fn written(hit: &Hit, project: &Project) -> String {
     let mut out = project.full(hit.card);
     if let Some(row) = &hit.used.note
-        && hit.card.kind == "formatdoc"
+        && hit.card.kind == "structdoc"
         && row != facts::TOP_ROW
     {
         for name in crate::pathtext::names(row).iter().filter(|n| !n.is_empty()) {
@@ -195,13 +195,13 @@ pub(crate) fn of<'a>(
         let uses: Vec<Use> = if card.kind == "action" || card.kind == "flow" {
             facts::uses_in_effect(card)
         } else {
-            // A formatdoc's: the item a mention is drawn from, said as the use's note.
+            // A structdoc's: the item a mention is drawn from, said as the use's note.
             facts::links(card)
                 .into_iter()
                 .map(|l| Use {
                     path: l.path,
                     role: Role::Read,
-                    note: matches!(card.kind.as_str(), "formatdoc" | "stackdoc").then_some(l.row),
+                    note: matches!(card.kind.as_str(), "structdoc" | "stackdoc").then_some(l.row),
                 })
                 .collect()
         };
@@ -307,12 +307,12 @@ pub(crate) fn key_use<'a>(
 
 // MARK: - What is connected to an item
 
-/// A row of a formatdoc, or a note or a freedoc taken whole, as the list of what is
+/// A row of a structdoc, or a note or a freedoc taken whole, as the list of what is
 /// connected to an item shows it (`RowLink`).
 #[derive(Clone, Debug)]
 pub(crate) struct RowLink<'a> {
     pub note: &'a Card,
-    /// The item's names in the formatdoc; empty for a card taken whole.
+    /// The item's names in the structdoc; empty for a card taken whole.
     pub path: Vec<String>,
     /// As the project writes it, from the top: `Docs:Spec.auth.login`.
     pub written: String,
@@ -379,7 +379,7 @@ pub(crate) fn connected<'a>(
             written.push_str(n);
         }
         if names.is_empty() {
-            let text = if holder.kind == "formatdoc" {
+            let text = if holder.kind == "structdoc" {
                 crate::export::rows_markdown(&holder.rows, crate::export::RowNames::No, &mut |r| {
                     (r.kind == "text").then(|| r.body.clone())
                 })
@@ -419,7 +419,7 @@ pub(crate) fn connected<'a>(
             .into_iter()
             .filter(|s| !s.is_empty())
             .collect();
-        if landed.kind != "formatdoc" || names.is_empty() {
+        if landed.kind != "structdoc" || names.is_empty() {
             return Some((landed, Vec::new()));
         }
         let (found, _) = walk::deepest(&names, &landed.rows);
@@ -457,7 +457,7 @@ pub(crate) fn connected<'a>(
     let mut mentioned_by = Vec::new();
     let mut cited = HashSet::new();
     for other in project.detail.schemas.iter().filter(|c| c.is_writing()) {
-        if other.kind != "formatdoc" {
+        if other.kind != "structdoc" {
             let text = if other.kind == "stackdoc" {
                 other
                     .versions()

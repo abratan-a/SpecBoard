@@ -710,7 +710,7 @@ impl Kinds {
         self.get(kind).is_some_and(|k| !k.holds.is_empty())
     }
 
-    /// Whether a card of `kind` keeps what its definition no longer has (「定義に無い欄」),
+    /// Whether a card of `kind` keeps what its definition no longer has (「定義に無いフィールド」),
     /// not refused for it: a kind the project defines, and the board's goal and task — read by
     /// their definitions alone, so a field taken out of them stays with the cards that have a
     /// value in it.
@@ -777,6 +777,9 @@ impl Kinds {
             };
             let mut found = Vec::new();
             let kind = read_kind(raw, &kinds, false, &mut found);
+            if let Some(why) = kind_named_before(&kind.name) {
+                found.push(format!("{}: {why}", kind.name));
+            }
             let taken = kinds.iter().find(|k| k.name == kind.name);
             if let Some(taken) = taken {
                 found.push(if taken.builtin {
@@ -802,7 +805,13 @@ impl Kinds {
         for kind in &kinds[first..] {
             for held in &kind.holds {
                 let problem = match kinds.iter().find(|k| &k.name == held) {
-                    None => Some(text!("kinds.own.holdsUnknown", kind = kind.name, held)),
+                    None => Some(match kind_named_before(held) {
+                        Some(why) => text!(
+                            "kinds.own.problem",
+                            problem = format!("{}: {why}", kind.name)
+                        ),
+                        None => text!("kinds.own.holdsUnknown", kind = kind.name, held),
+                    }),
                     Some(k) if k.is_abstract => {
                         Some(text!("kinds.own.holdsAbstract", kind = kind.name, held))
                     }
@@ -876,6 +885,19 @@ pub const OF_LINE: &str = "shapeOf";
 
 /// The line from a spec's item or scenario to the test that checks it (`testedBy`).
 pub const TESTED_BY: &str = "testedBy";
+
+/// The built-in kinds of card named otherwise before (`kind_move`), each by its name of before and
+/// of now: no kind has the name of before, so one written by it is refused with the name of now.
+pub const KIND_NAMES_BEFORE: [(&str, &str); 1] = [("formatdoc", "structdoc")];
+
+/// Why a kind of card written by its name of before is refused, its name of now said; none for any
+/// other name.
+pub(crate) fn kind_named_before(name: &str) -> Option<String> {
+    KIND_NAMES_BEFORE
+        .iter()
+        .find(|(before, _)| *before == name)
+        .map(|(before, now)| text!("kinds.kindRenamed", name = *before, now = *now))
+}
 
 /// The built-in kinds of line named otherwise before (`name_move`), each by its name of before and
 /// of now: named now as the screen says them.
@@ -1323,7 +1345,10 @@ fn read_kind(
         Some(parent) => {
             let found = earlier.iter().find(|k| &k.name == parent);
             if found.is_none() {
-                problems.push(text!("kinds.read.parentMissing", at, parent));
+                match kind_named_before(parent) {
+                    Some(why) => problems.push(format!("{at}: {why}")),
+                    None => problems.push(text!("kinds.read.parentMissing", at, parent)),
+                }
             }
             found
         }
@@ -1769,6 +1794,11 @@ fn check_fields(fields: &[Field], at: &str, problems: &mut Vec<String>) {
         }
         if !field.kinds.is_empty() && field.fieldtype != FieldType::Card {
             problems.push(text!("kinds.check.kindsOnlyCard", here));
+        }
+        for kind in &field.kinds {
+            if let Some(why) = kind_named_before(kind) {
+                problems.push(format!("{here}: {why}"));
+            }
         }
         for cond in [&field.when, &field.required] {
             check_cond(cond, fields, &here, problems);

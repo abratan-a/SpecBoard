@@ -1,4 +1,4 @@
-//! What is inside a card written one at a time: a formatdoc's rows (`createRowAt`・
+//! What is inside a card written one at a time: a structdoc's rows (`createRowAt`・
 //! `updateRowAt`・`deleteRowAt` in the Swift app's surface). Each is the card's list as MCP
 //! writes it, changed, and written back whole through the card's edit — checked as whole as
 //! `rows` is — with what moved said, so the paths into it follow. A flow's nodes are cards
@@ -104,7 +104,7 @@ fn children_mut<'l>(rows: &'l mut Vec<Value>, parent: &[String]) -> Option<&'l m
     Some(list)
 }
 
-/// The kind of the row at `names` in the formatdoc `id`, as it is written now; none when there is none.
+/// The kind of the row at `names` in the structdoc `id`, as it is written now; none when there is none.
 pub(crate) fn row_kind(tx: &Tx, scope: &Scope, id: &str, names: &[String]) -> Option<String> {
     let rows = wire_list(tx, scope, id, "rows").ok()?;
     row_at(&rows, names)?
@@ -221,7 +221,7 @@ fn table_cells(row: &Map<String, Value>) -> Vec<Vec<String>> {
         .unwrap_or_default()
 }
 
-// MARK: - Rows of a formatdoc
+// MARK: - Rows of a structdoc
 
 /// A row added where its path says (`createRowAt`).
 pub(crate) fn create_row(
@@ -233,7 +233,7 @@ pub(crate) fn create_row(
     let seen = Seen::in_tx(tx, scope)?;
     let project = seen.project();
     let doc = card_holding(&project, path)
-        .filter(|c| c.kind == "formatdoc")
+        .filter(|c| c.kind == "structdoc")
         .ok_or_else(|| text!("inner.error.noFormatdoc", path))?;
     let (id, full) = (doc.id.clone(), project.full(doc));
     let mut value = value.clone();

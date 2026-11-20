@@ -660,7 +660,7 @@ impl Context<'_> {
         Some((Layer::Refs, self.entry(path, &card.kind, said, read)))
     }
 
-    /// A formatdoc's item as it is written out, with the lines that leave it.
+    /// A structdoc's item as it is written out, with the lines that leave it.
     fn row(&self, doc: &Card, names: &[String]) -> Option<(Layer, Entry)> {
         let written = &self.tree.detail.project;
         let text = written

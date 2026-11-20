@@ -60,6 +60,7 @@
   "kinds.def.rowNameForm": "{at}.{name}: The name of a kind of row must not be empty, must have no space at either end, be at most 40 characters, and contain none of . : / [ ] , \" or a line break",
   "kinds.def.rowNameValueKey": "{at}.{name}: \"{name}\" is a key of a card's value, so it cannot be the name of a kind of row",
   "kinds.def.semanticsBuiltinOnly": "{at}: semantics (the names of the code for inspection, lines, export and the editor) is only for built-in kinds",
+  "kinds.kindRenamed": "\"{name}\" is the name of before: write it as \"{now}\" now",
   "kinds.own.holdsAbstract": "In cards, {kind}: The kind \"{held}\" in holds cannot be a card",
   "kinds.own.holdsGhost": "In cards, {kind}: holds cannot have ghost (a card ghost cannot be put inside a container)",
   "kinds.own.holdsInnerOnly": "In cards, {kind}: The kind \"{held}\" in holds can be put only inside a container ({holders})",

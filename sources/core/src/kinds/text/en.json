@@ -4,7 +4,7 @@
   "text": "Base definition"
  },
  "cards.base.context.purpose": {
-  "from": "どの種類も受け継ぐ欄。カード自身の名前（name）は欄ではなく、カードの名前として持つ",
+  "from": "どの種類も継承するフィールド。カード自身の名前（name）はフィールドではなく、カードの名前として持つ",
   "text": "Fields that every kind inherits. A card's own name (name) is not a field; it is kept as the card's name"
  },
  "cards.base.fields.label.label": {
@@ -20,7 +20,7 @@
   "text": "Description"
  },
  "cards.base.fields.description.description": {
-  "from": "最初の一文でそのカードが何かを言い、続けてカード全体にかかる今の決まりを書く",
+  "from": "最初の一文でそのカードが何かを言い、続けてカード全体にかかる今のルールを書く",
   "text": "Say what the card is in the first sentence, then write the current rules that apply to the whole card"
  },
  "cards.base.fields.tags.label": {
@@ -44,7 +44,7 @@
   "text": "Shape"
  },
  "cards.shape.context.purpose": {
-  "from": "データの形を持つ種類（entity・value・enum）が共に持つ欄",
+  "from": "データの形を持つ種類（entity・value・enum）が共に持つフィールド",
   "text": "Fields shared by the kinds that hold a data shape (entity, value, enum)"
  },
  "cards.shape.fields.rules.label": {
@@ -76,15 +76,15 @@
   "text": "Discriminator field"
  },
  "cards.shape.fields.discriminator.description": {
-  "from": "判別に使うフィールド名（各フィールドの variants と組）",
+  "from": "判別に使うフィールド名（各フィールドの variants とペア）",
   "text": "The name of the field used to tell variants apart (goes together with variants of each field)"
  },
  "cards.record.label": {
-  "from": "記録の形",
+  "from": "レコードの形",
   "text": "Record shape"
  },
  "cards.record.context.purpose": {
-  "from": "フィールドの木を持つ種類（entity・value）が共に持つ行",
+  "from": "フィールドのツリーを持つ種類（entity・value）が共に持つ行",
   "text": "Rows shared by the kinds that hold a tree of fields (entity, value)"
  },
  "cards.record.fields.face.label": {
@@ -92,7 +92,7 @@
   "text": "List face"
  },
  "cards.record.fields.face.description": {
-  "from": "{list, header}（データのカードの形）か {text, note, mark, fold}（並びの要素の形）。この形のデータを図の上で記録の一覧として描く見かけ（名前は自分の一番上の欄）",
+  "from": "{list, header}（データのカードの形式）か {text, note, mark, fold}（配列の要素の形式）。この形のデータを図の上で記録の一覧として描く見かけ（名前は自分の一番上のフィールド）",
   "text": "{list, header} (on a data card's shape) or {text, note, mark, fold} (on an array element's shape): how data of this shape is drawn as a list of records on a diagram (names are this shape's top-level fields)"
  },
  "cards.record.rows.fields.label": {
@@ -112,7 +112,7 @@
   "text": "Description"
  },
  "cards.record.rows.fields.fields.description.description": {
-  "from": "その値の決まり（形式・単位・範囲、空や null の意味、指し先の補足）",
+  "from": "その値のルール（形式・単位・範囲、空や null の意味、指し先の補足）",
   "text": "The rules for that value (format, unit, range, what empty or null means, notes on what it points to)"
  },
  "cards.record.rows.fields.fields.type.label": {
@@ -168,19 +168,19 @@
   "text": "Other accepted types"
  },
  "cards.record.rows.fields.fields.also.description": {
-  "from": "本来の型のほかに受ける JSON の型（string・integer・number・boolean・object・array。array は本来の型の並びも受ける）。実例の確かめと JSON Schema・MCP のツール定義の type の並びに効く",
+  "from": "本来の型のほかに受ける JSON の型（string・integer・number・boolean・object・array。array は本来の型の配列も受ける）。実例の確かめと JSON Schema・MCP のツール定義の type の配列に効く",
   "text": "JSON types accepted in addition to the field's own type (string, integer, number, boolean, object, array. array also accepts a list of the own type). It affects the validation of examples and the type lists (type) in JSON Schema and MCP tool definitions"
  },
  "cards.entity.label": {
-  "from": "記録",
-  "text": "Record"
+  "from": "エンティティ",
+  "text": "Entity"
  },
  "cards.entity.context.purpose": {
-  "from": "単位で保存・送信される記録（ID を持つ）",
+  "from": "単位で保存・送信されるレコード（ID を持つ）",
   "text": "A record that is stored and sent as a unit (it has an ID)"
  },
  "cards.entity.context.use_when": {
-  "from": "データベースの行・API で送る文書など、それ自体で扱われる形を書くとき",
+  "from": "データベースの行・API で送るドキュメントなど、それ自体で扱われる形を書くとき",
   "text": "When writing a shape that is handled on its own, such as a database row or a document sent through an API"
  },
  "cards.entity.context.not_for": {
@@ -188,8 +188,8 @@
   "text": "A shape that only goes inside something else (value)"
  },
  "cards.value.label": {
-  "from": "値の形",
-  "text": "Value shape"
+  "from": "値オブジェクト",
+  "text": "Value object"
  },
  "cards.value.context.purpose": {
   "from": "何かの中に入る形（ID を持たない）",
@@ -208,7 +208,7 @@
   "text": "In the diagram of its own section, show it as a card of its own instead of folding it into the card that holds it (appearance)"
  },
  "cards.enum.label": {
-  "from": "列挙",
+  "from": "列挙型",
   "text": "Enumeration"
  },
  "cards.enum.context.purpose": {
@@ -252,7 +252,7 @@
   "text": "What the value stands for (one line; not shown on the diagram's card)"
  },
  "cards.store.label": {
-  "from": "置き場",
+  "from": "ストア",
   "text": "Store"
  },
  "cards.store.context.purpose": {
@@ -260,7 +260,7 @@
   "text": "A place where data is kept (table, collection, ledger, file)"
  },
  "cards.store.context.use_when": {
-  "from": "flow の処理の行が読み書きする相手を書くとき。置くもの（記録の形）は「置く」線（connections の line: holds）で書く",
+  "from": "flow の処理のステップが読み書きする相手を書くとき。置くもの（レコードの形）は「置く」線（connections の line: holds）で書く",
   "text": "When writing what the process steps of a flow read from and write to. Write what it holds (record shapes) with a \"Holds\" line (line: holds in connections)"
  },
  "cards.instance.label": {
@@ -272,7 +272,7 @@
   "text": "An actual value (an example) of the shape of an entity or value. The shape is given by the line shapeOf (in MCP, the path of the shape goes in the of key of value), and the value is kept in data as JSON nested the same way as the shape"
  },
  "cards.instance.context.use_when": {
-  "from": "「たとえばこういう値」を形と一緒に置くとき（API の要求と答えの例・設定の例・MCP のツール定義など）。定義のセクションに置く",
+  "from": "「たとえばこういう値」を形と一緒に置くとき（API のリクエストとレスポンスの例・設定の例・MCP のツール定義など）。定義のセクションに置く",
   "text": "When placing a sample value (\"a value like this, for example\") together with its shape (examples of API requests and responses, configuration examples, MCP tool definitions, and so on). Place it in a Definition section"
  },
  "cards.instance.context.not_for": {
@@ -284,7 +284,7 @@
   "text": "Data"
  },
  "cards.instance.fields.data.description": {
-  "from": "形（線 shapeOf の先）と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）",
+  "from": "形（線 shapeOf の先）と同じ入れ子の JSON（キーはフィールドの名前、配列のフィールドは配列）",
   "text": "JSON nested the same way as the shape (what the line shapeOf points to); keys are field names, and a field that is a list is an array"
  },
  "cards.table.label": {
@@ -292,23 +292,23 @@
   "text": "Table"
  },
  "cards.table.context.purpose": {
-  "from": "形（entity・value）のデータ（instance）を決まり（絞り込み・列・並べ方・要素ごとの行）で集めた表。形は線 shapeOf（MCP は value のキー of に形のパス）。文書に ![[…]] か行 card で入れる",
+  "from": "形（entity・value）のデータ（instance）を条件（絞り込み・列・並べ方・要素ごとの行）で集めた表。形は線 shapeOf（MCP は value のキー of に形のパス）。ドキュメントに ![[…]] か行 card で入れる",
   "text": "A table that collects the data (instance) of a shape (entity, value) by rules (filter, columns, sort order, rows per element). The shape is given by the line shapeOf (in MCP, the path of the shape goes in the of key of value). Put it into a document with ![[…]] or with a row of kind card"
  },
  "cards.table.context.use_when": {
-  "from": "データを一覧の表にして文書に入れるとき（ホストの一覧・ツールの一覧など）。定義・ドキュメント・フリーのセクションに置く",
+  "from": "データを一覧の表にしてドキュメントに入れるとき（ホストの一覧・ツールの一覧など）。定義・ドキュメント・フリーのセクションに置く",
   "text": "When turning data into a table of a list and putting it into a document (a list of hosts, a list of tools, and so on). Place it in a Definition, Document or Free section"
  },
  "cards.table.context.not_for": {
-  "from": "手で書く表（formatdoc の行 table）・データ 1 枚の欄と値（formatdoc の行 card の target にデータ）",
-  "text": "A table written by hand (a table row of formatdoc) and the fields and values of a single piece of data (data as the target of a card row of formatdoc)"
+  "from": "手で書く表（structdoc の行 table）・データ 1 枚のフィールドと値（structdoc の行 card の target にデータ）",
+  "text": "A table written by hand (a table row of structdoc) and the fields and values of a single piece of data (data as the target of a card row of structdoc)"
  },
  "cards.table.fields.within.label": {
   "from": "読むセクション",
   "text": "Section to read"
  },
  "cards.table.fields.within.description": {
-  "from": "読むデータのセクション（そのセクションと中のセクション）。省けば木の中の全部",
+  "from": "読むデータのセクション（そのセクションと中のセクション）。省けばツリーの中の全部",
   "text": "The section whose data is read (that section and the sections inside it). If omitted, everything in the tree"
  },
  "cards.table.fields.where.label": {
@@ -316,7 +316,7 @@
   "text": "Filter"
  },
  "cards.table.fields.where.description": {
-  "from": "[{path, op, value}]。path は形の欄の名前で書く値のパス（@name・@label も）、op は eq・ne・lt・le・gt・ge・contains・exists。全部に合うデータが行になる",
+  "from": "[{path, op, value}]。path は形のフィールドの名前で書く値のパス（@name・@label も）、op は eq・ne・lt・le・gt・ge・contains・exists。全部に合うデータが行になる",
   "text": "[{path, op, value}]. path is the path of a value, written with the names of the shape's fields (@name and @label also work); op is one of eq, ne, lt, le, gt, ge, contains, exists. Data that matches all of them becomes a row"
  },
  "cards.table.fields.columns.label": {
@@ -324,7 +324,7 @@
   "text": "Columns"
  },
  "cards.table.fields.columns.description": {
-  "from": "[{path, label?, show?}]。省けば @name と形の一番上の欄。[] のパスは並びの要素ごとの値を「, 」でつなぐ。show で見せ方を変える: label は列挙の値を表示名で（無ければ値）、link は値をカードのパスとして [[パス]] に（エクスポートでは相対リンク、解けなければ字のまま）。where・sort は値で比べる",
+  "from": "[{path, label?, show?}]。省けば @name と形の一番上のフィールド。[] のパスは配列の要素ごとの値を「, 」でつなぐ。show で見せ方を変える: label は列挙の値を表示名で（無ければ値）、link は値をカードのパスとして [[パス]] に（エクスポートでは相対リンク、解けなければ字のまま）。where・sort は値で比べる",
   "text": "[{path, label?, show?}]. If omitted, @name and the first field of the shape. A path with [] joins the values of each element of a list with \", \". show changes how a value is shown: label shows an enumeration value by its display name (the value itself if there is none); link turns the value into [[path]] as a card path (a relative link in an export; left as plain text if it cannot be resolved). where and sort compare by value"
  },
  "cards.table.fields.sort.label": {
@@ -340,15 +340,15 @@
   "text": "Rows per element"
  },
  "cards.table.fields.unnest.description": {
-  "from": "要素ごとの行にする並びの欄（値のパス）。要素の無いデータは行にならない",
+  "from": "要素ごとの行にする配列のフィールド（値のパス）。要素の無いデータは行にならない",
   "text": "The list field (a value path) to turn into one row per element. Data with no elements does not become a row"
  },
  "cards.flow.label": {
-  "from": "流れ",
+  "from": "フロー",
   "text": "Flow"
  },
  "cards.flow.context.purpose": {
-  "from": "部品がすることと、部品をまたぐ処理の流れ。入れ物のカードで、中にノード（begin・process・run・eval・wait・join・end）のカードを置き、ノードの間を線（next・condition・else・onError・onTimeout）でつなぐ",
+  "from": "部品がすることと、部品をまたぐ処理の流れ。コンテナのカードで、中にノード（begin・process・run・eval・wait・join・end）のカードを置き、ノードの間を線（next・condition・else・onError・onTimeout）でつなぐ",
   "text": "What a component does, and the flow of processing that crosses components. It is a container card: put node cards (begin, process, run, eval, wait, join, end) inside it and join the nodes with lines (next, condition, else, onError, onTimeout)"
  },
  "cards.flow.context.use_when": {
@@ -364,7 +364,7 @@
   "text": "Node"
  },
  "cards.node.context.purpose": {
-  "from": "flow の中に置くノードが共に持つ欄。ノードは flow の中にだけ置け、パスは <flow のパス>.<ノードの名前>",
+  "from": "flow の中に置くノードが共に持つフィールド。ノードは flow の中にだけ置け、パスは <flow のパス>.<ノードの名前>",
   "text": "Fields shared by the nodes placed inside a flow. A node can be placed only inside a flow, and its path is <flow path>.<node name>"
  },
  "cards.node.fields.label.label": {
@@ -372,7 +372,7 @@
   "text": "Heading"
  },
  "cards.node.fields.label.description": {
-  "from": "箱の頭に出す見出し（日本語可）",
+  "from": "箱のヘッダーに出す見出し（日本語可）",
   "text": "The heading shown at the top of the box (any language)"
  },
  "cards.node.fields.description.label": {
@@ -388,7 +388,7 @@
   "text": "Start"
  },
  "cards.begin.context.purpose": {
-  "from": "flow に 1 つの始まりで、きっかけ（trigger）と受けるもの（receive）を持つ",
+  "from": "flow に 1 つの始まりで、トリガー（trigger）と受けるもの（receive）を持つ",
   "text": "A flow's single start, with its trigger (trigger) and what it receives (receive)"
  },
  "cards.begin.context.use_when": {
@@ -396,7 +396,7 @@
   "text": "When writing the entry point of a flow. Use the line next to go on; the line partner for the flow it receives from (any number of lines; a partner that is not in the project can be written together in program); the line key for the key that verifies what it received (use: verify); and the line awaits for the end of another flow it waits for"
  },
  "cards.begin.fields.trigger.label": {
-  "from": "きっかけ",
+  "from": "トリガー",
   "text": "Trigger"
  },
  "cards.begin.fields.every.label": {
@@ -424,7 +424,7 @@
   "text": "Anyone"
  },
  "cards.begin.fields.anyCaller.description": {
-  "from": "呼び手を問わない受け口（どの flow・program から呼ばれてもよい）。相手（線 partner・program）とは一緒に書けない",
+  "from": "呼び出し元を問わないエンドポイント（どの flow・program から呼ばれてもよい）。相手（線 partner・program）とは一緒に書けない",
   "text": "A receiving start that takes any caller (any flow or program may call it). Not written together with partners (peer lines, program)"
  },
  "cards.process.label": {
@@ -432,19 +432,19 @@
   "text": "Process"
  },
  "cards.process.context.purpose": {
-  "from": "まっすぐ続く処理の行（steps）を持つノード",
+  "from": "まっすぐ続く処理のステップ（steps）を持つノード",
   "text": "A node that has process steps (steps) that continue in a straight line"
  },
  "cards.process.context.use_when": {
-  "from": "読む・書く・署名する・確かめる・呼ぶ（プロジェクトに無いプログラム）・送る・受ける・計算する（外に出ない業務の検証や計算）を順に書くとき。行が読む・書く所は線 reads・writes、送る・受ける相手のフローは線 partner（何本でも）、鍵は線 key で、それぞれ from に行（steps[0] など）を書く。次へは線 next",
+  "from": "read・write・sign・verify・call（プロジェクトに無いプログラム）・send・receive・compute（外に出ない業務の検証や計算）を順に書くとき。ステップが読む・書く所は線 reads・writes、送る・受ける相手のフローは線 partner（何本でも）、鍵は線 key で、それぞれ from にステップ（steps[0] など）を書く。次へは線 next",
   "text": "When writing, in order, steps that read, write, sign, verify, call (a program that is not in the project), send, receive and compute (business checks or calculations that stay inside). Use the lines reads and writes for where a step reads and writes, the line partner (any number) for the flows it sends to and receives from, and the line key for keys; for each of them, write the step in from (such as steps[0]). Use the line next to go on"
  },
  "cards.process.rows.steps.label": {
-  "from": "処理の行",
+  "from": "処理のステップ",
   "text": "Process step"
  },
  "cards.process.rows.steps.fields.do.label": {
-  "from": "何をする行か",
+  "from": "何をするステップか",
   "text": "What the step does"
  },
  "cards.process.rows.steps.fields.description.label": {
@@ -504,11 +504,11 @@
   "text": "Decision"
  },
  "cards.eval.context.purpose": {
-  "from": "分かれ道・繰り返しのノード",
+  "from": "分岐・繰り返しのノード",
   "text": "A node for forks and loops"
  },
  "cards.eval.context.use_when": {
-  "from": "条件ごとの行き先は線 condition（欄 when に条件の文）を当てる順に、どれにも当たらないときは線 else（必須）。繰り返しは前のノードへ戻す線",
+  "from": "条件ごとの行き先は線 condition（フィールド when に条件の文）を、一致を調べる順に並べ、どれにも一致しないときは線 else（必須）。繰り返しは前のノードへ戻す線",
   "text": "Write where to go for each condition as lines branch (the condition sentence goes in the field when), in the order they are tested; write where to go when none matches as the line else (required). A loop is a line that goes back to an earlier node"
  },
  "cards.eval.fields.value.label": {
@@ -524,7 +524,7 @@
   "text": "A node that waits for an approval, for time, or for the end of another flow"
  },
  "cards.wait.context.use_when": {
-  "from": "待つほかのフローの終わりは線 awaits、期限切れの行き先は線 onTimeout、次へは線 next",
+  "from": "待つほかのフローの終わりは線 awaits、タイムアウトの行き先は線 onTimeout、次へは線 next",
   "text": "The end of another flow to wait for goes in the line awaits, where to go when it times out in the line onTimeout, and the next node in the line next"
  },
  "cards.wait.fields.for.label": {
@@ -532,7 +532,7 @@
   "text": "What it waits for"
  },
  "cards.wait.fields.timeout.label": {
-  "from": "期限",
+  "from": "タイムアウト",
   "text": "Timeout"
  },
  "cards.join.label": {
@@ -564,7 +564,7 @@
   "text": "A flow's end, whose result (outcome) is its return value. It also becomes the result of the run that called it and the event of another flow's begin"
  },
  "cards.end.context.use_when": {
-  "from": "返すものは欄 return（carries・program）、返す相手のフローは線 partner（何本でも。program と一緒にも書ける）、返すものに署名する鍵は線 key（use: sign）",
+  "from": "返すものはフィールド return（carries・program）、返す相手のフローは線 partner（何本でも。program と一緒にも書ける）、返すものに署名する鍵は線 key（use: sign）",
   "text": "What it returns goes in the field return (carries, program); the flow it returns to goes in the line partner (any number of lines; can also be written together with program); the key that signs what it returns goes in the line key (use: sign)"
  },
  "cards.end.fields.outcome.label": {
@@ -583,73 +583,73 @@
   "from": "返す相手のプログラム",
   "text": "Program to return to"
  },
- "cards.formatdoc.label": {
-  "from": "整形文書",
-  "text": "Formatted document"
+ "cards.structdoc.label": {
+  "from": "構造ドキュメント",
+  "text": "Structured document"
  },
- "cards.formatdoc.context.purpose": {
-  "from": "決めた書式に則って書く文書。項目ごとにパスがあり、flow やカードから項目を名指しで指せ、影響にも出る",
+ "cards.structdoc.context.purpose": {
+  "from": "決めた書式に則って書くドキュメント。項目ごとにパスがあり、flow やカードから項目を指定して指せ、影響にも出る",
   "text": "A document written according to a set format. Each item has a path, so a flow or a card can point at an item by name, and items also show up in impact"
  },
- "cards.formatdoc.context.use_when": {
+ "cards.structdoc.context.use_when": {
   "from": "設計書・仕様書のように、項目単位で関係を把握したいとき。カードの表や図を埋め込むと、カードと一緒に変わる",
   "text": "When you want to track relations item by item, as in a design document or a specification. A table or diagram of a card embedded in it changes together with the card"
  },
- "cards.formatdoc.context.not_for": {
-  "from": "形の決まっていない文書（freedoc）・短いメモ（note）",
+ "cards.structdoc.context.not_for": {
+  "from": "形式の決まっていないドキュメント（freedoc）・短いメモ（note）",
   "text": "A document with no fixed format (freedoc) and a short memo (note)"
  },
- "cards.formatdoc.fields.view.label": {
+ "cards.structdoc.fields.view.label": {
   "from": "セクションマップでの見え方",
   "text": "Appearance in the Section map"
  },
- "cards.formatdoc.rows.rows.label": {
+ "cards.structdoc.rows.rows.label": {
   "from": "行",
   "text": "Row"
  },
- "cards.formatdoc.rows.rows.fields.name.label": {
+ "cards.structdoc.rows.rows.fields.name.label": {
   "from": "名前",
   "text": "Name"
  },
- "cards.formatdoc.rows.rows.fields.kind.label": {
+ "cards.structdoc.rows.rows.fields.kind.label": {
   "from": "行の種類",
   "text": "Row kind"
  },
- "cards.formatdoc.rows.rows.fields.heading.label": {
+ "cards.structdoc.rows.rows.fields.heading.label": {
   "from": "見出し",
   "text": "Heading"
  },
- "cards.formatdoc.rows.rows.fields.body.label": {
+ "cards.structdoc.rows.rows.fields.body.label": {
   "from": "本文",
   "text": "Body"
  },
- "cards.formatdoc.rows.rows.fields.columns.label": {
+ "cards.structdoc.rows.rows.fields.columns.label": {
   "from": "列の見出し",
   "text": "Column headings"
  },
- "cards.formatdoc.rows.rows.fields.cells.label": {
+ "cards.structdoc.rows.rows.fields.cells.label": {
   "from": "表の行",
   "text": "Table rows"
  },
- "cards.formatdoc.rows.rows.fields.target.label": {
+ "cards.structdoc.rows.rows.fields.target.label": {
   "from": "描くもの",
   "text": "What it draws"
  },
  "cards.freedoc.label": {
-  "from": "自由文書",
+  "from": "フリードキュメント",
   "text": "Free document"
  },
  "cards.freedoc.context.purpose": {
-  "from": "Markdown で書く文書。つながりは文書 1 枚まるごと（線はカードの頭から）",
+  "from": "Markdown で書くドキュメント。つながりはドキュメント 1 枚まるごと（線はカードのヘッダーから）",
   "text": "A document written in Markdown. Connections attach to the whole document as one (lines start from the head of the card)"
  },
  "cards.freedoc.context.use_when": {
-  "from": "Markdown でメモしたいとき・純粋な Markdown で文書を書くとき",
+  "from": "Markdown でメモしたいとき・純粋な Markdown でドキュメントを書くとき",
   "text": "When taking notes in Markdown, or writing a document in plain Markdown"
  },
  "cards.freedoc.context.not_for": {
-  "from": "項目ごとに指したい文書（formatdoc）・カードのそばの短いメモ（note）",
-  "text": "A document whose items you want to point at one by one (formatdoc) and a short memo beside a card (note)"
+  "from": "項目ごとに指したいドキュメント（structdoc）・カードのそばの短いメモ（note）",
+  "text": "A document whose items you want to point at one by one (structdoc) and a short memo beside a card (note)"
  },
  "cards.freedoc.fields.body.label": {
   "from": "本文",
@@ -660,31 +660,31 @@
   "text": "[[path]], {{path}} and ![[path]] can be used"
  },
  "cards.stackdoc.label": {
-  "from": "積み重ね文書",
+  "from": "スタックドキュメント",
   "text": "Stacked document"
  },
  "cards.stackdoc.context.purpose": {
-  "from": "版や日付ごとに積み重なる文書を 1 枚で持ち、セレクタで版を切り替えて読む。版ごとにパスがある（<カード>.<版の name>）",
+  "from": "バージョンや日付ごとに積み重なるドキュメントを 1 枚で持ち、セレクタでバージョンを切り替えて読む。バージョンごとにパスがある（<カード>.<バージョンの name>）",
   "text": "Holds in one card a document that stacks up by version or date; the version being read is switched with a selector. Each version has a path (<card>.<version name>)"
  },
  "cards.stackdoc.context.use_when": {
-  "from": "変更履歴・リリースノート・議事録のように、同じ形の節が増えていく文書を書くとき",
+  "from": "変更履歴・リリースノート・議事録のように、同じ形式の節が増えていくドキュメントを書くとき",
   "text": "When writing a document that grows by sections of the same shape, such as a changelog, release notes or meeting minutes"
  },
  "cards.stackdoc.context.not_for": {
-  "from": "項目ごとに関係を持つ設計書・仕様書（formatdoc）・1 つの本文の文書（freedoc）",
-  "text": "A design document or a specification whose items have relations (formatdoc) and a document with a single body (freedoc)"
+  "from": "項目ごとに関係を持つ設計書・仕様書（structdoc）・1 つの本文のドキュメント（freedoc）",
+  "text": "A design document or a specification whose items have relations (structdoc) and a document with a single body (freedoc)"
  },
  "cards.stackdoc.fields.version.label": {
-  "from": "選んでいる版",
+  "from": "選んでいるバージョン",
   "text": "Selected version"
  },
  "cards.stackdoc.fields.version.description": {
-  "from": "図とエディタで開いている版の name。無ければ一番上の版",
+  "from": "図とエディタで開いているバージョンの name。無ければ一番上のバージョン",
   "text": "The name of the version open in the diagram and the editor. If there is none, the top version"
  },
  "cards.stackdoc.rows.versions.label": {
-  "from": "版",
+  "from": "バージョン",
   "text": "Version"
  },
  "cards.stackdoc.rows.versions.fields.name.label": {
@@ -692,11 +692,11 @@
   "text": "Name"
  },
  "cards.stackdoc.rows.versions.fields.name.description": {
-  "from": "パスに使う名前（例 v1_2_0。区切りの字を含む名前は、パスでは一重引用符で囲む）",
+  "from": "パスに使う名前（例 v1_2_0。区切り文字を含む名前は、パスでは一重引用符で囲む）",
   "text": "The name used in paths (example: v1_2_0; a name holding a separator character is wrapped in single quotes in a path)"
  },
  "cards.stackdoc.rows.versions.fields.key.label": {
-  "from": "版",
+  "from": "バージョン",
   "text": "Version"
  },
  "cards.stackdoc.rows.versions.fields.key.description": {
@@ -708,7 +708,7 @@
   "text": "Heading"
  },
  "cards.stackdoc.rows.versions.fields.heading.description": {
-  "from": "省くと版（key）。例 1.2.0 (2026-01-15)",
+  "from": "省くとバージョン（key）。例 1.2.0 (2026-01-15)",
   "text": "If omitted, it is the version (key). Example: 1.2.0 (2026-01-15)"
  },
  "cards.stackdoc.rows.versions.fields.body.label": {
@@ -732,8 +732,8 @@
   "text": "When leaving a memo about the card beside it, or an open question"
  },
  "cards.note.context.not_for": {
-  "from": "長い文書（freedoc）・決めた書式の文書（formatdoc）",
-  "text": "A long document (freedoc) and a document in a set format (formatdoc)"
+  "from": "長いドキュメント（freedoc）・決めた書式のドキュメント（structdoc）",
+  "text": "A long document (freedoc) and a document in a set format (structdoc)"
  },
  "cards.note.fields.body.label": {
   "from": "本文",
@@ -760,7 +760,7 @@
   "text": "Body"
  },
  "cards.svg.fields.body.description": {
-  "from": "SVG（XML として読め、根が svg の要素）",
+  "from": "SVG（XML として読め、ルートが svg の要素）",
   "text": "SVG (reads as XML, with an svg element at its root)"
  },
  "cards.svg.fields.headerPlace.label": {
@@ -768,7 +768,7 @@
   "text": "Header place"
  },
  "cards.svg.fields.headerPlace.description": {
-  "from": "マップで見出しの札（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
+  "from": "マップで見出しのバッジ（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
   "text": "The corner of the part the map shows its header tag (name | label | kind) at. hidden keeps it off the map"
  },
  "cards.svg.fields.headerPlace.optionLabels.topLeft": {
@@ -828,11 +828,11 @@
   "text": "Hidden"
  },
  "cards.svg.fields.reviewedAt.label": {
-  "from": "見直した時刻",
+  "from": "レビューした時刻",
   "text": "Reviewed at"
  },
  "cards.svg.fields.reviewedAt.description": {
-  "from": "アクション「見直した」（reviewed）が書く時刻。部品を書いたことになり、見直しの印が消える",
+  "from": "アクション「レビューした」（reviewed）が書く時刻。部品を書いたことになり、レビューのマークが消える",
   "text": "When the action Reviewed (reviewed) was used. Writing it counts as writing the part, which clears its review mark"
  },
  "cards.html.context.purpose": {
@@ -844,7 +844,7 @@
   "text": "When placing a look with layout and flowing text, such as a screen idea. A link sb-nav:<path> in the page opens that card in the app"
  },
  "cards.html.context.not_for": {
-  "from": "静止した図（svg）・文書（freedoc）",
+  "from": "静止した図（svg）・ドキュメント（freedoc）",
   "text": "A still figure (svg) and a document (freedoc)"
  },
  "cards.html.fields.body.label": {
@@ -860,7 +860,7 @@
   "text": "Header place"
  },
  "cards.html.fields.headerPlace.description": {
-  "from": "マップで見出しの札（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
+  "from": "マップで見出しのバッジ（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
   "text": "The corner of the part the map shows its header tag (name | label | kind) at. hidden keeps it off the map"
  },
  "cards.html.fields.headerPlace.optionLabels.topLeft": {
@@ -920,15 +920,15 @@
   "text": "Hidden"
  },
  "cards.html.fields.reviewedAt.label": {
-  "from": "見直した時刻",
+  "from": "レビューした時刻",
   "text": "Reviewed at"
  },
  "cards.html.fields.reviewedAt.description": {
-  "from": "アクション「見直した」（reviewed）が書く時刻。部品を書いたことになり、見直しの印が消える",
+  "from": "アクション「レビューした」（reviewed）が書く時刻。部品を書いたことになり、レビューのマークが消える",
   "text": "When the action Reviewed (reviewed) was used. Writing it counts as writing the part, which clears its review mark"
  },
  "cards.frame.label": {
-  "from": "はめ込み",
+  "from": "フレーム",
   "text": "Frame"
  },
  "cards.frame.context.purpose": {
@@ -936,7 +936,7 @@
   "text": "A card in a ui section that puts another ui section's mock into its box at 1:1 (what overflows the box is clipped)"
  },
  "cards.frame.context.use_when": {
-  "from": "ヘッダー・サイドバーのように、いくつもの画面で使う部品の組をはめ込むとき（同じセクションを何枚ものはめ込みで使える）",
+  "from": "ヘッダー・サイドバーのように、いくつもの画面で使う部品の組をはめ込むとき（同じセクションを何枚ものフレームで使える）",
   "text": "When putting in a set of parts many screens use, such as a header or a sidebar (one section can be used by many frames)"
  },
  "cards.frame.context.not_for": {
@@ -948,7 +948,7 @@
   "text": "Target"
  },
  "cards.frame.fields.target.description": {
-  "from": "はめ込む UI のセクションのパス（UI/Header のように木の頭から。id で覚えて改名・移動に付いて行く）。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない",
+  "from": "はめ込む UI のセクションのパス（UI/Header のようにツリーの先頭から。id で記録して改名・移動に付いて行く）。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない",
   "text": "The path of the ui section to put in (from the top of the tree, like UI/Header; held by id, so it follows a rename or a move). It cannot be its own section, nor one whose frames lead back to its own section"
  },
  "cards.frame.fields.headerPlace.label": {
@@ -956,7 +956,7 @@
   "text": "Header place"
  },
  "cards.frame.fields.headerPlace.description": {
-  "from": "マップで見出しの札（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
+  "from": "マップで見出しのバッジ（名前 | 表示名 | 種類）を出す部品の角。hidden ならマップに出さない",
   "text": "The corner of the part the map shows its header tag (name | label | kind) at. hidden keeps it off the map"
  },
  "cards.frame.fields.headerPlace.optionLabels.topLeft": {
@@ -1016,11 +1016,11 @@
   "text": "Hidden"
  },
  "cards.frame.fields.reviewedAt.label": {
-  "from": "見直した時刻",
+  "from": "レビューした時刻",
   "text": "Reviewed at"
  },
  "cards.frame.fields.reviewedAt.description": {
-  "from": "アクション「見直した」（reviewed）が書く時刻。部品を書いたことになり、見直しの印が消える",
+  "from": "アクション「レビューした」（reviewed）が書く時刻。部品を書いたことになり、レビューのマークが消える",
   "text": "When the action Reviewed (reviewed) was used. Writing it counts as writing the part, which clears its review mark"
  },
  "cards.goal.label": {
@@ -1028,7 +1028,7 @@
   "text": "Goal"
  },
  "cards.goal.context.purpose": {
-  "from": "まとめてやりたいことを、中の goal と task で進める入れ物。終わったら完了にする。進み具合は、中の task の done と、中の goal が完了かで数える",
+  "from": "まとめてやりたいことを、中の goal と task で進めるコンテナ。終わったら完了にする。進み具合は、中の task の done と、中の goal が完了かで数える",
   "text": "A container for something to get done, worked through by the goals and tasks inside it. Set its status to done when it is finished. Progress is counted from the done of the tasks inside and from whether the goals inside are done"
  },
  "cards.goal.context.use_when": {
@@ -1136,7 +1136,7 @@
   "text": "A card that gathers, into one, only the parts of other sections that lines reach. The app draws it in a section's diagram (it is not a card that has been placed)"
  },
  "cards.section.context.use_when": {
-  "from": "読むだけ。図の上でセクションゴーストを見たとき、その中のカードはセクションのパスで読む",
+  "from": "読み取り専用。図の上でセクションゴーストを見たとき、その中のカードはセクションのパスで読む",
   "text": "Read only. When you see a section ghost on a diagram, read the cards inside it by the path of the section"
  },
  "cards.section.context.not_for": {
@@ -1148,15 +1148,15 @@
   "text": "File"
  },
  "cards.file.context.purpose": {
-  "from": "コアが作業ディレクトリから読む、ファイル 1 つ。main と各 branch の作業ディレクトリのセクションの中に作る。名前と表示名はファイルの名前そのまま（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス",
+  "from": "コアが作業ディレクトリから読む、ファイル 1 つ。main と各 branch の作業ディレクトリのセクションの中に作る。名前と表示名はファイルの名前そのまま（パスでは区切り文字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス",
   "text": "One file the core reads off a working directory. It is made inside the working directory's section of main and every branch. Its name and display name are the file's name as it is (in a path, a name holding a separator character is wrapped in single quotes: repo/docs:'CardKinds.md'), and filePath is the path from the working directory"
  },
  "cards.file.context.use_when": {
-  "from": "読むだけ。main・branch のカードから「実装」の線で指す（相手は木の中のパス: repo/src:'a.rs'）",
+  "from": "読み取り専用。main・branch のカードから「実装」の線（implementedBy）で指す（相手はツリーの中のパス: repo/src:'a.rs'）",
   "text": "Read only. Point at it from a card in main or a branch with an \"Implemented by\" line (the partner is its path in the tree: repo/src:'a.rs')"
  },
  "cards.file.context.not_for": {
-  "from": "書くもの（作業ディレクトリを読み直すと作り直される。card_create では作れない）",
+  "from": "書くもの（作業ディレクトリを再読み込みすると作り直される。card_create では作れない）",
   "text": "Something to write (it is recreated when the working directory is read again; it cannot be created with card_create)"
  },
  "cards.file.fields.filePath.label": {
@@ -1176,15 +1176,15 @@
   "text": "The id of the language decided from the extension or the file's name and the working directory's parsers (rust, swift and so on; left out when there is none)"
  },
  "cards.symbol.label": {
-  "from": "関数と型",
+  "from": "シンボル",
   "text": "Function or type"
  },
  "cards.symbol.context.purpose": {
-  "from": "コアがファイルから読む関数や型（読むたびに作り、保存しない）。パスはファイルのパスに続ける: repo/src:'a.rs'.Order.total",
+  "from": "コアがファイルから読むシンボル（関数や型。読むたびに作り、保存しない）。パスはファイルのパスに続ける: repo/src:'a.rs'.Order.total",
   "text": "A function or type the core reads off a file (made each time it is read, never kept). Its path goes on from the file's: repo/src:'a.rs'.Order.total"
  },
  "cards.symbol.context.use_when": {
-  "from": "読むだけ。関数 1 つのコードを card_read で読むとき・main・branch のカードから「実装」の線で指すとき（相手は repo/src:'a.rs'.Order.total）",
+  "from": "読み取り専用。シンボル 1 つのコードを card_read で読むとき・main・branch のカードから「実装」の線（implementedBy）で指すとき（相手は repo/src:'a.rs'.Order.total）",
   "text": "Read only. Read the code of one function with card_read, or point at it from a card in main or a branch with an \"Implemented by\" line (the partner is repo/src:'a.rs'.Order.total)"
  },
  "cards.symbol.context.not_for": {
@@ -1196,7 +1196,7 @@
   "text": "What it is"
  },
  "cards.symbol.fields.of.description": {
-  "from": "どの言語でも同じ分け方（関数・メソッド・型・モジュール・定数・マクロ）。画面の札はこれから",
+  "from": "どの言語でも同じ分け方（関数・メソッド・型・モジュール・定数・マクロ）。画面のバッジはこれから",
   "text": "Sorted the same way in every language (function, method, type, module, constant, macro). The screen's badge comes from it"
  },
  "cards.symbol.fields.word.label": {
@@ -1220,7 +1220,7 @@
   "text": "Card ghost"
  },
  "cards.ghost.context.purpose": {
-  "from": "ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアス）。本物は元の場所に 1 つだけで、カードゴーストは置いたセクションに自分の名前を持ち、指す先を id で覚えて改名・移動に付いて行く",
+  "from": "ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアス）。元のカードは元の場所に 1 つだけで、カードゴーストは置いたセクションに自分の名前を持ち、指す先を id で記録して改名・移動に付いて行く",
   "text": "A shortcut (like a macOS alias) that points to a card in another section (or to another card ghost). The real card exists only once, in its original place; a card ghost has its own name in the section where it is placed, and it remembers what it points to by id, so it follows renames and moves"
  },
  "cards.ghost.context.use_when": {
@@ -1228,7 +1228,7 @@
   "text": "When you want to show a card of another section whole in this section's diagram, or to write it by name only from inside this section"
  },
  "cards.ghost.context.not_for": {
-  "from": "カードの写し（中身は本物にだけあり、カードゴーストを通して読み書きすると本物が変わる）",
+  "from": "カードのコピー（中身は元のカードにだけあり、カードゴーストを通して読み書きすると元のカードが変わる）",
   "text": "A copy of a card (the content exists only in the real card, and reading or writing through the card ghost changes the real card)"
  },
  "cards.ghost.fields.target.label": {
@@ -1236,7 +1236,7 @@
   "text": "Target"
  },
  "cards.ghost.fields.target.description": {
-  "from": "本物のカードか、ほかのカードゴーストのパス（同じセクションのものは指せない）。付け替えは、たどった本物が今と同じ種類のときだけ",
+  "from": "元のカードか、ほかのカードゴーストのパス（同じセクションのものは指せない）。付け替えは、たどった元のカードが今と同じ種類のときだけ",
   "text": "The path of a real card or of another card ghost (one in the same section cannot be pointed at). It can be repointed only when the real card it leads to is of the same kind as the current one"
  },
  "sections.document.label": {
@@ -1244,11 +1244,11 @@
   "text": "Document"
  },
  "sections.document.description": {
-  "from": "文書（freedoc・formatdoc・stackdoc・spec）と、そのそばの付箋（note）・図（svg・html）を置く",
-  "text": "Holds documents (freedoc, formatdoc, stackdoc, spec) and the sticky notes (note) and pictures (svg, html) beside them"
+  "from": "ドキュメント（freedoc・structdoc・stackdoc・spec）と、そのそばの付箋（note）・図（svg・html）を置く",
+  "text": "Holds documents (freedoc, structdoc, stackdoc, spec) and the sticky notes (note) and pictures (svg, html) beside them"
  },
  "sections.document.context.use_when": {
-  "from": "仕様書・設計書・読み方の文書を書くとき",
+  "from": "仕様書・設計書・読み方のドキュメントを書くとき",
   "text": "When writing specifications, design documents and reading guides"
  },
  "sections.document.context.not_for": {
@@ -1256,15 +1256,15 @@
   "text": "Data shapes (schema) and flows of processing (chart)"
  },
  "sections.ui.description": {
-  "from": "画面の案を部品（html・svg）とはめ込み（frame）で組む。付箋（note）も置ける。開くとセクションマップに、部品を組み上げた画面と同じ見た目で描く",
+  "from": "画面の案を部品（html・svg）とフレーム（frame）で組む。付箋（note）も置ける。開くとセクションマップに、部品を組み上げた画面と同じ見た目で描く",
   "text": "A screen mock built from parts (html, svg) and frames (frame); sticky notes (note) too. It opens on its Section map, each part drawn as the assembled screen draws it"
  },
  "sections.ui.context.use_when": {
-  "from": "画面の見え方を、部品を置いて組み上げた画面そのもので決めるとき。いくつもの画面で使う組は別の UI のセクションにして、はめ込みで使う",
+  "from": "画面の見え方を、部品を置いて組み上げた画面そのもので決めるとき。いくつもの画面で使う組は別の UI のセクションにして、フレームで使う",
   "text": "When deciding how a screen looks by the screen itself, built from parts put in place. A set many screens use goes in a ui section of its own and is used through frames"
  },
  "sections.ui.context.not_for": {
-  "from": "文書のそばの図（document の svg・html）",
+  "from": "ドキュメントのそばの図（document の svg・html）",
   "text": "Pictures beside a document (svg, html in a document section)"
  },
  "sections.schema.label": {
@@ -1272,15 +1272,15 @@
   "text": "Schema"
  },
  "sections.schema.description": {
-  "from": "データの形（entity・value・enum）と置き場（store）を置く",
+  "from": "データの形（entity・value・enum）とストア（store）を置く",
   "text": "Holds data shapes (entity, value, enum) and stores (store)"
  },
  "sections.schema.context.use_when": {
-  "from": "記録・値の形・列挙と、それを置く所を書くとき。部品ごとに中のセクションに分ける",
+  "from": "エンティティ・値オブジェクト・列挙型と、それを置く所を書くとき。部品ごとに中のセクションに分ける",
   "text": "When writing records, value shapes and enumerations, and the places that hold them. Split them into inner sections by component"
  },
  "sections.schema.context.not_for": {
-  "from": "処理の流れ（chart）・文書（document）",
+  "from": "処理の流れ（chart）・ドキュメント（document）",
   "text": "Flows of processing (chart) and documents (document)"
  },
  "sections.definition.label": {
@@ -1288,15 +1288,15 @@
   "text": "Definition"
  },
  "sections.definition.description": {
-  "from": "外へ約束する定義（API の引数・設定ファイル・メッセージの形）を、形（entity・value・enum・store）とデータ（instance）・表（table）で一緒に置く",
+  "from": "外へ約束する定義（API の引数・設定ファイル・メッセージの形式）を、形（entity・value・enum・store）とデータ（instance）・表（table）で一緒に置く",
   "text": "Holds definitions promised to the outside (the shapes of API arguments, configuration files and messages) as shapes (entity, value, enum, store) together with data (instance) and tables (table)"
  },
  "sections.definition.context.use_when": {
-  "from": "API の引数・設定ファイル・メッセージの形のように外へ約束する定義を、形と実例（データ）で一緒に持つとき。部品ごとに中のセクションに分ける",
+  "from": "API の引数・設定ファイル・メッセージの形式のように外へ約束する定義を、形と実例（データ）で一緒に持つとき。部品ごとに中のセクションに分ける",
   "text": "When keeping a definition promised to the outside, such as the shape of API arguments, a configuration file or a message, as its shape together with examples (data). Split them into inner sections by component"
  },
  "sections.definition.context.not_for": {
-  "from": "外へ約束しない記録の形と置き場（schema）・処理の流れ（chart）",
+  "from": "外へ約束しないレコードの形とストア（schema）・処理の流れ（chart）",
   "text": "Shapes of records and stores not promised to the outside (schema) and flows of processing (chart)"
  },
  "sections.chart.label": {
@@ -1340,11 +1340,11 @@
   "text": "A draft area where cards of any kind can be put. Sort them out by moving them to a section that fits"
  },
  "sections.free.context.use_when": {
-  "from": "置き場の決まらないカードをいったん置くとき。あとで合うセクションへ移す",
+  "from": "置く場所の決まらないカードをいったん置くとき。あとで合うセクションへ移す",
   "text": "When putting down, for the time being, a card whose place is not decided. Move it later to a section that fits"
  },
  "sections.free.context.not_for": {
-  "from": "整理したあとのカードの置き場",
+  "from": "整理したあとのカードを置く場所",
   "text": "The place for cards after they have been sorted out"
  },
  "sections.goals.label": {
@@ -1356,7 +1356,7 @@
   "text": "Holds the goals (goal) and tasks (task) of the Project Board"
  },
  "sections.goals.context.use_when": {
-  "from": "やることを目標とタスクで持つとき（ボードの根の直下）",
+  "from": "やることを目標とタスクで持つとき（ボードのルートの直下）",
   "text": "When keeping to-dos as goals and tasks (directly under the root of the board)"
  },
  "sections.goals.context.not_for": {
@@ -1368,7 +1368,7 @@
   "text": "Complete"
  },
  "sections.complete.description": {
-  "from": "ボードの Goals の中の、完了した目標と済んだタスクの置き場。カードのアクション（finish・done）がここへ移す",
+  "from": "ボードの Goals の中の、完了した目標と済んだタスクを置く場所。カードのアクション（finish・done）がここへ移す",
   "text": "Inside the board's Goals, where finished goals and done tasks go. The card actions (finish, done) move them here"
  },
  "sections.complete.context.use_when": {
@@ -1384,7 +1384,7 @@
   "text": "Cancelled"
  },
  "sections.cancelled.description": {
-  "from": "ボードの Goals の中の、打ち切った目標とタスクの置き場。カードのアクション（cancel）がここへ移す",
+  "from": "ボードの Goals の中の、打ち切った目標とタスクを置く場所。カードのアクション（cancel）がここへ移す",
   "text": "Inside the board's Goals, where cancelled goals and tasks go. The card action cancel moves them here"
  },
  "sections.cancelled.context.use_when": {
@@ -1400,11 +1400,11 @@
   "text": "Working directory"
  },
  "sections.workdir.description": {
-  "from": "この機械のフォルダを結び付け、コアが読んでディレクトリをセクション、ファイルをカードにする所。中身はどの branch でも同じで、読むだけ。置けるのはメモ（note）だけ",
+  "from": "このマシンのフォルダを結び付け、コアが読んでディレクトリをセクション、ファイルをカードにする所。中身はどの branch でも同じで、読み取り専用。置けるのはメモ（note）だけ",
   "text": "A folder on this machine, read by the core into sections (directories) and cards (files). What is in it is the same in every branch, and read only. Only notes can be put in it"
  },
  "sections.workdir.context.use_when": {
-  "from": "コードのファイルを読むとき・カードから「実装」の線でファイルを指すとき・フォルダのそばにメモを置くとき（プロジェクトの木に並べると作業ディレクトリができる）",
+  "from": "コードのファイルを読むとき・カードから「実装」の線（implementedBy）でファイルを指すとき・フォルダのそばにメモを置くとき（プロジェクトのツリーに並べると作業ディレクトリができる）",
   "text": "When reading the files of the code, pointing at a file from a card with an \"Implemented by\" line, or putting a note beside a folder (listing it in the project tree makes the working directory)"
  },
  "sections.workdir.context.not_for": {
@@ -1416,11 +1416,11 @@
   "text": "Directory"
  },
  "sections.directory.description": {
-  "from": "作業ディレクトリの中のフォルダ。コアが読んで作業ディレクトリのセクションの中に作る（根の直下には置かない）",
+  "from": "作業ディレクトリの中のフォルダ。コアが読んで作業ディレクトリのセクションの中に作る（ルートの直下には置かない）",
   "text": "A folder inside a working directory, made by the core inside the working directory's section (never directly under a root)"
  },
  "sections.directory.context.use_when": {
-  "from": "読むだけ。ファイルのカードへ「実装」の線を引くとき・フォルダのそばにメモを置くとき",
+  "from": "読み取り専用。ファイルのカードへ「実装」の線（implementedBy）を引くとき・フォルダのそばにメモを置くとき",
   "text": "Read only. When drawing an \"Implemented by\" line to a file card, or putting a note beside a folder"
  },
  "sections.directory.context.not_for": {
@@ -1432,15 +1432,15 @@
   "text": "Embeds"
  },
  "lines.embed.description": {
-  "from": "欄の型が相手の形になる",
+  "from": "フィールドの型が相手の形になる",
   "text": "The field's type becomes the partner's shape"
  },
  "lines.embed.context.purpose": {
-  "from": "欄の型が相手の形になる。欄の型が相手になる（相手の形をそのまま持つ）。線を外すと欄の型は string に戻る",
+  "from": "フィールドの型が相手の形になる。フィールドの型が相手になる（相手の形をそのまま持つ）。線を外すとフィールドの型は string に戻る",
   "text": "The field's type becomes the partner's shape. The type of the field becomes the partner (it holds the partner's shape as it is). Removing the line returns the type of the field to string"
  },
  "lines.embed.context.use_when": {
-  "from": "住所や金額のように、相手の形を欄にそのまま持つとき",
+  "from": "住所や金額のように、相手の形をフィールドにそのまま持つとき",
   "text": "When a field holds the partner's shape as it is, such as an address or an amount"
  },
  "lines.embed.context.not_for": {
@@ -1452,15 +1452,15 @@
   "text": "Points by ID"
  },
  "lines.points.description": {
-  "from": "欄の値が相手の ID を指す",
+  "from": "フィールドの値が相手の ID を指す",
   "text": "The field's value is the partner's ID"
  },
  "lines.points.context.purpose": {
-  "from": "欄の値が相手の ID を指す。欄の値が相手の ID。型は変わらない",
+  "from": "フィールドの値が相手の ID を指す。フィールドの値が相手の ID。型は変わらない",
   "text": "The field's value is the partner's ID. The value of the field is the partner's ID. The type does not change"
  },
  "lines.points.context.use_when": {
-  "from": "欄が相手の記録の ID を持つとき（外部キー）",
+  "from": "フィールドが相手の記録の ID を持つとき（外部キー）",
   "text": "When a field holds the ID of the partner's record (a foreign key)"
  },
  "lines.points.context.not_for": {
@@ -1484,19 +1484,19 @@
   "text": "Value that selects it"
  },
  "lines.points.fields.discriminatedBy.label": {
-  "from": "相手の種類名が入っている欄",
+  "from": "相手の種類名が入っているフィールド",
   "text": "Field that holds the kind name of the partner"
  },
  "lines.points.fields.discriminatedBy.description": {
-  "from": "書くと相手（to）は書かず、同じセクションの、この欄の値を const で持つカードが相手の候補になる",
+  "from": "書くと相手（to）は書かず、同じセクションの、このフィールドの値を const で持つカードが相手の候補になる",
   "text": "If you write this, leave out the partner (to); the candidates for the partner are the cards in the same section that hold the value of this field as a const"
  },
  "lines.points.fields.discriminatorField.label": {
-  "from": "相手の側で const を持つ欄",
+  "from": "相手の側で const を持つフィールド",
   "text": "Field that holds the const on the partner's side"
  },
  "lines.points.fields.discriminatorField.description": {
-  "from": "discriminatedBy と組。省けば discriminatedBy と同じ名前",
+  "from": "discriminatedBy とペア。省けば discriminatedBy と同じ名前",
   "text": "Goes together with discriminatedBy. If omitted, it has the same name as discriminatedBy"
  },
  "lines.link.label": {
@@ -1508,7 +1508,7 @@
   "text": "A plain connection, with no effect on types"
  },
  "lines.link.context.purpose": {
-  "from": "型に関係しない、つながりだけの線（task からほかの task・goal へ、欄から使ってよい値の一覧のある欄へ、など。ボードのカードから main のカードへもフルパスで引ける（直す予定の仕様・設計へ。逆向きと branch にしか無いカードへは引けない））",
+  "from": "型に関係しない、つながりだけの線（task からほかの task・goal へ、フィールドから使ってよい値の一覧のあるフィールドへ、など。ボードのカードから main のカードへもフルパスで引ける（直す予定の仕様・設計へ。逆向きと branch にしか無いカードへは引けない））",
   "text": "A plain connection, with no effect on types. A line that only connects and has nothing to do with types (from a task to another task or goal, from a field to a field that has a list of values it may use, and so on. A card on the board can also reach a card in main by its full path (to a specification or design that is going to be changed; it cannot reach in the reverse direction, or a card that exists only in a branch))"
  },
  "lines.link.context.use_when": {
@@ -1516,7 +1516,7 @@
   "text": "When you only want to state a connection, regardless of types. Also from a task to a specification card"
  },
  "lines.link.context.not_for": {
-  "from": "本文の [[ ]] のつながり（mentions。本文から拾う）",
+  "from": "本文の [[ ]] のつながり（mentions。本文から抽出する）",
   "text": "Connections made by [[ ]] in a body (mentions; picked up from the body)"
  },
  "lines.holds.label": {
@@ -1524,15 +1524,15 @@
   "text": "Holds"
  },
  "lines.holds.description": {
-  "from": "store が置く記録の形",
+  "from": "store が置くレコードの形",
   "text": "The record shape that a store holds"
  },
  "lines.holds.context.purpose": {
-  "from": "store が置く記録の形",
+  "from": "store が置くレコードの形",
   "text": "The record shape that a store holds"
  },
  "lines.holds.context.use_when": {
-  "from": "store に置く記録の形を言うとき",
+  "from": "store に置くレコードの形を言うとき",
   "text": "When stating the record shape that a store holds"
  },
  "lines.shapeOf.label": {
@@ -1548,7 +1548,7 @@
   "text": "Which shape a piece of data or a table is of. Which shape (entity, value) a piece of data (instance) is an example of, and which shape's data a table collects. In MCP, write it with the of key of value; do not write it in connections"
  },
  "lines.shapeOf.context.use_when": {
-  "from": "読むだけ。データと表の形は value のキー of で書く",
+  "from": "読み取り専用。データと表の形は value のキー of で書く",
   "text": "Read only. The shape of data and tables is written with the of key of value"
  },
  "lines.shapeOf.context.not_for": {
@@ -1556,19 +1556,19 @@
   "text": "Lines between shapes (embed, points)"
  },
  "lines.rules.label": {
-  "from": "決まり",
+  "from": "ルール",
   "text": "Rules"
  },
  "lines.rules.description": {
-  "from": "flow が従う決まりを書いた文書",
+  "from": "flow が従うルールを書いたドキュメント",
   "text": "The document that states the rules a flow follows"
  },
  "lines.rules.context.purpose": {
-  "from": "flow が従う決まりを書いた文書。flow の決まりを書いた note・freedoc・formatdoc か、formatdoc の項目",
-  "text": "The document that states the rules a flow follows. A note, freedoc or formatdoc that states the rules of a flow, or an item of a formatdoc"
+  "from": "flow が従うルールを書いたドキュメント。flow のルールを書いた note・freedoc・structdoc か、structdoc の項目",
+  "text": "The document that states the rules a flow follows. A note, freedoc or structdoc that states the rules of a flow, or an item of a structdoc"
  },
  "lines.rules.context.use_when": {
-  "from": "flow の決まりを書いた文書や項目をつなぐとき",
+  "from": "flow のルールを書いたドキュメントや項目をつなぐとき",
   "text": "When connecting a document or an item that states the rules of a flow"
  },
  "lines.implementedBy.label": {
@@ -1580,7 +1580,7 @@
   "text": "The file or function that implements a specification or design"
  },
  "lines.implementedBy.context.purpose": {
-  "from": "仕様・設計を実装しているファイルや関数。仕様・設計のカード（とその欄・行・ノード）から、それを実装している作業ディレクトリのファイルか、その中の関数と型へ。main と branch のカードから引け、相手は to に木の中のパス（repo/src:'a.rs'・repo/src:'a.rs'.Order.total。まだ無いファイルと関数も書ける）",
+  "from": "仕様・設計を実装しているファイルや関数。仕様・設計のカード（とそのフィールド・行・ノード）から、それを実装している作業ディレクトリのファイルか、その中のシンボルへ。main と branch のカードから引け、相手は to にツリーの中のパス（repo/src:'a.rs'・repo/src:'a.rs'.Order.total。まだ無いファイルと関数も書ける）",
   "text": "The file or function that implements a specification or design. From a specification or design card (and its fields, rows and nodes) to the file in a working directory that implements it, or to a function or type inside it. It can be drawn from cards in main and branches, and the partner is written in to as its path in the tree (repo/src:'a.rs', repo/src:'a.rs'.Order.total; a file or function that does not exist yet can be written too)"
  },
  "lines.implementedBy.context.use_when": {
@@ -1612,11 +1612,11 @@
   "text": "What [[ ]] in a body points at"
  },
  "lines.mentions.context.purpose": {
-  "from": "本文の [[ ]] が指す所。note と文書の本文の [[ ]] が指す所。本文から拾うので connections には書かない",
+  "from": "本文の [[ ]] が指す所。note とドキュメントの本文の [[ ]] が指す所。本文から抽出するので connections には書かない",
   "text": "What [[ ]] in a body points at. What [[ ]] in the body of a note or document points at. It is picked up from the body, so it is not written in connections"
  },
  "lines.mentions.context.use_when": {
-  "from": "読むだけ。本文の [[ ]] から拾うので書かない",
+  "from": "読み取り専用。本文の [[ ]] から抽出するので書かない",
   "text": "Read only. It is picked up from [[ ]] in the body, so do not write it"
  },
  "lines.mentions.context.not_for": {
@@ -1644,15 +1644,15 @@
   "text": "Condition"
  },
  "lines.condition.description": {
-  "from": "判断の条件が当たるときの行き先",
+  "from": "判断の条件が一致するときの行き先",
   "text": "Where a decision goes when its condition matches"
  },
  "lines.condition.context.purpose": {
-  "from": "判断の条件が当たるときの行き先。判断（eval）の分かれ道: 条件（欄 when）が当たるときの行き先。並びの順に当てる",
+  "from": "判断の条件が一致するときの行き先。判断（eval）の分岐: 条件（フィールド when）が一致するときの行き先。並びの順に一致を調べる",
   "text": "Where a decision goes when its condition matches. A fork of an eval node: where to go when the condition (field when) matches. The conditions are tested in the order of the list"
  },
  "lines.condition.context.use_when": {
-  "from": "判断の条件ごとの行き先を、当てる順に",
+  "from": "判断の条件ごとの行き先を、一致を調べる順に",
   "text": "Where to go for each condition of an eval node, in the order they are tested"
  },
  "lines.condition.fields.when.label": {
@@ -1668,15 +1668,15 @@
   "text": "Otherwise"
  },
  "lines.else.description": {
-  "from": "判断のどの条件にも当たらないときの行き先",
+  "from": "判断のどの条件にも一致しないときの行き先",
   "text": "Where a decision goes when no condition matches"
  },
  "lines.else.context.purpose": {
-  "from": "判断のどの条件にも当たらないときの行き先。判断（eval）のどの条件にも当たらないときの行き先（判断に必須）",
+  "from": "判断のどの条件にも一致しないときの行き先。判断（eval）のどの条件にも一致しないときの行き先（判断に必須）",
   "text": "Where a decision goes when no condition matches. Where to go when none of the conditions of an eval node matches (required for an eval node)"
  },
  "lines.else.context.use_when": {
-  "from": "判断のどの条件にも当たらないときの行き先（判断に必須）",
+  "from": "判断のどの条件にも一致しないときの行き先（判断に必須）",
   "text": "Where to go when none of the conditions of an eval node matches (required for an eval node)"
  },
  "lines.onError.label": {
@@ -1696,19 +1696,19 @@
   "text": "Where to go when a run node fails"
  },
  "lines.onTimeout.label": {
-  "from": "期限切れ",
+  "from": "タイムアウト",
   "text": "On timeout"
  },
  "lines.onTimeout.description": {
-  "from": "待つが期限を過ぎたときの行き先",
+  "from": "待つがタイムアウトになったときの行き先",
   "text": "Where a wait goes when it times out"
  },
  "lines.onTimeout.context.purpose": {
-  "from": "待つが期限を過ぎたときの行き先。待つ（wait）が期限（timeout）を過ぎたときの行き先",
+  "from": "待つがタイムアウトになったときの行き先。待つ（wait）がタイムアウト（timeout）になったときの行き先",
   "text": "Where a wait goes when it times out. Where to go when a wait node passes its timeout"
  },
  "lines.onTimeout.context.use_when": {
-  "from": "待つが期限を過ぎたときの行き先",
+  "from": "待つがタイムアウトになったときの行き先",
   "text": "Where to go when a wait node passes its timeout"
  },
  "lines.runs.label": {
@@ -1736,7 +1736,7 @@
   "text": "The end of another flow that a begin or a wait waits for"
  },
  "lines.awaits.context.purpose": {
-  "from": "開始や待つが待つ、ほかのフローの終わり。開始（trigger: event）や待つ（for: event）が待つ、ほかのフローの終わり（欄 outcome にその結果）",
+  "from": "開始や待つが待つ、ほかのフローの終わり。開始（trigger: event）や待つ（for: event）が待つ、ほかのフローの終わり（フィールド outcome にその結果）",
   "text": "The end of another flow that a begin or a wait waits for. The end of another flow that a begin node (trigger: event) or a wait node (for: event) waits for (the field outcome holds its result)"
  },
  "lines.awaits.context.use_when": {
@@ -1752,15 +1752,15 @@
   "text": "Reads"
  },
  "lines.reads.description": {
-  "from": "処理の行が読む所",
+  "from": "処理のステップが読む所",
   "text": "What a process step reads"
  },
  "lines.reads.context.purpose": {
-  "from": "処理の行が読む所。処理の行（read）が読む所。from に行（steps[0] など）",
+  "from": "処理のステップが読む所。処理のステップ（read）が読む所。from にステップ（steps[0] など）",
   "text": "What a process step reads. Where a process step (read) reads from. Write the step in from (such as steps[0])"
  },
  "lines.reads.context.use_when": {
-  "from": "処理の行が読む所を言うとき（from に行）",
+  "from": "処理のステップが読む所を言うとき（from にステップ）",
   "text": "When stating where a process step reads from (the step goes in from)"
  },
  "lines.writes.label": {
@@ -1768,15 +1768,15 @@
   "text": "Writes"
  },
  "lines.writes.description": {
-  "from": "処理の行が書く所",
+  "from": "処理のステップが書く所",
   "text": "What a process step writes"
  },
  "lines.writes.context.purpose": {
-  "from": "処理の行が書く所。処理の行（write）が書く所。from に行（steps[0] など）",
+  "from": "処理のステップが書く所。処理のステップ（write）が書く所。from にステップ（steps[0] など）",
   "text": "What a process step writes. Where a process step (write) writes to. Write the step in from (such as steps[0])"
  },
  "lines.writes.context.use_when": {
-  "from": "処理の行が書く所を言うとき（from に行）",
+  "from": "処理のステップが書く所を言うとき（from にステップ）",
   "text": "When stating where a process step writes to (the step goes in from)"
  },
  "lines.partner.label": {
@@ -1788,7 +1788,7 @@
   "text": "The flow sent to, received from or returned to"
  },
  "lines.partner.context.purpose": {
-  "from": "送る・受ける・返す相手のフロー。送る・受ける相手のフロー: 処理の行（send・receive）、開始の受ける（trigger: receive）、終了の返す相手。何本でも引け（同じ所から同じ flow へは 1 本）、program と一緒にも書ける",
+  "from": "送る・受ける・返す相手のフロー。送る・受ける相手のフロー: 処理のステップ（send・receive）、開始の受ける（trigger: receive）、終了の返す相手。何本でも引け（同じ所から同じ flow へは 1 本）、program と一緒にも書ける",
   "text": "The flow sent to, received from or returned to. The partner flow to send to or receive from: a process step (send, receive), the receive of a begin node (trigger: receive), and the return partner of an end node. Any number of lines can be drawn (one from the same place to the same flow), and it can be written together with program"
  },
  "lines.partner.context.use_when": {
@@ -1804,11 +1804,11 @@
   "text": "Used to make or to verify a signature"
  },
  "lines.key.context.purpose": {
-  "from": "署名を作る・確かめるのに使う。署名する（use: sign）・確かめる（use: verify）鍵: 処理の行（sign・verify の鍵、send・call の署名、receive・call の確かめ）、実行の渡すものと受けたもの、開始の受けたもの、終了の返すもの",
+  "from": "署名を作る・確かめるのに使う。署名する（use: sign）・確かめる（use: verify）鍵: 処理のステップ（sign・verify の鍵、send・call の署名、receive・call の確かめ）、実行の渡すものと受けたもの、開始の受けたもの、終了の返すもの",
   "text": "Used to make or to verify a signature. The key that signs (use: sign) or verifies (use: verify): a process step (the key of sign and verify, the signature of send and call, the verification of receive and call), what a run node passes on and what it received, what a begin node received, and what an end node returns"
  },
  "lines.key.context.use_when": {
-  "from": "署名する鍵・確かめる鍵を言うとき（欄 use）",
+  "from": "署名する鍵・確かめる鍵を言うとき（フィールド use）",
   "text": "When stating a key that signs or a key that verifies (field use)"
  },
  "lines.key.fields.use.label": {
@@ -1832,7 +1832,7 @@
   "text": "Finish"
  },
  "actions.finish.description": {
-  "from": "status を完了に、workBranch を空にし、ボードの完了のセクションへ移す（中のカードも）。workBranch の branch に main へ入っていない変更か出している MR があれば断る。変更の無い branch は消す",
+  "from": "status を完了に、workBranch を空にし、ボードの完了のセクションへ移す（中のカードも）。workBranch の branch に main へ入っていない変更か出している MR があればエラーにする。変更の無い branch は消す",
   "text": "Sets status to done, empties workBranch and moves the goal into the board's Complete section (the cards inside go with it). Refused while workBranch's branch has changes not in main or an open MR. A branch with no changes is deleted"
  },
  "actions.cancel.label": {
@@ -1852,19 +1852,19 @@
   "text": "Checks done. A task outside any goal is moved into the board's Complete section"
  },
  "actions.read.label": {
-  "from": "読み込む",
+  "from": "再読み込み",
   "text": "Read"
  },
  "actions.read.description": {
-  "from": "作業ディレクトリのセクションのアクション。この機械で結び付けたフォルダを読み直し、中のディレクトリとファイルを今の姿にする（プロジェクトの中身は変えない）。フォルダを結び付けていて、読み方が none でないときに使える",
+  "from": "作業ディレクトリのセクションのアクション。このマシンで結び付けたフォルダを再読み込みし、中のディレクトリとファイルを今の姿にする（プロジェクトの中身は変えない）。フォルダを結び付けていて、読み方が none でないときに使える",
   "text": "An action of a working directory's section. Reads the folder bound on this machine again and brings the directories and files in it up to how they are now (the project's content does not change). Usable when a folder is bound and it is not read as none"
  },
  "actions.reviewed.label": {
-  "from": "見直した",
+  "from": "レビューした",
   "text": "Reviewed"
  },
  "actions.reviewed.description": {
-  "from": "部品（html・svg・frame）の reviewedAt に今の時刻を書き、部品を書いたことにして見直しの印を消す。作業ディレクトリのファイルへ引いた線（implementedBy など）を持つカードでは、変わった線と覚えていない線のコードを今の形で覚え直す（コミットにならない）。印のあるカードで使える",
+  "from": "部品（html・svg・frame）の reviewedAt に今の時刻を書き、部品を書いたことにしてレビューのマークを消す。作業ディレクトリのファイルへ引いた線（implementedBy など）を持つカードでは、変わった線と記録していない線のコードを今の形で記録し直す（コミットにならない）。マークのあるカードで使える",
   "text": "Writes the current time to the part's (html, svg, frame) reviewedAt, which counts as writing the part and clears its review mark; on a card with lines to working-directory files (implementedBy and the like), records the code of the changed and unrecorded lines as it is now (no commit). Usable on a card with a mark"
  },
  "cards.spec.label": {
@@ -1872,7 +1872,7 @@
   "text": "Specification"
  },
  "cards.spec.context.purpose": {
-  "from": "機能ごとの仕様を、ねらい（As・I want・So that）と Scenario（Given・When・Then の段）の決まった形で書く文書。Scenario ごとにパスがあり（<カード>.<Scenario の name>）、確かめるテストへ線を引く",
+  "from": "機能ごとの仕様を、ねらい（As・I want・So that）と Scenario（Given・When・Then のステップ）の決まった形式で書くドキュメント。Scenario ごとにパスがあり（<カード>.<Scenario の name>）、確かめるテストへ線を引く",
   "text": "A document that writes a feature's specification in a fixed form: its story (As, I want, So that) and scenarios (the steps of Given, When, Then). Each scenario has a path (<card>.<scenario name>) and draws lines to the tests that check it"
  },
  "cards.spec.context.use_when": {
@@ -1880,8 +1880,8 @@
   "text": "When writing acceptance criteria as scenarios and looking over whether every scenario has a test that checks it"
  },
  "cards.spec.context.not_for": {
-  "from": "形の決まっていない文書（freedoc）・決めた書式の設計書（formatdoc）・積み重なる文書（stackdoc）",
-  "text": "A document with no set form (freedoc), a design document of a set format (formatdoc) and a document that stacks up (stackdoc)"
+  "from": "形式の決まっていないドキュメント（freedoc）・決めた書式の設計書（structdoc）・積み重なるドキュメント（stackdoc）",
+  "text": "A document with no set form (freedoc), a design document of a set format (structdoc) and a document that stacks up (stackdoc)"
  },
  "cards.spec.fields.as.description": {
   "from": "誰の話か",
@@ -1916,7 +1916,7 @@
   "text": "The name used in paths (example: addRemove)"
  },
  "cards.spec.rows.scenarios.fields.heading.label": {
-  "from": "題",
+  "from": "タイトル",
   "text": "Title"
  },
  "cards.spec.rows.scenarios.fields.note.label": {
@@ -1924,11 +1924,11 @@
   "text": "Notes"
  },
  "cards.spec.rows.scenarios.fields.note.description": {
-  "from": "段のあとに書く本文",
+  "from": "ステップのあとに書く本文",
   "text": "The text written after the steps"
  },
  "cards.spec.rows.scenarios.rows.steps.label": {
-  "from": "段",
+  "from": "ステップ",
   "text": "Step"
  },
  "cards.image.label": {
@@ -1936,7 +1936,7 @@
   "text": "Image"
  },
  "cards.image.context.purpose": {
-  "from": "ホワイトボードに置く絵（スクリーンショット・写真）。PNG・JPEG・GIF で 1 枚 5MB まで。中身はカードに入れず、プロジェクトの画像の置き場に中身ごとに 1 つだけ持ち、カードは中身の名前（sha256）と形式・原寸を持つ。中身は imageData（base64）か imageFrom（作業ディレクトリのファイル）で渡し、card_read の as: image で絵そのものを読む",
+  "from": "ホワイトボードに置く画像（スクリーンショット・写真）。PNG・JPEG・GIF で 1 枚 5MB まで。中身はカードに入れず、プロジェクトのデータベースに中身ごとに 1 つだけ持ち、カードは中身の名前（sha256）と形式・原寸を持つ。中身は imageData（base64）か imageFrom（作業ディレクトリのファイル）で渡し、card_read の as: image で画像そのものを読む",
   "text": "A picture (a screenshot, a photo) placed on a whiteboard. A PNG, a JPEG or a GIF of 5MB at the most. Its contents are not in the card: the project keeps each picture once, and the card holds its name (sha256), its form and its size. Give the contents as imageData (base64) or imageFrom (a working directory's file), and read the picture itself with card_read's as: image"
  },
  "cards.image.context.use_when": {
@@ -1992,7 +1992,7 @@
   "text": "Description"
  },
  "cards.image.fields.alt.description": {
-  "from": "何の絵か",
+  "from": "何の画像か",
   "text": "What the picture shows"
  },
  "cards.sketch.label": {
@@ -2000,7 +2000,7 @@
   "text": "Sketch"
  },
  "cards.sketch.context.purpose": {
-  "from": "ホワイトボードで考えを絵にする部品。形（四角・角丸・丸・ひし形・円柱・文字だけ）と中の字と色を持ち、カードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。位置を書かなければ、同じ呼び出しで作ったものは矢印をたどって左から右へ並ぶ。大きさは手で決めなければ字から決まる",
+  "from": "ホワイトボードで考えを絵にする部品。形（四角・角丸・丸・ひし形・円柱・文字だけ）と中の字と色を持ち、カードのヘッダーを描かずに形そのものを描く。矢印（arrow）でつなぐ。位置を書かなければ、同じ呼び出しで作ったものは矢印をたどって左から右へ並ぶ。サイズは手で決めなければ字から決まる",
   "text": "A piece of a picture of an idea on a whiteboard. It has a shape (rectangle, rounded, ellipse, diamond, cylinder, text only), the text inside it and its colours, and is drawn as the shape itself without a card's header. Joined by arrows (arrow). Made with no place, the ones made in one call go left to right along their arrows. Sized from its text unless sized by hand"
  },
  "cards.sketch.context.use_when": {
@@ -2112,7 +2112,7 @@
   "text": "Whiteboard"
  },
  "sections.whiteboard.description": {
-  "from": "図形（sketch）と付箋（note）・svg・画像（image）を矢印（arrow）でつなぎ、設計の考えを絵で説明する。開くと図形を形そのもので描く。描いたら section_read の as: picture で絵を読んで確かめる",
+  "from": "図形（sketch）と付箋（note）・svg・画像（image）を矢印（arrow）でつなぎ、設計の考えを絵で説明する。開くと図形を形そのもので描く。描いたら section_read の as: picture で画像を読んで確かめる",
   "text": "Join sketches (sketch), notes (note), SVGs and images (image) with arrows (arrow) to explain a design's ideas as a picture. Opened, its sketches are drawn as the shapes themselves. After drawing, read it as a picture (section_read with as: picture) to check it"
  },
  "sections.whiteboard.context.use_when": {
@@ -2120,7 +2120,7 @@
   "text": "When AI explains a design's ideas to a person as a picture, or a person draws an idea to show AI"
  },
  "sections.whiteboard.context.not_for": {
-  "from": "プロジェクトの中身（形・流れ・文書）そのもの",
+  "from": "プロジェクトの中身（形・流れ・ドキュメント）そのもの",
   "text": "The project's own contents (shapes, flows, documents)"
  },
  "lines.arrow.label": {
@@ -2132,7 +2132,7 @@
   "text": "An arrow between a whiteboard's sketches, notes, SVGs and images. Each has its own text, dash, ends and colour"
  },
  "lines.arrow.context.purpose": {
-  "from": "ホワイトボードで、図形どうしのつながりや流れを矢印で見せる。見え方は 1 本ごとの欄で決める",
+  "from": "ホワイトボードで、図形どうしのつながりや流れを矢印で見せる。見え方は 1 本ごとのフィールドで決める",
   "text": "On a whiteboard, show how sketches are joined or what flows between them with arrows. Each one's look is set by its own fields"
  },
  "lines.arrow.context.use_when": {

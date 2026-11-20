@@ -70,13 +70,13 @@ pub(crate) struct Walk<'a> {
     /// goal's card): `head` is that card, and the path's head is that many names longer.
     pub entered: usize,
     /// The kind of row the place is a row of (`kinds::LinePlace`): a record's field's
-    /// `fields`, a formatdoc's item's `rows`, a row of a project's own kind by its kind of row
+    /// `fields`, a structdoc's item's `rows`, a row of a project's own kind by its kind of row
     /// (the last); none for the head, a field of a project's own kind's card, a goal's row of
     /// before.
     pub row: Option<String>,
 }
 
-/// The one kind of row a built-in kind of card has (a record's `fields`, a formatdoc's
+/// The one kind of row a built-in kind of card has (a record's `fields`, a structdoc's
 /// `rows`, a process node's `steps`), as its definition names it.
 pub(crate) fn builtin_row(kind: &str) -> Option<String> {
     crate::kinds::builtin()
@@ -177,7 +177,7 @@ pub(crate) fn walk<'a>(
         return Ok(out);
     }
     match head.kind.as_str() {
-        "formatdoc" => {
+        "structdoc" => {
             let (found, missing) = deepest(names, &head.rows);
             if !missing.is_empty() {
                 return Err(Miss {

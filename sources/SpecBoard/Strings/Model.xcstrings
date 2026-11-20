@@ -32,7 +32,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エージェントに繋がりません"
+            "value" : "エージェントに接続できません"
           }
         }
       }
@@ -116,7 +116,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エージェントが %lld 秒たっても答えません"
+            "value" : "エージェントが %lld 秒たっても応答しません"
           }
         }
       }
@@ -218,7 +218,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "図を描けません（このプロジェクトを置いている所に繋がっていません）"
+            "value" : "図を描けません（このプロジェクトのある場所に接続されていません）"
           }
         }
       }
@@ -236,7 +236,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "action はなくなりました。部品がすることは flow で書きます: 開始（kind: begin。trigger: receive で受ける） → 処理ノード（kind: process。読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算するの行を steps に）→ 終了（kind: end。返すものは return）。ほかの flow を呼んで終わりを待つのは実行ノード（kind: run）。形は guide の about: flow"
+            "value" : "action はなくなりました。部品がすることは flow で書きます: 開始（kind: begin。trigger: receive で受ける） → 処理ノード（kind: process。read・write・sign・verify・call・send・receive・compute のステップを steps に）→ 終了（kind: end。返すものは return）。ほかの flow を呼んで終わりを待つのは実行ノード（kind: run）。形式は guide の about: flow"
           }
         }
       }
@@ -290,7 +290,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の答えに branch がありません"
+            "value" : "%@ のレスポンスに branch がありません"
           }
         }
       }
@@ -470,7 +470,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（読み込み）"
+            "value" : "%@（インポート）"
           }
         }
       }
@@ -488,7 +488,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（読み込み %lld）"
+            "value" : "%@（インポート %lld）"
           }
         }
       }
@@ -668,7 +668,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。繋がり直したら開き直します"
+            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。再接続したら開き直します"
           }
         }
       }
@@ -686,7 +686,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。繋がり直したら開き直します（%@）"
+            "value" : "プロジェクトを置いているエージェントとの接続が切れたので、プロジェクトを閉じました。再接続したら開き直します（%@）"
           }
         }
       }
@@ -992,7 +992,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ずれを見つけて全体を読み直しました"
+            "value" : "ずれを見つけて全体を再読み込みしました"
           }
         }
       }

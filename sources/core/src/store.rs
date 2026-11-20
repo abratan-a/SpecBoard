@@ -872,6 +872,16 @@ fn upgrade(conn: &mut Connection, path: &Path) -> Result<bool, String> {
         )
         .map_err(sql)?;
     }
+    // The built-in structured document by its name of now (`schema::STRUCT_DOC`): after the pieces,
+    // as the history's long rows are read and kept in them.
+    if !marked(&tx, crate::schema::STRUCT_DOC)? {
+        crate::kind_move::move_all(&tx)?;
+        tx.execute(
+            "INSERT INTO _migrations (name) VALUES (?1)",
+            [crate::schema::STRUCT_DOC],
+        )
+        .map_err(sql)?;
+    }
     tx.commit().map_err(sql)?;
     Ok(packed > 0)
 }

@@ -437,7 +437,7 @@ pub(crate) fn doc_checked(
     let unfinished_kept = node && tx.who().side == Side::Screen;
     // By the project's kinds of card and of line: the built-in ones and the project's own. What a
     // kind of the project's own, or the board's goal and task, no longer has is kept, not refused
-    // (「定義に無い欄」).
+    // (「定義に無いフィールド」).
     let own = tx.reader().project(&scope.project)?.and_then(|p| p.kinds);
     let defs = crate::kinds::Defs::of_project(own.as_deref());
     let custom = defs.cards().keeps_strays(kind);
@@ -836,7 +836,7 @@ pub(crate) fn edit_card(
             ));
         }
     }
-    // What its kind no longer has (「定義に無い欄」), let go of: those
+    // What its kind no longer has (「定義に無いフィールド」), let go of: those
     // named (`{"<where>": null}`), or every one (`null`).
     else if let Some(raw) = value.get("strayFields") {
         let which: Option<HashSet<String>> = match raw {
@@ -879,7 +879,7 @@ pub(crate) fn edit_card(
     }
 
     // What it holds that the new kind cannot show would be seen nowhere — unless this write empties
-    // it (a formatdoc made a spec in one write: `rows: []` with the spec's scenarios).
+    // it (a structdoc made a spec in one write: `rows: []` with the spec's scenarios).
     if reworked {
         if let Some(rows) = doc.get_mut("rows").and_then(Value::as_object_mut) {
             rows.retain(|key, _| {
@@ -1257,7 +1257,7 @@ fn set_size(
     })
 }
 
-/// How a formatdoc or a spec is drawn, or none for the project's default (`setDocView`).
+/// How a structdoc or a spec is drawn, or none for the project's default (`setDocView`).
 fn set_doc_view(
     tx: &mut Tx,
     scope: &Scope,
@@ -1265,7 +1265,7 @@ fn set_doc_view(
     kind: &str,
     raw: &Value,
 ) -> Result<(), String> {
-    if kind != "formatdoc" && kind != "spec" {
+    if kind != "structdoc" && kind != "spec" {
         return Err(text!("update.error.docViewKind", kind));
     }
     match raw {

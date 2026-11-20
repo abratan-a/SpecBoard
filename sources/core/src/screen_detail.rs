@@ -608,8 +608,8 @@ fn lines_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
     }
 }
 
-/// What a note's, a freedoc's, a formatdoc's, a stackdoc's or a spec's text names (`mentions`, read
-/// from the text and not written in `connections`): from the card — a formatdoc's from the item
+/// What a note's, a freedoc's, a structdoc's, a stackdoc's or a spec's text names (`mentions`, read
+/// from the text and not written in `connections`): from the card — a structdoc's from the item
 /// whose rows name it (none for the rows at the top), a stackdoc's from the version, a spec's from
 /// the scenario (none for its story) — to where the path lands, the path as it is
 /// written in the text beside it (`written`), so the screen can put the line on the text's
@@ -639,7 +639,7 @@ fn mentions_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
                 crate::export::Named::Ghost(g) => Some(g.id.clone()),
                 crate::export::Named::Card(_) => None,
             });
-        let from = if (card.kind == "formatdoc" && link.row != TOP_ROW)
+        let from = if (card.kind == "structdoc" && link.row != TOP_ROW)
             || card.kind == "stackdoc"
             || card.kind == "spec"
         {
@@ -648,7 +648,7 @@ fn mentions_of(project: &Project, card: &Card, out: &mut Vec<Value>) {
             String::new()
         };
         // Where it lands, in the card's own names: a field's names, a flow's node, a
-        // formatdoc's item; none for the card itself.
+        // structdoc's item; none for the card itself.
         let at = match row.as_str() {
             "" => None,
             TOP_ROW => None,

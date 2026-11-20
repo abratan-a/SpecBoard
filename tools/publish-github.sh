@@ -40,7 +40,7 @@ github_url=https://github.com/$github_repo.git
 profile=${SPECBOARD_NOTARY_PROFILE:-specboard-notary}
 
 usage() {
-  echo "使い方: bash tools/publish-github.sh [--check] <版> <コミット>" >&2
+  echo "使い方: bash tools/publish-github.sh [--check] <バージョン> <コミット>" >&2
   exit 2
 }
 
@@ -67,17 +67,17 @@ stop() {
   shift
   local line
   for line in "$@"; do printf '  → %s\n' "$line" >&2; done
-  printf '直したら、同じコマンドをもう一度流してください（済んだ段は飛ばします）。\n' >&2
+  printf '直したら、同じコマンドをもう一度流してください（済んだステップは飛ばします）。\n' >&2
   exit 1
 }
 
-[[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || stop "版は X.Y.Z の形で渡してください（渡されたのは ${ver}）"
+[[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || stop "バージョンは X.Y.Z の形で渡してください（渡されたのは ${ver}）"
 [[ $commit_arg =~ ^[0-9a-f]{7,40}$ ]] || stop "コミットは 16 進のハッシュで渡してください（渡されたのは ${commit_arg}）"
 
 root=$(cd "$(dirname "$0")/.." && pwd -P)
 top=$(git -C "$root" rev-parse --show-toplevel 2>/dev/null || true)
 [[ -n $top && $(cd "$top" && pwd -P) == "$root" ]] \
-  || stop "この道具は、公開する木の clone の中の tools/publish-github.sh として流してください（${root} は git の clone ではありません）"
+  || stop "このツールは、公開ツリーの clone の中の tools/publish-github.sh として流してください（${root} は git の clone ではありません）"
 
 # --- 1. prerequisites: collect every missing one, then report them together ---
 problems=()
@@ -105,7 +105,7 @@ source "$root/tools/build-env.sh"
 if [[ -z $CARGO ]]; then
   need "Rust がありません（rustup で入れます）" "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 elif [[ -z $RUSTUP ]]; then
-  need "cargo（${CARGO}）の隣に rustup がありません（Rust の版は rust-toolchain.toml で決まり、rustup が入れます。Homebrew の rust では組めません）" \
+  need "cargo（${CARGO}）の隣に rustup がありません（Rust のバージョンは rust-toolchain.toml で決まり、rustup が入れます。Homebrew の rust では組めません）" \
     "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 if [[ -z $ZIG || -z $ZIGBUILD ]]; then
@@ -152,41 +152,41 @@ if [[ -n $identity ]]; then
 fi
 
 if ! xcrun notarytool history --keychain-profile "$profile" >/dev/null 2>&1; then
-  need "公証の資格（notarytool のキーチェーンのプロファイル ${profile}）が使えません（ネットに繋がっていないときもここで止まります）" \
+  need "公証の資格（notarytool のキーチェーンのプロファイル ${profile}）が使えません（ネットに接続していないときもここで止まります）" \
     "xcrun notarytool store-credentials ${profile} --apple-id <Apple ID のメール> --team-id ${team:-<チーム ID>}（パスワードを聞かれたら App 用パスワードを貼る。確かめ: xcrun notarytool history --keychain-profile ${profile}）"
 fi
 
 changes=$(git -C "$root" status --porcelain 2>/dev/null || echo "?")
 if [[ -n $changes ]]; then
-  need "clone に変更があります（${root}）" "git -C ${root} status で見て、変更を片付ける（この道具は clone のファイルを書き換えません）"
+  need "clone に変更があります（${root}）" "git -C ${root} status で見て、変更を片付ける（このツールは clone のファイルを書き換えません）"
 fi
 
 # --- 2. source: the published tag points at the commit the maintainer was given ---
-step "2. 公開する木（origin）"
+step "2. 公開ツリー（origin）"
 before=${#problems[@]}
 commit=""
 if ! git -C "$root" remote get-url origin >/dev/null 2>&1; then
-  need "clone にリモート origin がありません" "公開する木を clone し直す（手順は Docs/Rules:PublishGithub）"
+  need "clone にリモート origin がありません" "公開ツリーを clone し直す（手順は Docs/Rules:PublishGithub）"
 elif ! git -C "$root" fetch --quiet --tags origin 2>/dev/null; then
   need "origin からタグを取れません（ネットか、手元のタグが origin と違う）" "git -C ${root} fetch --tags origin を流して、出た理由を見る"
 else
   commit=$(git -C "$root" rev-parse -q --verify "${commit_arg}^{commit}" 2>/dev/null || true)
   tagged=$(git -C "$root" rev-parse -q --verify "refs/tags/${tag}^{commit}" 2>/dev/null || true)
   if [[ -z $tagged ]]; then
-    need "origin にタグ ${tag} がありません" "版を確かめる（公開する木に出す前なら、セッションが出し終えるのを待つ）"
+    need "origin にタグ ${tag} がありません" "バージョンを確かめる（公開ツリーに出す前なら、セッションが出し終えるのを待つ）"
   fi
   if [[ -z $commit ]]; then
     need "コミット ${commit_arg} が origin にありません" "セッションが伝えたハッシュを確かめる"
   elif [[ -n $tagged && $tagged != "$commit" ]]; then
     need "タグ ${tag} は ${tagged:0:12} を指していて、渡されたコミット ${commit:0:12} と違います" \
-      "セッションに版とハッシュを確かめてもらう（違うものを公開しないために止めています）"
+      "セッションにバージョンとハッシュを確かめてもらう（違うものを公開しないために止めています）"
   fi
   if [[ -n $commit ]]; then
     if ! git -C "$root" merge-base --is-ancestor "$commit" refs/remotes/origin/main 2>/dev/null; then
       need "コミット ${commit:0:12} が origin/main に含まれていません" "セッションに伝えたハッシュを確かめてもらう"
     fi
     version=$(git -C "$root" show "$commit:VERSION" 2>/dev/null | tr -d ' \t\r\n' || true)
-    [[ $version == "$ver" ]] || need "コミットの VERSION が ${version:-無し} で、版 ${ver} と違います" "セッションに版を確かめてもらう"
+    [[ $version == "$ver" ]] || need "コミットの VERSION が ${version:-無し} で、バージョン ${ver} と違います" "セッションにバージョンを確かめてもらう"
     changelog=$(git -C "$root" show "$commit:CHANGELOG.md" 2>/dev/null || true)
     if ! grep -qx "## $ver" <<<"$changelog"; then
       need "コミットの CHANGELOG.md に「## ${ver}」の節がありません" "セッションに伝える（GitHub の Release のノートにする節です）"
@@ -237,7 +237,7 @@ check_pushes() {
         && git -C "$root" merge-base --is-ancestor "$main" "$commit"; then
       pushed=""
     else
-      stop "GitHub の main（${main:0:12}）から ${commit:0:12} へ進めません（公開する木に無いコミットがあります）" \
+      stop "GitHub の main（${main:0:12}）から ${commit:0:12} へ進めません（公開ツリーに無いコミットがあります）" \
         "GitHub の ${github_repo} の main を見る。force push はしません"
     fi
   fi
@@ -246,7 +246,7 @@ check_pushes() {
   if [[ -z $tag_object ]]; then
     pushed=""
   elif [[ $tag_object != "$local_tag" ]]; then
-    stop "GitHub のタグ ${tag} が、公開する木のタグと違うものを指しています" \
+    stop "GitHub のタグ ${tag} が、公開ツリーのタグと違うものを指しています" \
       "GitHub の ${github_repo} のタグ ${tag} を見る。タグは消しも付け替えもしません"
   fi
 }
@@ -288,7 +288,7 @@ check_signature() {  # <file> <what it is> [code]: code is also held to Hardened
   info=$(codesign -dvv "$1" 2>&1) || stop "${2} の署名が読めません"
   grep -q "^Authority=Developer ID Application: " <<<"$info" || stop "${2} の署名が Developer ID Application ではありません"
   grep -q "^TeamIdentifier=${team}$" <<<"$info" || stop "${2} の署名のチームが ${team} ではありません"
-  grep -q "^Timestamp=" <<<"$info" || stop "${2} の署名に安全なタイムスタンプがありません（公証で断られます）"
+  grep -q "^Timestamp=" <<<"$info" || stop "${2} の署名に安全なタイムスタンプがありません（公証で拒否されます）"
   if [[ ${3:-} == code ]]; then
     grep -Eq "^CodeDirectory .*flags=0x[0-9a-f]+\([^)]*runtime" <<<"$info" || stop "${2} の署名が Hardened Runtime ではありません"
   fi
@@ -327,7 +327,7 @@ if [[ -z $stapled ]]; then
     mkdir -p "$cache/src" "$out"
     git -C "$root" archive --format=tar "$commit" | tar -x -C "$cache/src"
     build=$(TZ=Asia/Tokyo date +%Y%m%d%H%M)
-    say "組みます（版 ${ver}・ビルド番号 ${build}。10〜20 分かかります）"
+    say "組みます（バージョン ${ver}・ビルド番号 ${build}。10〜20 分かかります）"
     BUILD_NUMBER=$build \
       SPECBOARD_SIGN_IDENTITY="$identity" SPECBOARD_TEAM="$team" SPECBOARD_SIGN_TIMESTAMP=1 \
       SPECBOARD_UPDATE_FEED_URL=https://github.com SPECBOARD_UPDATE_FEED_REPO="$github_repo" \
@@ -352,7 +352,7 @@ if [[ -z $stapled ]]; then
     else
       cat "$result" >&2 || true
     fi
-    stop "公証で通りませんでした（${status:-答えが読めない}）" "上の記録の issues を見る（セッションに渡せば直し方を調べます）"
+    stop "公証で通りませんでした（${status:-レスポンスが読めない}）" "上の記録の issues を見る（セッションに渡せば直し方を調べます）"
   fi
   xcrun stapler staple -q "$dmg" || stop "DMG に公証の票を付けられません"
   xcrun stapler validate -q "$dmg" || stop "DMG の公証の票を確かめられません"

@@ -1,6 +1,6 @@
-//! The stacked document (`stackdoc`; `specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」): one card
+//! The stacked document (`stackdoc`; `specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」): one card
 //! of versions, the newest on top, each with a path of its own (`Docs:Changelog.v0_2_21`) — made,
-//! read, changed and let go of one at a time as a formatdoc's rows are; read without their bodies
+//! read, changed and let go of one at a time as a structdoc's rows are; read without their bodies
 //! unless a version is the target; the version open kept as how the card looks; written out whole or
 //! one version alone; merged version by version.
 
@@ -199,7 +199,7 @@ fn the_version_open_is_how_the_card_looks() {
         "card_update",
         json!({"target": "Docs:Changelog", "value": {"version": "v9"}}),
     );
-    assert!(said.contains("版 v9 がありません"), "{said}");
+    assert!(said.contains("バージョン v9 がありません"), "{said}");
     ok(
         &core,
         "card_update",
@@ -292,7 +292,7 @@ fn a_stackdoc_is_written_out_whole_or_one_version_alone() {
     );
     let read = ok(&core, "export_read", json!({"targetdir": "[default]", }));
     assert!(
-        read["problems"].to_string().contains("消えた版"),
+        read["problems"].to_string().contains("消えたバージョン"),
         "{}",
         read["problems"]
     );
@@ -301,7 +301,7 @@ fn a_stackdoc_is_written_out_whole_or_one_version_alone() {
         "export_update",
         json!({"target": "log", "value": {"entries": {"add": [{"from": "Docs:Changelog.v7", "to": "v7.md"}]}}}),
     );
-    assert!(said.contains("版 v7 はありません"), "{said}");
+    assert!(said.contains("バージョン v7 はありません"), "{said}");
 }
 
 #[test]

@@ -104,7 +104,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ファイルの言語。名前と作業ディレクトリの parsers で決まり、関数と型はこの言語で読む"
+            "value" : "ファイルの言語。名前と作業ディレクトリの parsers で決まり、シンボルはこの言語で読む"
           }
         }
       }
@@ -122,7 +122,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "解けなかった所の数。拾えた分は出しています"
+            "value" : "パースできなかった所の数。拾えた分は出しています"
           }
         }
       }
@@ -140,7 +140,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "関数と型を拾えなかった（全部は拾えなかった）わけ"
+            "value" : "シンボルを読み取れなかった（全部は読み取れなかった）わけ"
           }
         }
       }
@@ -842,7 +842,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "枠の大きさ（マス）。横 %1$lld〜%3$lld・縦 %2$lld〜%3$lld。変えてもカードは動かない"
+            "value" : "枠のサイズ（マス）。横 %1$lld〜%3$lld・縦 %2$lld〜%3$lld。変えてもカードは動かない"
           }
         }
       }
@@ -968,7 +968,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "[…]（JSON の並び）"
+            "value" : "[…]（JSON の配列）"
           }
         }
       }
@@ -1243,20 +1243,20 @@
         }
       }
     },
-    "kind.formatdocRow" : {
-      "comment" : "What the top of the Properties panel says a picked row of a formatdoc is.",
+    "kind.structdocRow" : {
+      "comment" : "What the top of the Properties panel says a picked row of a structdoc is.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc row"
+            "value" : "structdoc row"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc の行"
+            "value" : "structdoc の行"
           }
         }
       }
@@ -1292,7 +1292,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "処理ノードの行"
+            "value" : "処理ノードのステップ"
           }
         }
       }
@@ -1346,7 +1346,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大きな欄で書く"
+            "value" : "大きなフィールドで書く"
           }
         }
       }
@@ -1490,7 +1490,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（%lld 件で打ち切り）"
+            "value" : "（%lld 件で切り詰め）"
           }
         }
       }
@@ -1598,7 +1598,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "空なら、データの名前と形の一番上の欄。[] の付いた欄は要素ごとの値を「, 」でつなぎます"
+            "value" : "空なら、データの名前と形の一番上のフィールド。[] の付いたフィールドは要素ごとの値を「, 」でつなぎます"
           }
         }
       }
@@ -1760,7 +1760,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選んだ並びの要素ごとに 1 行にします。要素の無いデータは行になりません"
+            "value" : "選んだ配列の要素ごとに 1 行にします。要素の無いデータは行になりません"
           }
         }
       }
@@ -1850,7 +1850,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "そのセクションと中のセクションのデータだけを読みます。空なら木の中のその形のデータ全部"
+            "value" : "そのセクションと中のセクションのデータだけを読みます。空ならツリーの中のその形のデータ全部"
           }
         }
       }
@@ -1916,7 +1916,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アクターが何か: システム・人・外部。印もそれに合わせて変わる"
+            "value" : "アクターが何か: システム・人・外部。アイコンもそれに合わせて変わる"
           }
         }
       }
@@ -1934,7 +1934,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ナビパネル・マップのタブ・セクションゴーストに出す、このセクションの印。決めない方は種類の印"
+            "value" : "ナビパネル・マップのタブ・セクションゴーストに出す、このセクションのアイコン。決めない方は種類のアイコン"
           }
         }
       }
@@ -1970,7 +1970,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セクション付きのパスの頭。カードは パス:カード名 で指す"
+            "value" : "セクション付きのパスの先頭。カードは パス:カード名 で指す"
           }
         }
       }
@@ -2024,7 +2024,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "種類の印にする"
+            "value" : "種類のアイコンにする"
           }
         }
       }
@@ -2150,7 +2150,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "いまのファイルにありません。この名前への線は点検に出ます（今の名前へ引き直してください）"
+            "value" : "いまのファイルにありません。この名前への線はインスペクションに出ます（今の名前へ引き直してください）"
           }
         }
       }
@@ -2204,7 +2204,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "その言語での呼び方（fn・struct・protocol など）と言語。札はどの言語でも同じで、ƒ が関数とメソッド、T が型、M がモジュール、C が定数、# がマクロ"
+            "value" : "その言語での呼び方（fn・struct・protocol など）と言語。バッジはどの言語でも同じで、ƒ が関数とメソッド、T が型、M がモジュール、C が定数、# がマクロ"
           }
         }
       }
@@ -2240,7 +2240,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ファイルの中身を、この関数と型までスクロールして範囲を色付けして出す"
+            "value" : "ファイルの中身を、このシンボルまでスクロールして範囲を色付けして出す"
           }
         }
       }
@@ -2294,7 +2294,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "関数と型"
+            "value" : "シンボル"
           }
         }
       }
@@ -2312,7 +2312,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "関数と型"
+            "value" : "シンボル"
           }
         }
       }
@@ -3104,7 +3104,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "結び付けたフォルダ: この作業ディレクトリを読む %@ のフォルダ。その機械にだけ残り、プロジェクトにも branch にも履歴にも入りません"
+            "value" : "結び付けたフォルダ: この作業ディレクトリを読む %@ のフォルダ。そのマシンにだけ残り、プロジェクトにも branch にも履歴にも入りません"
           }
         }
       }
@@ -3176,7 +3176,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読み込む"
+            "value" : "再読み込み"
           }
         }
       }
@@ -3194,7 +3194,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フォルダを読み直します。足した・変えた・消したファイルが main とどの branch にも出ます"
+            "value" : "フォルダを再読み込みします。足した・変えた・消したファイルが main とどの branch にも出ます"
           }
         }
       }

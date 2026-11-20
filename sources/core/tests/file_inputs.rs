@@ -1,4 +1,4 @@
-//! Text read from files of a working directory: a body in a formatdoc's text rows at any depth and in a
+//! Text read from files of a working directory: a body in a structdoc's text rows at any depth and in a
 //! stackdoc's versions (`bodyFrom`), and a batch's steps from a JSON file (`stepsFrom`), each read once, when
 //! the call is received, and held to what one call may read in all.
 
@@ -93,7 +93,7 @@ fn text_rows_at_any_depth_are_read_from_files_and_the_answer_says_where_each_wen
     let made = ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "rows": [
             {"name": "intro", "kind": "text", "bodyFrom": from("spec/intro.md")},
             {"name": "part", "heading": "部", "rows": [
                 {"name": "sub", "heading": "節", "rows": [
@@ -178,7 +178,7 @@ fn a_row_or_a_version_named_by_its_path_takes_bodyfrom_and_answers_with_one_entr
         &core,
         "card_create",
         json!({"value": {
-            "Docs:Plan": {"kind": "formatdoc", "rows": [{"name": "r", "kind": "text", "body": "前"}]},
+            "Docs:Plan": {"kind": "structdoc", "rows": [{"name": "r", "kind": "text", "body": "前"}]},
             "Docs:Notes": {"kind": "stackdoc", "versions": [{"name": "v1", "key": "1", "body": "前"}]}
         }}),
     );
@@ -217,7 +217,7 @@ fn every_refusal_of_a_call_is_said_with_its_place_and_nothing_is_written() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:A": {"kind": "formatdoc", "rows": [
+            "Docs:A": {"kind": "structdoc", "rows": [
                 {"name": "first", "kind": "text", "body": "x", "bodyFrom": from("ok.md")},
                 {"name": "second", "kind": "text", "bodyFrom": from("ok.md")},
                 {"name": "third", "kind": "text", "bodyFrom": from("missing.md")}
@@ -243,7 +243,7 @@ fn every_refusal_of_a_call_is_said_with_its_place_and_nothing_is_written() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "rows": [
             {"name": "r", "kind": "text", "body": "前"}]}}),
     );
     let why = refused(
@@ -274,24 +274,24 @@ fn a_place_with_no_body_is_refused_before_its_file_is_read() {
     no_body(&refused(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "bodyFrom": gone}}),
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "bodyFrom": gone}}),
     ));
     no_body(&refused(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "rows": [
             {"name": "t", "kind": "table", "columns": ["a"], "bodyFrom": gone}]}}),
     ));
     no_body(&refused(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "rows": [
             {"name": "i", "heading": "項目", "bodyFrom": gone}]}}),
     ));
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Plan", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Plan", "value": {"kind": "structdoc", "rows": [
             {"name": "t", "kind": "table", "columns": ["a"], "cells": [["x"]]}]}}),
     );
     no_body(&refused(
@@ -329,14 +329,14 @@ fn what_one_call_reads_in_all_is_held_to_the_most_it_could_carry_inline() {
     let why = refused(
         &core,
         "card_create",
-        json!({"target": "Docs:Many", "value": {"kind": "formatdoc", "rows": rows(15)}}),
+        json!({"target": "Docs:Many", "value": {"kind": "structdoc", "rows": rows(15)}}),
     );
     assert!(why.contains("合わせて 8388608 バイトまで"), "{why}");
     assert!(!exists(&core, "Docs:Many"));
     let made = ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Many", "value": {"kind": "formatdoc", "rows": rows(13)}}),
+        json!({"target": "Docs:Many", "value": {"kind": "structdoc", "rows": rows(13)}}),
     );
     assert_eq!(made["created"][0]["bodyFrom"].as_array().unwrap().len(), 13);
     assert_eq!(
@@ -444,11 +444,11 @@ fn a_steps_file_that_does_not_fit_is_refused_with_why() {
     for (path, said) in [
         ("text.json", "2 行"),
         ("text.json", "JSON として読めません"),
-        ("object.json", "手の配列"),
-        ("empty.json", "手の配列"),
+        ("object.json", "ステップの配列"),
+        ("empty.json", "ステップの配列"),
         ("notool.json", "steps の要素は"),
         ("badtool.json", "steps[0]"),
-        ("many.json", "200 手まで"),
+        ("many.json", "200 ステップまで"),
         ("huge.json", "読める 8388608 バイトを超えます"),
         ("../x.json", "外へ出ます"),
         ("none.json", "ファイルがありません"),

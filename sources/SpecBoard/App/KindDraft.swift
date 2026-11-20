@@ -26,7 +26,7 @@ struct KindDraft {
 
     /// The saved name of each field and kind of row the saved definition has, by where it is now.
     private var origins: [Place: String] = [:]
-    /// Renames of values the cards hold that the definition no longer has (「定義に無い欄」) to a field it has.
+    /// Renames of values the cards hold that the definition no longer has (「定義に無いフィールド」) to a field it has.
     private var strays: [OJSON] = []
     private var undone: [State] = []
     private var redone: [State] = []

@@ -176,7 +176,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "note と文書"
+            "value" : "note とドキュメント"
           }
         }
       }
@@ -212,7 +212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "処理ノードの行（steps）"
+            "value" : "処理ノードのステップ（steps）"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "条件: 判断の条件が当たるときの行き先"
+            "value" : "条件: 判断の条件が一致するときの行き先"
           }
         }
       }
@@ -284,7 +284,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "それ以外: 判断のどの条件にも当たらないときの行き先"
+            "value" : "それ以外: 判断のどの条件にも一致しないときの行き先"
           }
         }
       }
@@ -302,7 +302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "内包: 欄の型が相手の形になる"
+            "value" : "内包: フィールドの型が相手の形になる"
           }
         }
       }
@@ -320,7 +320,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置く: store が置く記録の形"
+            "value" : "置く: store が置くレコードの形"
           }
         }
       }
@@ -464,7 +464,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "期限切れ: 待つが期限を過ぎたときの行き先"
+            "value" : "タイムアウト: 待つがタイムアウトになったときの行き先"
           }
         }
       }
@@ -500,7 +500,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ID で指す: 欄の値が相手の ID を指す"
+            "value" : "ID で指す: フィールドの値が相手の ID を指す"
           }
         }
       }
@@ -518,7 +518,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読む: 処理の行が読む所"
+            "value" : "読む: 処理のステップが読む所"
           }
         }
       }
@@ -536,7 +536,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "決まり: flow が従う決まりを書いた文書"
+            "value" : "ルール: flow が従うルールを書いたドキュメント"
           }
         }
       }
@@ -626,7 +626,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書く: 処理の行が書く所"
+            "value" : "書く: 処理のステップが書く所"
           }
         }
       }
@@ -644,7 +644,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線が相手の中で着く所（欄か行。相手の外なら、そこのフルパス）"
+            "value" : "線が相手の中で着く所（フィールドか行。相手の外なら、そこのフルパス）"
           }
         }
       }
@@ -680,7 +680,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開始。trigger と next の線。受けて始まる（receive）ときは相手のフローへの partner の線（何本でも）と program（どちらも省くのは穴（相手が書かれていない）。呼び手を問わないなら anyCaller: true）・carries"
+            "value" : "開始。trigger と next の線。受けて始まる（receive）ときは相手のフローへの partner の線（何本でも）と program（どちらも省くのは穴（相手が書かれていない）。呼び出し元を問わないなら anyCaller: true）・carries"
           }
         }
       }
@@ -698,7 +698,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトボード。やること（目標と小目標・作業の文書）を置く、main・branch の外の木。merge・ロック・MR は無く、いつでも書ける。MCP は branch: \"_project_board_\"。ボードのカードからは main のカードへ「つながる」線（link）を引け、本文に main のパスを書ける（main からボードへは引けない）"
+            "value" : "プロジェクトボード。やること（目標と小目標・作業のドキュメント）を置く、main・branch の外のツリー。merge・ロック・MR は無く、いつでも書ける。MCP は branch: \"_project_board_\"。ボードのカードからは main のカードへ「つながる」線（link）を引け、本文に main のパスを書ける（main からボードへは引けない）"
           }
         }
       }
@@ -716,7 +716,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "note と freedoc の本文（Markdown）。[[パス]] で欄を指し（[[セクション:]] でセクション、[[パス|字]] で見せる字を変える）、{{パス}} で値（const のある欄・列挙・データの値）を差し込み、![[パス]] の 1 行で図を入れる"
+            "value" : "note と freedoc の本文（Markdown）。[[パス]] でフィールドを指し（[[セクション:]] でセクション、[[パス|字]] で見せる字を変える）、{{パス}} で値（const のあるフィールド・列挙・データの値）を差し込み、![[パス]] の 1 行で図を入れる"
           }
         }
       }
@@ -734,7 +734,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "変更の計画。main から作り、作ったときの main の全部を見て、branch で書いたものだけが branch のものになる。作ったあとの main の変更は、main を取り込むまで映らない。main からは見えず、branch どうしも見えない"
+            "value" : "変更の計画。main から作り、作ったときの main の全部を見て、branch で書いたものだけが branch のものになる。作ったあとの main の変更は、main をマージするまで映らない。main からは見えず、branch どうしも見えない"
           }
         }
       }
@@ -752,7 +752,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトに無い道具（program）を呼んで返りを待つ（carries を送り、returns を受ける）。プロジェクトの flow を呼んで待つのは実行ノード"
+            "value" : "プロジェクトに無いツール（program）を呼んで返りを待つ（carries を送り、returns を受ける）。プロジェクトの flow を呼んで待つのは実行ノード"
           }
         }
       }
@@ -770,7 +770,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "計算。業務の検証や計算のような、外に出ない処理（何をするかは行の description。ほかの欄・線は持たない）"
+            "value" : "計算。業務の検証や計算のような、外に出ない処理（何をするかはステップの description。ほかのフィールド・線は持たない）"
           }
         }
       }
@@ -788,7 +788,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの線の並び。1 本ずつ line（線の種類）・from（出る欄や行。省けば頭）・to（相手）・at（相手の中の着く所）・description・fields（線の種類が決める欄）"
+            "value" : "カードの線の配列。1 本ずつ line（線の種類）・from（出るフィールドや行。省けばカード）・to（相手）・at（相手の中の着く所）・description・fields（線の種類が決めるフィールド）"
           }
         }
       }
@@ -824,7 +824,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "データ（instance）の値。形と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）。書いた値は形のフィールドの型・nullable・const・列挙の値・判別子の枝と、文字の値は欄の rules の pattern で確かめ、合わなければ断る。required の欠けは書き途中として点検に出る。形から消えたフィールドの値は strayFields に残る"
+            "value" : "データ（instance）の値。形と同じ入れ子の JSON（キーはフィールドの名前、配列のフィールドは配列）。書いた値は形のフィールドの型・nullable・const・列挙の値・判別子の枝と、文字の値はフィールドの rules の pattern で確かめ、合わなければエラーにする。required の欠けは書き途中としてインスペクションに出る。形から消えたフィールドの値は strayFields に残る"
           }
         }
       }
@@ -842,7 +842,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "flow の図の形の既定: flowchart（コンテンツマップの図）/ sequence（シーケンス図）。エクスポート・文書の図・MCP の図はこの形で描く"
+            "value" : "flow の図の形式の既定: flowchart（コンテンツマップの図）/ sequence（シーケンス図）。エクスポート・ドキュメントの図・MCP の図はこの形式で描く"
           }
         }
       }
@@ -860,7 +860,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作業ディレクトリのセクションの中のディレクトリ。コアが読んだフォルダから作るセクションで、ファイルが種類 file のカード。読むだけ"
+            "value" : "作業ディレクトリのセクションの中のディレクトリ。コアが読んだフォルダから作るセクションで、ファイルが種類 file のカード。読み取り専用"
           }
         }
       }
@@ -878,7 +878,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "内包: 欄が相手の形をそのまま持つ（生成される型が変わる。欄の type は ref と読む）"
+            "value" : "内包: フィールドが相手の形をそのまま持つ（生成される型が変わる。フィールドの type は ref と読む）"
           }
         }
       }
@@ -914,7 +914,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "単位で保存・送信される記録（ID を持つ）"
+            "value" : "単位で保存・送信されるレコード（ID を持つ）"
           }
         }
       }
@@ -950,7 +950,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "判断。value と、condition の線（欄 when）・else の線"
+            "value" : "判断。value と、condition の線（フィールド when）・else の線"
           }
         }
       }
@@ -968,7 +968,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ファイル。作業ディレクトリ（この機械で結び付けたフォルダ）を読んで、コアが作業ディレクトリのセクションの中に作るカード。名前と表示名はファイルの名前（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス、language は名前と作業ディレクトリの parsers で決まる言語。読むだけで、main と branch のカードから実装の線（implementedBy）で指す。関数と型を拾う言語のファイルは、中の関数と型（symbol）も指せ、図ではそれを行で並べる"
+            "value" : "ファイル。作業ディレクトリ（このマシンで結び付けたフォルダ）を読んで、コアが作業ディレクトリのセクションの中に作るカード。名前と表示名はファイルの名前（パスでは区切り文字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス、language は名前と作業ディレクトリの parsers で決まる言語。読み取り専用で、main と branch のカードから実装の線（implementedBy）で指す。シンボルを読み取る言語のファイルは、中のシンボル（symbol）も指せ、図ではそれを行で並べる"
           }
         }
       }
@@ -986,13 +986,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "部品がすることと、部品をまたぐ処理の流れ（MCP のリクエストを受ける・ユーザー登録など。部品はセクションで表す）。入れ物のカードで、中に開始・処理・実行・判断・待つ・合流・終了のノードのカードを置き、線でつなぐ"
+            "value" : "部品がすることと、部品をまたぐ処理の流れ（MCP のリクエストを受ける・ユーザー登録など。部品はセクションで表す）。コンテナのカードで、中に開始・処理・実行・判断・待つ・合流・終了のノードのカードを置き、線でつなぐ"
           }
         }
       }
     },
-    "term.formatdoc" : {
-      "comment" : "What the word formatdoc means, in the glossary and the help of the screen.",
+    "term.structdoc" : {
+      "comment" : "What the word structdoc means, in the glossary and the help of the screen.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1004,7 +1004,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "整形文書。ドキュメントセクションに置く、項目と行（rows）で組んだ設計書・仕様書。エクスポートすると 1 枚が 1 ファイル"
+            "value" : "ドキュメントセクションに置く、項目と行（rows）で組んだ設計書・仕様書。エクスポートすると 1 枚が 1 ファイル"
           }
         }
       }
@@ -1022,7 +1022,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "はめ込み。UI のセクションに置き、欄 target の UI のセクションのモックを自分の箱に 1:1 ではめ込む（はみ出す所は切る）。target はパスで書き、id で覚えて改名・移動に付いて行く。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない。同じセクションを何枚ものはめ込みで使える。大きさを変えられ、既定はカード 1 枚分"
+            "value" : "フレーム。UI のセクションに置き、フィールド target の UI のセクションのモックを自分の箱に 1:1 ではめ込む（はみ出す所は切る）。target はパスで書き、id で覚えて改名・移動に付いて行く。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない。同じセクションを何枚ものフレームで使える。サイズを変えられ、既定はカード 1 枚分"
           }
         }
       }
@@ -1058,7 +1058,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自由文書。ドキュメントセクションに置く Markdown 1 枚（body）の文書。エクスポートすると 1 枚が 1 ファイル"
+            "value" : "ドキュメントセクションに置く、Markdown 1 枚（body）のドキュメント。エクスポートすると 1 枚が 1 ファイル"
           }
         }
       }
@@ -1094,7 +1094,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードゴースト。セクションに置く、ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアスのようなもの。コピーではない）。自分の名前を持ち、置いたセクションの中ではその名前だけで書け、ほかからは section:名前 で書ける。指す先（target）は id で覚えて改名・移動に付いて行き、本物が消えると指す先の無いカードゴーストとして残る。セクションの図には指す先のカードが丸ごと出る。カードゴーストの無いほかのセクションのカードは、セクションごとに 1 枚のセクションゴーストにまとまり、指されている所だけが出る。画面で一時的に出すだけのもの（一時カードゴースト）はプロジェクトに残らない"
+            "value" : "カードゴースト。セクションに置く、ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアスのようなもの。コピーではない）。自分の名前を持ち、置いたセクションの中ではその名前だけで書け、ほかからは section:名前 で書ける。指す先（target）は id で覚えて改名・移動に付いて行き、元のカードが消えると指す先の無いカードゴーストとして残る。セクションの図には指す先のカードが丸ごと出る。カードゴーストの無いほかのセクションのカードは、セクションごとに 1 枚のセクションゴーストにまとまり、指されている所だけが出る。画面で一時的に出すだけのもの（一時カードゴースト）はプロジェクトに残らない"
           }
         }
       }
@@ -1112,7 +1112,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目標。status（状態）・priority（優先度）・due（期限）・workBranch（作業する branch）・MR の欄と、本文（body）を持つ入れ物のカードで、中に goal と task を置く。中の並びが task の作業の順。プロジェクトボードの goals のセクションとフリーセクションに置く"
+            "value" : "目標。status（状態）・priority（優先度）・due（期限）・workBranch（作業する branch）・MR のフィールドと、本文（body）を持つコンテナのカードで、中に goal と task を置く。中の並びが task の作業の順。プロジェクトボードの goals のセクションとフリーセクションに置く"
           }
         }
       }
@@ -1130,7 +1130,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。頭に同じ守りを書く）"
+            "value" : "HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、サイズを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。先頭に同じ守りを書く）"
           }
         }
       }
@@ -1148,7 +1148,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ホワイトボードの画像。中身（PNG・JPEG・GIF。5MB まで）はプロジェクトに中身ごとに 1 つだけ持ち、カードは中身の sha256 と形式・原寸を持つ。中身は imageData か imageFrom で渡し、card_read の as: image で絵そのものを読む。大きさは手で決めなければ原寸から決まる"
+            "value" : "ホワイトボードの画像。中身（PNG・JPEG・GIF。5MB まで）はプロジェクトに中身ごとに 1 つだけ持ち、カードは中身の sha256 と形式・原寸を持つ。中身は imageData か imageFrom で渡し、card_read の as: image で画像そのものを読む。サイズは手で決めなければ原寸から決まる"
           }
         }
       }
@@ -1166,7 +1166,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入れ物のカード（flow・goal。種類の定義の holds に中に置ける種類がある）の中のカードが入っている入れ物。中のカードのパスは入れ物のパスに名前を続ける（Behavior:Checkout.review・Goals:Launch.Design）。card_update の in で入れ物を移す"
+            "value" : "コンテナのカード（flow・goal。種類の定義の holds に中に置ける種類がある）の中のカードが入っているコンテナ。中のカードのパスはコンテナのパスに名前を続ける（Behavior:Checkout.review・Goals:Launch.Design）。card_update の in でコンテナを移す"
           }
         }
       }
@@ -1202,7 +1202,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "データ。entity・value の実例（形を持つ実際の値）。定義のセクション（definition。新しいプロジェクトでは根の Definitions）とフリーセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に持つ。図とエディタは形のフィールドごとに型の札と値を並べる。値 1 つのパスは Data:first.status（並びの要素は Data:first.lines[0]・Data:first.lines[sku=A-1]）。形の JSON Schema の examples と、文書の card の行の表に出る"
+            "value" : "データ。entity・value の実例（形を持つ実際の値）。定義のセクション（definition。新しいプロジェクトではルートの Definitions）とフリーセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に持つ。図とエディタは形のフィールドごとに型のバッジと値を並べる。値 1 つのパスは Data:first.status（配列の要素は Data:first.lines[0]・Data:first.lines[sku=A-1]）。形の JSON Schema の examples と、ドキュメントの card の行の表に出る"
           }
         }
       }
@@ -1292,7 +1292,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "モック。UI のセクションの部品を、置いた所に置いた大きさで組み上げた 1 枚の HTML のページ（はめ込みには指す先の UI のセクションのモックが入る。note のカードは描かない。スクリプトは動かない）。MCP は section_read の as: mock（html・width・height・parts・frames）で読み、faces: true で部品ごとのページ（faces）も添え、as: picture で絵。画面のセクションマップは部品ごとのページで部品を描く。エクスポートすると UI のセクションごとに 1 枚の .html"
+            "value" : "モック。UI のセクションの部品を、置いた所に置いたサイズで組み上げた 1 枚の HTML のページ（フレームには指す先の UI のセクションのモックが入る。note のカードは描かない。スクリプトは動かない）。MCP は section_read の as: mock（html・width・height・parts・frames）で読み、faces: true で部品ごとのページ（faces）も添え、as: picture で画像。画面のセクションマップは部品ごとのページで部品を描く。エクスポートすると UI のセクションごとに 1 枚の .html"
           }
         }
       }
@@ -1346,7 +1346,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "形: データ（instance）と表（table）から形（entity・value）への線。1 本だけで、MCP は value のキー of に形のパスを書く（connections には書かない）。図にははじめから描かず、カードの頭に形の名前が出る"
+            "value" : "形: データ（instance）と表（table）から形（entity・value）への線。1 本だけで、MCP は value のキー of に形のパスを書く（connections には書かない）。図にははじめから描かず、カードのヘッダーに形の名前が出る"
           }
         }
       }
@@ -1382,7 +1382,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "section:Card.field の形で場所を指す書き方。書いた場所のツリーの中で探す。区切りの字（空白と / : . [ ] ' @ | { } # \" `）を含む名前は一重引用符で囲む（Docs:'release notes.md'。名前の中の ' は ''）"
+            "value" : "section:Card.field の形式で場所を指す書き方。書いた場所のツリーの中で探す。区切り文字（空白と / : . [ ] ' @ | { } # \" `）を含む名前は一重引用符で囲む（Docs:'release notes.md'。名前の中の ' は ''）"
           }
         }
       }
@@ -1400,7 +1400,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ID で指す: 欄の値が相手の ID（型は変わらない）"
+            "value" : "ID で指す: フィールドの値が相手の ID（型は変わらない）"
           }
         }
       }
@@ -1418,7 +1418,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "処理。steps にまっすぐ続く行（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算する）と next の線。行が読む・書く所は reads・writes の線（from に行）"
+            "value" : "処理。steps にまっすぐ続くステップ（read・write・sign・verify・call・send・receive・compute）と next の線。ステップが読む・書く所は reads・writes の線（from にステップ）"
           }
         }
       }
@@ -1454,7 +1454,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの木。main・branch の根の直下（main_sections）とボードの根の直下（board_sections）のセクションの種類・名前・並び。書き換えると、外したセクションは空なら消え、中身があれば _evacuation_ へ退避する"
+            "value" : "プロジェクトのツリー。main・branch のルートの直下（main_sections）とボードのルートの直下（board_sections）のセクションの種類・名前・並び。書き換えると、外したセクションは空なら消え、中身があれば _evacuation_ へ退避する"
           }
         }
       }
@@ -1472,7 +1472,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場所から読む（reads の線）"
+            "value" : "ストアから読む（reads の線）"
           }
         }
       }
@@ -1538,13 +1538,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The rows of a formatdoc. name (a name used in the path) and kind: item (an item: a heading and the rows inside it, up to 5 levels), text (a body), table (a table), diagram (a diagram), diagrams (the section's diagrams), card (a table of cards). The path has the same form as a field's (Docs:Spec.auth.login)"
+            "value" : "The rows of a structdoc. name (a name used in the path) and kind: item (an item: a heading and the rows inside it, up to 5 levels), text (a body), table (a table), diagram (a diagram), diagrams (the section's diagrams), card (a table of cards). The path has the same form as a field's (Docs:Spec.auth.login)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "formatdoc の行。name（パスに使う名前）と kind: item（項目。heading と中の rows、5 段まで）・text（本文）・table（表）・diagram（図）・diagrams（セクションの図）・card（カードの表）。パスはフィールドと同じ形（Docs:Spec.auth.login）"
+            "value" : "structdoc の行。name（パスに使う名前）と kind: item（項目。heading と中の rows、5 段まで）・text（本文）・table（表）・diagram（図）・diagrams（セクションの図）・card（カードの表）。パスはフィールドと同じ形式（Docs:Spec.auth.login）"
           }
         }
       }
@@ -1580,7 +1580,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの組。main・branch とボードの根の直下はプロジェクトの project_tree で決まり（種類と名前と並び）、ほかのセクションはその中に作り、入れ子にできる。パスでは Store/Ordering:Order のように書く"
+            "value" : "カードのグループ。main・branch とボードのルートの直下はプロジェクトの project_tree で決まり（種類と名前と並び）、ほかのセクションはその中に作り、入れ子にできる。パスでは Store/Ordering:Order のように書く"
           }
         }
       }
@@ -1634,7 +1634,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ホワイトボードの図形。形（rect・rounded・ellipse・diamond・cylinder・text）と字（Markdown）と塗り・縁の色を持ち、図の上ではカードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。大きさは手で決めなければ字から決まり、位置を書かずに作ったものは矢印をたどって左から右へ並ぶ"
+            "value" : "ホワイトボードの図形。形（rect・rounded・ellipse・diamond・cylinder・text）と字（Markdown）と塗り・縁の色を持ち、図の上ではカードのヘッダーを描かずに形そのものを描く。矢印（arrow）でつなぐ。サイズは手で決めなければ字から決まり、位置を書かずに作ったものは矢印をたどって左から右へ並ぶ"
           }
         }
       }
@@ -1652,7 +1652,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "仕様。ドキュメントセクションに置く、機能のねらい（As・I want・So that）と Scenario（題と Given・When・Then・And・But の段）を決まった形で持つ文書。Scenario ごとにパス（<カード>.<name>）があり、確かめるテストへの線（testedBy）を引く。線の無い Scenario は点検に出る。エクスポートすると Markdown（# Feature・## Scenario）"
+            "value" : "仕様。ドキュメントセクションに置く、機能のねらい（As・I want・So that）と Scenario（タイトルと Given・When・Then・And・But のステップ）を決まった形式で持つドキュメント。Scenario ごとにパス（<カード>.<name>）があり、確かめるテストへの線（testedBy）を引く。線の無い Scenario はインスペクションに出る。エクスポートすると Markdown（# Feature・## Scenario）"
           }
         }
       }
@@ -1670,7 +1670,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "積み重ね文書。ドキュメントセクションに置く、版（versions）を新しい順に重ねた文書（変更履歴など）。図とエディタはセレクタで選んだ版を見せる。エクスポートするとカード全体が 1 ファイルで、エクスポートの項目に版のパスを書くとその版だけ"
+            "value" : "ドキュメントセクションに置く、バージョン（versions）を新しい順に重ねたドキュメント（変更履歴など）。図とエディタはセレクタで選んだバージョンを見せる。エクスポートするとカード全体が 1 ファイルで、エクスポートの項目にバージョンのパスを書くとそのバージョンだけ"
           }
         }
       }
@@ -1724,7 +1724,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SVG の絵。本文（body）に SVG を書き、図の上ではカードの箱に収めて（縦横の比を保って）画像として描く（中のスクリプトは動かず、外のものは読み込まない）。本文は XML として読め、根が svg の要素であること。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.svg）"
+            "value" : "SVG の画像。本文（body）に SVG を書き、図の上ではカードの箱に収めて（縦横の比を保って）画像として描く（中のスクリプトは動かず、外のものは読み込まない）。本文は XML として読め、ルートが svg の要素であること。ドキュメント・フリー・UI のセクションに置き、サイズを変えられる。エクスポートすると 1 枚が 1 ファイル（.svg）"
           }
         }
       }
@@ -1742,7 +1742,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "関数と型。関数と型を拾う言語の作業ディレクトリのファイルの中の関数・メソッド・型・モジュール・定数・マクロで、コアが同梱の tree-sitter の文法で読むたびにファイルから作るカード（保存しない）。パスはファイルのパスに続ける（repo/src:'a.rs'.Order.total。同じ親に同じ名前が並べば、あとのものに「 (2)」）。of（どの言語でも同じ分け方。画面の札は ƒ が関数とメソッド・T が型・M がモジュール・C が定数・# がマクロ）・word（その言語での呼び方: fn・struct・protocol など）・language を持つ。main と branch のカードから実装の線（implementedBy）で指せ、関数と型から線は出せない。card_read で宣言の 1 行（declaration）・中身（body）・呼んでいる名前（calls）を読む"
+            "value" : "シンボル。シンボルを読み取る言語の作業ディレクトリのファイルの中の関数・メソッド・型・モジュール・定数・マクロで、コアが同梱の tree-sitter の文法で読むたびにファイルから作るカード（保存しない）。パスはファイルのパスに続ける（repo/src:'a.rs'.Order.total。同じ親に同じ名前が並べば、あとのものに「 (2)」）。of（どの言語でも同じ分け方。画面のバッジは ƒ が関数とメソッド・T が型・M がモジュール・C が定数・# がマクロ）・word（その言語での呼び方: fn・struct・protocol など）・language を持つ。main と branch のカードから実装の線（implementedBy）で指せ、シンボルから線は出せない。card_read で宣言の 1 行（declaration）・中身（body）・呼んでいる名前（calls）を読む"
           }
         }
       }
@@ -1760,7 +1760,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "表。形（entity・value）のデータ（instance）を決まり（within・where・columns・sort・unnest）で集めた表のカード。定義・ドキュメント・フリーのセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）。図は組み上がった表の絵で、文書には本文の埋め込みか行 card で表として入り、エクスポートでは Markdown の表"
+            "value" : "表。形（entity・value）のデータ（instance）を条件（within・where・columns・sort・unnest）で集めた表のカード。定義・ドキュメント・フリーのセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）。図は組み上がった表の画像で、ドキュメントには本文の埋め込みか行 card で表として入り、エクスポートでは Markdown の表"
           }
         }
       }
@@ -1778,7 +1778,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タスク。済みのチェック（done）と、本文（body。決めたこと・どこまで進んだか・経緯）と、つながる線（connections の line: link）を持つ。goal の中に入れると、goal の行（番号・チェック・名前）として出る。図の上では種類の定義の face のとおり、チェックと本文の Markdown で描き、大きさを変えられる"
+            "value" : "タスク。済みのチェック（done）と、本文（body。決めたこと・どこまで進んだか・経緯）と、つながる線（connections の line: link）を持つ。goal の中に入れると、goal の行（番号・チェック・名前）として出る。図の上では種類の定義の face のとおり、チェックと本文の Markdown で描き、サイズを変えられる"
           }
         }
       }
@@ -1814,7 +1814,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開始のきっかけ: manual（手動）・receive（受ける）・event（ほかのフローの終わり）・schedule（定期）・startup（起動のたび）"
+            "value" : "開始のトリガー: manual（手動）・receive（受ける）・event（ほかのフローの終わり）・schedule（定期）・startup（起動のたび）"
           }
         }
       }
@@ -1832,7 +1832,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UI のセクション。部品（html・svg のカード）と、ほかの UI のセクションをはめ込むはめ込み（frame）を置いて画面を組む。note も置ける。中に作るセクションも ui。プロジェクトの project_tree に type: ui で足す。画面ではセクションマップで開き、部品をモックと同じ見た目で、置いた所に並び順に重ねて描く。部品の角に見出しの札（headerPlace）と付箋（notePlace）を重ね、図の上のバーの「見出し」「ノート」で出し入れする"
+            "value" : "UI のセクション。部品（html・svg のカード）と、ほかの UI のセクションをはめ込むフレーム（frame）を置いて画面を組む。note も置ける。中に作るセクションも ui。プロジェクトの project_tree に type: ui で足す。画面ではセクションマップで開き、部品をモックと同じ見た目で、置いた所に並び順に重ねて描く。部品の角に見出しのバッジ（headerPlace）と付箋（notePlace）を重ね、図の上のバーの「見出し」「ノート」で出し入れする"
           }
         }
       }
@@ -1886,7 +1886,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "stackdoc で開いている版（版の name。見かけで、コミットにならない）。無ければ一番上の版"
+            "value" : "stackdoc で開いているバージョン（バージョンの name。見かけで、コミットにならない）。無ければ一番上のバージョン"
           }
         }
       }
@@ -1904,7 +1904,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "stackdoc の版。name（パスに使う名前）・key（セレクタに出す名前）・heading（見出し。省くと key）・body（本文の Markdown）。並びは新しい版が上で、版のパスは Docs:Changelog.v1_2_0"
+            "value" : "stackdoc のバージョン。name（パスに使う名前）・key（セレクタに出す名前）・heading（見出し。省くと key）・body（本文の Markdown）。並びは新しいバージョンが上で、バージョンのパスは Docs:Changelog.v1_2_0"
           }
         }
       }
@@ -1958,7 +1958,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作業ディレクトリのセクション。main と各 branch の根の直下に、プロジェクトの木に種類 workdir で並べたもの。中はこの機械のフォルダから読んで作る読むだけのもので、置けるのはメモだけ。設定はそのセクションの section_update（readType・exclude・description・folder）、読み直すのはアクションの「読み込む」（section_action の op: read）"
+            "value" : "作業ディレクトリのセクション。main と各 branch のルートの直下に、プロジェクトのツリーに種類 workdir で並べたもの。中はこのマシンのフォルダから読んで作る読み取り専用のもので、置けるのはメモだけ。設定はそのセクションの section_update（readType・exclude・description・folder）、再読み込みはアクションの「再読み込み」（section_action の op: read）"
           }
         }
       }
@@ -1976,7 +1976,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場所へ書く（writes の線）"
+            "value" : "ストアへ書く（writes の線）"
           }
         }
       }

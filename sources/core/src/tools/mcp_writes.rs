@@ -1281,11 +1281,11 @@ mod tests {
         let cards = find("card_update").unwrap();
         assert_eq!(
             denied(&[rules, cards], &[]),
-            "このプロジェクトでは、project_update.rules（書き方の決まり）・card_update（カードを変える） は MCP から使えません（拒否）。変えられるのは人だけで、アプリのプロジェクト設定の「MCP」のタブで許可か都度承認にします"
+            "このプロジェクトでは、project_update.rules（書き方のルール）・card_update（カードを変える） は MCP から使えません（拒否）。変えられるのは人だけで、アプリのプロジェクト設定の「MCP」のタブで許可か都度承認にします"
         );
         assert_eq!(
             denied(&[], &[key_item("app_control.capture")]),
-            "このアクセスキーでは、app_control.capture（画面を撮る） は使えません（拒否）。変えられるのは人だけで、プロジェクト一覧の場所の設定の「アクセスキー」でこのキーの項目を許可か都度承認にします"
+            "このアクセスキーでは、app_control.capture（画面をキャプチャする） は使えません（拒否）。変えられるのは人だけで、プロジェクト一覧の場所の設定の「アクセスキー」でこのキーの項目を許可か都度承認にします"
         );
         let asked = [Asked {
             item: rules,
@@ -1297,7 +1297,7 @@ mod tests {
         }];
         assert_eq!(
             not_requested(&asked, "project_update"),
-            "project_update.rules（書き方の決まり） は都度承認です。project_update に request: true を付けて呼び直すと、画面に許可を求めて答えを待ちます（2 分まで）"
+            "project_update.rules（書き方のルール） は都度承認です。project_update に request: true を付けて呼び直すと、画面に許可を求めて答えを待ちます（2 分まで）"
         );
     }
 }

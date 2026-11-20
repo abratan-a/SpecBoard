@@ -1,6 +1,6 @@
 import Foundation
 
-/// A version of a stackdoc (`specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」):
+/// A version of a stackdoc (`specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」):
 /// a row of its `versions` — its name for paths (`Docs:Changelog.v0_2_21`), its key for the selector
 /// (`0.2.21`), its heading (the key when none) and its body in Markdown.
 nonisolated struct StackVersion: Equatable, Hashable, Sendable {

@@ -58,7 +58,7 @@ fn svg_and_html_cards_are_made_read_and_changed_with_their_body() {
 fn an_svg_body_that_is_not_svg_is_refused_and_an_html_body_is_not_checked() {
     let core = core();
     for (body, said) in [
-        ("<html><body/></html>", "根の要素が <html> です"),
+        ("<html><body/></html>", "ルート要素が <html> です"),
         ("<svg><g></svg>", "SVG として読めません（1 行目"),
         ("ただの文", "要素がありません"),
     ] {
@@ -306,7 +306,7 @@ fn a_body_from_a_file_is_refused_with_why_and_nothing_is_written() {
         ),
         (
             json!({"kind": "html", "bodyFrom": from("docs_2", "a.html")}),
-            "この置き場でのフォルダが決まっていません",
+            "この場所でのフォルダが決まっていません",
         ),
         (
             json!({"kind": "html", "bodyFrom": from("repo", "../secret.txt")}),

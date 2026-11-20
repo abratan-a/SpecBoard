@@ -303,9 +303,9 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
         ]
     );
     for part in [
-        "## start（begin）\n\n返金の終わりを受ける\n\n- きっかけ: `event`\n- event: [[Charts/Shop:Refund]] が `success`\n- 次: [[Charts/Shop:Tell.send]]\n",
-        "## send（process）\n\n**送る**\n\n| 行 | do | 相手・パス | 運ぶもの | 説明 |\n|---|---|---|---|---|\n| `steps[0]` | send | `mailer`（via `http`） | [[Schemas/Ordering:Order.id]] | メールで |\n\n- 次: [[Charts/Shop:Tell.wait]]\n",
-        "## wait（wait）\n\n- 待つもの: `timer`\n- 期限: 1時間\n- 次: [[Charts/Shop:Tell.again]]\n- 期限切れ: [[Charts/Shop:Tell.gave_up]]\n",
+        "## start（begin）\n\n返金の終わりを受ける\n\n- トリガー: `event`\n- event: [[Charts/Shop:Refund]] が `success`\n- 次: [[Charts/Shop:Tell.send]]\n",
+        "## send（process）\n\n**送る**\n\n| ステップ | do | 相手・パス | 運ぶもの | 説明 |\n|---|---|---|---|---|\n| `steps[0]` | send | `mailer`（via `http`） | [[Schemas/Ordering:Order.id]] | メールで |\n\n- 次: [[Charts/Shop:Tell.wait]]\n",
+        "## wait（wait）\n\n- 待つもの: `timer`\n- タイムアウト: 1時間\n- 次: [[Charts/Shop:Tell.again]]\n- タイムアウトしたら: [[Charts/Shop:Tell.gave_up]]\n",
         "## again（run）\n\n- 呼ぶ flow: [[Charts/Shop:Checkout]]\n- 次: [[Charts/Shop:Tell.done]]\n- 失敗したら: [[Charts/Shop:Tell.gave_up]]\n",
         "## gave_up（end）\n\n- 結果: `cancelled`",
     ] {
@@ -315,7 +315,7 @@ fn a_flow_is_read_as_one_markdown_with_every_node_its_rows_and_its_ways() {
     // back.
     let (_, refund) = markdown(&core, "Charts/Shop:Refund");
     for part in [
-        "- きっかけ: `receive`\n- 相手: [[Charts/Shop:Checkout]]\n- 運ぶもの: [[Schemas/Ordering:Order.total]]\n",
+        "- トリガー: `receive`\n- 相手: [[Charts/Shop:Checkout]]\n- 運ぶもの: [[Schemas/Ordering:Order.total]]\n",
         "| `steps[0]` | call | `payment-gateway` | [[Schemas/Ordering:Order.total]] → [[Schemas/Ordering:Order.status]] |  |",
         "| `steps[1]` | send | [[Charts/Shop:Checkout]] | [[Schemas/Ordering:Order.id]] |  |",
         "- 次（並列）: [[Charts/Shop:Refund.a]]、[[Charts/Shop:Refund.b]]",
@@ -365,7 +365,7 @@ fn a_nodes_lines_are_held_to_the_flows_kinds_of_line() {
         ),
     );
     assert!(
-        said.contains("相手は同じ入れ物（Charts/Shop:Pay）の中のカードです"),
+        said.contains("相手は同じコンテナ（Charts/Shop:Pay）の中のカードです"),
         "{said}"
     );
     // An end goes nowhere; a row is one there is; a key says its use.
@@ -1302,10 +1302,10 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Note over P1: send 配る",
             "activate P1",
             "deactivate P1",
-            "Note over P1: wait approval（期限 30秒）",
+            "Note over P1: wait approval（タイムアウト 30秒）",
             "alt 間に合ったとき",
             "Note over P1: 配った",
-            "else 期限切れ",
+            "else タイムアウト",
             "Note over P1: expire リースを切る",
             "activate P1",
             "deactivate P1",
@@ -1332,8 +1332,8 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
     assert_eq!(
         lines_from(&chart, "Note over P1: wait approval", 2),
         [
-            "Note over P1: wait approval（期限 30秒）",
-            "Note right of P1: ✕ 期限切れ → cancelled",
+            "Note over P1: wait approval（タイムアウト 30秒）",
+            "Note right of P1: ✕ タイムアウト → cancelled",
         ],
         "{chart}"
     );
@@ -1369,8 +1369,8 @@ fn a_waits_time_running_out_is_drawn_as_a_way_of_its_own() {
             "Note over P1: send 配る",
             "activate P1",
             "deactivate P1",
-            "Note over P1: wait approval（期限 30秒）",
-            "alt 期限切れ",
+            "Note over P1: wait approval（タイムアウト 30秒）",
+            "alt タイムアウト",
             "Note over P1: expire リースを切る",
             "activate P1",
             "deactivate P1",

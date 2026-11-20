@@ -4,7 +4,7 @@
   "kindConvert.problem.noCard": "「{path}」というカードはありません",
   "kindConvert.problem.noCardUnmade": "「{path}」というカードはありません（同じ呼び出しで作れなかった {card} を指すため。{card} を直せば通る）",
   "kindConvert.problem.noCardWhy": "「{path}」というカードはありません。{why}",
-  "kindConvert.problem.noSection": "「{path}」というセクションはありません（セクションは木の頭から UI/Home のように書きます）",
+  "kindConvert.problem.noSection": "「{path}」というセクションはありません（セクションはツリーの先頭から UI/Home のように書きます）",
   "kindConvert.problem.rowKey": "「{key}」は{label}の行に書けないキーです",
   "kindConvert.problem.rowNotPlaceable": "「{key}」は置けない行です",
   "kindConvert.problem.rowObject": "行はオブジェクトです",

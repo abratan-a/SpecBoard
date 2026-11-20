@@ -1,5 +1,5 @@
 //! A body read from a file (`bodyFrom: {directory, path}` in `card_create`'s and `card_update`'s
-//! value — at its top, in a formatdoc's text rows and in a stackdoc's versions —,
+//! value — at its top, in a structdoc's text rows and in a stackdoc's versions —,
 //! `specboard://SpecBoard/Docs/Design:CoreApi`「本文をファイルから取り込む」): the text of a
 //! file in one of the project's working directories, from its folder on this machine, written as
 //! the body. The card holds it from then on, tied to nothing: what is in the file changes outside
@@ -49,7 +49,7 @@ impl Budget {
 }
 
 /// Where a `bodyFrom` may stand in the value of one target: on the target itself (when it has a
-/// body), in its `rows` (a formatdoc's) and in its `versions` (a stackdoc's).
+/// body), in its `rows` (a structdoc's) and in its `versions` (a stackdoc's).
 #[derive(Clone, Copy, Default)]
 pub(crate) struct Holds {
     /// Whether the target takes a body; none when it cannot be told (a batch step is received

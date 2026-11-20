@@ -1,4 +1,4 @@
-//! A part's review marks (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」): a
+//! A part's review marks (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」): a
 //! part — an html, svg or frame card — is drawn from the cards its lines reach (an entity it shows, a
 //! flow it starts), so when one of them changes after the part last did, the part may no longer say
 //! what that card says, and is marked to be looked at again. Writing the part — its action

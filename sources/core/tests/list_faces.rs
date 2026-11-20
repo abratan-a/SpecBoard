@@ -144,13 +144,13 @@ fn a_face_that_does_not_fit_its_fields_is_refused_with_every_problem_and_nothing
             "fold": ["name", "given", "given"]}}}),
     );
     for wanted in [
-        "Data:Case.face.text: この形に欄「nope」はありません",
-        "Data:Case.face.note: given は文字（string・text）か列挙の 1 つの値の欄ではない",
-        "Data:Case.face.list: checks は entity・value の形の要素の並びではない",
-        "Data:Case.face.mark.field: checks は列挙か bool の 1 つの値の欄ではない",
-        "Data:Case.face.mark.values.x: \"green\" は印の役ではありません",
-        "Data:Case.face.mark.none: \"red\" は印の役ではありません",
-        "Data:Case.face.fold[1]: given は行の字・後ろの字・印に出している",
+        "Data:Case.face.text: この形にフィールド「nope」はありません",
+        "Data:Case.face.note: given は文字（string・text）か列挙の 1 つの値のフィールドではない",
+        "Data:Case.face.list: checks は entity・value の形の要素の配列ではない",
+        "Data:Case.face.mark.field: checks は列挙か bool の 1 つの値のフィールドではない",
+        "Data:Case.face.mark.values.x: \"green\" はマークの役ではありません",
+        "Data:Case.face.mark.none: \"red\" はマークの役ではありません",
+        "Data:Case.face.fold[1]: given は行の字・後ろの字・マークに出している",
         "Data:Case.face.fold[2]: given を 2 度書いています",
     ] {
         assert!(said.contains(wanted), "wanted「{wanted}」: {said}");
@@ -170,7 +170,7 @@ fn a_face_that_does_not_fit_its_fields_is_refused_with_every_problem_and_nothing
             "mark": {"field": "result", "values": {"broken": "bad"}}}}}),
     );
     assert!(
-        said.contains("Data:Case.face.mark.values.broken: broken は欄の値ではありません"),
+        said.contains("Data:Case.face.mark.values.broken: broken はフィールドの値ではありません"),
         "{said}"
     );
     // A card made with a wrong face is not made.

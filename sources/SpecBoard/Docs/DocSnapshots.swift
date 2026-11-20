@@ -3,7 +3,7 @@ import WebKit
 
 /// Pictures of documents, for the cards that show one (overview §12).
 ///
-/// A freedoc's card, and a formatdoc's when it reads as a document, shows the whole
+/// A freedoc's card, and a structdoc's when it reads as a document, shows the whole
 /// Markdown as it reads — diagrams drawn — without a web view of its own on the
 /// canvas: the page is drawn once out of sight at the card's width, and a picture of
 /// it is what the card shows. It is drawn again only when the text, the width or the

@@ -158,7 +158,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作る"
+            "value" : "作成"
           }
         }
       }
@@ -374,7 +374,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ につながりません"
+            "value" : "%@ に接続できません"
           }
         }
       }
@@ -410,7 +410,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "インターネットにつながっていません"
+            "value" : "インターネットに接続されていません"
           }
         }
       }
@@ -464,7 +464,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "応答がないまま時間切れになりました"
+            "value" : "応答がないままタイムアウトしました"
           }
         }
       }
@@ -482,7 +482,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コアの答えが読めません"
+            "value" : "コアのレスポンスが読めません"
           }
         }
       }
@@ -500,7 +500,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コアの答えが読めません: %@"
+            "value" : "コアのレスポンスが読めません: %@"
           }
         }
       }
@@ -644,7 +644,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄"
+            "value" : "フィールド"
           }
         }
       }

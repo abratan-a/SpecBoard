@@ -11,7 +11,7 @@ import SwiftUI
 /// other parts give way first, in this order:
 /// 1. the label is cut short — and left out when not even a few letters of it fit (never an
 ///    ellipsis alone);
-/// 2. the badge says the kind's name alone (`freedoc（自由文書）` → `freedoc`);
+/// 2. the badge says the kind's name alone (`freedoc（フリードキュメント）` → `freedoc`);
 /// 3. the tools go compact (`cardBarCompact`): marks without words, a switch between ways to
 ///    look as marks (`BarLabel`), and what goes together in one menu (`BarMenu`, `CardTools`);
 /// 4. the name is cut short, down to its first few letters and an ellipsis — no further.
@@ -93,7 +93,7 @@ struct CardBar<Leading: View, Tools: View>: View {
     }
 }
 
-/// The line below a card editor (a flow's legend, a goal's card map, a formatdoc's adding):
+/// The line below a card editor (a flow's legend, a goal's card map, a structdoc's adding):
 /// what it holds on the left — the legend, buttons — and on the right how it is used.
 ///
 /// Never a column a letter or two wide (as the bar above was): the items

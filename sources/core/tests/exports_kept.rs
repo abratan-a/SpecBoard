@@ -148,7 +148,7 @@ fn an_enums_described_values_are_written_out_as_kept() {
     );
     mcp(
         "card_create",
-        json!({"target": "Docs:Statuses", "value": {"kind": "formatdoc", "rows": [
+        json!({"target": "Docs:Statuses", "value": {"kind": "structdoc", "rows": [
             {"kind": "card", "name": "status", "target": "Schemas:Status"},
             {"kind": "card", "name": "payment", "target": "Schemas:Payment"}
         ]}}),

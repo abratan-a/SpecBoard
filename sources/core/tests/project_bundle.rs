@@ -155,7 +155,7 @@ fn a_project_moves_whole_and_what_is_the_stores_stays() {
             &fresh,
             json!({"op": "project_bundle_read", "bundle": other})
         )
-        .contains("置き場の形が違います")
+        .contains("データベースのバージョンが違います")
     );
     // Another project by its slug there: refused.
     tool(&fresh, "project_create", json!({"project": "動く"}));
@@ -258,7 +258,7 @@ fn an_archived_project_moves_archived() {
     assert!(
         said["error"]
             .as_str()
-            .is_some_and(|e| e.contains("アーカイブです（読むだけ）")),
+            .is_some_and(|e| e.contains("アーカイブです（読み取り専用）")),
         "{said}"
     );
 }
@@ -333,7 +333,7 @@ fn a_bundle_whose_history_names_what_it_does_not_hold_is_refused() {
             &there,
             json!({"op": "project_bundle_read", "bundle": hostile}),
         );
-        assert!(said.contains("束に無い"), "{table}: {said}");
+        assert!(said.contains("バンドルに無い"), "{table}: {said}");
         assert_eq!(
             ok(&there, json!({"op": "projects"}))["projects"]
                 .as_array()

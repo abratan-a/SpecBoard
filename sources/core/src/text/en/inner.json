@@ -5,7 +5,7 @@
   "inner.error.besideSelf": "{key} cannot name the row itself ({name})",
   "inner.error.exists": "{path} already exists (to change it, use card_update)",
   "inner.error.noDefinition": "There is no kind definition for {kind}",
-  "inner.error.noFormatdoc": "No formatdoc found at {path}",
+  "inner.error.noFormatdoc": "No structdoc found at {path}",
   "inner.error.noSpec": "No spec holds \"{path}\"",
   "inner.error.noStackdoc": "No stackdoc found at {path}",
   "inner.error.notATable": "{path} is not a table row, so cells cannot be changed in part ({kind})",

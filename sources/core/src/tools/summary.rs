@@ -83,7 +83,7 @@ const COUNTED: [&str; 17] = [
     "flow",
     "store",
     "freedoc",
-    "formatdoc",
+    "structdoc",
     "stackdoc",
     "spec",
     "instance",
@@ -520,7 +520,7 @@ fn row_links(links: &[RowLink]) -> Value {
 
 /// What a change at `path` reaches (the operation `get_impact`): the flows whose rows
 /// read or write inside it or around it, the notes and documents naming it, and — for
-/// a key — who signs and checks with it. For an item of a formatdoc: what its rows
+/// a key — who signs and checks with it. For an item of a structdoc: what its rows
 /// name, and the documents and items connected to it.
 pub(crate) fn impact_view(seen: &Seen, path: &str, base: Option<&str>) -> Result<Value, String> {
     let project = seen.project();

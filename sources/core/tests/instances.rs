@@ -236,7 +236,7 @@ fn a_data_card_is_read_and_written_a_value_at_a_time() {
         "card_read",
         json!({"target": "Data:first.lines.sku"}),
     );
-    assert!(inside.contains("並び（配列）"), "{inside}");
+    assert!(inside.contains("配列で、その中は"), "{inside}");
     let unknown = refused(&core, "card_read", json!({"target": "Data:first.nope"}));
     assert!(
         unknown.contains("Data:first の下にあるフィールドは: id"),
@@ -261,7 +261,7 @@ fn a_data_card_is_read_and_written_a_value_at_a_time() {
         json!({"target": "Data:first.lines", "value": {"value": "A-1"}}),
     );
     assert!(
-        wrong.contains("Data:first.lines: 並び（配列）ではありません"),
+        wrong.contains("Data:first.lines: 配列ではありません"),
         "{wrong}"
     );
     ok(&core, "card_delete", json!({"target": "Data:first.total"}));
@@ -550,7 +550,7 @@ fn a_data_cards_value_draws_a_line_to_another_card() {
         json!({"target": "Data:first", "value": {"connections": {"add": [{"line": "points", "from": "customer_id", "to": "Data:alice"}]}}}),
     );
     assert!(
-        points.contains("この線は entity・valueの欄 から出せます（instance の"),
+        points.contains("この線は entity・valueのフィールド から出せます（instance の"),
         "{points}"
     );
 }
@@ -592,11 +592,11 @@ fn an_arrays_element_is_picked_by_its_values_or_its_place() {
     for (target, why) in [
         (
             "Data:first.lines[sku=B-2]",
-            "Data:first.lines[sku=B-2]: 2 つに当たります（lines[1]・lines[2]）",
+            "Data:first.lines[sku=B-2]: 2 つに一致します（lines[1]・lines[2]）",
         ),
         (
             "Data:first.lines[sku=Z-9]",
-            "Data:first.lines[sku=Z-9]: 当たる要素がありません",
+            "Data:first.lines[sku=Z-9]: 一致する要素がありません",
         ),
         (
             "Data:first.lines[3]",
@@ -608,14 +608,17 @@ fn an_arrays_element_is_picked_by_its_values_or_its_place() {
     for (target, why) in [
         (
             "Data:first.lines[skuu=A-1]",
-            "lines の要素に欄「skuu」はありません（欄: sku・qty）",
+            "lines の要素にフィールド「skuu」はありません（フィールド: sku・qty）",
         ),
         (
             "Data:first.lines[=A-1]",
-            "lines の要素は欄（sku・qty）を持つので",
+            "lines の要素はフィールド（sku・qty）を持つので",
         ),
-        ("Data:first.status[0]", "status は並び（配列）ではない"),
-        ("Data:first.lines[sku]", "欄の値の条件 [欄=値,…]"),
+        ("Data:first.status[0]", "status は配列ではない"),
+        (
+            "Data:first.lines[sku]",
+            "フィールドの値の条件 [フィールド=値,…]",
+        ),
     ] {
         let said = refused(&core, "card_read", json!({"target": target}));
         assert!(said.contains(why), "{target}: {said}");
@@ -659,7 +662,7 @@ fn an_arrays_element_is_picked_by_its_values_or_its_place() {
         "card_delete",
         json!({"target": "Data:first.lines[sku=Z-9]"}),
     );
-    assert!(gone.contains("当たる要素がありません"), "{gone}");
+    assert!(gone.contains("一致する要素がありません"), "{gone}");
 }
 
 #[test]
@@ -794,7 +797,7 @@ fn a_line_from_an_element_goes_with_it() {
     );
     let said = json!(broken(&core)).to_string();
     assert!(
-        said.contains("Data:first.lines[sku=A-2]") && said.contains("当たる要素がありません"),
+        said.contains("Data:first.lines[sku=A-2]") && said.contains("一致する要素がありません"),
         "{said}"
     );
     // A field a pick names renamed: the picks follow.
@@ -828,7 +831,7 @@ fn a_line_from_an_element_goes_with_it() {
     assert!(
         pending["warnings"]
             .to_string()
-            .contains("当たる要素がありません"),
+            .contains("一致する要素がありません"),
         "{pending}"
     );
 }
@@ -933,7 +936,7 @@ fn a_line_written_as_a_schema_puts_its_form_into_the_data_json() {
     );
     let problems = checked["problems"].to_string();
     for wanted in [
-        "export の as が schema の線は、データ（instance）の欄・要素",
+        "export の as が schema の線は、データ（instance）のフィールド・要素",
         "export の as が schema の線は、形（to の kinds が entity・value",
     ] {
         assert!(problems.contains(wanted), "wanted「{wanted}」: {checked}");
@@ -1362,7 +1365,7 @@ fn a_value_put_in_from_data_is_written_out_and_one_not_found_is_said_why() {
         [
             (
                 "Data:vault.ports[number=8200].note",
-                "Data:vault.ports[number=8200]: 2 つに当たります（ports[0]・ports[2]）"
+                "Data:vault.ports[number=8200]: 2 つに一致します（ports[0]・ports[2]）"
             ),
             (
                 "Data:vault.ports[2].note",
@@ -1396,7 +1399,7 @@ fn a_value_put_in_from_data_is_written_out_and_one_not_found_is_said_why() {
     );
     assert_eq!(
         put["result"]["problems"]["Data:vault.ports[number=8200].note"],
-        "Data:vault.ports[number=8200]: 2 つに当たります（ports[0]・ports[2]）"
+        "Data:vault.ports[number=8200]: 2 つに一致します（ports[0]・ports[2]）"
     );
 }
 

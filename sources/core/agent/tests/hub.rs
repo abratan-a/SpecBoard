@@ -682,7 +682,10 @@ fn a_member_not_enrolled_is_turned_away() {
     let mut z = host.member_silent("z");
     let said = z.next();
     assert_eq!(said["t"], "refused", "{said}");
-    assert!(said["message"].as_str().unwrap().contains("名簿"), "{said}");
+    assert!(
+        said["message"].as_str().unwrap().contains("メンバーリスト"),
+        "{said}"
+    );
     assert!(z.try_next().is_none());
     assert_ne!(z.ended(), 0);
 
@@ -719,8 +722,10 @@ fn a_members_second_connection_takes_the_firsts_place() {
 fn another_protocol_is_turned_away_saying_which_to_renew() {
     let host = Host::new();
     let mut app = host.with_members(&[("a", "Mac")]);
-    for (protocol, renew) in [(PROTOCOL + 1, "ハブを新しく"), (0, "エージェントを新しく")]
-    {
+    for (protocol, renew) in [
+        (PROTOCOL + 1, "ハブをアップデート"),
+        (0, "エージェントをアップデート"),
+    ] {
         let mut a = host.member_silent("a");
         a.send(&json!({"t": "hello", "protocol": protocol, "build": "1"}));
         let said = a.next();

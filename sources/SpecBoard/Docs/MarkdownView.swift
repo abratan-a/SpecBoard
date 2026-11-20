@@ -17,7 +17,7 @@ struct MarkdownView: View {
     var size: CGFloat = 12
     /// For a note: how its `[[path]]` and `{{path}}` read. Nil leaves them as text.
     var refs: MarkdownRefs? = nil
-    /// For a formatdoc read as a document (`RowMarks`): the right-click on a row, with the row's path in the
+    /// For a structdoc read as a document (`RowMarks`): the right-click on a row, with the row's path in the
     /// document, rearranges the menu WebKit is about to open — true when it did.
     var rowMenu: ((String, NSMenu) -> Bool)? = nil
 
@@ -133,7 +133,7 @@ enum MarkdownPage {
     /// a table is laid out by its content and cut at the column's edge when wider. The
     /// card is widened or zoomed into to read them.
     ///
-    /// A formatdoc's text with its rows marked (`RowMarks`) is drawn a row to a block, its items' brackets in
+    /// A structdoc's text with its rows marked (`RowMarks`) is drawn a row to a block, its items' brackets in
     /// the left margin; on the card editor's page (not `card`), a row right-clicked is told to the app.
     static func html(_ markdown: String, size: CGFloat, refs: MarkdownRefs? = nil, card: Bool = false) -> String {
         let resolved = refs?.resolve(markdown) ?? markdown
@@ -141,7 +141,7 @@ enum MarkdownPage {
         let body = marked.map { RowMarks.html($0) } ?? Markdown.html(resolved)
         let diagram = Markdown.hasDiagram(body)
         let px = String(format: "%.1f", size)
-        // A formatdoc's rows: their page's room and menu. A spec's scenarios alone take neither.
+        // A structdoc's rows: their page's room and menu. A spec's scenarios alone take neither.
         let rows = marked.flatMap { $0.blocks.contains { [.item, .row].contains($0.mark.kind) } ? $0 : nil }
         let classes = rows == nil ? [] : ["sb-rows"] + (rows?.outlined == true ? ["sb-outline"] : [])
         let look = css(px) + (card ? cardCSS : "")
@@ -230,7 +230,7 @@ enum MarkdownPage {
         .mermaid { overflow: hidden; }
         """
 
-    /// A formatdoc's rows as blocks (`RowMarks.html`): each item's bracket in the left margin, a colour to a
+    /// A structdoc's rows as blocks (`RowMarks.html`): each item's bracket in the left margin, a colour to a
     /// depth. The blocks keep the document's spacing — a section has no margin, padding or border of its own,
     /// so its first and last child's margins pass through it — and draw a lit row and its item with shadows,
     /// which take no room.

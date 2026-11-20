@@ -1,10 +1,10 @@
 {
-  "tools.branch.directoryGone": "branch「{name}」はありません。作業ディレクトリは main と各 branch の根の直下のセクションになりました。branch を省いて repo/src:'a.rs' のように、作業ディレクトリの名前から書いて読みます（読み直すのは section_action の op: read）",
+  "tools.branch.directoryGone": "branch「{name}」はありません。作業ディレクトリは main と各 branch のルートの直下のセクションになりました。branch を省いて repo/src:'a.rs' のように、作業ディレクトリの名前から書いて読みます（再読み込みは section_action の op: read）",
   "tools.branch.gone": "branch「{name}」はありません。あるのは: {listed}",
   "tools.branch.notTaken": "{name} は branch を取りません（プロジェクトの設定は branch ごとには持ちません。branch を取るのはセクションとカードを読み書きするツールです）",
-  "tools.branchInPath": "「{found}@…」: パスに branch は書きません。branch {found} の中は、引数 branch: \"{found}\" で名指して読み書きします",
+  "tools.branchInPath": "「{found}@…」: パスに branch は書きません。branch {found} の中は、引数 branch: \"{found}\" で指定して読み書きします",
   "tools.capped": "{names} …ほか {count} 件",
-  "tools.doc.fieldsNotObject": "文書の fields がオブジェクトではありません",
+  "tools.doc.fieldsNotObject": "JSON の fields がオブジェクトではありません",
   "tools.kindList.noKey": "kind_list の value に「{key}」は書けません（value は取りません）",
   "tools.line.slashed": "{head} / {tail}",
   "tools.notYet": "「{name}」はまだ使えません（コアへ移している途中です）",

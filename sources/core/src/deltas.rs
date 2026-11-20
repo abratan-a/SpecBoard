@@ -1,5 +1,5 @@
 //! The screen's reading of a project (`project_detail`) told as what changed since the reader's last
-//! (`specboard://SpecBoard/Docs/Design:CoreApi`「頼み」): every answer carries a hash of each of its
+//! (`specboard://SpecBoard/Docs/Design:CoreApi`「リクエスト」): every answer carries a hash of each of its
 //! entries (`hashes`) and one over them all (`digest`); a request that says the digest the reader
 //! holds (`since`) is answered with only the entries that differ from it (`delta`), when the core
 //! sent that reader that digest of the same tree. The detail is built whole each time and compared

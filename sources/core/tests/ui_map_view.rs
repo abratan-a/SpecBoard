@@ -1,4 +1,4 @@
-//! A ui section drawn on its map (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」,
+//! A ui section drawn on its map (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」,
 //! `specboard://SpecBoard/Docs/Design:CoreApi`「モックを組み上げる」): each part's face is a page of
 //! that part alone, drawn as the mock draws it, which `section_read` gives with `as: mock` and
 //! `faces: true`; a part's `headerPlace` says the corner of its box the map shows its header tag at,

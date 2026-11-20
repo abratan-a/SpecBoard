@@ -743,10 +743,10 @@ struct KindsView: View {
 /// 「名前を変える…」 in the tab for kinds: a kind of card's field, kind of row or the kind itself
 /// given another name in its JSON, and its cards' values moved with it when it is saved
 /// (`kind_update`'s `name` and `renames`). A field the cards still hold that the definition no longer has
-/// (「定義に無い欄」) may be moved to one it has.
+/// (「定義に無いフィールド」) may be moved to one it has.
 struct KindRenameSheet: View {
     var text: String
-    /// The fields left behind in its cards (「定義に無い欄」), offered as what to move from.
+    /// The fields left behind in its cards (「定義に無いフィールド」), offered as what to move from.
     var strays: [String]
     /// The rename written into the draft, as the form writes one: why not, when it cannot be.
     var apply: (KindsEditing.Renamed, String, String) -> KindsEditing.Problem?

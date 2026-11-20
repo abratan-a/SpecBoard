@@ -122,7 +122,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードのまわりのマスを通る縦横の線で、ほかのカードの上を通らない。カードを置いたときに引き直し、動かしている間は曲線"
+            "value" : "カードの余白のマスを通る縦横の線で、ほかのカードの上を通らない。カードを置いたときに引き直し、動かしている間は曲線"
           }
         }
       }
@@ -140,7 +140,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行から相手の頭まで 1 本の曲線。間のカードの下を通る"
+            "value" : "行から相手のヘッダーまで 1 本の曲線。間のカードの下を通る"
           }
         }
       }
@@ -177,6 +177,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "線の引き方"
+          }
+        }
+      }
+    },
+    "notices.shownBubble" : {
+      "comment" : "Choice: a kind of notification is shown in a bubble in the header, pointing at the bell.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show a bubble"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吹き出しに出す"
           }
         }
       }
@@ -266,7 +284,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エラー・知らせ・AI の merge・アップデートの吹き出しに効きます。ポインタを載せているあいだは消えません。"
+            "value" : "エラー・通知・AI の merge・アップデートの吹き出しに効きます。ポインタを載せているあいだは消えません。"
           }
         }
       }
@@ -483,24 +501,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "文字の大きさ"
-          }
-        }
-      }
-    },
-    "notices.shownBubble" : {
-      "comment" : "Choice: a kind of notification is shown in a bubble in the header, pointing at the bell.",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show a bubble"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "吹き出しに出す"
           }
         }
       }

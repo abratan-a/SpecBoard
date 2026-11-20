@@ -65,7 +65,7 @@
     "id": "missingStores-53eb06f55a",
     "group": "missingStores",
     "kind": "fix",
-    "label": "置き場が書かれていない",
+    "label": "ストアが書かれていない",
     "at": "Charts/Shop:Refund.a.steps[0]",
     "problem": "Customer を置く store がありません（read Customer.name）",
     "shapes": [
@@ -73,7 +73,7 @@
     ],
     "op": "read",
     "data": "Customer.name",
-    "fix": "その形を置く store の holds に足します（内包される形なら、入れ物を置く store に）。いくつもの store に着いて決まらないときは、行にその store か、その store が置く形の中のパスを書きます"
+    "fix": "その形を置く store の holds に足します（内包される形なら、コンテナを置く store に）。いくつもの store に着いて決まらないときは、ステップにその store か、その store が置く形の中のパスを書きます"
   },
   {
     "id": "freeCards-ed84e339ac",
@@ -83,6 +83,6 @@
     "at": "Free:Memo",
     "problem": "フリーセクション Free に置いたままです",
     "section": "Free",
-    "fix": "置き場が決まったら、種類の合うセクションへ移します"
+    "fix": "置く場所が決まったら、種類の合うセクションへ移します"
   }
 ]

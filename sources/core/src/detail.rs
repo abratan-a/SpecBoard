@@ -130,7 +130,7 @@ const BROUGHT_UP: [&str; 8] = [
     "flow",
     "store",
     "freedoc",
-    "formatdoc",
+    "structdoc",
 ];
 
 /// A card's entry in the project read whole (`read`'s JSON, its typed reading and what the tree
@@ -1155,7 +1155,7 @@ const CARD_KINDS: [&str; 20] = [
     "instance",
     "table",
     "freedoc",
-    "formatdoc",
+    "structdoc",
     "stackdoc",
     "spec",
     "svg",
@@ -1735,7 +1735,7 @@ fn node_before(
     Value::Object(out)
 }
 
-/// A formatdoc's row as SP keeps it: its fields, with the rows inside under `rows`.
+/// A structdoc's row as SP keeps it: its fields, with the rows inside under `rows`.
 fn format_doc(row: &Value) -> Value {
     let mut out = row_fields(row);
     let inside: Vec<Value> = row_children(row, "rows").iter().map(format_doc).collect();

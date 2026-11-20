@@ -20,7 +20,7 @@
   "inPart.read.linesNumber": "lines.{key} is a line number from 1",
   "inPart.read.linesShape": "lines is {from, to} (line numbers start at 1)",
   "inPart.read.linesStray": "lines cannot take {stray} (from, to)",
-  "inPart.read.noBody": "{path} has no body (lines reads a body: the body of a freedoc, note, goal or task, a formatdoc's text rows, and a stackdoc's versions. find also searches everything inside a formatdoc, stackdoc or flow and its items)",
+  "inPart.read.noBody": "{path} has no body (lines reads a body: the body of a freedoc, note, goal or task, a structdoc's text rows, and a stackdoc's versions. find also searches everything inside a structdoc, stackdoc or flow and its items)",
   "inPart.read.toBefore": "lines.to is before lines.from",
   "inPart.word.body": "body",
   "inPart.word.cell": "cell"

@@ -1541,7 +1541,7 @@ final class SequenceView: NSView, NSViewToolTipOwner {
 }
 
 /// The heads of a sequence diagram kept at the top of its scroll view once scrolled past them
-/// (`specboard://SpecBoard/Docs/Design:UI`「止まる頭」): the diagram's own heads — brackets with their parents' names,
+/// (`specboard://SpecBoard/Docs/Design:UI`「止まるヘッダー」): the diagram's own heads — brackets with their parents' names,
 /// the heads and their chips — drawn from its layout at the scroll's zoom and following it sideways, over a light
 /// band with a line under it. A press on it is a press on the heads it shows, never on what lies under them; hidden
 /// while the heads themselves are in view.

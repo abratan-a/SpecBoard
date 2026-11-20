@@ -1,6 +1,6 @@
 //! Paths read against a project (`WrittenPath`, `CardWalk`, `resolvePath`, `landing` and
 //! `projectValue` in the Swift app's Model): a path taken apart, the walk of its names
-//! inside a card — a field, on through a `ref`; a formatdoc's row; a flow's node; a
+//! inside a card — a field, on through a `ref`; a structdoc's row; a flow's node; a
 //! custom card's row — and what it lands on.
 
 use super::Project;
@@ -62,7 +62,7 @@ pub struct Walk<'a> {
     pub legs: Vec<Vec<String>>,
 }
 
-/// The row of a formatdoc a path names, through items only.
+/// The row of a structdoc a path names, through items only.
 pub fn format_row<'r>(path: &[String], rows: &'r [FormatRow]) -> Option<&'r FormatRow> {
     let found = rows.iter().find(|r| Some(&r.name) == path.first())?;
     if path.len() == 1 {
@@ -112,7 +112,7 @@ pub fn walk<'a>(head: &'a Card, written: &[String], project: &Project<'a>) -> Op
         });
     }
     match head.kind.as_str() {
-        "formatdoc" => {
+        "structdoc" => {
             return format_deepest(names, &head.rows).then(|| Walk {
                 place: Place::FormatRow(names.to_vec()),
                 legs: vec![names.to_vec()],

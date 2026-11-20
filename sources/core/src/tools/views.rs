@@ -366,7 +366,7 @@ fn dotted(names: &[String]) -> String {
 }
 
 /// The form a target is read and written in: a card, a field of an entity or a value, a value of an
-/// enum, a value of a data card, or a row (a formatdoc's, a stackdoc's version, a process node's step,
+/// enum, a value of a data card, or a row (a structdoc's, a stackdoc's version, a process node's step,
 /// a row of a kind the project defines).
 pub(crate) fn form_of(target: &super::walk::Target) -> &'static str {
     use super::walk::Target;
@@ -524,7 +524,7 @@ impl Seen {
         }
 
         if fields && card.is_writing() {
-            if card.kind == "formatdoc" {
+            if card.kind == "structdoc" {
                 out.insert("rows".into(), row_list(&card.rows, &project.full(card)));
             } else if card.kind == "stackdoc" {
                 // Its versions without their bodies: a body is read with the version's path.
@@ -903,7 +903,7 @@ impl Seen {
 
 impl Seen {
     /// What a card of a kind the project defines, or the board's goal and task,
-    /// holds that its definition no longer has (「定義に無い欄」): by where it is, its value as MCP reads it.
+    /// holds that its definition no longer has (「定義に無いフィールド」): by where it is, its value as MCP reads it.
     pub fn strays(&self, card: &Card) -> Vec<(String, Value)> {
         let project = self.project();
         let kinds = project.defs.cards();
@@ -980,7 +980,7 @@ fn size_of(w: i64, h: i64) -> Value {
     Value::Object(size)
 }
 
-/// What a formatdoc's row holds, as `rows` writes it — an item without its rows.
+/// What a structdoc's row holds, as `rows` writes it — an item without its rows.
 fn row_entry(row: &crate::model::FormatRow) -> Map<String, Value> {
     let mut out = Map::new();
     out.insert("name".into(), row.name.clone().into());
@@ -1305,7 +1305,7 @@ impl Seen {
         Value::Object(out)
     }
 
-    /// One row of a formatdoc: what it holds, the rows directly in an item, and what it
+    /// One row of a structdoc: what it holds, the rows directly in an item, and what it
     /// points at (`MCPViews.rowView`).
     pub fn row_view(&self, doc: &Card, names: &[String]) -> Value {
         let project = self.project();

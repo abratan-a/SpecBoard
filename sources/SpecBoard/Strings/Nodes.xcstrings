@@ -14,7 +14,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分かれ道を追加"
+            "value" : "分岐を追加"
           }
         }
       }
@@ -32,7 +32,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分かれる行き先を追加"
+            "value" : "分岐する行き先を追加"
           }
         }
       }
@@ -212,7 +212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この分かれ道で行くノード"
+            "value" : "この分岐で行くノード"
           }
         }
       }
@@ -248,7 +248,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "どの分かれ道にも当たらないときに行くノード"
+            "value" : "どの分岐にも一致しないときに行くノード"
           }
         }
       }
@@ -446,7 +446,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "期限切れのときに行くノード"
+            "value" : "タイムアウトのときに行くノード"
           }
         }
       }
@@ -464,7 +464,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フローの戻り値。呼んだ側の判断や、ほかのフローの開始（event）が見る"
+            "value" : "フローの戻り値。呼び出し元の判断や、ほかのフローの開始（event）が見る"
           }
         }
       }
@@ -500,7 +500,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "相手が書かれていない — 相手か program を足すか、誰からでもを入れる"
+            "value" : "相手が書かれていない — 相手か program を足すか、「誰からでも」をオンにする"
           }
         }
       }
@@ -518,7 +518,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "送ってくる flow（何本でも。program と一緒にも書ける）。peer も program も省くのは穴（相手が書かれていない）。呼び手を問わないなら下の「誰からでも」"
+            "value" : "送ってくる flow（何本でも。program と一緒にも書ける）。peer も program も省くのは穴（相手が書かれていない）。呼び出し元を問わないなら下の「誰からでも」"
           }
         }
       }
@@ -608,7 +608,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まっすぐ続く行（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算する）。選ぶとここで直せ、図の行の右クリックで足す・並べ替え・消す"
+            "value" : "まっすぐ続くステップ（read・write・sign・verify・call・send・receive・compute）。選ぶとここで直せ、図のステップの右クリックで足す・並べ替え・消す"
           }
         }
       }
@@ -626,7 +626,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "待つ期限"
+            "value" : "タイムアウトまでの待ち時間"
           }
         }
       }
@@ -644,7 +644,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フローが始まるきっかけ: 手動・受ける（呼ばれる・届く）・ほかのフローの終わり・定期・起動のたび"
+            "value" : "フローが始まるトリガー: 手動・受ける（呼ばれる・届く）・ほかのフローの終わり・定期・起動のたび"
           }
         }
       }
@@ -896,7 +896,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "条件（[[パス]] で欄を指せる）"
+            "value" : "条件（[[パス]] でフィールドを指せる）"
           }
         }
       }
@@ -1274,7 +1274,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: 処理ノードの行に %@ は書けません。分かれ道・繰り返しは判断ノード（kind: eval）、並列は next を配列にして合流（kind: join）で書きます"
+            "value" : "%@: 処理ノードのステップに %@ は書けません。分岐・繰り返しは判断ノード（kind: eval）、並列は next を配列にして合流（kind: join）で書きます"
           }
         }
       }
@@ -1292,7 +1292,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: 処理ノードの行に return は書けません。返すのは終了ノード（kind: end）の return です"
+            "value" : "%@: 処理ノードのステップに return は書けません。返すのは終了ノード（kind: end）の return です"
           }
         }
       }
@@ -1364,7 +1364,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "steps は全部で 300 行までです"
+            "value" : "steps は全部で 300 ステップまでです"
           }
         }
       }
@@ -1400,7 +1400,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（%@）に %@ は書けません。%@ の行は何をするかを description に書きます"
+            "value" : "%@（%@）に %@ は書けません。%@ のステップは何をするかを description に書きます"
           }
         }
       }
@@ -1706,7 +1706,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "外の道具"
+            "value" : "外部ツール"
           }
         }
       }

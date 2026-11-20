@@ -1,4 +1,4 @@
-//! A link written out to an item of a formatdoc lands on it: the item's heading carries an anchor
+//! A link written out to an item of a structdoc lands on it: the item's heading carries an anchor
 //! made from the row's path, which does not change when its heading is reworded.
 
 use crate::common;
@@ -24,7 +24,7 @@ fn a_link_to_a_documents_item_lands_on_its_anchor() {
         &core,
         "card_create",
         json!({"value": {
-            "Docs:Decisions": {"kind": "formatdoc", "rows": [
+            "Docs:Decisions": {"kind": "structdoc", "rows": [
                 {"name": "adr_single_binary", "kind": "item", "heading": "1 つのバイナリで配る", "rows": [
                     {"name": "why", "kind": "item", "heading": "理由", "rows": [
                         {"name": "body", "kind": "text", "body": "本文"}

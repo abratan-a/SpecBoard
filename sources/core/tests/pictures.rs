@@ -313,7 +313,7 @@ fn what_is_not_one_card_or_one_section_is_refused_with_how_it_is_read() {
     for (target, said) in [
         (
             json!("Schemas/Ordering:Order.total"),
-            "Schemas/Ordering:Order の欄",
+            "Schemas/Ordering:Order のフィールド",
         ),
         (json!("Docs:Spec.intro"), "Docs:Spec の行"),
         (
@@ -435,7 +435,7 @@ fn with_no_app_the_same_call_as_a_diagram_is_offered() {
     ));
     assert_eq!(
         refusal["message"],
-        "絵を描けません: 描く SpecBoard のアプリが繋いでいません。絵は SpecBoard のアプリが描きます。as: diagram なら同じ図を文字（mermaid）で読めます"
+        "画像を描けません: 描く SpecBoard のアプリが接続していません。画像は SpecBoard のアプリが描きます。as: diagram なら同じ図を文字（mermaid）で読めます"
     );
     assert_eq!(
         refusal["use"],
@@ -461,15 +461,15 @@ fn what_keeps_the_app_from_drawing_is_said_with_the_diagram_offered() {
     for (answer, said) in [
         (
             json!({"error": "そのセクションは消えました"}).to_string(),
-            "絵を描けません: そのセクションは消えました。",
+            "画像を描けません: そのセクションは消えました。",
         ),
         (
             "not json".to_string(),
-            "アプリの答えが読めません（not json）",
+            "アプリのレスポンスが読めません（not json）",
         ),
         (
             json!({"image": {"data": "x"}}).to_string(),
-            "アプリの答えが読めません",
+            "アプリのレスポンスが読めません",
         ),
     ] {
         *painter.answer.lock().unwrap() = answer;
@@ -503,7 +503,7 @@ fn a_picture_drawn_small_says_how_to_read_it_larger() {
     ));
     assert_eq!(
         note["hint"],
-        "画面の 30% の大きさで描いたので、字が読みにくいかもしれません。cards・area で絞るか、maxSize を上げます（3000 まで）"
+        "画面の 30% のサイズで描いたので、字が読みにくいかもしれません。cards・area で絞るか、maxSize を上げます（3000 まで）"
     );
     *painter.answer.lock().unwrap() = small("flowDiagram");
     let note = note_of(&read(
@@ -513,7 +513,7 @@ fn a_picture_drawn_small_says_how_to_read_it_larger() {
     ));
     assert_eq!(
         note["hint"],
-        "画面の 30% の大きさで描いたので、字が読みにくいかもしれません。maxSize を上げます（3000 まで）"
+        "画面の 30% のサイズで描いたので、字が読みにくいかもしれません。maxSize を上げます（3000 まで）"
     );
     *painter.answer.lock().unwrap() = drawn(
         json!({"picture": "flowDiagram", "width": 800, "height": 400, "scale": 0.5, "cards": 9}),

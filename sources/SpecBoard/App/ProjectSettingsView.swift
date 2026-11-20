@@ -198,7 +198,7 @@ struct CardSizeSettings: View {
                 Text(L10n[.ProjectSettings.sizeMargin(settings.margin)]).font(.app(11.5))
             }
             .help(L10n[.ProjectSettings.sizeMarginHelp])
-            // How a formatdoc that does not say reads on the diagram.
+            // How a structdoc that does not say reads on the diagram.
             HStack(spacing: 8) {
                 Text(L10n[.ProjectSettings.sizeDocCards]).font(.app(11.5))
                 Picker("", selection: Binding(get: { settings.docView }, set: { value in apply { $0.docView = value } })) {

@@ -146,7 +146,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大きさ"
+            "value" : "サイズ"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトのファイルを読み込む…"
+            "value" : "プロジェクトのファイルをインポート…"
           }
         }
       }
@@ -338,7 +338,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトのファイル（.json）を読み込む（この Mac に入ります）"
+            "value" : "プロジェクトのファイル（.json）をインポートする（この Mac に入ります）"
           }
         }
       }
@@ -392,7 +392,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "丸ごと残したプロジェクト。読むだけで、元に戻すと書き換えられます"
+            "value" : "丸ごと残したプロジェクト。読み取り専用で、元に戻すと書き換えられます"
           }
         }
       }
@@ -518,7 +518,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開く（読むだけ）"
+            "value" : "開く（読み取り専用）"
           }
         }
       }
@@ -716,7 +716,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場"
+            "value" : "場所"
           }
         }
       }
@@ -770,7 +770,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "繋ぐ"
+            "value" : "接続"
           }
         }
       }
@@ -806,7 +806,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このエージェントには、まだ繋がっていません"
+            "value" : "このエージェントには、まだ接続されていません"
           }
         }
       }
@@ -824,7 +824,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "別のプロジェクトとして読み込む"
+            "value" : "別のプロジェクトとしてインポート"
           }
         }
       }
@@ -914,7 +914,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "読み込むプロジェクトのファイル（.json）を選んでください"
+            "value" : "インポートするプロジェクトのファイル（.json）を選んでください"
           }
         }
       }

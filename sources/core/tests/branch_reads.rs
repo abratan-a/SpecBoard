@@ -107,7 +107,7 @@ fn the_check_is_not_a_way_to_read_a_branch() {
     );
     assert_eq!(
         said,
-        "as: verify はありません。点検は inspection_list で読みます（1 件の中身は inspection_read、設計どおりの印は inspection_update）"
+        "as: verify はありません。インスペクションは inspection_list で読みます（1 件の中身は inspection_read、設計どおりのマークは inspection_update）"
     );
     // Of no other as either.
     let said = refused(

@@ -64,7 +64,7 @@ fn sharing() -> Core {
     ok(
         &core,
         "card_create",
-        json!({"branch": "sharing", "target": "Docs:Rules", "value": {"kind": "formatdoc", "rows": [
+        json!({"branch": "sharing", "target": "Docs:Rules", "value": {"kind": "structdoc", "rows": [
             {"name": "can_edit", "heading": "編集できる人", "rows": [
                 {"name": "text", "kind": "text", "body": "[[Schemas:Customer]] が編集できる"}
             ]}

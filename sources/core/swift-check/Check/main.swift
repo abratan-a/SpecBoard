@@ -154,7 +154,7 @@ do {
     _ = try Core.open(place: "")
     check(false, "an empty store path does not open")
 } catch {
-    check("\(error)".contains("データの置き場が空です"), "an empty store path does not open (\(error))")
+    check("\(error)".contains("データベースの場所が空です"), "an empty store path does not open (\(error))")
 }
 
 exit(failures.isEmpty ? 0 : 1)

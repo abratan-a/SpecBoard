@@ -298,7 +298,7 @@ fn a_working_directory_is_read_as_it_is_set_and_again_when_asked() {
         "batch",
         json!({"project": PROJECT, "value": {"steps": [{"tool": "section_update", "arguments": {"target": "repo", "value": {"readType": "git"}}}]}}),
     );
-    assert!(said.contains("batch の手では書けません"), "{said}");
+    assert!(said.contains("batch のステップでは書けません"), "{said}");
     fs::remove_dir_all(&repo).unwrap();
 }
 
@@ -575,12 +575,12 @@ fn what_is_read_is_not_written_but_notes_and_places() {
         (
             "card_update",
             json!({"target": "repo/src:'a.rs'", "value": {"label": "x"}}),
-            "読むだけです",
+            "読み取り専用です",
         ),
         (
             "card_delete",
             json!({"target": "repo/src:'a.rs'"}),
-            "読むだけです",
+            "読み取り専用です",
         ),
         (
             "tag_update",
@@ -595,12 +595,12 @@ fn what_is_read_is_not_written_but_notes_and_places() {
         (
             "section_update",
             json!({"target": "repo/src", "value": {"name": "lib"}}),
-            "ディレクトリで、読むだけです",
+            "ディレクトリで、読み取り専用です",
         ),
         (
             "section_delete",
             json!({"target": "repo/src"}),
-            "ディレクトリで、読むだけです",
+            "ディレクトリで、読み取り専用です",
         ),
         (
             "card_create",
@@ -831,7 +831,7 @@ fn the_tree_of_before_is_named_no_more() {
     let core = Core::open(script_store()).unwrap();
     let said = refused(&core, "card_list", json!({"branch": "_directory_"}));
     assert!(
-        said.contains("main と各 branch の根の直下のセクションになりました"),
+        said.contains("main と各 branch のルートの直下のセクションになりました"),
         "{said}"
     );
     let said = refused(&core, "inspection_list", json!({"branch": "_directory_"}));

@@ -32,7 +32,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "組み込みの定義は読むだけで、名前はプロジェクトの定義では使えません。何のためか・使うとき・使わないときと、セクションの種類のナビパネルの印は、このプロジェクトに合わせて書き換えられます（AI が kind_list・kind_read で読みます）"
+            "value" : "組み込みの定義は読み取り専用で、名前はプロジェクトの定義では使えません。何のためか・使うとき・使わないときと、セクションの種類のナビパネルのアイコンは、このプロジェクトに合わせて書き換えられます（AI が kind_list・kind_read で読みます）"
           }
         }
       }
@@ -50,7 +50,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "印をこのプロジェクトで書き換え"
+            "value" : "アイコンをこのプロジェクトで書き換え"
           }
         }
       }
@@ -158,7 +158,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "誤りはありません"
+            "value" : "エラーはありません"
           }
         }
       }
@@ -176,7 +176,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "誤りはありません。保存できます"
+            "value" : "エラーはありません。保存できます"
           }
         }
       }
@@ -302,7 +302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "JSON で書きます（形は MCP の guide の about: kind_create と同じ）。書くと、その場で確かめます（kind_create・kind_update の dryRun）"
+            "value" : "JSON で書きます（形式は MCP の guide の about: kind_create と同じ）。書くと、その場で確かめます（kind_create・kind_update の dryRun）"
           }
         }
       }
@@ -320,7 +320,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄・行の種類・種類の名前を変え、カードの値も移します（renames）"
+            "value" : "フィールド・行の種類・種類の名前を変え、カードの値も移します（renames）"
           }
         }
       }
@@ -374,7 +374,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左で定義を選ぶと、ここに出ます。組み込みの定義は読むだけ（使う場面は書き換えられます）、プロジェクトの定義は書けます。＋ で足します。プロジェクトに 1 つの設定で、branch では変わりません。MCP からは kind_list・kind_read で読み、kind_create・kind_update・kind_delete で書きます"
+            "value" : "左で定義を選ぶと、ここに出ます。組み込みの定義は読み取り専用（使う場面は書き換えられます）、プロジェクトの定義は書けます。＋ で足します。プロジェクトに 1 つの設定で、branch では変わりません。MCP からは kind_list・kind_read で読み、kind_create・kind_update・kind_delete で書きます"
           }
         }
       }
@@ -410,7 +410,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄を追加"
+            "value" : "フィールドを追加"
           }
         }
       }
@@ -500,7 +500,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄 name"
+            "value" : "フィールド name"
           }
         }
       }
@@ -518,7 +518,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄 value"
+            "value" : "フィールド value"
           }
         }
       }
@@ -644,7 +644,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カード（頭）"
+            "value" : "カード（ヘッダー）"
           }
         }
       }
@@ -752,7 +752,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄 %lld"
+            "value" : "フィールド %lld"
           }
         }
       }
@@ -824,7 +824,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "内包: 欄の型が相手になる。ID で指す: 値が相手を指す。つながる: 型に関係しない"
+            "value" : "内包: フィールドの型が相手になる。ID で指す: 値が相手を指す。つながる: 型に関係しない"
           }
         }
       }
@@ -950,7 +950,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄"
+            "value" : "フィールド"
           }
         }
       }
@@ -1076,7 +1076,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "チェックボックス・ボタン・メニュー・日付・テキスト・セクションの欄だけ。引いて並べ替えます"
+            "value" : "チェックボックス・ボタン・メニュー・日付・テキスト・セクションのフィールドだけ。ドラッグして並べ替えます"
           }
         }
       }
@@ -1184,7 +1184,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "既定で入"
+            "value" : "既定でオン"
           }
         }
       }
@@ -1202,7 +1202,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この欄を削除"
+            "value" : "このフィールドを削除"
           }
         }
       }
@@ -1256,7 +1256,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入で済みと数える"
+            "value" : "オンで済みと数える"
           }
         }
       }
@@ -1328,7 +1328,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切: マップの線の切り替えで出す"
+            "value" : "オフ: マップの線の切り替えで出す"
           }
         }
       }
@@ -1508,7 +1508,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "受け継ぐ"
+            "value" : "継承"
           }
         }
       }
@@ -1526,7 +1526,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "親の欄が先に並びます（表示名・説明・タグ）"
+            "value" : "親のフィールドが先に並びます（表示名・説明・タグ）"
           }
         }
       }
@@ -1544,7 +1544,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄"
+            "value" : "フィールド"
           }
         }
       }
@@ -1562,7 +1562,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの値。カードに出る順で並びます。⋮⋮ で引いて並べ替えます"
+            "value" : "カードの値。カードに出る順で並びます。⋮⋮ でドラッグして並べ替えます"
           }
         }
       }
@@ -1580,7 +1580,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中の欄"
+            "value" : "中のフィールド"
           }
         }
       }
@@ -1706,7 +1706,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄"
+            "value" : "フィールド"
           }
         }
       }
@@ -1778,7 +1778,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場"
+            "value" : "配置"
           }
         }
       }
@@ -2030,7 +2030,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置くものがあると入れ物になり、コンテンツマップで開きます"
+            "value" : "置くものがあるとコンテナになり、コンテンツマップで開きます"
           }
         }
       }
@@ -2066,7 +2066,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入れ物の中"
+            "value" : "コンテナの中"
           }
         }
       }
@@ -2084,7 +2084,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄"
+            "value" : "フィールド"
           }
         }
       }
@@ -2156,7 +2156,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線 1 本ずつの欄"
+            "value" : "線 1 本ずつのフィールド"
           }
         }
       }
@@ -2210,7 +2210,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長いテキストかマークダウンの欄"
+            "value" : "longtext か markdown のフィールド"
           }
         }
       }
@@ -2390,7 +2390,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの木のどのセクションの種類も置かないので、%@ のカードはまだ作れません"
+            "value" : "プロジェクトのツリーのどのセクションの種類も置かないので、%@ のカードはまだ作れません"
           }
         }
       }
@@ -2444,7 +2444,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マップの上で押す欄"
+            "value" : "マップの上で押すフィールド"
           }
         }
       }
@@ -2552,7 +2552,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本文（Markdown）は長いテキストかマークダウンの欄 body が要ります"
+            "value" : "本文（Markdown）は longtext か markdown のフィールド body が要ります"
           }
         }
       }
@@ -2858,7 +2858,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入れ物"
+            "value" : "コンテナ"
           }
         }
       }
@@ -2894,7 +2894,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの木 ›"
+            "value" : "プロジェクトのツリー ›"
           }
         }
       }
@@ -2966,7 +2966,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カードの中の並び。行の種類ごとに欄を持ちます"
+            "value" : "カードの中の並び。行の種類ごとにフィールドを持ちます"
           }
         }
       }
@@ -3092,7 +3092,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ を受け継ぐ"
+            "value" : "%@ を継承"
           }
         }
       }
@@ -3254,7 +3254,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重ならない"
+            "value" : "重複しない"
           }
         }
       }
@@ -3326,7 +3326,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "並び"
+            "value" : "配列"
           }
         }
       }
@@ -3344,7 +3344,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "並びの並び"
+            "value" : "配列の配列"
           }
         }
       }
@@ -3560,7 +3560,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文書"
+            "value" : "ドキュメント"
           }
         }
       }
@@ -3794,7 +3794,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場"
+            "value" : "ストレージ"
           }
         }
       }
@@ -4046,7 +4046,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このプロジェクトで書き換えた印です"
+            "value" : "このプロジェクトで書き換えたアイコンです"
           }
         }
       }
@@ -4100,7 +4100,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "組み込みの既定の印です"
+            "value" : "組み込みの既定のアイコンです"
           }
         }
       }
@@ -4118,7 +4118,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "種類の印（%@）"
+            "value" : "種類のアイコン（%@）"
           }
         }
       }
@@ -4136,7 +4136,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "種類の印"
+            "value" : "種類のアイコン"
           }
         }
       }
@@ -4154,7 +4154,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ナビパネルの印"
+            "value" : "ナビパネルのアイコン"
           }
         }
       }
@@ -4172,7 +4172,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "組み込みの印に戻す"
+            "value" : "組み込みのアイコンに戻す"
           }
         }
       }
@@ -4208,7 +4208,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ナビパネルの印を保存"
+            "value" : "ナビパネルのアイコンを保存"
           }
         }
       }
@@ -4262,7 +4262,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セクションマップが描くとおりに %@ のカードを描きます。%@ のカードが無いあいだは作り物の値で、あればそのどれかを見本にできます"
+            "value" : "セクションマップが描くとおりに %@ のカードを描きます。%@ のカードが無いあいだはダミーの値で、あればそのどれかをサンプルにできます"
           }
         }
       }
@@ -4280,7 +4280,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本物の %@ のカードを見本にしています。フォームで選んでいる欄・行の種類を囲みます"
+            "value" : "実際の %@ のカードをサンプルにしています。フォームで選んでいるフィールド・行の種類を囲みます"
           }
         }
       }
@@ -4298,7 +4298,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入れ物（goal）の中では 1 行（入れ物の中のとおり）"
+            "value" : "コンテナ（goal）の中では 1 行（コンテナの中のとおり）"
           }
         }
       }
@@ -4316,7 +4316,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "見本の入れ物"
+            "value" : "サンプルのコンテナ"
           }
         }
       }
@@ -4352,7 +4352,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "見本の %@ と %@ を、マップが描くとおりにこの線でつないだもの"
+            "value" : "サンプルの %@ と %@ を、マップが描くとおりにこの線でつないだもの"
           }
         }
       }
@@ -4442,7 +4442,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（切）"
+            "value" : "（オフ）"
           }
         }
       }
@@ -4460,7 +4460,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切り替えで入れるまでマップに描きません（はじめから描く: 切）"
+            "value" : "切り替えで入れるまでマップに描きません（はじめから描く: オフ）"
           }
         }
       }
@@ -4478,7 +4478,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "見本の値"
+            "value" : "サンプルの値"
           }
         }
       }
@@ -4622,7 +4622,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ は並び（[ … ]）です"
+            "value" : "%@ は配列（[ … ]）です"
           }
         }
       }
@@ -4658,7 +4658,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前の欄の名前を書いてください"
+            "value" : "前のフィールドの名前を書いてください"
           }
         }
       }
@@ -4694,7 +4694,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消す"
+            "value" : "削除"
           }
         }
       }
@@ -4730,7 +4730,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main_sections は main と各 branch の根の直下、board_sections はボードの根の直下のセクションです（{type, name} を並べた順）。type に workdir を書くと作業ディレクトリ（この Mac のフォルダを読むだけのセクション）ができ、外すと消えます（置いたメモは _evacuation_ へ）。保存すると名前で突き合わせ、新しい名前は作り、外したものは空なら消え、中身があれば _evacuation_ へ退避します。名前を変えるのはナビパネルの右クリックの「名前を変える…」で（中身とパスが付いて行きます。ここで名前を書き換えると、消して足したことになります）"
+            "value" : "main_sections は main と各 branch のルートの直下、board_sections はボードのルートの直下のセクションです（{type, name} を並べた順）。type に workdir を書くと作業ディレクトリ（この Mac のフォルダを読み取り専用で読むセクション）ができ、外すと消えます（置いたメモは _evacuation_ へ）。保存すると名前で突き合わせ、新しい名前は作り、外したものは空なら消え、中身があれば _evacuation_ へ退避します。名前を変えるのはナビパネルの右クリックの「名前を変える…」で（中身とパスが付いて行きます。ここで名前を書き換えると、消して足したことになります）"
           }
         }
       }
@@ -4748,7 +4748,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main・branch とボードの根の直下のセクション（種類・名前・並び）"
+            "value" : "main・branch とボードのルートの直下のセクション（種類・名前・並び）"
           }
         }
       }
@@ -4802,7 +4802,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの木"
+            "value" : "プロジェクトのツリー"
           }
         }
       }
@@ -4940,7 +4940,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前の名前が定義にあればその欄の名前を変え、無ければ（定義に無い欄）その値を新しい名前の欄へ移します"
+            "value" : "前の名前が定義にあればそのフィールドの名前を変え、無ければ（定義に無いフィールド）その値を新しい名前のフィールドへ移します"
           }
         }
       }
@@ -5030,7 +5030,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@（定義に無い欄）"
+            "value" : "%@（定義に無いフィールド）"
           }
         }
       }
@@ -5066,7 +5066,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "組み込みの定義（読むだけ）"
+            "value" : "組み込みの定義（読み取り専用）"
           }
         }
       }
@@ -5084,7 +5084,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの定義。プロジェクトの木のどのセクションにも置けない（入れるセクションの種類を書き、プロジェクトの木に並べると置ける）"
+            "value" : "プロジェクトの定義。プロジェクトのツリーのどのセクションにも置けない（入れるセクションの種類を書き、プロジェクトのツリーに並べると置ける）"
           }
         }
       }
@@ -5120,7 +5120,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "置き場なし"
+            "value" : "配置なし"
           }
         }
       }
@@ -5264,7 +5264,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ブランチ"
+            "value" : "branch"
           }
         }
       }
@@ -5282,7 +5282,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトのブランチ"
+            "value" : "プロジェクトの branch"
           }
         }
       }
@@ -5354,7 +5354,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "入か切。スイッチ"
+            "value" : "オンかオフ。スイッチ"
           }
         }
       }
@@ -5390,7 +5390,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メニュー"
+            "value" : "dropdownlist（メニュー）"
           }
         }
       }
@@ -5444,7 +5444,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄の中の欄"
+            "value" : "フィールドの中のフィールド"
           }
         }
       }
@@ -5588,7 +5588,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長いテキスト"
+            "value" : "longtext（長いテキスト）"
           }
         }
       }
@@ -5642,7 +5642,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "名前から文への組"
+            "value" : "名前と文のペア"
           }
         }
       }
@@ -5660,7 +5660,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マークダウン"
+            "value" : "markdown"
           }
         }
       }
@@ -5786,7 +5786,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ボタン"
+            "value" : "radio（ボタン）"
           }
         }
       }
@@ -5894,7 +5894,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ウェブのアドレス"
+            "value" : "URL"
           }
         }
       }
@@ -5996,7 +5996,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "行の名前「%@」が重なっています（カードの中で 1 つずつ）"
+            "value" : "行の名前「%@」が重複しています（カードの中で 1 つずつ）"
           }
         }
       }
@@ -6014,7 +6014,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ に欄「%@」はありません（あるのは %@）"
+            "value" : "%@ にフィールド「%@」はありません（あるのは %@）"
           }
         }
       }
@@ -6140,7 +6140,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欄「%@」は必ず書きます"
+            "value" : "フィールド「%@」は必ず書きます"
           }
         }
       }

@@ -32,7 +32,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "窓は branch「%@」を開いていません（開いているのは「%@」）。開くのは op: select です"
+            "value" : "ウィンドウは branch「%@」を開いていません（開いているのは「%@」）。開くのは op: select です"
           }
         }
       }
@@ -194,7 +194,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "「_directory_」という木はありません。作業ディレクトリは main と各 branch のセクションです。branch を省くか branch を名指しして、作業ディレクトリのセクションからのパス（例: repo/src:'a.rs'）を渡してください"
+            "value" : "「_directory_」というツリーはありません。作業ディレクトリは main と各 branch のセクションです。branch を省くか branch を名指しして、作業ディレクトリのセクションからのパス（例: repo/src:'a.rs'）を渡してください"
           }
         }
       }
@@ -266,7 +266,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "セクションマップが表示されていません。セクションマップは スキーマセクションとフリーセクションの画面です。チャートセクション・ドキュメントセクションは target: window で撮ってください"
+            "value" : "セクションマップが表示されていません。セクションマップは スキーマセクションとフリーセクションの画面です。チャートセクション・ドキュメントセクションは target: window でキャプチャしてください"
           }
         }
       }
@@ -302,7 +302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この窓は、このキーで読めるエージェントのプロジェクトを開いていません"
+            "value" : "このウィンドウは、このキーで読めるエージェントのプロジェクトを開いていません"
           }
         }
       }
@@ -536,7 +536,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "窓「%@」はありません。あるのは: %@"
+            "value" : "ウィンドウ「%@」はありません。あるのは: %@"
           }
         }
       }
@@ -662,7 +662,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクト「%@」を開いている窓がありません（開いているのは「%@」）"
+            "value" : "プロジェクト「%@」を開いているウィンドウがありません（開いているのは「%@」）"
           }
         }
       }
@@ -716,7 +716,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "op: select の value の as は connections です（形は guide の about: app_control）"
+            "value" : "op: select の value の as は connections です（形式は guide の about: app_control）"
           }
         }
       }
@@ -752,7 +752,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "op: select の value の view は map か sequence です（形は guide の about: app_control）"
+            "value" : "op: select の value の view は map か sequence です（形式は guide の about: app_control）"
           }
         }
       }
@@ -788,7 +788,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトの置き場が開いていません"
+            "value" : "プロジェクトのデータベースが開いていません"
           }
         }
       }
@@ -878,7 +878,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "value はオブジェクトです（形は guide）"
+            "value" : "value はオブジェクトです（形式は guide）"
           }
         }
       }
@@ -1040,7 +1040,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "そのカードは木にもうありません"
+            "value" : "そのカードはツリーにもうありません"
           }
         }
       }
@@ -1094,7 +1094,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アプリがプロジェクトの置き場に繋がっていません"
+            "value" : "アプリがプロジェクトのデータベースに接続されていません"
           }
         }
       }
@@ -1148,7 +1148,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "そのセクションは木にもうありません"
+            "value" : "そのセクションはツリーにもうありません"
           }
         }
       }
@@ -1166,7 +1166,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "木を読めませんでした（%@）"
+            "value" : "ツリーを読めませんでした（%@）"
           }
         }
       }
@@ -1184,7 +1184,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "描くよう頼まれたものをアプリが読めません"
+            "value" : "描くようリクエストされたものをアプリが読めません"
           }
         }
       }

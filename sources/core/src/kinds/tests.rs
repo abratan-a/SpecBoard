@@ -66,7 +66,7 @@ fn the_builtin_kinds_read() {
     // the stacked document `stackdoc`; 9 since the data card `instance` and its
     // section; and up by one with each
     // change since (builtin.json's history says which).
-    assert_eq!(kinds.version, 27);
+    assert_eq!(kinds.version, 28);
     let placeable: Vec<&str> = kinds.placeable().map(|k| k.name.as_str()).collect();
     assert_eq!(
         placeable,
@@ -85,7 +85,7 @@ fn the_builtin_kinds_read() {
             "wait",
             "join",
             "end",
-            "formatdoc",
+            "structdoc",
             "freedoc",
             "stackdoc",
             "spec",
@@ -153,7 +153,7 @@ fn the_builtin_definition_section_holds_shapes_and_their_data() {
     for kind in [
         "flow",
         "freedoc",
-        "formatdoc",
+        "structdoc",
         "stackdoc",
         "goal",
         "task",
@@ -303,17 +303,17 @@ fn the_builtin_sections_and_lines_read() {
     let field = LinePlace::row(Some(FIELD_ROWS));
     assert!(points.leaves("entity", &field));
     assert!(!points.leaves("entity", &head));
-    assert!(!points.leaves("formatdoc", &LinePlace::row(Some("rows"))));
-    assert_eq!(points.from_said(), "entity・valueの欄");
-    assert_eq!(points.to.said(), "entity・valueの頭・欄");
+    assert!(!points.leaves("structdoc", &LinePlace::row(Some("rows"))));
+    assert_eq!(points.from_said(), "entity・valueのフィールド");
+    assert_eq!(points.to.said(), "entity・valueのヘッダー・フィールド");
     let link = defs.line("link").unwrap();
     assert!(
-        link.leaves("formatdoc", &LinePlace::row(Some("rows"))) && link.leaves("process", &step)
+        link.leaves("structdoc", &LinePlace::row(Some("rows"))) && link.leaves("process", &step)
     );
-    assert_eq!(link.to.said(), "どのカードの頭・欄・行");
+    assert_eq!(link.to.said(), "どのカードのヘッダー・フィールド・行");
     assert_eq!(
         defs.line("rules").unwrap().to.said(),
-        "note・freedoc・formatdocの頭・行"
+        "note・freedoc・structdocのヘッダー・行"
     );
     assert_eq!(defs.line("embed").unwrap().max, Some(1));
     assert!(defs.line("mentions").unwrap().from_text);
@@ -342,10 +342,10 @@ fn a_projects_own_kinds_are_checked_beside_the_builtin_ones() {
             // A record's field was `field` before; a row now, and which kinds of row
             // only where a kind has them.
             { "line": "前の形", "base": "link", "from": [{ "kinds": ["entity"], "at": "field" }],
-              "to": { "kinds": ["formatdoc"], "at": ["card"], "rows": ["rows"] } },
+              "to": { "kinds": ["structdoc"], "at": ["card"], "rows": ["rows"] } },
             { "line": "行の種類", "base": "link", "from": [{ "kinds": ["entity", "note"], "at": "row", "rows": ["fields", "steps"] }],
               "to": { "kinds": ["*"], "at": ["row"], "rows": ["nope"] } },
-            { "line": "型", "base": "embed", "from": [{ "kinds": ["formatdoc"], "at": "row" }],
+            { "line": "型", "base": "embed", "from": [{ "kinds": ["structdoc"], "at": "row" }],
               "to": { "kinds": ["entity"], "at": ["card"] } }
         ]
     });
@@ -355,17 +355,17 @@ fn a_projects_own_kinds_are_checked_beside_the_builtin_ones() {
         "sections の bad name: holds（入れられるカードの種類。* でどれでも）がありません",
         "sections の schema: 同じ名前のセクションの種類がもうあります（組み込み）",
         "sections の pinned: 「fixed」は書けないキーです（書けるのは section・label・description・context・holds・sections・opens・trees・export・icon・color・actions）",
-        "sections の pinned: trees は main・board の並びです（roots）",
+        "sections の pinned: trees は main・board の配列です（roots）",
         "sections の shown: opens は relations です（mock）",
         "lines の points: 同じ名前の線の種類がもうあります（組み込み）",
         "lines の odd: base は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）のどれかです",
         "lines の odd の from[0]: 「moon」というカードの種類はありません",
-        "lines の odd の from[0]: at は card（頭）・row（中の行）・symbol（ファイルの中の関数と型）のどれかです（edge）",
-        "lines の 前の形 の from[0]: at は card（頭）・row（中の行）・symbol（ファイルの中の関数と型）のどれかです（field）。entity・value の欄も row です",
+        "lines の odd の from[0]: at は card・row（中の行）・symbol（ファイルの中のシンボル）のどれかです（edge）",
+        "lines の 前の形 の from[0]: at は card・row（中の行）・symbol（ファイルの中のシンボル）のどれかです（field）。entity・value のフィールドも row です",
         "lines の 前の形 の to: rows（行の種類）は at に row があるときだけ書けます",
         "lines の 行の種類 の from[0]: rows の「steps」という行の種類は entity・note にありません（あるのは: fields）",
         "lines の 行の種類 の to: rows の「nope」という行の種類はどのカードの種類にもありません",
-        "lines の 型: base が embed の線は、entity・value の欄（from の kinds が entity・value、at が row）からだけ出せます",
+        "lines の 型: base が embed の線は、entity・value のフィールド（from の kinds が entity・value、at が row）からだけ出せます",
         "lines の odd: export の as が annotation のときは、key に JSON Schema の注記の名前（x- で始まる）を書きます",
         "lines の odd: owner（カードの種類が自分で持つ線）は組み込みの線だけです",
     ] {
@@ -423,7 +423,10 @@ fn a_line_names_the_kinds_of_row_of_a_kind_with_more_than_one() {
     // The kinds of row named are every kind's: an entity's fields are not among them.
     assert!(!cause.to.takes("entity", &LinePlace::row(Some(FIELD_ROWS))));
     assert_eq!(cause.from_said(), "riskの行（causes）");
-    assert_eq!(cause.to.said(), "risk・entityの頭・行（steps・checks）");
+    assert_eq!(
+        cause.to.said(),
+        "risk・entityのヘッダー・行（steps・checks）"
+    );
     // None named: any row, a field of the card too.
     let any = defs.line("どの行").unwrap();
     assert!(any.leaves("risk", &LinePlace::row(Some("steps"))));
@@ -454,22 +457,22 @@ fn a_projects_own_kinds_of_card_are_read_after_the_builtin_ones_and_held_to_them
     });
     let problems = Defs::checked(&own).unwrap_err();
     for wanted in [
-        "cards の epic: holds の「process」は入れ物（flow）の中にだけ置ける種類です",
-        "cards の epic: holds に ghost は書けません（カードゴーストは入れ物の中に置けません）",
+        "cards の epic: holds の「process」はコンテナ（flow）の中にだけ置ける種類です",
+        "cards の epic: holds に ghost は書けません（カードゴーストはコンテナの中に置けません）",
         "cards の odd: semantics（検査・線・エクスポート・編集画面のコードの名前）は組み込みの種類だけです",
         "cards の odd: extends は base（組み込みの基の定義）かプロジェクトの種類です（record は組み込みの種類）",
         "cards の odd: color は #RRGGBB です（\"red\"）",
-        "cards の odd: as_row の \"nope\" は欄にありません",
-        "cards の odd: on_double_click の edit_in_place には、longtext か markdown の欄 body が要ります",
-        "cards の odd.a.b: look（見かけの欄）は組み込みの種類だけです",
-        "cards の odd.a.b: 欄の名前は空でなく、前後に空白が無く、40 字までで、. : / [ ] , \" と改行を含みません",
-        "cards の odd.connections: 「connections」はカードの value のキーなので、欄の名前に使えません",
+        "cards の odd: as_row の \"nope\" はフィールドにありません",
+        "cards の odd: on_double_click の edit_in_place には、longtext か markdown のフィールド body が要ります",
+        "cards の odd.a.b: look（見かけのフィールド）は組み込みの種類だけです",
+        "cards の odd.a.b: フィールドの名前は空でなく、前後に空白が無く、40 字までで、. : / [ ] , \" と改行を含みません",
+        "cards の odd.connections: 「connections」はカードの value のキーなので、フィールドの名前に使えません",
         "cards の odd: context に「why」は書けません（書けるのは purpose・use_when・not_for）",
         "cards の task: 同じ名前の種類がもうあります（組み込み）",
         "cards の 1bad: 名前は、半角英字か _ で始まる英数字と _ だけで、80 字までです",
-        "cards の page: opens の markdown には、longtext か markdown の欄 body が要ります",
-        "cards の alone: opens の card-map は、holds のある種類（入れ物）だけです",
-        "cards の box: holds のある種類（入れ物）の opens は card-map です（fields）",
+        "cards の page: opens の markdown には、longtext か markdown のフィールド body が要ります",
+        "cards の alone: opens の card-map は、holds のある種類（コンテナ）だけです",
+        "cards の box: holds のある種類（コンテナ）の opens は card-map です（fields）",
     ] {
         assert!(
             problems.iter().any(|p| p == wanted),
@@ -561,16 +564,16 @@ fn a_face_names_fields_of_its_kind_it_can_draw() {
     let problems = Defs::checked(&own).unwrap_err();
     for wanted in [
         "cards の risk: face に「size」は書けません（書けるのは top・markdown・svg・html）",
-        "cards の risk: face の top に書けるのは checkbox・radio・dropdownlist・date・text・section の欄です（count は number）",
-        "cards の risk: face の top に並びの欄は書けません（owners は many）",
-        "cards の risk: face の top の「steps」は欄にありません（行の種類は top に書けません）",
-        "cards の risk: face の top の「nowhere」は欄にありません",
-        "cards の risk: face の top の「done」が重なっています",
-        "cards の risk: face の markdown に書けるのは markdown・longtext の欄です（summary は text）",
-        "cards の short: face の top は欄の名前の並びです",
-        "cards の short: face の markdown に書けるのは markdown・longtext の欄です（memo は markdown の並び）",
-        "cards の odd: face の markdown の「missing」は欄にありません",
-        r#"cards の flat: face は {"top": [欄の名前…], "markdown"（か "svg"・"html"）: "<欄の名前>"} のオブジェクトです"#,
+        "cards の risk: face の top に書けるのは checkbox・radio・dropdownlist・date・text・section のフィールドです（count は number）",
+        "cards の risk: face の top に配列のフィールドは書けません（owners は many）",
+        "cards の risk: face の top の「steps」はフィールドにありません（行の種類は top に書けません）",
+        "cards の risk: face の top の「nowhere」はフィールドにありません",
+        "cards の risk: face の top の「done」が重複しています",
+        "cards の risk: face の markdown に書けるのは markdown・longtext のフィールドです（summary は text）",
+        "cards の short: face の top はフィールドの名前の配列です",
+        "cards の short: face の markdown に書けるのは markdown・longtext のフィールドです（memo は markdown の配列）",
+        "cards の odd: face の markdown の「missing」はフィールドにありません",
+        r#"cards の flat: face は {"top": [フィールドの名前…], "markdown"（か "svg"・"html"）: "<フィールドの名前>"} のオブジェクトです"#,
     ] {
         assert!(
             problems.iter().any(|p| p == wanted),
@@ -648,13 +651,13 @@ fn a_face_draws_one_long_text_below_as_markdown_or_a_page() {
     ] });
     let problems = Defs::checked(&own).unwrap_err();
     for wanted in [
-        "cards の both: face の下に描く欄（markdown・svg・html）は 1 つだけです",
-        "cards の pages: face の下に描く欄（markdown・svg・html）は 1 つだけです",
-        "cards の typed: face の html に書けるのは longtext の欄です（memo は markdown。並びの欄は書けません）",
-        "cards の listed: face の svg に書けるのは longtext の欄です（many は longtext。並びの欄は書けません）",
-        "cards の named: face の svg は欄の名前（文字列）です",
-        "cards の missing: face の html の「nowhere」は欄にありません",
-        "cards の twice: face の「pic」は top と、下に描く欄（markdown・svg・html）の両方にあります",
+        "cards の both: face の下に描くフィールド（markdown・svg・html）は 1 つだけです",
+        "cards の pages: face の下に描くフィールド（markdown・svg・html）は 1 つだけです",
+        "cards の typed: face の html に書けるのは longtext のフィールドです（memo は markdown。配列のフィールドは書けません）",
+        "cards の listed: face の svg に書けるのは longtext のフィールドです（many は longtext。配列のフィールドは書けません）",
+        "cards の named: face の svg はフィールドの名前（文字列）です",
+        "cards の missing: face の html の「nowhere」はフィールドにありません",
+        "cards の twice: face の「pic」は top と、下に描くフィールド（markdown・svg・html）の両方にあります",
     ] {
         assert!(
             problems.iter().any(|p| p == wanted),
@@ -675,7 +678,7 @@ fn a_face_draws_one_long_text_below_as_markdown_or_a_page() {
     let problems = crate::kinds::check_card(defs.cards(), &card("<html/>"));
     assert_eq!(
         problems.iter().map(ToString::to_string).collect::<Vec<_>>(),
-        ["picture: SVG ではありません: 根の要素が <html> です（svg の要素で書きます）"]
+        ["picture: SVG ではありません: ルート要素が <html> です（svg の要素で書きます）"]
     );
 }
 
@@ -765,7 +768,7 @@ fn a_kind_takes_its_parents_fields_and_rows_first() {
     assert_eq!(kinds.get("entity").unwrap().semantics["editor"], "schema");
     assert_eq!(
         kinds.get("entity").unwrap().context["purpose"],
-        "単位で保存・送信される記録（ID を持つ）"
+        "単位で保存・送信されるレコード（ID を持つ）"
     );
     // What sets value apart from entity: how it sits inside another card.
     assert_eq!(kinds.get("entity").unwrap().as_row, None);
@@ -799,16 +802,16 @@ fn a_definition_with_problems_is_refused_whole() {
     .to_string();
     let problems = Kinds::parse(&text).unwrap_err();
     for wanted in [
-        "orphan: 受け継ぐ「nowhere」が、この種類より前にありません",
+        "orphan: 継承元の「nowhere」が、この種類より前にありません",
         // Where a card goes is the sections' to say (`holds`), not the card kind's.
         "broken: 「places」は定義に書けないキーです",
         "broken.fields[0]（a）: 「colour」は値の種類ではありません",
         "broken.b: radio には options が要ります",
-        "broken.c: 条件の「z」は同じ所の欄にありません",
-        "broken.c: 名前が重なっています",
+        "broken.c: 条件の「z」は同じ所のフィールドにありません",
+        "broken.c: 名前が重複しています",
         "broken.items: ref の「elsewhere」は上の行の種類ではありません",
-        "broken: 「a」は欄と行の種類で名前が重なっています",
-        "broken.a: address: value には欄 value が要ります",
+        "broken: 「a」はフィールドと行の種類で名前が重複しています",
+        "broken.a: address: value にはフィールド value が要ります",
     ] {
         assert!(
             problems.iter().any(|p| p == wanted),
@@ -919,7 +922,7 @@ fn nodes() -> Vec<Value> {
 
 fn formatdoc() -> Value {
     card(
-        "formatdoc",
+        "structdoc",
         json!({ "label": "仕様" }),
         json!({ "rows": [
             { "id": "f1", "fields": { "name": "auth", "heading": "認証" }, "rows": { "rows": [
@@ -977,7 +980,7 @@ fn a_card_of_every_kind_holds() {
 fn the_card_itself_is_checked() {
     says(
         &card("shape", json!({}), json!({})),
-        "「shape」はカードにできない種類です（受け継ぐためだけの定義）",
+        "「shape」はカードにできない種類です（継承するためだけの定義）",
     );
     says(
         &card("widget", json!({}), json!({})),
@@ -990,13 +993,13 @@ fn the_card_itself_is_checked() {
         &doc,
         "名前「a\nb」は 1〜255 字で、改行・タブなどの制御文字と前後の空白を含みません",
     );
-    says(&doc, "「colour」はカードの文書に書けないキーです");
+    says(&doc, "「colour」はカードの JSON に書けないキーです");
     let mut doc = card("task", json!({}), json!({}));
     doc["order"] = json!("first");
     says(&doc, "order（セクションの中の並び）は整数です");
     // Where a card is written out is the project's exports', not the card's.
     doc["exportTo"] = json!([{ "dir": "d1" }]);
-    says(&doc, "「exportTo」はカードの文書に書けないキーです");
+    says(&doc, "「exportTo」はカードの JSON に書けないキーです");
     let mut doc = card("entity", json!({}), json!({}));
     doc["order"] = json!(3);
     assert_eq!(problems(&doc), Vec::<String>::new());
@@ -1017,7 +1020,7 @@ fn fields_hold_what_they_say() {
     says(&doc, "MR: MR の番号（1 以上の整数）です");
     says(&doc, "metadata: 「n」の値は文字列です");
     says(&doc, "tags[0]: 「,」は書けません");
-    says(&doc, "colour: 持てない欄です");
+    says(&doc, "colour: 持てないフィールドです");
     let many: Vec<String> = (0..33).map(|i| format!("t{i}")).collect();
     says(
         &card("note", json!({ "tags": many }), json!({})),
@@ -1025,15 +1028,15 @@ fn fields_hold_what_they_say() {
     );
     says(
         &card("note", json!({ "tags": ["a", "a"] }), json!({})),
-        "tags: \"a\" が重なっています",
+        "tags: \"a\" が重複しています",
     );
 }
 
 #[test]
 fn a_look_is_not_written_in_the_document() {
     says(
-        &card("formatdoc", json!({ "view": "rows" }), json!({})),
-        "view: 見かけの欄なので、カードの文書には書けません",
+        &card("structdoc", json!({ "view": "rows" }), json!({})),
+        "view: 見かけのフィールドなので、カードの JSON には書けません",
     );
 }
 
@@ -1090,7 +1093,7 @@ fn required_fields_are_required_where_they_apply() {
             json!({}),
             json!([]),
         ),
-        "target: 持てない欄です",
+        "target: 持てないフィールドです",
     );
     // An embedding is a line (`connections`), not a type a field is written in.
     let doc = card(
@@ -1151,8 +1154,8 @@ fn rows_beside_one_another_differ() {
         json!({}),
         json!({ "values": [{ "id": "a", "fields": { "name": "x" } }, { "id": "a", "fields": { "name": "x" } }] }),
     );
-    says(&doc, "values: 値「x」が重なっています");
-    says(&doc, "values.x: 行の id「a」が重なっています");
+    says(&doc, "values: 値「x」が重複しています");
+    says(&doc, "values.x: 行の id「a」が重複しています");
 }
 
 // MARK: - The wire
@@ -1267,8 +1270,8 @@ fn steps_keep_their_ids_by_place() {
 #[test]
 fn the_wire_sets_aside_how_a_card_looks_and_refuses_what_it_cannot_hold() {
     let parts = back(
-        "formatdoc",
-        &json!({ "kind": "formatdoc", "label": "仕様", "view": "rows" }),
+        "structdoc",
+        &json!({ "kind": "structdoc", "label": "仕様", "view": "rows" }),
         None,
     )
     .unwrap();
@@ -1341,7 +1344,7 @@ fn a_cards_lines_hold_what_their_kind_says() {
         .collect();
     for wanted in [
         "connections[0].fields.cardinality: \"many\" は選べません（1:1・1:N・N:1・N:N）",
-        "connections[1]: 線の id「a」が重なっています",
+        "connections[1]: 線の id「a」が重複しています",
         "connections[1]: 「sideways」という線の種類はありません（あるのは embed・points・link・holds・rules・implementedBy・testedBy・next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key・arrow）",
         "connections[2]: 線の id がありません",
         "connections[2]: to（相手のカード）がありません",
@@ -1361,7 +1364,7 @@ fn a_cards_lines_hold_what_their_kind_says() {
     ghost["connections"] = json!([]);
     says(
         &ghost,
-        "カードゴーストは線（connections）を持ちません（線は指す先の本物に書きます）",
+        "カードゴーストは線（connections）を持ちません（線は指す先の元のカードに書きます）",
     );
 }
 
@@ -1407,13 +1410,13 @@ fn a_card_inside_a_container_keeps_it_by_id() {
             json!({ "status": "進行中", "items": ["t1"] }),
             json!({}),
         ),
-        "items: 持てない欄です",
+        "items: 持てないフィールドです",
     );
     let mut task = card("task", json!({}), json!({}));
     task["in"] = json!("g1");
     assert_eq!(problems(&task), Vec::<String>::new());
     task["in"] = json!("");
-    says(&task, "in（入れ物のカードの id）は空でない文字列です");
+    says(&task, "in（コンテナのカードの id）は空でない文字列です");
 }
 
 #[test]
@@ -1432,9 +1435,9 @@ fn the_rules_a_write_brings_are_held_to_their_kinds() {
     assert_eq!(
         said,
         [
-            "rules[0]: rule「uniqueBy」に fields は書けません（書けるのは by・keys・field・note。形は guide の about: rules）",
+            "rules[0]: rule「uniqueBy」に fields は書けません（書けるのは by・keys・field・note。形式は guide の about: rules）",
             "profile.rules[0]: rule「pattern」には regex が要ります",
-            "profile.nick.rules[0]: rule「sortedBy」の keys は欄の名前の並びです",
+            "profile.nick.rules[0]: rule「sortedBy」の keys はフィールドの名前の配列です",
             "profile.nick.rules[0]: rule「sortedBy」の order は asc / desc のいずれかです",
         ]
     );
@@ -1588,14 +1591,14 @@ fn the_built_in_kinds_are_said_in_the_language_of_the_call() {
         )
     };
     let (entity, field, section, line, purpose) = said("ja");
-    assert_eq!((entity.as_str(), field.as_str()), ("記録", "名前"));
+    assert_eq!((entity.as_str(), field.as_str()), ("エンティティ", "名前"));
     assert_eq!(
         (section.as_str(), line.as_str()),
         ("スキーマ", Some("相手"))
     );
     assert!(crate::text::has_japanese(&purpose), "{purpose}");
     let (entity, field, section, line, purpose) = said("en");
-    assert_eq!((entity.as_str(), field.as_str()), ("Record", "Name"));
+    assert_eq!((entity.as_str(), field.as_str()), ("Entity", "Name"));
     assert_eq!(
         (section.as_str(), line.as_str()),
         ("Schema", Some("Partner"))
@@ -1790,7 +1793,7 @@ fn every_boxed_card_may_carry_a_size() {
         "flow",
         "note",
         "freedoc",
-        "formatdoc",
+        "structdoc",
         "stackdoc",
         "svg",
         "html",

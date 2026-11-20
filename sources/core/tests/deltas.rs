@@ -1,5 +1,5 @@
 //! The screen's reading of a project told as what changed (`project_detail`'s `since`,
-//! `specboard://SpecBoard/Docs/Design:CoreApi`「頼み」): a write's entries alone, put on what the
+//! `specboard://SpecBoard/Docs/Design:CoreApi`「リクエスト」): a write's entries alone, put on what the
 //! reader holds as the app puts them, give what a whole reading gives, down to the digest; what the
 //! reader was not sent is answered whole; and each reader is answered against its own.
 

@@ -194,7 +194,7 @@ fn the_call_is_checked_before_the_app_is_asked() {
     );
     assert_eq!(
         error_of(&call(&s.core, &s.reader, json!({"op": "capture"}))),
-        "このアクセスキーでは、app_control.capture（画面を撮る） は使えません（拒否）。変えられるのは人だけで、プロジェクト一覧の場所の設定の「アクセスキー」でこのキーの項目を許可か都度承認にします"
+        "このアクセスキーでは、app_control.capture（画面をキャプチャする） は使えません（拒否）。変えられるのは人だけで、プロジェクト一覧の場所の設定の「アクセスキー」でこのキーの項目を許可か都度承認にします"
     );
     // The value against its op's form.
     assert_eq!(
@@ -203,7 +203,7 @@ fn the_call_is_checked_before_the_app_is_asked() {
             &s.driver.1,
             json!({"op": "capture", "value": {"maxSize": "大"}})
         )),
-        "value の maxSize は integer で指定してください（渡されたのは 文字列）（value の形は guide の about: app_control）"
+        "value の maxSize は integer で指定してください（渡されたのは 文字列）（value の形式は guide の about: app_control）"
     );
     let said = error_of(&call(
         &s.core,
@@ -331,7 +331,7 @@ fn a_select_is_looked_up_in_the_tree_it_names_and_the_app_told_which() {
     let asked = s.window.asked.lock().unwrap().len();
     let said = error_of(&select(json!({"target": "Goals:Ship"})));
     assert!(
-        said.starts_with("Goals:Ship は main にありません（窓は動かしていません）: "),
+        said.starts_with("Goals:Ship は main にありません（ウィンドウは動かしていません）: "),
         "{said}"
     );
     let said = error_of(&select(
@@ -339,7 +339,7 @@ fn a_select_is_looked_up_in_the_tree_it_names_and_the_app_told_which() {
     ));
     assert!(
         said.starts_with(
-            "Schemas:Status は _project_board_ にありません（窓は動かしていません）: "
+            "Schemas:Status は _project_board_ にありません（ウィンドウは動かしていません）: "
         ),
         "{said}"
     );
@@ -365,7 +365,7 @@ fn a_core_no_app_was_handed_to_says_so() {
     let result = call(&core, &s.driver.1, json!({"op": "state"}));
     assert_eq!(
         error_of(&result),
-        "app_control に答えるアプリがありません（画面を読む・動かすのは、開いているアプリです）"
+        "app_control に応答するアプリがありません（画面を読む・動かすのは、開いているアプリです）"
     );
 }
 

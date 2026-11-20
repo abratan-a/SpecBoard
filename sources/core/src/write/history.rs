@@ -66,6 +66,8 @@ const MIGRATED: &[&str] = &[
     "history.migrate.goalKeys",
     "history.migrate.goalMr",
     "history.migrate.goalWorkBranch",
+    "history.migrate.builtinNames",
+    "history.migrate.structDoc",
 ];
 
 /// A commit's name as the call reading it says it: a move's of the store's form in its language, any

@@ -177,7 +177,7 @@ struct CardContent: Hashable {
 typealias SchemaLookup = (String) -> SchemaNode?
 
 extension SchemaNode {
-    /// The row a formatdoc's rows at the top draw from: the card itself.
+    /// The row a structdoc's rows at the top draw from: the card itself.
     static let topRow = "#top"
 
     /// A flow's node's row (`#n.<node>`), the name quoted where it needs it, as the core writes a
@@ -425,9 +425,9 @@ func cardRows(
         return window(all, from: from)
     }
 
-    // A formatdoc: a row for each item, nested as written, what its rows point at
+    // A structdoc: a row for each item, nested as written, what its rows point at
     // leaving from it — and one for the rows at the top, when they point at anything.
-    if schema.kind == .formatdoc {
+    if schema.kind == .structdoc {
         // The rows at the top, when they name anything: what they name leaves from there.
         if FormatRows.said(by: [], in: schema.rows).contains(where: { $0.place == "target" ? !$0.text.isEmpty : !NoteText.refs($0.text).isEmpty }) {
             all.append(CardRow(path: SchemaNode.topRow, depth: 0, field: nil, value: nil, fromType: nil,
@@ -681,11 +681,11 @@ enum StackRows {
 }
 
 /// Whether a card is drawn as a document — its whole text as it reads — rather than
-/// as rows: a freedoc and a stackdoc always, a formatdoc unless it, or else the project, says rows.
+/// as rows: a freedoc and a stackdoc always, a structdoc unless it, or else the project, says rows.
 func drawnAsDocument(_ schema: SchemaNode, docView: String) -> Bool {
     switch schema.kind {
     case .freedoc, .stackdoc, .table: return true
-    case .formatdoc: return (schema.docView ?? docView) == "document"
+    case .structdoc: return (schema.docView ?? docView) == "document"
     // Its scenarios are what a spec is looked over by: rows unless the card itself says otherwise.
     case .spec: return schema.docView == "document"
     default: return false

@@ -83,7 +83,7 @@ nonisolated struct LineKind: Codable, Hashable, Sendable {
 }
 
 /// One field of a kind of line (`fields`, written as a card's field is, `specboard://SpecBoard/Docs/Design:CardKinds`
-/// 「欄の定義」): what the property panel shows of it — its name, its words, the kind of value
+/// 「フィールドの定義」): what the property panel shows of it — its name, its words, the kind of value
 /// and the options, whether it is needed, and a group's own fields.
 nonisolated struct LineField: Codable, Hashable, Sendable, Identifiable {
     var name: String

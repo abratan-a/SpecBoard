@@ -39,7 +39,7 @@ nonisolated struct LayoutSettings: Hashable, Sendable {
     var size: CardSize = .standard
     /// Grid units kept clear around a card, on all four sides.
     var margin: Int = 1
-    /// How a formatdoc's card is drawn when the card does not say: `document`
+    /// How a structdoc's card is drawn when the card does not say: `document`
     /// — the whole of it as it reads — or `rows`, its items one a row.
     var docView: String = "document"
 

@@ -253,12 +253,14 @@ fn lines_are_written_whole_and_held_to_their_kinds() {
     let each = |line: Value| refused(&core, "card_update", with(card, &[line]));
     let said = each(json!({"line": "points", "to": "Schemas:Customer"}));
     assert!(
-        said.contains("この線は entity・valueの欄 から出せます（entity の頭からは出せません）"),
+        said.contains(
+            "この線は entity・valueのフィールド から出せます（entity のヘッダーからは出せません）"
+        ),
         "{said}"
     );
     let said = each(json!({"line": "embed", "from": "kind", "to": "Charts/Shop:Checkout"}));
     assert!(
-        said.contains("相手は entity・value・enumの頭 です（Charts/Shop:Checkout は flow）"),
+        said.contains("相手は entity・value・enumのヘッダー です（Charts/Shop:Checkout は flow）"),
         "{said}"
     );
     let said = each(json!({"line": "embed", "from": "status", "to": "Schemas:Customer"}));
@@ -267,7 +269,10 @@ fn lines_are_written_whole_and_held_to_their_kinds() {
         "{said}"
     );
     let said = each(json!({"line": "holds", "to": "Schemas:Customer"}));
-    assert!(said.contains("この線は storeの頭 から出せます"), "{said}");
+    assert!(
+        said.contains("この線は storeのヘッダー から出せます"),
+        "{said}"
+    );
     let said = each(json!({"line": "sideways", "to": "Schemas:Customer"}));
     assert!(
         said.contains("「sideways」という線の種類はありません"),
@@ -778,7 +783,7 @@ fn the_projects_own_kinds_are_read_and_written_and_one_in_use_stays() {
         problems[0]["problem"]
             .as_str()
             .unwrap()
-            .contains("（entity の頭からは出せません）"),
+            .contains("（entity のヘッダーからは出せません）"),
         "{problems}"
     );
 
@@ -900,7 +905,7 @@ fn a_designating_lines_landing_is_inside_the_card_it_reaches() {
     let said = refused(&core, "card_update", write(&written));
     assert!(
         said.contains(
-            "customer_id の ID で指す（points）: 着く所（at）は相手 Schemas:Customer の中の所だけです（欄の名前。例: id）。Schemas/Ordering:Order.kind は相手の外です。値のある別のカードへは、別の線（つながる link など）を引いてください: {\"line\":\"link\",\"from\":\"customer_id\",\"to\":\"Schemas/Ordering:Order\",\"at\":\"kind\"}"
+            "customer_id の ID で指す（points）: 着く所（at）は相手 Schemas:Customer の中の所だけです（フィールドの名前。例: id）。Schemas/Ordering:Order.kind は相手の外です。値のある別のカードへは、別の線（つながる link など）を引いてください: {\"line\":\"link\",\"from\":\"customer_id\",\"to\":\"Schemas/Ordering:Order\",\"at\":\"kind\"}"
         ),
         "{said}"
     );
@@ -1012,7 +1017,7 @@ fn a_project_file_before_12_has_its_lines_moved() {
         .unwrap()
         .to_string();
     let mut file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 34);
+    assert_eq!(file["version"], 35);
     // As 11 wrote it: the lines in the cards' fields, no kinds of the project's own.
     file["version"] = 11.into();
     file["project"].as_object_mut().unwrap().remove("kinds");
@@ -1093,7 +1098,7 @@ fn a_project_file_before_12_has_its_lines_moved() {
     assert_eq!(
         said,
         [
-            "線の種類 署名する をプロジェクトに作った（pointsAt の as と payloads の鍵から）",
+            "線の種類 署名する をプロジェクトに作った（pointsAt の as と payloads のキーから）",
             "カードの線 5 本を connections に移した（内包 2・ID で指す 1・置く 1・署名する 1）"
         ]
     );
@@ -1549,7 +1554,7 @@ fn the_lines_a_place_may_draw_follow_the_kinds_from_to_and_max() {
     let (_, now, _) = drawable(&core, "Schemas:Orders", json!({"to": "Schemas:Status"}));
     assert_eq!(now, ["link"]);
 
-    // A flow's rules: a note, a document or an item of a formatdoc — a row a link lands on
+    // A flow's rules: a note, a document or an item of a structdoc — a row a link lands on
     // too.
     let checkout = "Charts/Shop:Checkout";
     let (_, now, _) = drawable(&core, checkout, json!({"to": "Free:Memo"}));
@@ -1603,9 +1608,15 @@ fn the_lines_a_place_may_draw_follow_the_kinds_from_to_and_max() {
         now,
         ["embed", "points", "link", "implementedBy", "testedBy"]
     );
-    assert_eq!(read["lines"][0]["reaches"], "entity・value・enumの頭");
-    assert_eq!(read["lines"][1]["reaches"], "entity・valueの頭・欄");
-    assert_eq!(read["lines"][2]["reaches"], "どのカードの頭・欄・行");
+    assert_eq!(read["lines"][0]["reaches"], "entity・value・enumのヘッダー");
+    assert_eq!(
+        read["lines"][1]["reaches"],
+        "entity・valueのヘッダー・フィールド"
+    );
+    assert_eq!(
+        read["lines"][2]["reaches"],
+        "どのカードのヘッダー・フィールド・行"
+    );
 
     // The project's own line, one at most: drawn once, it is full.
     let kinds = common::kinds_whole(&core);

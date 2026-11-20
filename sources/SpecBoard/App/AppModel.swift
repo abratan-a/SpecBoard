@@ -2496,7 +2496,7 @@ final class AppModel {
         return min(max(cells, GridSize.widths.lowerBound), GridSize.widths.upperBound)
     }
 
-    /// How a formatdoc reads on the diagram: rows, a document, or nil for the project's.
+    /// How a structdoc reads on the diagram: rows, a document, or nil for the project's.
     func setDocView(_ id: String, _ view: String?) {
         write { try tool("card_update", target: cardPath(id), value: ["view": view ?? NSNull()]) }
     }
@@ -3243,7 +3243,7 @@ final class AppModel {
         setOwnRows(card.id, changed.kind, changed.rows)
     }
 
-    /// What its definition no longer has (「定義に無い欄」) let go of: the one at `at`, or all.
+    /// What its definition no longer has (「定義に無いフィールド」) let go of: the one at `at`, or all.
     func dropStrays(_ id: String, at: String? = nil) {
         let which: Any = at.map { [$0: NSNull()] } ?? NSNull()
         write { try tool("card_update", target: cardPath(id), value: ["strayFields": which]) }
@@ -3334,7 +3334,7 @@ final class AppModel {
     }
 
     /// A custom card's rows, all of them as they are now: a goal's are the cards inside it
-    /// (`specboard://SpecBoard/Docs/Design:CardKinds`「入れ物のカード」), each written with the tools — a row made here
+    /// (`specboard://SpecBoard/Docs/Design:CardKinds`「コンテナのカード」), each written with the tools — a row made here
     /// a task made inside the goal (`card_create` of `<goal>.<name>`), one changed its card
     /// (its label, whether it is done, what it is joined to: its `link` lines), one taken out
     /// let go of (a task) or taken out of the goal (a goal under it: `in: null`), and the
@@ -3700,7 +3700,7 @@ final class AppModel {
         rowsDraft = nil
     }
 
-    /// A formatdoc's rows, all of them, written back — with the rows that moved or were
+    /// A structdoc's rows, all of them, written back — with the rows that moved or were
     /// renamed, so the paths into them follow. The picked row follows too.
     func setRows(_ noteId: String, _ rows: [FormatRow], moves: [(from: [String], to: [String])] = []) {
         write {

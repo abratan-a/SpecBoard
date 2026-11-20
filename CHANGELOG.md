@@ -4,6 +4,13 @@
 
 Changes in each public release of SpecBoard that people using it can see (newest first).
 
+## 0.3.65
+
+- Built-in kinds: `formatdoc` is now `structdoc` (structured document). A store is moved to the new name once when it is opened, after a copy is kept beside it, and project files of earlier versions are read with the new name. Over MCP, `formatdoc` is refused with the name to write now.
+- Labels of the built-in kinds: in English, `entity` is Entity (was Record), `value` is Value object (was Value shape) and `structdoc` is Structured document (was Formatted document). In Japanese, the kinds are named with the established katakana terms: フロー, エンティティ, レコードの形, 値オブジェクト, 列挙型, 構造ドキュメント, フリードキュメント, スタックドキュメント and フレーム (付箋 stays).
+- Japanese: the window and MCP (tool descriptions, guides and error messages) use the established technical terms instead of native-word paraphrases, for example フィールド, データベース, ウィンドウ, 接続, 起動, バージョン, 読み取り専用 and オン／オフ. The line label 決まり is now ルール and a wait's 期限切れ is now タイムアウト.
+- Projects are saved in a newer format, and older versions of the app and its agents cannot open them or read its project files. Update the app and its agents together, and reconnect AI sessions to MCP.
+
 ## 0.3.62
 
 - Local agent: a switch in This Mac's settings runs the agent bundled with the app for your user on this Mac, with no SSH and no other host. While it is on, the agent keeps this Mac's projects and receives MCP on this Mac's 127.0.0.1, so AI sessions on this Mac can read and write them with an access key, and This Mac's settings get the Hub, Access keys and Public tabs. Turning it off moves the projects back into the app's own store. Moving a project between This Mac and its agent keeps the folders its working directories and exports are bound to.

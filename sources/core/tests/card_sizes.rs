@@ -181,7 +181,7 @@ fn a_size_said_wrongly_or_of_a_card_that_cannot_carry_one_is_refused() {
         "card_update",
         json!({"target": "Charts/Shop:Checkout.check", "value": {"size": {"w": 12}}}),
     );
-    assert!(said.contains("eval のカードは大きさを持てません"), "{said}");
+    assert!(said.contains("eval のカードはサイズを持てません"), "{said}");
     // A card ghost is drawn at the size of the card it leads to.
     ok(
         &core,
@@ -194,7 +194,7 @@ fn a_size_said_wrongly_or_of_a_card_that_cannot_carry_one_is_refused() {
         json!({"target": "Free", "value": {"places": {"Free:Shadow": {"size": {"w": 12}}}}}),
     );
     assert!(
-        said.contains("カードゴーストは指す先のカードの大きさ"),
+        said.contains("カードゴーストは指す先のカードのサイズ"),
         "{said}"
     );
     assert!(at(&core, "Free:Wide").get("ownSize").is_none());
@@ -328,7 +328,7 @@ fn a_card_grown_over_another_stays_and_says_so() {
     let answer = update(&core, "Free:Wide", json!({"size": {"w": 20}}));
     let said = answer["warnings"][0].as_str().unwrap_or_default();
     assert!(
-        said.contains("大きさを変えたので Free:Next と重なる"),
+        said.contains("サイズを変えたので Free:Next と重なる"),
         "{answer}"
     );
     assert_eq!(

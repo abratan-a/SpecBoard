@@ -1,7 +1,7 @@
 import Foundation
 
-/// What a formatdoc's rows that are drawn from the project come out as — the same on
-/// screen and written out (`specboard://SpecBoard/Docs/Design:DesignActions`「formatdoc」): a card's table, and
+/// What a structdoc's rows that are drawn from the project come out as — the same on
+/// screen and written out (`specboard://SpecBoard/Docs/Design:DesignActions`「structdoc」): a card's table, and
 /// the cards of a chart section whose diagrams are put in.
 enum FormatRender {
 

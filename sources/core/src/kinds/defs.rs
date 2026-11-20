@@ -59,7 +59,7 @@ impl Base {
 pub enum At {
     /// The card's head.
     Card,
-    /// A row inside it: a record's field, a formatdoc's item, a process node's step, a row of
+    /// A row inside it: a record's field, a structdoc's item, a process node's step, a row of
     /// a project's own kind (and a field of its card).
     Row,
     /// A function or a type inside a working directory's file: made of the file each time, so
@@ -120,7 +120,7 @@ fn row_names(kind: &super::Kind) -> Vec<String> {
 }
 
 /// A place in a card a line leaves or lands at, found: its head, or a row with the kind of
-/// row it is one of (`fields` for a record's field, `rows` for a formatdoc's item, `steps`
+/// row it is one of (`fields` for a record's field, `rows` for a structdoc's item, `steps`
 /// for a process node's step, the project's own name for a row of a project's own kind); none for
 /// a field of a project's own kind's card itself (and a goal's row of before).
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1137,7 +1137,9 @@ fn read_sections(
             problems.push(text!("kindDefs.problem.holdsMissing", at));
         }
         for kind in &holds {
-            if kind != "*" && cards.get(kind).is_none_or(|k| k.is_abstract) {
+            if let Some(why) = super::kind_named_before(kind) {
+                problems.push(format!("{at}: {why}"));
+            } else if kind != "*" && cards.get(kind).is_none_or(|k| k.is_abstract) {
                 problems.push(text!("kindDefs.problem.holdsKind", at, kind));
             } else if !builtin && super::inner_only(kind) {
                 problems.push(text!(
@@ -1376,7 +1378,9 @@ fn read_end(
         problems.push(text!("kindDefs.problem.endKindsMissing", here));
     }
     for kind in &kinds {
-        if kind != "*" && cards.get(kind).is_none_or(|k| k.is_abstract) {
+        if let Some(why) = super::kind_named_before(kind) {
+            problems.push(format!("{here}: {why}"));
+        } else if kind != "*" && cards.get(kind).is_none_or(|k| k.is_abstract) {
             problems.push(text!("kindDefs.problem.endKind", here, kind));
         }
     }

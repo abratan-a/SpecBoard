@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 // How the marks of what a branch changed look (`ChangeMark`, `specboard://SpecBoard/Docs/Design:UI` §2
-// 「変更の印」): the system's green, yellow, red and blue, light and dark — the yellow dark enough to
+// 「変更のマーク」): the system's green, yellow, red and blue, light and dark — the yellow dark enough to
 // read as text on a light window.
 
 extension ChangeMark.Tint {

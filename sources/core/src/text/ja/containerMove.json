@@ -1,5 +1,5 @@
 {
-  "containerMove.error.sql": "入れ物の中身を移せません: {e}",
+  "containerMove.error.sql": "コンテナの中身を移せません: {e}",
   "containerMove.line.flows": "flow {flows} 枚のノード {nodes} 個を、flow の中のカードと線にした",
   "containerMove.line.goals": "goal {goals} 枚の中身（items）{held} 枚を、goal の中のカードにした",
   "containerMove.line.inCard": "{name} の {line}",
@@ -8,7 +8,7 @@
   "containerMove.line.lineKindRenamed": "プロジェクトの線の種類 {from} を {to} に名前を変えた（flow の線と同じ名前のため）",
   "containerMove.line.pathsRewritten": "goal の中に入ったカードを指すパス {count} か所を、goal の下のパスに書き直した",
   "containerMove.reason.cycle": "入れるとその goal を中に持つことになる",
-  "containerMove.reason.ghost": "カードゴーストで入れ物の中には置けない",
+  "containerMove.reason.ghost": "カードゴーストでコンテナの中には置けない",
   "containerMove.reason.kind": "goal に入れられない種類のカード",
   "containerMove.reason.noTarget": "指す先のカードがない",
   "containerMove.reason.otherGoal": "ほかの goal の中身に先に入った",

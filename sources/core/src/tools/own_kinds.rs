@@ -6,7 +6,7 @@
 //! definition is written.
 //!
 //! What a change leaves behind is not refused: a field taken out of a definition (or renamed
-//! without its values) stays in the cards as 「定義に無い欄」 (`kinds::strays`), and a card
+//! without its values) stays in the cards as 「定義に無いフィールド」 (`kinds::strays`), and a card
 //! that no longer fits is said by the tree's check (`inspection_list`: `cardProblems`,
 //! `lineProblems`, `sectionProblems`). A kind still in use is not let go of.
 

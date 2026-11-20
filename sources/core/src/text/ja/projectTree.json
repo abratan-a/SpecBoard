@@ -1,5 +1,5 @@
 {
-  "projectTree.branch.hasIt": "project_tree の {tree}[{at}]: branch に、根の直下の {name} がもうあります（その branch で名前を変えるか、main へ入れてから）",
+  "projectTree.branch.hasIt": "project_tree の {tree}[{at}]: branch に、ルートの直下の {name} がもうあります（その branch で名前を変えるか、main へ入れてから）",
   "projectTree.kind.cannotChange": "project_tree の {tree}[{at}]: {name} は今 {kind} のセクションです。種類（type）だけを変えることはできません（別の名前で足して、中身を移します）",
   "projectTree.kind.none": "種類なし",
   "projectTree.line.changed": "{tree}（{parts}）",

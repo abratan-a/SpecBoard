@@ -65,7 +65,10 @@ fn the_list_says_each_kind_in_a_line_and_where_it_goes() {
     let core = Core::open(script_store()).unwrap();
     let list = ok(&core, "kind_list", json!({}));
     let entity = listed(&list["cards"], "kind", "entity");
-    assert_eq!(entity["purpose"], "単位で保存・送信される記録（ID を持つ）");
+    assert_eq!(
+        entity["purpose"],
+        "単位で保存・送信されるレコード（ID を持つ）"
+    );
     assert_eq!(entity["in"], json!(["schema", "definition"]));
     // When to use it and the rest are kind_read's and the guide's; a built-in kind is not marked.
     for key in ["fields", "use_when", "not_for", "builtin", "own"] {
@@ -204,7 +207,7 @@ fn a_built_in_kind_has_its_context_alone_written_over() {
     let written = ok(
         &core,
         "kind_update",
-        json!({"target": "formatdoc", "value": {"context": {"use_when": "このプロジェクトの設計書と仕様書"}}}),
+        json!({"target": "structdoc", "value": {"context": {"use_when": "このプロジェクトの設計書と仕様書"}}}),
     );
     assert_eq!(written["builtin"], true);
     assert_eq!(written["contextChanged"], true);
@@ -219,10 +222,10 @@ fn a_built_in_kind_has_its_context_alone_written_over() {
             .contains("決めた書式")
     );
     let list = ok(&core, "kind_list", json!({}));
-    let formatdoc = listed(&list["cards"], "kind", "formatdoc");
+    let formatdoc = listed(&list["cards"], "kind", "structdoc");
     assert_eq!(formatdoc["contextChanged"], true);
     assert_eq!(
-        ok(&core, "kind_read", json!({"target": "formatdoc"}))["context"]["use_when"],
+        ok(&core, "kind_read", json!({"target": "structdoc"}))["context"]["use_when"],
         "このプロジェクトの設計書と仕様書"
     );
     // A section's and a line's too; nothing else of a built-in kind.
@@ -251,7 +254,7 @@ fn a_built_in_kind_has_its_context_alone_written_over() {
     let back = ok(
         &core,
         "kind_update",
-        json!({"target": "formatdoc", "value": {"context": null}}),
+        json!({"target": "structdoc", "value": {"context": null}}),
     );
     assert!(back.get("contextChanged").is_none(), "{back}");
     assert!(

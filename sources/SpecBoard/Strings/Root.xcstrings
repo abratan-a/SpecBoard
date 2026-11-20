@@ -14,7 +14,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アーカイブのプロジェクトです（読むだけ）。書き換えるには元に戻してください"
+            "value" : "アーカイブのプロジェクトです（読み取り専用）。書き換えるには元に戻してください"
           }
         }
       }
@@ -950,7 +950,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この branch で変えたことを main（か、ほかの branch）に入れる窓を開く"
+            "value" : "この branch で変えたことを main（か、ほかの branch）に入れるダイアログを開く"
           }
         }
       }
@@ -1022,7 +1022,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main を取り込む…"
+            "value" : "main をマージ…"
           }
         }
       }
@@ -1040,7 +1040,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main の変更を、この branch で直したカードに入れます（merge の窓を開く）"
+            "value" : "main の変更を、この branch で直したカードに入れます（merge のダイアログを開く）"
           }
         }
       }
@@ -1094,7 +1094,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "種別の絞り込みが効いています。押すと変えられます"
+            "value" : "種類の絞り込みが効いています。押すと変えられます"
           }
         }
       }
@@ -1112,7 +1112,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "線の引き方と、セクション外のカード・種別の絞り込み（線の種類は図の上で切り替える）"
+            "value" : "線の引き方と、セクション外のカード・種類の絞り込み（線の種類は図の上で切り替える）"
           }
         }
       }
@@ -1130,7 +1130,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "種別"
+            "value" : "種類"
           }
         }
       }
@@ -1304,7 +1304,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "値オブジェクトと列挙は、持っているカードの行に畳んで描いています。一覧を出します"
+            "value" : "value と enum は、持っているカードの行に畳んで描いています。一覧を出します"
           }
         }
       }
@@ -1340,7 +1340,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "持っている欄へ移ります"
+            "value" : "持っているフィールドへ移ります"
           }
         }
       }
@@ -1460,7 +1460,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文書の変わった所はありません"
+            "value" : "ドキュメントの変わった所はありません"
           }
         }
       }
@@ -1742,7 +1742,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ナビパネルを開く（⌃⌘S。セクションとカードの木）"
+            "value" : "ナビパネルを開く（⌃⌘S。セクションとカードのツリー）"
           }
         }
       }
@@ -1994,7 +1994,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "知らせ"
+            "value" : "お知らせ"
           }
         }
       }
@@ -2168,7 +2168,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "（AI が頼んだ）"
+            "value" : "（AI がリクエストした）"
           }
         }
       }
@@ -2186,7 +2186,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "branch で動かした位置を、main の位置に上書きして入れます。AI が branch_merge の places で頼んだときは入れた形で始まります（数は AI が試したときのもの。入るのは承認したときの branch の位置）"
+            "value" : "branch で動かした位置を、main の位置に上書きして入れます。AI が branch_merge の places でリクエストしたときは入れた形で始まります（数は AI が試したときのもの。入るのは承認したときの branch の位置）"
           }
         }
       }
@@ -2348,7 +2348,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "merge したあとの main を図とカードで開く（読むだけ。上の帯で承認・拒否・閉じる）"
+            "value" : "merge したあとの main を図とカードで開く（読み取り専用。上のバナーで承認・拒否・閉じる）"
           }
         }
       }
@@ -2438,7 +2438,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の履歴へ（足を切る）"
+            "value" : "%@ の履歴へ（古い履歴を切り詰める）"
           }
         }
       }
@@ -2456,7 +2456,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクトが DB の中で使っている大きさの目安（行の中身の長さの合計）。中身は main と branch のカード・セクション、履歴は branch ごとのコミットの変える前の中身"
+            "value" : "プロジェクトがデータベースの中で使っているサイズの目安（行の中身の長さの合計）。中身は main と branch のカード・セクション、履歴は branch ごとのコミットの変える前の中身"
           }
         }
       }
@@ -2744,7 +2744,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "閉じるまでの直しを 1 つのコミットにします。その間、この branch への MCP の書き込みは断ります"
+            "value" : "閉じるまでの直しを 1 つのコミットにします。その間、この branch への MCP の書き込みは拒否します"
           }
         }
       }
@@ -2762,7 +2762,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ロック中の main を直します。閉じると、直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は断ります"
+            "value" : "ロック中の main を直します。閉じると、直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は拒否します"
           }
         }
       }
@@ -2882,7 +2882,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "部品のノートを、マップに付箋で重ねる・隠す。橙の見直しの点は出たまま"
+            "value" : "部品のノートを、マップに付箋で重ねる・隠す。橙のレビューの点は出たまま"
           }
         }
       }
@@ -2918,7 +2918,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "部品ごとの札（名前 | 表示名 | 種類）を、見出しの位置の角に出す・隠す"
+            "value" : "部品ごとのバッジ（名前 | 表示名 | 種類）を、見出しの位置の角に出す・隠す"
           }
         }
       }

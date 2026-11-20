@@ -36,7 +36,7 @@ fn a_batch_and_what_is_not_json_rpc_are_turned_away() {
         batch["error"]["message"]
             .as_str()
             .unwrap()
-            .contains("まとめ送り"),
+            .contains("バッチリクエスト"),
         "{batch}"
     );
     let bare = sent(&core, json!({"id": 2, "method": "tools/list"}));
@@ -519,7 +519,7 @@ fn a_document_is_read_as_one_markdown_with_its_paths_as_written() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Guide", "value": {"kind": "formatdoc", "label": "手引き", "rows": [
+        json!({"target": "Docs:Guide", "value": {"kind": "structdoc", "label": "手引き", "rows": [
             {"name": "intro", "kind": "item", "heading": "はじめに", "rows": [
                 {"name": "body", "kind": "text", "body": "[[Schemas:Customer]] を見る"}
             ]},
@@ -571,7 +571,7 @@ fn a_documents_markdown_says_which_card_each_table_is_and_names_its_items() {
     ok(
         &core,
         "card_create",
-        json!({"target": "Docs:Decisions", "value": {"kind": "formatdoc", "label": "決めたこと", "rows": [
+        json!({"target": "Docs:Decisions", "value": {"kind": "structdoc", "label": "決めたこと", "rows": [
             {"name": "adr_single_binary", "kind": "item", "heading": "1 つのバイナリで配る", "rows": [
                 {"name": "why", "kind": "item", "heading": "理由", "rows": [
                     {"name": "body", "kind": "text", "body": "[[Docs:Decisions.adr_single_binary]] のとおり"}

@@ -7,7 +7,7 @@
 //! values (`fields`; a data card's `data` by its top-level fields, an array whose elements' shape
 //! has a key an element at a time, where the array stands among them worked out apart), each row
 //! of a record's fields, of an enum's values, of a stackdoc's
-//! versions and of a formatdoc's rows by id (its parent is part of it; where it stands among
+//! versions and of a structdoc's rows by id (its parent is part of it; where it stands among
 //! its siblings is worked out apart), and every other kind of row whole — a flow's steps,
 //! whose parts lead to one another, and a table a project's own kind defines: mixing them
 //! would make shapes neither side wrote. A section is taken apart into its keys. A unit only
@@ -16,7 +16,7 @@
 //! A row one side removed while the other changed it or what it holds is one conflict, of
 //! that row: taken either way whole, so nothing inside is dropped unsaid. Two things the merge
 //! would leave at one path refuse it: a card or a section, and a row a card keeps by id — a
-//! field under one parent, an enum's value, a stackdoc's version, a formatdoc's row under one
+//! field under one parent, an enum's value, a stackdoc's version, a structdoc's row under one
 //! parent — made with one name on both sides.
 
 use super::{Table, Tx, db};
@@ -349,13 +349,13 @@ fn data_assembled(
 }
 
 /// Whether a card's rows of `name` are kept apart row by row — a record's fields, an enum's
-/// values, a stackdoc's versions, a formatdoc's rows, a spec's scenarios (each its own: one added
-/// on one side and another changed on the other both go in). A formatdoc's rows and a spec's
+/// values, a stackdoc's versions, a structdoc's rows, a spec's scenarios (each its own: one added
+/// on one side and another changed on the other both go in). A structdoc's rows and a spec's
 /// scenarios are by row only in that kind: a table a project's own kind names so is its own, and one
 /// unit.
 fn by_row(card: Option<&str>, name: &str) -> bool {
     match name {
-        "rows" => card == Some("formatdoc"),
+        "rows" => card == Some("structdoc"),
         "scenarios" => card == Some("spec"),
         _ => BY_ROW.contains(&name),
     }
@@ -409,7 +409,7 @@ fn rows_of<'d>(doc: &'d Map<String, Value>, name: &str) -> &'d [Value] {
 
 /// The rows a card keeps by id that share a name with a sibling — a record's fields under one
 /// parent (by name), an enum's values (by value), a stackdoc's versions (by name), a
-/// formatdoc's rows under one parent (by name) — each said by its path in the card (`memo`,
+/// structdoc's rows under one parent (by name) — each said by its path in the card (`memo`,
 /// `address.street`, `high`, `v0_2_34`, `auth.login`) with the ids at it.
 fn rows_at_one_name(doc: &Map<String, Value>) -> Vec<(String, Vec<String>)> {
     fn gather(list: &[Value], name: &str, prefix: &str, out: &mut Vec<(String, Vec<String>)>) {
@@ -2841,10 +2841,10 @@ mod tests {
         assert!(inner.iter().all(|r| r.get(PARENT).is_none()));
     }
 
-    /// A formatdoc as the store keeps it: `intro` holding `body`, and `terms`.
+    /// A structdoc as the store keeps it: `intro` holding `body`, and `terms`.
     fn spec() -> Map<String, Value> {
         doc(
-            json!({"id": "c", "kind": "formatdoc", "name": "Spec", "rows": {"rows": [
+            json!({"id": "c", "kind": "structdoc", "name": "Spec", "rows": {"rows": [
             {"id": "i", "fields": {"name": "intro", "kind": "item", "heading": "はじめに"}, "rows": {"rows": [
                 {"id": "b", "fields": {"name": "body", "kind": "text", "body": "前"}}]}},
             {"id": "t", "fields": {"name": "terms", "kind": "text", "body": "規約"}}]}}),
@@ -3035,7 +3035,7 @@ mod tests {
     #[test]
     fn rows_moved_under_one_another_on_two_sides_are_not_dropped() {
         let base = doc(
-            json!({"id": "c", "kind": "formatdoc", "name": "Spec", "rows": {"rows": [
+            json!({"id": "c", "kind": "structdoc", "name": "Spec", "rows": {"rows": [
             {"id": "a", "fields": {"name": "a", "kind": "item"}},
             {"id": "b", "fields": {"name": "b", "kind": "item"}}]}}),
         );
@@ -3043,7 +3043,7 @@ mod tests {
         let under = |outer: &str, inner: &str| {
             let mut o = row(outer);
             o["rows"] = json!({"rows": [row(inner)]});
-            doc(json!({"id": "c", "kind": "formatdoc", "name": "Spec", "rows": {"rows": [o]}}))
+            doc(json!({"id": "c", "kind": "structdoc", "name": "Spec", "rows": {"rows": [o]}}))
         };
         let out = merge3(
             Kind::Card,

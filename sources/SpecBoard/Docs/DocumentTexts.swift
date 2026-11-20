@@ -161,7 +161,7 @@ final class DocumentTexts {
 
 /// The text of a card drawn as a document, before its references are resolved: what its face shows.
 enum DocumentSource {
-    /// A freedoc's text, a formatdoc as it reads (`FormatDocEditor.document`), a stackdoc's version
+    /// A freedoc's text, a structdoc as it reads (`FormatDocEditor.document`), a stackdoc's version
     /// open (its heading and body), a table's Markdown, and the Markdown a card's face draws below
     /// its fields (a task's body).
     static func of(_ card: SchemaNode, in detail: ProjectDetail) -> DocumentParts.Source {
@@ -176,7 +176,7 @@ enum DocumentSource {
             return DocumentParts.Source(card: card.id, text: text, plain: true, form: page.form)
         }
         let text = card.face?.markdown != nil ? card.faceMarkdown
-            : card.kind == .formatdoc ? FormatDocEditor.document(card, in: detail)
+            : card.kind == .structdoc ? FormatDocEditor.document(card, in: detail)
             : card.kind == .stackdoc ? card.openVersion?.page ?? ""
             : card.kind == .spec ? SpecDocument.markdown(card) : card.body
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {

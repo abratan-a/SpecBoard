@@ -26,7 +26,7 @@ struct WrittenPath: Equatable {
 }
 
 /// Where the names inside a card lead: a field — on through a `ref` into the card it
-/// embeds when more names follow — a formatdoc's row, or a flow's node. The one walk
+/// embeds when more names follow — a structdoc's row, or a flow's node. The one walk
 /// every reader of a path makes: the MCP target, the check for broken paths, the
 /// links between items, the values a note puts in, the impact of a change, and the
 /// identities a rename is followed by.
@@ -66,7 +66,7 @@ struct CardWalk {
     }
 
     /// The row a line to this place lands on in `head`'s card, as a path writes it: the names
-    /// from the head for a field, the item a formatdoc's row is (or is in) — `#top` for a row at
+    /// from the head for a field, the item a structdoc's row is (or is in) — `#top` for a row at
     /// the top — `#n.<name>` for a node, empty for the card.
     var row: String {
         switch place {
@@ -111,7 +111,7 @@ struct CardWalk {
         let names = written.map(PathText.plain)
 
         switch head.kind {
-        case .formatdoc:
+        case .structdoc:
             let (found, missing) = FormatRows.deepest(names, in: head.rows)
             guard missing.isEmpty else {
                 return .failure(Miss(kind: .formatRow, holder: head, walked: found, fromHead: found,

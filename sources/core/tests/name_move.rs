@@ -50,7 +50,7 @@ fn the_builtin_lines_are_named_as_they_are_shown() {
             .clone()
     };
     for (name, said) in [
-        ("rules", "決まり"),
+        ("rules", "ルール"),
         ("shapeOf", "形"),
         ("condition", "条件"),
         ("awaits", "待つ終わり"),

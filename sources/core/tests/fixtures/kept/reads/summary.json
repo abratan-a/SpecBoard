@@ -9,7 +9,7 @@
     "flow": 2,
     "store": 1,
     "freedoc": 1,
-    "formatdoc": 1,
+    "structdoc": 1,
     "stackdoc": 0,
     "spec": 0,
     "instance": 0,

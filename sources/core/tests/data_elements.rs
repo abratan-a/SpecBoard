@@ -98,9 +98,9 @@ fn an_arrays_keys_are_held_apart_on_every_write() {
             {"number": 80, "service": "ssh"}]}}}),
     );
     for wanted in [
-        "Data:vault.ports[2]: 鍵（number=53,protocol=udp）が ports[0] と重なります",
-        "Data:vault.ports[3]: 鍵の欄 protocol がありません",
-        "Data:vault.ports[3].service: unique の欄 service の値 ssh が ports[1] と重なります",
+        "Data:vault.ports[2]: キー（number=53,protocol=udp）が ports[0] と重複します",
+        "Data:vault.ports[3]: キーのフィールド protocol がありません",
+        "Data:vault.ports[3].service: unique のフィールド service の値 ssh が ports[1] と重複します",
     ] {
         assert!(said.contains(wanted), "wanted「{wanted}」: {said}");
     }
@@ -125,7 +125,7 @@ fn an_arrays_keys_are_held_apart_on_every_write() {
             "data": {"items": [{"id": 53}, {"id": "53"}]}}}),
     );
     assert!(
-        said.contains("鍵（id=\"53\"）が items[0] と重なります"),
+        said.contains("キー（id=\"53\"）が items[0] と重複します"),
         "{said}"
     );
     // One element written over with another's key; one value making a key the one before's.
@@ -136,7 +136,9 @@ fn an_arrays_keys_are_held_apart_on_every_write() {
             "value": {"value": {"number": 53, "protocol": "udp"}}}),
     );
     assert!(
-        said.contains("Data:vault.ports[1]: 鍵（number=53,protocol=udp）が ports[0] と重なります"),
+        said.contains(
+            "Data:vault.ports[1]: キー（number=53,protocol=udp）が ports[0] と重複します"
+        ),
         "{said}"
     );
     ok(
@@ -150,7 +152,9 @@ fn an_arrays_keys_are_held_apart_on_every_write() {
         json!({"target": "Data:vault.ports[number=53,protocol=udp].number", "value": {"value": 22}}),
     );
     assert!(
-        said.contains("Data:vault.ports[1]: 鍵（number=22,protocol=udp）が ports[0] と重なります"),
+        said.contains(
+            "Data:vault.ports[1]: キー（number=22,protocol=udp）が ports[0] と重複します"
+        ),
         "{said}"
     );
     // Nothing of it was written.
@@ -195,13 +199,13 @@ fn an_element_is_made_at_its_path_by_its_key_its_place_or_its_value() {
         json!({"target": "Data:vault.ports[number=8080,protocol=tcp]",
             "value": {"value": {"number": 8081}}}),
     );
-    assert!(apart.contains("パスの鍵と違います"), "{apart}");
+    assert!(apart.contains("パスのキーと違います"), "{apart}");
     let by_place = refused(
         &core,
         "card_create",
         json!({"target": "Data:vault.ports[1]", "value": {"value": {"number": 1, "protocol": "tcp"}}}),
     );
-    assert!(by_place.contains("鍵の条件で作ります"), "{by_place}");
+    assert!(by_place.contains("キーの条件で作ります"), "{by_place}");
     // No key: by the place it goes in, the length last; past it, refused.
     ok(
         &core,
@@ -222,7 +226,7 @@ fn an_element_is_made_at_its_path_by_its_key_its_place_or_its_value() {
         "card_create",
         json!({"target": "Data:vault.notes[9]", "value": {}}),
     );
-    assert!(past.contains("並びの長さ（4）"), "{past}");
+    assert!(past.contains("配列の長さ（4）"), "{past}");
     let keyed = refused(
         &core,
         "card_create",

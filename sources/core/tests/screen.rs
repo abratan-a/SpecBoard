@@ -720,7 +720,7 @@ fn boxes_are_put_where_the_window_says() {
 
     assert_eq!(
         s.refused(json!({"op": "places"})),
-        "places には boxes（置く箱の並び）が要ります"
+        "places には boxes（置く箱の配列）が要ります"
     );
     assert_eq!(
         s.refused(
@@ -792,7 +792,7 @@ fn the_layout_and_the_writing_rules() {
     let last = &s.ok(json!({"op": "commits", "limit": 1}))["commits"][0];
     assert_eq!(
         last["lines"][0]["summary"],
-        "書き方の決まりを更新（1 か所）"
+        "書き方のルールを更新（1 か所）"
     );
     let read = s.mcp(
         "project_read",
@@ -810,7 +810,7 @@ fn the_layout_and_the_writing_rules() {
         s.refused(
             json!({"op": "writing_rules_set", "place": "note.body", "text": "あ".repeat(4001)})
         ),
-        "note.body の決まりが長すぎます（4000 文字まで）"
+        "note.body のルールが長すぎます（4000 文字まで）"
     );
     // Empty: the app's again.
     assert_eq!(
@@ -1136,7 +1136,7 @@ fn a_sections_documents_are_read_in_one_request_as_each_part_is_read_alone() {
     assert_eq!(rule["missing"], json!({}));
     assert_eq!(
         s.refused(json!({"op": "document_parts"})),
-        "document_parts には documents（文書のカードの並び）が要ります"
+        "document_parts には documents（ドキュメントのカードの配列）が要ります"
     );
 }
 
@@ -1254,7 +1254,7 @@ fn a_renamed_node_and_rows_written_whole_take_the_paths_into_them_along() {
         nodes(&s)
     );
 
-    // A formatdoc's row renamed.
+    // A structdoc's row renamed.
     let rows = json!([{"name": "opening", "kind": "item", "heading": "はじめに",
                        "rows": [{"name": "body", "kind": "text", "body": "始める"}]}]);
     s.tool(
@@ -1522,7 +1522,7 @@ fn a_locked_main_is_arranged_and_tagged_from_the_window_and_nothing_else() {
     let s = &l.s;
     let before = s.last_seq("");
 
-    // Its own cards' boxes, a writing card's size, a formatdoc's look, a flow's nodes:
+    // Its own cards' boxes, a writing card's size, a structdoc's look, a flow's nodes:
     // no commit. A node is put as a card on its flow's card map, by its id.
     let save = nodes(s).into_iter().find(|n| n["name"] == "save").unwrap();
     s.ok(json!({"op": "places", "boxes": [
@@ -1592,7 +1592,7 @@ fn a_locked_main_is_arranged_and_tagged_from_mcp_and_nothing_else() {
     let s = &l.s;
     let before = s.last_seq("");
 
-    // Its own cards' boxes, a writing card's size, a formatdoc's look, a flow's nodes.
+    // Its own cards' boxes, a writing card's size, a structdoc's look, a flow's nodes.
     s.mcp(
         "card_update",
         json!({"target": "Schemas:Customer", "value": {"topLeft": {"x": 40, "y": 2}}}),

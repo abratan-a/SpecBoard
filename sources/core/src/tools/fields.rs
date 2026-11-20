@@ -57,7 +57,7 @@ fn holds_fields(card: &crate::model::Card) -> Result<(), String> {
     }
     let instead = match card.kind.as_str() {
         "note" | "freedoc" | "svg" | "html" => text!("fields.instead.body"),
-        "formatdoc" => text!("fields.instead.rows"),
+        "structdoc" => text!("fields.instead.rows"),
         "stackdoc" => text!("fields.instead.versions"),
         _ => text!("fields.instead.values"),
     };

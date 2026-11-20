@@ -105,7 +105,7 @@ struct OwnFieldControl: View {
 /// What the property panel says of a card of a kind the project defines, after its names: its
 /// fields, each written the way its type is; its rows, a count each (written in its card
 /// editor, a row picked here); and what its definition no longer has, faint, each let go of
-/// by hand (「定義に無い欄」).
+/// by hand (「定義に無いフィールド」).
 struct OwnCardProperties: View {
     var model: AppModel
     var card: SchemaNode

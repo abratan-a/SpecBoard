@@ -134,7 +134,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "そのプロジェクトの main の履歴を開きます（この知らせは閉じます）"
+            "value" : "そのプロジェクトの main の履歴を開きます（この通知は閉じます）"
           }
         }
       }
@@ -224,7 +224,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ の画面でまとめて直しています（%@、%@ から）。終わるまで、この branch は読むだけです"
+            "value" : "%@ の画面でまとめて直しています（%@、%@ から）。終わるまで、この branch は読み取り専用です"
           }
         }
       }
@@ -242,7 +242,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まとめて直しています（%@、%@ から）。main はロック中なので、閉じると直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は断ります"
+            "value" : "まとめて直しています（%@、%@ から）。main はロック中なので、閉じると直したものが 1 つの merge として main に入ります。その間、MCP の書き込みと merge は拒否します"
           }
         }
       }
@@ -260,7 +260,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まとめて直しています（%@、%@ から）。閉じるまでの直しは 1 つのコミットになり、この branch への MCP の書き込みは断ります"
+            "value" : "まとめて直しています（%@、%@ から）。閉じるまでの直しは 1 つのコミットになり、この branch への MCP の書き込みは拒否します"
           }
         }
       }
@@ -278,7 +278,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MCP バッチ処理中です（%@、%@ から）。終わるまで、この branch は読むだけです"
+            "value" : "MCP バッチ処理中です（%@、%@ から）。終わるまで、この branch は読み取り専用です"
           }
         }
       }
@@ -350,7 +350,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main はロック中（merge でしか変えられません）。図の上の位置・書くカードの大きさと見え方・タグ・プロジェクトの設定は直せます。中身は branch か「まとめて直す」で直します"
+            "value" : "main はロック中（merge でしか変えられません）。図の上の位置・書くカードのサイズと見え方・タグ・プロジェクトの設定は直せます。中身は branch か「まとめて直す」で直します"
           }
         }
       }
@@ -386,7 +386,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main を取り込む…"
+            "value" : "main をマージ…"
           }
         }
       }
@@ -440,7 +440,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MR %lld（%@ → main）を merge したあとの main を開いて見る（読むだけ。上の帯で承認・拒否）"
+            "value" : "MR %lld（%@ → main）を merge したあとの main を開いて見る（読み取り専用。上のバナーで承認・拒否）"
           }
         }
       }
@@ -668,7 +668,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "main の変更を merge 先の branch に取り込みます（branch で直したカードには、main の変更が入ります）"
+            "value" : "main の変更を merge 先の branch にマージします（branch で直したカードには、main の変更が入ります）"
           }
         }
       }
@@ -740,7 +740,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この知らせを閉じます。ベルの一覧からも goal を終えられます"
+            "value" : "この通知を閉じます。ベルの一覧からも goal を終えられます"
           }
         }
       }
@@ -950,7 +950,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "branch で動かしたカード・カードゴースト・flow のノード・セクションゴーストの箱の位置と、書くカードの大きさ・goal のコンテンツマップの箱を、merge 先の位置に上書きして入れます（ロック中の main にも）。切ると merge 先の並べ方のままで、merge 先に位置の無いもの（branch で作ったカードなど）にだけ入ります"
+            "value" : "branch で動かしたカード・カードゴースト・flow のノード・セクションゴーストの箱の位置と、書くカードのサイズ・goal のコンテンツマップの箱を、merge 先の位置に上書きして入れます（ロック中の main にも）。切ると merge 先の並べ方のままで、merge 先に位置の無いもの（branch で作ったカードなど）にだけ入ります"
           }
         }
       }
@@ -1280,7 +1280,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "merge したあとの main を図とカードで開く（読むだけ。上の帯で merge する・閉じる）"
+            "value" : "merge したあとの main を図とカードで開く（読み取り専用。上のバナーで merge する・閉じる）"
           }
         }
       }
@@ -1658,7 +1658,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@の main を見ています（読むだけ。図の印が merge で変わる・増えるカード、薄く打ち消したものが消えるカード、プロパティパネルの履歴に変わる所）"
+            "value" : "%@の main を見ています（読み取り専用。図のマークが merge で変わる・増えるカード、薄く打ち消したものが消えるカード、プロパティパネルの履歴に変わる所）"
           }
         }
       }

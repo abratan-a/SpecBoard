@@ -246,11 +246,11 @@ fn a_shared_project_is_listed_with_its_owner_and_the_lower_level() {
     let thing = |project: &str| json!({"project": project, "target": "Schemas:Thing", "value": {"kind": "entity"}});
     assert_eq!(
         u.refused("card_create", thing("Shop")),
-        "プロジェクト「Shop」は、このアクセスキーでは読むだけです（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）"
+        "プロジェクト「Shop」は、このアクセスキーでは読み取り専用です（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）"
     );
     assert_eq!(
         u.refused("card_create", thing("Notes")),
-        "プロジェクト「Notes」は、ほかのエージェントからは読むだけです（持ち主の共有か、使う側のアクセスキーの許可が読むだけ）"
+        "プロジェクト「Notes」は、ほかのエージェントからは読み取り専用です（オーナーの共有か、利用側のアクセスキーの許可が読み取り専用）"
     );
     assert!(u.way.handed().is_empty());
 }
@@ -433,19 +433,20 @@ fn an_owner_away_or_of_another_build_is_refused_without_being_asked() {
     let listed = |why: &str| json!([{"project": "Shop", "owner": "Server", "access": "write", "reachable": false, "why": why}]);
 
     // Not linked to the hub now.
-    let away = "Server は今ハブに繋がっていません";
+    let away = "Server は今ハブに接続されていません";
     state(&u.core, MAC.into(), true, server(false, BUILD));
     assert_eq!(u.refused("card_list", json!({"project": "Shop"})), away);
     assert_eq!(u.ok("project_list", json!({}))["projects"], listed(away));
 
     // Of another build: its answers are not the ones this side's tools describe.
-    let other = "Server は別の版で動いています（アプリを両方のエージェントに繋ぐと揃います）";
+    let other =
+        "Server は別のバージョンで動いています（アプリを両方のエージェントに接続すると揃います）";
     state(&u.core, MAC.into(), true, server(true, "0.3.58-9"));
     assert_eq!(u.refused("card_list", json!({"project": "Shop"})), other);
     assert_eq!(u.ok("project_list", json!({}))["projects"], listed(other));
 
     // This side not linked: the shared projects stay listed, and their grants stay.
-    let down = "ハブに繋がっていません";
+    let down = "ハブに接続されていません";
     state(&u.core, MAC.into(), false, json!([]));
     assert_eq!(u.refused("card_list", json!({"project": "Shop"})), down);
     assert_eq!(u.ok("project_list", json!({}))["projects"], listed(down));
@@ -506,7 +507,7 @@ fn a_write_cut_on_the_way_is_said_unknown_and_a_read_is_asked_once_more() {
             "card_read",
             json!({"project": "Shop", "target": "Schemas:Order"})
         ),
-        "持ち主までの繋ぎが、読んでいる途中で切れました。もう一度呼んでください"
+        "オーナーまでの接続が、読んでいる途中で切れました。もう一度呼んでください"
     );
     assert_eq!(u.way.handed().len(), 5);
     // The way not back in time is this agent not linked.
@@ -516,7 +517,7 @@ fn a_write_cut_on_the_way_is_said_unknown_and_a_read_is_asked_once_more() {
             "card_read",
             json!({"project": "Shop", "target": "Schemas:Order"})
         ),
-        "ハブに繋がっていません"
+        "ハブに接続されていません"
     );
 }
 
@@ -526,7 +527,7 @@ fn a_call_its_owner_does_not_answer_in_time_is_said_unknown_and_not_asked_again(
     u.told_shop(SERVER, "shop-srv");
     u.grant(SERVER, "shop-srv", json!("write"));
     let slow = json!({"failed": "slow"});
-    let said = "Server が時間内に答えませんでした。届いたか分かりません。読んで確かめてからやり直してください";
+    let said = "Server が時間内に応答しませんでした。届いたか分かりません。読んで確かめてからやり直してください";
 
     // A read is not asked once more: its owner is there, and still has the first to answer.
     u.way.answer(std::slice::from_ref(&slow));
@@ -839,7 +840,7 @@ fn a_members_call_is_judged_by_the_share_and_the_level_sent_and_written_under_ke
     // The lower of the two: a key that may only read, a share to read.
     let read_only = |name: &str| {
         format!(
-            "プロジェクト「{name}」は、ほかのエージェントからは読むだけです（持ち主の共有か、使う側のアクセスキーの許可が読むだけ）"
+            "プロジェクト「{name}」は、ほかのエージェントからは読み取り専用です（オーナーの共有か、利用側のアクセスキーの許可が読み取り専用）"
         )
     };
     assert_eq!(
@@ -911,7 +912,7 @@ fn a_members_call_is_judged_by_the_share_and_the_level_sent_and_written_under_ke
             &o.core,
             json!({"op": "hub_call", "member": "ghost", "request": {"k": "call", "tool": "card_list", "arguments": {"project": o.shop}, "key": "K", "level": "read", "build": BUILD, "lang": "ja"}})
         ),
-        "エージェント「ghost」はハブの名簿にありません"
+        "エージェント「ghost」はハブのメンバーリストにありません"
     );
     for tool in ["project_create", "project_list"] {
         let said = o.turned_down(tool, json!({"project": "New"}));
@@ -944,7 +945,7 @@ fn a_members_call_does_not_touch_the_owners_folders_alone_or_in_a_batch() {
     let path = folder.to_str().unwrap();
     let over_hub = |what: &str| {
         format!(
-            "{what} は、ハブ越しにはできません（持ち主のホストのフォルダに触ります。持ち主のエージェントに繋いだセッションでします）"
+            "{what} は、ハブ越しにはできません（オーナーのホストのフォルダに触ります。オーナーのエージェントに接続したセッションでします）"
         )
     };
     let entries = json!([{"from": "Schemas", "to": "docs/schemas.md"}]);
@@ -1084,7 +1085,7 @@ fn a_member_gone_from_the_hub_loses_its_shares_and_the_grants_to_its_projects() 
     );
     assert_eq!(
         view["shared"],
-        json!([{"owner": SERVER, "ownerName": "Server", "project": "shop-srv", "name": "Shop", "level": "write", "reachable": false, "why": "ハブに繋がっていません"}])
+        json!([{"owner": SERVER, "ownerName": "Server", "project": "shop-srv", "name": "Shop", "level": "write", "reachable": false, "why": "ハブに接続されていません"}])
     );
     assert_eq!(
         u.key_row()["hubGrants"],
@@ -1179,7 +1180,7 @@ fn shares_are_set_and_listed_for_the_screen_and_no_tool_writes_them() {
     // that is none.
     assert_eq!(
         share(&o.core, &o.shop, "ghost", json!("read"))["error"],
-        "エージェント「ghost」はハブの名簿にありません"
+        "エージェント「ghost」はハブのメンバーリストにありません"
     );
     assert_eq!(
         share(&o.core, &o.shop, SERVER, json!("read"))["error"],

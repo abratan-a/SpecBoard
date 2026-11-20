@@ -261,16 +261,16 @@ fn a_card_tool_says_the_keys_of_every_kind_and_a_kind_its_own() {
         keys(&entity["keys"]["card_create"]),
         ["fields", "absentFields", "discriminator", "face"]
     );
-    let formatdoc = json("formatdoc");
-    assert_eq!(keys(&formatdoc["keys"]["card_create"]), ["rows"]);
-    assert_eq!(keys(&formatdoc["keys"]["card_update"]), ["view"]);
-    assert!(formatdoc["keys"]["card_create"]["rows"]["heading"].is_string());
+    let structdoc = json("structdoc");
+    assert_eq!(keys(&structdoc["keys"]["card_create"]), ["rows"]);
+    assert_eq!(keys(&structdoc["keys"]["card_update"]), ["view"]);
+    assert!(structdoc["keys"]["card_create"]["rows"]["heading"].is_string());
     assert!(
-        formatdoc["row"]["card_create"]["same"]
+        structdoc["row"]["card_create"]["same"]
             .as_str()
             .unwrap()
             .contains("keys.card_create.rows"),
-        "{formatdoc}"
+        "{structdoc}"
     );
     // A store takes nothing of its own: what it holds are its lines.
     assert!(json("store").get("keys").is_none());

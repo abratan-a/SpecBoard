@@ -35,7 +35,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
 /// on the right. 閉じる or Esc goes back to what was there, which stays as it was
 /// underneath. The list of items reaches the top of the window as the nav panel does, the
 /// window's buttons over its first row; the title row on the right is the top bar here
-/// (overview §13 「窓の形」).
+/// (overview §13 「ウィンドウの形」).
 struct SettingsScreen: View {
     @Binding var page: SettingsPage?
     var model: AppModel

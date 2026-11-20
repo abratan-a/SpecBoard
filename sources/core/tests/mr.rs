@@ -57,7 +57,10 @@ fn a_request_is_made_with_its_conflicts_chosen_and_read_back() {
         "branch_merge",
         json!({"target": "work", "value": {"title": "客を直す"}}),
     );
-    assert!(said.contains("衝突が 1 残っているので出しません"), "{said}");
+    assert!(
+        said.contains("衝突が 1 残っているので作成しません"),
+        "{said}"
+    );
     let made = ok(
         &core,
         "branch_merge",

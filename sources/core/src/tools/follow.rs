@@ -6,7 +6,7 @@
 //! the card, and the field at each step, or the row or node by its place) against the
 //! project as it was, and written again against the project as it is, in full. A path that
 //! does not resolve stays as it was written. A section named alone (`[[Store/Ordering:]]`,
-//! `![[Store/Ordering:]]`, a formatdoc's diagram target) follows its section's renames and moves
+//! `![[Store/Ordering:]]`, a structdoc's diagram target) follows its section's renames and moves
 //! the same way. Descriptions are text that names places too:
 //! a card's, a field's, a node's
 //! and a step's by their definitions (`paths`), a line's, a section's (read from the section) and,
@@ -29,7 +29,7 @@ pub(crate) struct Identity {
     pub head: Option<String>,
     /// The field at each step.
     pub steps: Vec<String>,
-    /// For a formatdoc's row (its names from the top).
+    /// For a structdoc's row (its names from the top).
     pub inner: Option<Vec<String>>,
     /// How many names of the path its head takes: one for a card, more for a card inside a
     /// container (`Behavior:Checkout.review` is two).
@@ -406,7 +406,7 @@ fn each_string(v: &mut Value, f: &mut dyn FnMut(&mut String)) {
     }
 }
 
-/// The rows of a formatdoc or the nodes of a flow a change moved or renamed, by card:
+/// The rows of a structdoc or the nodes of a flow a change moved or renamed, by card:
 /// from where to where (their names from the top).
 pub(crate) type InnerMoves = std::collections::HashMap<String, Vec<(Vec<String>, Vec<String>)>>;
 

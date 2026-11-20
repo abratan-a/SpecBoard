@@ -1,7 +1,7 @@
 import Foundation
 
 /// A stackdoc's versions written from the window
-/// (`specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」): the version it has open — how it looks, no
+/// (`specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」): the version it has open — how it looks, no
 /// commit, and a locked main takes it too — one added on top, let go of, moved up or down, and one's
 /// name, key, heading or body changed. Each through the tools as MCP writes it: a version by its path.
 extension AppModel {

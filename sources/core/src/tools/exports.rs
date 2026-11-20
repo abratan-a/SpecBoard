@@ -318,6 +318,9 @@ fn entry_from(
                 let Some(kind) = kind.as_str() else {
                     return Err(text!("exports.entry.kindsList", at));
                 };
+                if let Some(why) = crate::kinds::kind_named_before(kind) {
+                    return Err(format!("{at}: {why}"));
+                }
                 if paths.project.defs.cards().get(kind).is_none() {
                     return Err(text!("exports.entry.noKind", at, kind));
                 }

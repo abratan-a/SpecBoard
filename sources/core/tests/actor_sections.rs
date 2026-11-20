@@ -529,7 +529,7 @@ fn actor_sections_and_marks_go_through_the_project_file() {
         .unwrap()
         .to_string();
     let file: Value = serde_json::from_str(&text).unwrap();
-    assert_eq!(file["version"], 34);
+    assert_eq!(file["version"], 35);
 
     let again = Core::create(common::place("again.sqlite")).unwrap();
     let read = op(&again, json!({"op": "project_file_read", "text": text}));
@@ -545,7 +545,7 @@ fn actor_sections_and_marks_go_through_the_project_file() {
 
     // A file written by an app newer than this one is refused as one.
     let mut newer = file.clone();
-    newer["version"] = 35.into();
+    newer["version"] = 36.into();
     let later = Core::create(common::place("later.sqlite")).unwrap();
     let refused = op(
         &later,
@@ -553,7 +553,7 @@ fn actor_sections_and_marks_go_through_the_project_file() {
     );
     assert_eq!(
         refused["error"],
-        "新しい版のアプリで書かれたファイルです。アプリを新しくしてから読み込んでください",
+        "新しいバージョンのアプリで書かれたファイルです。アプリをアップデートしてからインポートしてください",
         "{refused}"
     );
 }
@@ -594,7 +594,7 @@ fn an_actors_sections_page_says_what_it_provides_and_uses() {
     }
     let page = find(&files, "docs/charts/注文サーバ.md").unwrap_or_else(|| panic!("{files}"));
     let head = page.split("## ").next().unwrap();
-    assert!(head.contains("姿: システム"), "{page}");
+    assert!(head.contains("figure: システム"), "{page}");
     // Reserve is run only from inside 注文サーバ: what TakeOrder does, not a flow it provides.
     let provides = head
         .lines()

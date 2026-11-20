@@ -469,7 +469,7 @@ pub(crate) struct DeclaredPath {
     pub path: String,
     /// Why it is broken, once checked.
     pub hint: Option<String>,
-    /// A flow's `notes`: a note, a document, or an item of a formatdoc.
+    /// A flow's `notes`: a note, a document, or an item of a structdoc.
     pub writing: bool,
     /// A section of this kind, written with or without the `:` after it.
     pub section: Option<&'static str>,
@@ -516,7 +516,7 @@ fn said_once(r: &notetext::Ref) -> (Kind, String, String) {
 
 /// Every path a card asserts about itself (`declaredPaths`): rule parameters, what a
 /// flow's nodes name and decide by, what a note's or a document's Markdown names, a
-/// formatdoc's rows' targets and a custom card's joins. Its lines (a field's embedding and
+/// structdoc's rows' targets and a custom card's joins. Its lines (a field's embedding and
 /// pointer, a signature's keys, what a store holds, a flow's rules, a task's joins) are its
 /// connections now, and are checked as such (`line_paths`). `as_name` is how `at` spells
 /// the card — `Core:User` in full; its own name by default.
@@ -637,7 +637,7 @@ pub(crate) fn declared_paths(
         };
         out.push(from_ref(&own, via.to_string(), &r));
     }
-    // A formatdoc: each row's text, said as where it is, and what its diagrams and
+    // A structdoc: each row's text, said as where it is, and what its diagrams and
     // tables are of.
     facts::walk_format(&card.rows, &mut |row, path, _| {
         let at = format!(
@@ -907,7 +907,7 @@ pub(crate) fn line_paths(project: &Project, card: &Card) -> Vec<(DeclaredPath, D
         } else {
             format!("{via}.to")
         };
-        // The row it leaves: a field, a formatdoc's row, or a node's row by its place.
+        // The row it leaves: a field, a structdoc's row, or a node's row by its place.
         // (A data card's `steps[0]` is an element of its array `steps`.)
         if let Some(i) =
             crate::detail::step_index(&line.from).filter(|_| card.kind != crate::kinds::INSTANCE)
@@ -1187,7 +1187,7 @@ fn declared_problem_from(
             return Some(text!("check.path.notWriting", path));
         };
         let names = WrittenPath::new(path).map(|w| w.names).unwrap_or_default();
-        let an_item = landed.kind == "formatdoc"
+        let an_item = landed.kind == "structdoc"
             && format_row(&names, &landed.rows).is_some_and(|r| r.kind == "item");
         if !names.is_empty() && !an_item {
             return Some(text!("check.path.onlyItems", path));

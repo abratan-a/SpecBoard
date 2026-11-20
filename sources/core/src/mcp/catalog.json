@@ -1,6 +1,6 @@
 {
   "serverName": "specboard",
-  "instructions": "SpecBoard のプロジェクトを読み書きします。ツールは <対象>_<control>（対象は project・section・card・tag・kind・branch・mr・inspection・export、\ncontrol は list・create・read・update・delete ほか）で、guide と batch だけは 1 語です。ツールは tools/list の一覧で全部で、途中で変わりません。\n各ツールの value の説明に、target の指すものごとのキーがあります。\n\n引数はどのツールでも同じ意味です:\n- project: プロジェクトの名前（slug・id でも）。毎回渡します（画面で開いているものは見ません）。ほかのエージェントが共有しているもの（project_list の owner つき）は、同じ名前がほかにもあれば <名前>@<owner>\n- target: 対象のパス（配列を取るツールでは、いくつも）\n- value: 書く値や読み方。キーは一覧の value の説明に、その種類だけが取るキーは guide の about: <種類> にあります\n- branch: 読み書きする木。省くか main で main、branch の名前でその branch、_project_board_ でプロジェクトボード（やることを置く木）。\n  作業ディレクトリは main と各 branch の根の直下のセクション（repo/src:'a.rs' のように読む）\n- request: 都度承認の項目に当たるとき、true で画面に許可を求めて答えを待ちます（2 分まで）。付けなければ断られます\n\nパスは <セクション>/<セクション>:<カード>.<名前> で、木は書きません。根のセクションは根の名前（既定 Main）です。\n\n  Core:User / Core:User.profile.avatar.url   カード / 入れ子の末端\n  Store/Ordering:Order.lines[].sku           入れ子のセクション・配列の中（[] は省いてもよい。表の列・絞り・並べ替えのパスでは省けない）\n  Docs:Spec.auth / Behavior:Checkout.review  formatdoc の行 / 入れ物（flow・goal）の中のカード\n  repo/docs/design:'CardKinds.md'            区切りの字を含む名前（一重引用符で囲む）\n\n名前は日本語・空白・記号も使えます。区切りの字（空白と / : . [ ] ' @ | { } # \" `）を含む名前だけ、パスの中で一重引用符で囲みます（名前の中の ' は ''）。\n答えのパスはいつもこのフルパスで、そのまま次に渡せます。value の中のパス（connections の to・at など）はセクションを省けば\ntarget のカードのセクションから読み、保存のときにフルパスに直ります。本文と説明には [[パス]]（指す）・{{パス}}（値を差し込む）・\n![[パス]]（図を入れる）を書け、改名・移動に付いて行きます。カードは種類の合うセクションに置きます（種類と置ける所は kind_list）。\n書く前に、書く場所ごとの説明の決まりを project_read の value {as: \"rules\"} で読みます。\n\nguide は about に名前 1 つか名前の配列を取ります（省くと名前の一覧）。その種類だけのキーと例は about: <種類>（entity・flow・formatdoc・goal など。\nプロジェクトの種類は project も渡す）、キーや仕組みの書き方は about: connections・body・layout・rev・paging・paths・branch・board、仕様を先に書いて実装する進め方は about: sdd、\nツールの細かい決まりは、断られたときに案内される about: <ツール> で読みます。\n1 回の呼び出しは 1 つのトランザクションで、1 つでも断られたら何も書かず、直し方と guide の読み先を返します。",
+  "instructions": "SpecBoard のプロジェクトを読み書きします。ツールは <対象>_<control>（対象は project・section・card・tag・kind・branch・mr・inspection・export、\ncontrol は list・create・read・update・delete ほか）で、guide と batch だけは 1 語です。ツールは tools/list の一覧で全部で、途中で変わりません。\n各ツールの value の説明に、target の指すものごとのキーがあります。\n\n引数はどのツールでも同じ意味です:\n- project: プロジェクトの名前（slug・id でも）。毎回渡します（画面で開いているものは見ません）。ほかのエージェントが共有しているもの（project_list の owner つき）は、同じ名前がほかにもあれば <名前>@<owner>\n- target: 対象のパス（配列を取るツールでは、いくつも）\n- value: 書く値や読み方。キーは一覧の value の説明に、その種類だけが取るキーは guide の about: <種類> にあります\n- branch: 読み書きするツリー。省くか main で main、branch の名前でその branch、_project_board_ でプロジェクトボード（やることを置くツリー）。\n  作業ディレクトリは main と各 branch のルートの直下のセクション（repo/src:'a.rs' のように読む）\n- request: 都度承認の項目に当たるとき、true で画面に許可を求めて答えを待ちます（2 分まで）。付けなければ拒否されます\n\nパスは <セクション>/<セクション>:<カード>.<名前> で、ツリーは書きません。ルートのセクションはルートの名前（既定 Main）です。\n\n  Core:User / Core:User.profile.avatar.url   カード / 入れ子の末端\n  Store/Ordering:Order.lines[].sku           入れ子のセクション・配列の中（[] は省いてもよい。表の列・絞り・並べ替えのパスでは省けない）\n  Docs:Spec.auth / Behavior:Checkout.review  structdoc の行 / コンテナ（flow・goal）の中のカード\n  repo/docs/design:'CardKinds.md'            区切り文字を含む名前（一重引用符で囲む）\n\n名前は日本語・空白・記号も使えます。区切り文字（空白と / : . [ ] ' @ | { } # \" `）を含む名前だけ、パスの中で一重引用符で囲みます（名前の中の ' は ''）。\nレスポンスのパスはいつもこのフルパスで、そのまま次に渡せます。value の中のパス（connections の to・at など）はセクションを省けば\ntarget のカードのセクションから読み、保存のときにフルパスに直ります。本文と説明には [[パス]]（指す）・{{パス}}（値を差し込む）・\n![[パス]]（図を入れる）を書け、改名・移動に付いて行きます。カードは種類の合うセクションに置きます（種類と置ける所は kind_list）。\n書く前に、書く場所ごとの説明のルールを project_read の value {as: \"rules\"} で読みます。\n\nguide は about に名前 1 つか名前の配列を取ります（省くと名前の一覧）。その種類だけのキーと例は about: <種類>（entity・flow・structdoc・goal など。\nプロジェクトの種類は project も渡す）、キーや仕組みの書き方は about: connections・body・layout・rev・paging・paths・branch・board、仕様を先に書いて実装する進め方は about: sdd、\nツールの細かいルールは、拒否されたときに案内される about: <ツール> で読みます。\n1 回の呼び出しは 1 つのトランザクションで、1 つでも拒否されたら何も書かず、直し方と guide の読み先を返します。",
   "gone": {
     "appctl_capture": "appctl_capture はありません。app_control の op: capture を使います",
     "appctl_get_selection": "appctl_get_selection はありません。app_control の op: state を使います",
@@ -10,39 +10,39 @@
     "appctl_select_plan": "appctl_select_plan はありません。app_control の op: select を使います",
     "appctl_select_schema": "appctl_select_schema はありません。app_control の op: select を使います",
     "appctl_select_section": "appctl_select_section はありません。app_control の op: select を使います",
-    "appctl_set_view": "appctl_set_view はありません。app_control の op: view（読むだけなら op: state） を使います",
-    "appctl_show_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・まわりのマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
+    "appctl_set_view": "appctl_set_view はありません。app_control の op: view（読み取り専用なら op: state） を使います",
+    "appctl_show_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・余白のマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
     "branch_diff": "branch_diff はありません。branch_read を使います",
     "copy_to_branch": "copy_to_branch はありません。branch に複製する仕組みは外しました（branch は main の全部を見て、branch で書いたものだけが branch のものになります）。branch を作るのは branch_create です",
     "create_field": "create_field はありません。card_create（target をフィールドまで書く） を使います",
-    "create_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・まわりのマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
+    "create_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・余白のマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
     "create_plan": "create_plan はありません。project_create（project に新しい名前） を使います",
     "create_schema": "create_schema はありません。card_create を使います",
     "create_schemas": "create_schemas はありません。card_create（target を配列にするか、target を省いて value をパスごとに） を使います",
     "create_section": "create_section はありません。section_create（branch は branch_create） を使います",
     "delete_field": "delete_field はありません。card_delete（target をフィールドまで書く） を使います",
-    "delete_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・まわりのマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
+    "delete_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・余白のマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
     "delete_schema": "delete_schema はありません。card_delete を使います",
     "delete_section": "delete_section はありません。section_delete（branch は branch_delete） を使います",
-    "edit_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・まわりのマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
+    "edit_layout": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・余白のマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
     "edit_tag_groups": "edit_tag_groups はありません。tag_update（target に group:名前） を使います",
-    "export_plan": "export_plan はありません。書き出し先へ書くのは export_execute、何がどこへ書かれるかは export_read（書き出しは export_create で作ります）です。形式と範囲で選んでプロジェクトのコードを返す形はやめました（設計は card_read・section_read と as: diagram で読みます）",
+    "export_plan": "export_plan はありません。エクスポート先へ書くのは export_execute、何がどこへ書かれるかは export_read（エクスポートは export_create で作ります）です。形式と範囲で選んでプロジェクトのコードを返す形はやめました（設計は card_read・section_read と as: diagram で読みます）",
     "find": "find はありません。card_list の value の query を使います",
-    "get_diagram": "get_diagram はありません。card_read の value の as: diagram（セクションの図は section_read、木の全体は branch_read の as: diagram） を使います",
+    "get_diagram": "get_diagram はありません。card_read の value の as: diagram（セクションの図は section_read、ツリーの全体は branch_read の as: diagram） を使います",
     "get_diagram_revision": "get_diagram_revision はありません。図を読むツール（branch_read・section_read・card_read）の value の as: diagram と revisionOnly: true を使います",
     "get_impact": "get_impact はありません。card_read の value の as: impact を使います",
-    "get_plan": "get_plan はありません。project_read（点検は inspection_list、branch の一覧は branch_list、タグは tag_list） を使います",
+    "get_plan": "get_plan はありません。project_read（インスペクションは inspection_list、branch の一覧は branch_list、タグは tag_list） を使います",
     "get_schema": "get_schema はありません。card_read（集めるときは card_list） を使います",
-    "list_layouts": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・まわりのマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
+    "list_layouts": "名前付きレイアウトはありません。セクションマップの並べ方（カードの行数・幅・余白のマス）は project_update の value の layout で変えます。計画ごとの図は branch に分けます",
     "list_plans": "list_plans はありません。project_list を使います",
     "list_sections": "list_sections はありません。section_list を使います",
     "list_tags": "list_tags はありません。tag_list を使います",
     "merge_branch": "merge_branch はありません。branch_merge を使います",
     "move_schemas": "move_schemas はありません。card_update の value の section を使います",
-    "plan_export": "plan_export はありません。書き出し先へ書くのは export_execute、何がどこへ書かれるかは export_read（書き出しは export_create で作ります）です。形式と範囲で選んでプロジェクトのコードを返す形はやめました（設計は card_read・section_read と as: diagram で読みます）",
-    "plan_save": "plan_save はありません。保存先はありません（プロジェクトは DB に置き、保存先へ書く仕組みは外しました）。プロジェクトのファイルは、画面のプロジェクトの右クリック「ファイルに書き出す…」で書きます。型・図・文書は export_execute で書き出し先へ書きます",
+    "plan_export": "plan_export はありません。エクスポート先へ書くのは export_execute、何がどこへ書かれるかは export_read（エクスポートは export_create で作ります）です。形式と範囲で選んでプロジェクトのコードを返す形はやめました（設計は card_read・section_read と as: diagram で読みます）",
+    "plan_save": "plan_save はありません。保存先はありません（プロジェクトは DB に置き、保存先へ書く仕組みは外しました）。プロジェクトのファイルは、画面のプロジェクトの右クリック「ファイルに書き出す…」で書きます。型・図・ドキュメントは export_execute でエクスポート先へ書きます",
     "resolve_paths": "resolve_paths はありません。card_read の value の as: exists（target にパスの配列） を使います",
-    "save_plan": "save_plan はありません。保存先はありません（プロジェクトは DB に置き、保存先へ書く仕組みは外しました）。プロジェクトのファイルは、画面のプロジェクトの右クリック「ファイルに書き出す…」で書きます。型・図・文書は export_execute で書き出し先へ書きます",
+    "save_plan": "save_plan はありません。保存先はありません（プロジェクトは DB に置き、保存先へ書く仕組みは外しました）。プロジェクトのファイルは、画面のプロジェクトの右クリック「ファイルに書き出す…」で書きます。型・図・ドキュメントは export_execute でエクスポート先へ書きます",
     "set_enum_values": "set_enum_values はありません。card_update の value の values を使います",
     "set_tag_groups": "set_tag_groups はありません。tag_update（target に group:名前） を使います",
     "set_tags": "set_tags はありません。tag_update（target にタグ、value に {add: [パス], remove: [パス]}） を使います",
@@ -55,8 +55,8 @@
     "pr_create": "pr_create はありません。branch_merge で main へ入れると、ロック中なら MR（merge request）になり、人が承認します",
     "pr_delete": "pr_delete はありません。mr_delete を使います（PR は merge request、MR と呼ぶようになりました）",
     "directory_create": "directory_create はありません。作業ディレクトリは project_update の project_tree に {\"type\": \"workdir\", \"name\": \"repo\"} を足して作ります（設定は section_update）",
-    "directory_read": "directory_read はありません。作業ディレクトリのセクションを section_read で読み（folder・readType・exclude・files・problem）、読み直すのは section_action の op: read です",
-    "directory_update": "directory_update はありません。作業ディレクトリのセクションの section_update の readType・exclude・description・folder で変えます（名前は根の直下のほかのセクションと同じ）",
+    "directory_read": "directory_read はありません。作業ディレクトリのセクションを section_read で読み（folder・readType・exclude・files・problem）、再読み込みは section_action の op: read です",
+    "directory_update": "directory_update はありません。作業ディレクトリのセクションの section_update の readType・exclude・description・folder で変えます（名前はルートの直下のほかのセクションと同じ）",
     "directory_delete": "directory_delete はありません。作業ディレクトリは project_update の project_tree から外して消します（置いたメモは _evacuation_ へ）"
   },
   "replacedArguments": {
@@ -70,21 +70,21 @@
     "schemas": "カードは target に書きます（配列で複数）",
     "section": "target をセクション付きで書きます（例: Core:User。card_list は value の section で絞る）"
   },
-  "glossary": "# 用語集\n\n画面と MCP で同じ語を使う。語はそれを書くときのキーや値そのもの。\n\n## プロジェクトの形\n\n| 語 | 意味 |\n|---|---|\n| `project` | スキーマと振る舞いの設計図の全体 |\n| `main` | いまの実装を表すツリー。プロジェクトに 1 つ |\n| `branch` | 変更の計画。main から作り、作ったときの main の全部を見て、branch で書いたものだけが branch のものになる。作ったあとの main の変更は、main を取り込むまで映らない。main からは見えず、branch どうしも見えない |\n| `section` | カードの組。main・branch とボードの根の直下はプロジェクトの project_tree で決まり（種類と名前と並び）、ほかのセクションはその中に作り、入れ子にできる。パスでは Store/Ordering:Order のように書く |\n| `project_tree` | プロジェクトの木。main・branch の根の直下（main_sections）とボードの根の直下（board_sections）のセクションの種類・名前・並び。書き換えると、外したセクションは空なら消え、中身があれば _evacuation_ へ退避する |\n| `free` | フリーセクション。どの種類のカードも置ける下書きの場所。種類の合うセクションへ移して整理する |\n| `ui` | UI のセクション。部品（html・svg のカード）と、ほかの UI のセクションをはめ込むはめ込み（frame）を置いて画面を組む。note も置ける。中に作るセクションも ui。プロジェクトの project_tree に type: ui で足す。画面ではセクションマップで開き、部品をモックと同じ見た目で、置いた所に並び順に重ねて描く。部品の角に見出しの札（headerPlace）と付箋（notePlace）を重ね、図の上のバーの「見出し」「ノート」で出し入れする |\n| `mock` | モック。UI のセクションの部品を、置いた所に置いた大きさで組み上げた 1 枚の HTML のページ（はめ込みには指す先の UI のセクションのモックが入る。note のカードは描かない。スクリプトは動かない）。MCP は section_read の as: mock（html・width・height・parts・frames）で読み、faces: true で部品ごとのページ（faces）も添え、as: picture で絵。画面のセクションマップは部品ごとのページで部品を描く。エクスポートすると UI のセクションごとに 1 枚の .html |\n| `board` | プロジェクトボード。やること（目標と小目標・作業の文書）を置く、main・branch の外の木。merge・ロック・MR は無く、いつでも書ける。MCP は branch: \"_project_board_\"。ボードのカードからは main のカードへ「つながる」線（link）を引け、本文に main のパスを書ける（main からボードへは引けない） |\n| `ghost` | カードゴースト。セクションに置く、ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアスのようなもの。コピーではない）。自分の名前を持ち、置いたセクションの中ではその名前だけで書け、ほかからは section:名前 で書ける。指す先（target）は id で覚えて改名・移動に付いて行き、本物が消えると指す先の無いカードゴーストとして残る。セクションの図には指す先のカードが丸ごと出る。カードゴーストの無いほかのセクションのカードは、セクションごとに 1 枚のセクションゴーストにまとまり、指されている所だけが出る。画面で一時的に出すだけのもの（一時カードゴースト）はプロジェクトに残らない |\n| `standalone` | value・enum を自分のセクションの図に、持っているカードの中に畳まずに 1 枚のカードで出す（見かけ。コミットにならない） |\n| `base` | branch で main のカードを初めて書いたときの main の中身。branch で変えたことは base と比べて言う（branch_read） |\n| `merge` | branch で変えたことを main に入れること |\n| `path` | section:Card.field の形で場所を指す書き方。書いた場所のツリーの中で探す。区切りの字（空白と / : . [ ] ' @ \\| { } # \" `）を含む名前は一重引用符で囲む（Docs:'release notes.md'。名前の中の ' は ''） |\n| `in` | 入れ物のカード（flow・goal。種類の定義の holds に中に置ける種類がある）の中のカードが入っている入れ物。中のカードのパスは入れ物のパスに名前を続ける（Behavior:Checkout.review・Goals:Launch.Design）。card_update の in で入れ物を移す |\n\n## カードの種類（kind）\n\n| 語 | 意味 |\n|---|---|\n| `entity` | 単位で保存・送信される記録（ID を持つ） |\n| `value` | 何かの中に入る形（ID を持たない）。セクションマップでは持っているカードの中に畳んで出る |\n| `enum` | 値の集合（open なら網羅でない）。値ごとに表示名と説明を持てる。セクションマップでは持っているカードの中に畳んで出る |\n| `flow` | 部品がすることと、部品をまたぐ処理の流れ（MCP のリクエストを受ける・ユーザー登録など。部品はセクションで表す）。入れ物のカードで、中に開始・処理・実行・判断・待つ・合流・終了のノードのカードを置き、線でつなぐ |\n| `store` | 記録を置く場所（テーブル・コレクション・台帳・ファイル） |\n| `instance` | データ。entity・value の実例（形を持つ実際の値）。定義のセクション（definition。新しいプロジェクトでは根の Definitions）とフリーセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に持つ。図とエディタは形のフィールドごとに型の札と値を並べる。値 1 つのパスは Data:first.status（並びの要素は Data:first.lines[0]・Data:first.lines[sku=A-1]）。形の JSON Schema の examples と、文書の card の行の表に出る |\n| `table` | 表。形（entity・value）のデータ（instance）を決まり（within・where・columns・sort・unnest）で集めた表のカード。定義・ドキュメント・フリーのセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）。図は組み上がった表の絵で、文書には本文の埋め込みか行 card で表として入り、エクスポートでは Markdown の表 |\n| `note` | カードのそばに置く付箋（メモ・変更履歴）。どの種類のセクションにも置け、本文（body）を持つ。セクションマップで本文が見える |\n| `freedoc` | 自由文書。ドキュメントセクションに置く Markdown 1 枚（body）の文書。エクスポートすると 1 枚が 1 ファイル |\n| `formatdoc` | 整形文書。ドキュメントセクションに置く、項目と行（rows）で組んだ設計書・仕様書。エクスポートすると 1 枚が 1 ファイル |\n| `stackdoc` | 積み重ね文書。ドキュメントセクションに置く、版（versions）を新しい順に重ねた文書（変更履歴など）。図とエディタはセレクタで選んだ版を見せる。エクスポートするとカード全体が 1 ファイルで、エクスポートの項目に版のパスを書くとその版だけ |\n| `spec` | 仕様。ドキュメントセクションに置く、機能のねらい（As・I want・So that）と Scenario（題と Given・When・Then・And・But の段）を決まった形で持つ文書。Scenario ごとにパス（<カード>.<name>）があり、確かめるテストへの線（testedBy）を引く。線の無い Scenario は点検に出る。エクスポートすると Markdown（# Feature・## Scenario） |\n| `svg` | SVG の絵。本文（body）に SVG を書き、図の上ではカードの箱に収めて（縦横の比を保って）画像として描く（中のスクリプトは動かず、外のものは読み込まない）。本文は XML として読め、根が svg の要素であること。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.svg） |\n| `sketch` | ホワイトボードの図形。形（rect・rounded・ellipse・diamond・cylinder・text）と字（Markdown）と塗り・縁の色を持ち、図の上ではカードの頭を描かずに形そのものを描く。矢印（arrow）でつなぐ。大きさは手で決めなければ字から決まり、位置を書かずに作ったものは矢印をたどって左から右へ並ぶ |\n| `image` | ホワイトボードの画像。中身（PNG・JPEG・GIF。5MB まで）はプロジェクトに中身ごとに 1 つだけ持ち、カードは中身の sha256 と形式・原寸を持つ。中身は imageData か imageFrom で渡し、card_read の as: image で絵そのものを読む。大きさは手で決めなければ原寸から決まる |\n| `html` | HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、大きさを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。頭に同じ守りを書く） |\n| `frame` | はめ込み。UI のセクションに置き、欄 target の UI のセクションのモックを自分の箱に 1:1 ではめ込む（はみ出す所は切る）。target はパスで書き、id で覚えて改名・移動に付いて行く。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない。同じセクションを何枚ものはめ込みで使える。大きさを変えられ、既定はカード 1 枚分 |\n| `goal` | 目標。status（状態）・priority（優先度）・due（期限）・workBranch（作業する branch）・MR の欄と、本文（body）を持つ入れ物のカードで、中に goal と task を置く。中の並びが task の作業の順。プロジェクトボードの goals のセクションとフリーセクションに置く |\n| `task` | タスク。済みのチェック（done）と、本文（body。決めたこと・どこまで進んだか・経緯）と、つながる線（connections の line: link）を持つ。goal の中に入れると、goal の行（番号・チェック・名前）として出る。図の上では種類の定義の face のとおり、チェックと本文の Markdown で描き、大きさを変えられる |\n| `file` | ファイル。作業ディレクトリ（この機械で結び付けたフォルダ）を読んで、コアが作業ディレクトリのセクションの中に作るカード。名前と表示名はファイルの名前（パスでは区切りの字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス、language は名前と作業ディレクトリの parsers で決まる言語。読むだけで、main と branch のカードから実装の線（implementedBy）で指す。関数と型を拾う言語のファイルは、中の関数と型（symbol）も指せ、図ではそれを行で並べる |\n| `workdir` | 作業ディレクトリのセクション。main と各 branch の根の直下に、プロジェクトの木に種類 workdir で並べたもの。中はこの機械のフォルダから読んで作る読むだけのもので、置けるのはメモだけ。設定はそのセクションの section_update（readType・exclude・description・folder）、読み直すのはアクションの「読み込む」（section_action の op: read） |\n| `directory` | 作業ディレクトリのセクションの中のディレクトリ。コアが読んだフォルダから作るセクションで、ファイルが種類 file のカード。読むだけ |\n| `symbol` | 関数と型。関数と型を拾う言語の作業ディレクトリのファイルの中の関数・メソッド・型・モジュール・定数・マクロで、コアが同梱の tree-sitter の文法で読むたびにファイルから作るカード（保存しない）。パスはファイルのパスに続ける（repo/src:'a.rs'.Order.total。同じ親に同じ名前が並べば、あとのものに「 (2)」）。of（どの言語でも同じ分け方。画面の札は ƒ が関数とメソッド・T が型・M がモジュール・C が定数・# がマクロ）・word（その言語での呼び方: fn・struct・protocol など）・language を持つ。main と branch のカードから実装の線（implementedBy）で指せ、関数と型から線は出せない。card_read で宣言の 1 行（declaration）・中身（body）・呼んでいる名前（calls）を読む |\n| `parsers` | 言語の対応。作業ディレクトリのファイルの拡張子（.h）か名前（Makefile）から、読む言語の id（cpp。null で言語なし）への対応。作業ディレクトリのセクションの section_update の parsers で既定を書き換え、parsers: null で既定に戻す。読み方（readType・exclude）と同じくプロジェクトの設定で、section_read に効いている対応と言語（languages）が出る |\n\n## flow のノード\n\n| 語 | 意味 |\n|---|---|\n| `begin` | 開始。trigger と next の線。受けて始まる（receive）ときは相手のフローへの partner の線（何本でも）と program（どちらも省くのは穴（相手が書かれていない）。呼び手を問わないなら anyCaller: true）・carries |\n| `trigger` | 開始のきっかけ: manual（手動）・receive（受ける）・event（ほかのフローの終わり）・schedule（定期）・startup（起動のたび） |\n| `process` | 処理。steps にまっすぐ続く行（読む・書く・署名・確かめる・呼ぶ・送る・受ける・計算する）と next の線。行が読む・書く所は reads・writes の線（from に行） |\n| `run` | 実行。runs の線のフローを呼んで終わりを待つ（carries を渡し、returns を受ける）。onError・next の線 |\n| `eval` | 判断。value と、condition の線（欄 when）・else の線 |\n| `wait` | 待つ。for（approval / timer / event）・timeout と、onTimeout・next の線 |\n| `join` | 合流。next の線を 2 本以上にして分かれた行き先がそろうのを待つ（join: all / any / first、partial: fail / continue） |\n| `end` | 終了。outcome（success / failure / cancelled）がフローの戻り値。返すものは return |\n| `diagram` | flow の図の形の既定: flowchart（コンテンツマップの図）/ sequence（シーケンス図）。エクスポート・文書の図・MCP の図はこの形で描く |\n| `topLeft` | カードやノードの左上の位置（マス。{x, y}） |\n\n## note と文書\n\n| 語 | 意味 |\n|---|---|\n| `body` | note と freedoc の本文（Markdown）。`[[パス]]` で欄を指し（`[[セクション:]]` でセクション、`[[パス\\|字]]` で見せる字を変える）、`{{パス}}` で値（const のある欄・列挙・データの値）を差し込み、`![[パス]]` の 1 行で図を入れる |\n| `rows` | formatdoc の行。name（パスに使う名前）と kind: item（項目。heading と中の rows、5 段まで）・text（本文）・table（表）・diagram（図）・diagrams（セクションの図）・card（カードの表）。パスはフィールドと同じ形（Docs:Spec.auth.login） |\n| `versions` | stackdoc の版。name（パスに使う名前）・key（セレクタに出す名前）・heading（見出し。省くと key）・body（本文の Markdown）。並びは新しい版が上で、版のパスは Docs:Changelog.v1_2_0 |\n| `version` | stackdoc で開いている版（版の name。見かけで、コミットにならない）。無ければ一番上の版 |\n\n## フィールド\n\n| 語 | 意味 |\n|---|---|\n| `required` | キーが必ずある |\n| `nullable` | null が正当な値（required とは独立） |\n| `const` | 常にこの値を取る |\n| `data` | データ（instance）の値。形と同じ入れ子の JSON（キーはフィールドの名前、並びの欄は配列）。書いた値は形のフィールドの型・nullable・const・列挙の値・判別子の枝と、文字の値は欄の rules の pattern で確かめ、合わなければ断る。required の欠けは書き途中として点検に出る。形から消えたフィールドの値は strayFields に残る |\n\n## 線（connections）\n\n| 語 | 意味 |\n|---|---|\n| `connections` | カードの線の並び。1 本ずつ line（線の種類）・from（出る欄や行。省けば頭）・to（相手）・at（相手の中の着く所）・description・fields（線の種類が決める欄） |\n| `line` | 線の種類。組み込み（embed・points・link・holds・shapeOf・rules・implementedBy・testedBy・mentions と、flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）とプロジェクトが定義するもの。意味（定義の base）は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。kind_list・kind_read で読み、kind_create・kind_update で定義する |\n| `embed` | 内包: 欄が相手の形をそのまま持つ（生成される型が変わる。欄の type は ref と読む） |\n| `points` | ID で指す: 欄の値が相手の ID（型は変わらない） |\n| `of` | 形: データ（instance）と表（table）から形（entity・value）への線。1 本だけで、MCP は value のキー of に形のパスを書く（connections には書かない）。図にははじめから描かず、カードの頭に形の名前が出る |\n| `at` | 線が相手の中で着く所（欄か行。相手の外なら、そこのフルパス） |\n| `fromBoard` | 関わるやること。main（と branch）のカードを線か本文のパスで指している、ボードのカードのうち済んでいないもの（済んだ task、完了・打ち切りの goal とその中のカードは出さない）。プロパティパネルと card_read に出る |\n\n## 処理ノードの行（steps）\n\n| 語 | 意味 |\n|---|---|\n| `receive` | 受ける（相手のフローへの partner の線は何本でも引け、program と一緒にも書ける。どちらも省くと、開始が受ける相手から。開始が受けない flow では穴） |\n| `return` | 終了ノードが返すもの（carries。返す相手は partner の線（何本でも）と program で、どちらも省くと開始が受ける相手へ） |\n| `call` | プロジェクトに無い道具（program）を呼んで返りを待つ（carries を送り、returns を受ける）。プロジェクトの flow を呼んで待つのは実行ノード |\n| `send` | 渡す（返りを待たない。ほかの flow を始めさせるのも）。相手は partner の線（何本でも。相手ごとに渡す）か program で、どちらかが要る |\n| `read` | 置き場所から読む（reads の線） |\n| `write` | 置き場所へ書く（writes の線） |\n| `sign` | 署名する（key の線、use: sign） |\n| `verify` | 署名を確かめる（key の線、use: verify） |\n| `compute` | 計算。業務の検証や計算のような、外に出ない処理（何をするかは行の description。ほかの欄・線は持たない） |\n| `via` | 受け渡しの方法: stdio / file / exec / http / grpc / websocket / queue と、プロジェクトが足した値（kind_update の flow の vias。省くと部品の中） |\n| `initiator` | 呼びに行く側: self / peer（データの向きとは別） |\n\n## 線の種類（凡例）\n\n線の種類の名前と、画面の名前（定義の label）と 1 行の意味（定義の description）。定義と同じ文で書く。\n\n| 語 | 意味 |\n|---|---|\n| `embed` | 内包: 欄の型が相手の形になる |\n| `points` | ID で指す: 欄の値が相手の ID を指す |\n| `link` | つながる: 型に関係しない、つながりだけの線 |\n| `holds` | 置く: store が置く記録の形 |\n| `shapeOf` | 形: データや表がどの形のものか |\n| `rules` | 決まり: flow が従う決まりを書いた文書 |\n| `implementedBy` | 実装: 仕様・設計を実装しているファイルや関数 |\n| `testedBy` | 確かめるテスト: 仕様の項目やカードを、どのテストで確かめているか |\n| `mentions` | 言及: 本文の `[[ ]]` が指す所 |\n| `next` | 次: ノードの次の行き先 |\n| `condition` | 条件: 判断の条件が当たるときの行き先 |\n| `else` | それ以外: 判断のどの条件にも当たらないときの行き先 |\n| `onError` | 失敗したら: 実行が失敗したときの行き先 |\n| `onTimeout` | 期限切れ: 待つが期限を過ぎたときの行き先 |\n| `runs` | 実行する: 実行が呼んで終わりを待つフロー |\n| `awaits` | 待つ終わり: 開始や待つが待つ、ほかのフローの終わり |\n| `reads` | 読む: 処理の行が読む所 |\n| `writes` | 書く: 処理の行が書く所 |\n| `partner` | 相手: 送る・受ける・返す相手のフロー |\n| `key` | 鍵: 署名を作る・確かめるのに使う |\n| `arrow` | 矢印: ホワイトボードの図形・付箋・svg・画像のあいだの矢印。字・破線・向き・色を 1 本ごとに持つ |\n",
-  "branchGuide": "# branch\n\nプロジェクトはリモートの無い git のリポジトリのように扱います。main がいまの実装、branch は main から作る変更の計画です。\nパスに branch は書きません（Core:User は、どの branch でも同じカードを指します）。\n\n## 名指し方\n\n- section_*・card_*・tag_list・tag_update・export_read・inspection_* は、引数 branch で木を名指します: 省くか main で main、\n  branch の名前でその branch、_project_board_ でプロジェクトボード（やることを置く、merge しない木）。作業ディレクトリは main と各 branch のセクション\n- 答えの頭に、どの branch のものかを 1 度出します。画面で開いている branch には縛られません（替えるのは app_control の op: select）\n- プロジェクトに 1 つのもの（設定・タググループ・種類の定義・書き方の決まり・作業ディレクトリ・書き出し）は、どの branch にもすぐ効き、\n  project_read・project_update に branch を付けると断ります。export_execute は branch も書けます（targetdir に書く先のパス。[default] は main だけ）\n- batch は、開くときに branch を 1 度名指します\n- branch そのもの: branch_list・branch_read（as: diff と against か path（前と後の中身）・diagram・history）・\n  branch_create（main からだけ）・branch_update（改名）・branch_delete（discard: true で merge していない変更ごと）・branch_merge・branch_revert。\n  MR は mr_list・mr_read・mr_delete\n\n## merge\n\n- branch_merge の target が merge 元（main も可）、value の into が merge 先（省けば main）。main を取り込むのは target に main、into に branch\n- カードの欄・フィールド・列挙の値・版・formatdoc の行ごとに、共通の基点・merge 元・merge 先の 3 つで比べ、片側だけが変えた所はそちらを取ります。\n  両側が変えた所（片方が消して片方が直したものも）は衝突で、take で選びます。branch_read の against で下見でき、\n  その conflicts の path と unit をそのまま take に写せます\n- main へ入れると merge 元の branch は退けます（keep: true で残す）。位置は、merge 先に無いものにだけ入ります（places: true で全部）\n\n## 履歴と戻す\n\n- 画面の 1 操作・MCP の 1 回の呼び出し（batch の実行は全体で 1 回）が、branch ごとに 1 コミットで、書き手と変える前の中身が残ります\n- branch_read の as: history で新しい順に読み、branch_revert の to に seq を書くと、そのコミットのすぐあとの形に「戻す」の\n  1 コミットで戻します（ほかの書き手のコミットを挟むと断る）。main を戻すと、main は書き換えずに戻した形の branch を作るので、それを merge します\n- as: history に seq を足すとそのコミットの中身を読め、branch_revert の undo でそのコミットだけを取り消します（ほかの書き手のは request: true で）\n\n## ロックと MR\n\n- main がロック中（project_read の locked: true）は、main は merge でしか変わりません。branch を名指して書きます。ロック中も main に書けるのは\n  見かけ（位置と並び（topLeft・position・places）・size・view・standalone）・タグ・プロジェクトの設定です\n- ロック中の main へ branch_merge すると、merge をその場で試した MR（title・description）を出します。人が画面で承認するので、ユーザーに伝えます。\n  拒否されたら mr_read の reason を読んで直し、出し直します。branch か入るものが動くと MR は stale（古い）になり、出し直します。\n  project_read の aiMerge: true なら、MR を出さずにそのまま入ります\n- batch が押さえている branch は画面から直せず、画面で「まとめて直す」をしている branch へは MCP から書けません\n\n## git と違う所\n\n- branch は作ったときの main を見て、そのあとの main の変更は main を取り込むまで映りません（遅れは branch_list・branch_read に出る）。\n  リモート・rebase はありません（main を取り込む）\n- branch で書いたカードだけが branch の写しになり、id は main と同じです",
-  "boardGuide": "goal と task は、プロジェクトボード（branch: \"_project_board_\"）の goals のセクションとフリーセクションに置くカードです。欄は種類のキー（guide の about: goal・task）で、欄の名前（英語のキー。画面は label の名前）で書きます。個人向けの道具なので、担当の欄はありません。\n- goal は入れ物で、中に goal と task を置きます。中のパスは <goal のパス>.<名前>（Goals/Refunds:Launch.Design）で、名前は goal の中で一意。task の中に task は入れず、入れ子は goal で、細かい確かめは task の本文の Markdown のチェックリスト（- [ ]）で書きます\n- goal の中に作るのは card_create の target を <goal のパス>.<名前> に、ほかの goal へ移すのは card_update の in（goal のパス。in: null で goal の外のセクションへ）。task の作業の順は goal の中の並び（position。0 から。画面は 1・2・3…）、目標の予定の順は goal の表示名の頭の番号（1. 2. …）\n- priority は high・medium・low（表示は 高・中・低。書かなければ決めていない）。status は状態（notStarted・inProgress・done・cancelled。表示は 未着手・進行中・完了・打ち切り）、workBranch は作業する branch、MR は MR の番号\n- 線は connections の line: link で、to に仕様のカード・note・freedoc・goal・task のパス（ボードのカードは main のカードをフルパスで指せる）\n- 読む: card_read の goal は中のカードのパス（cards）。外した欄に残る値は strayFields で返し、card_update の strayFields（null で全部）で消します。card_list の kind（goal・task）・fields（{\"status\": \"inProgress\"}・{\"done\": false}。値を並びにするとそのどれか）・in（goal のパス）で issue の一覧のように絞れ、goal は番号の順に progress（済み done と全部 of）を添えて並びます\n- 材料を読む: card_read の value {as: \"context\"} に goal か task を渡すと、指している仕様の行・形・実装の関数の本文を、goal の workBranch の branch で解いて 1 回で返す（進め方は about: sdd）\n- goal を開くと中のカードのコンテンツマップ。task は済みのチェックと本文の Markdown で描き、card_update の size で大きさを変えます（見かけ。null で本文に合わせる）。箱は card_read の include: [\"places\"] で読み、card_update の places（{\"Goals:Refunds.Design\": {\"topLeft\": {\"x\": 0, \"y\": 0}}}）でまとめて置きます\n- 前の形（goal の items・card_create の in・日本語のキー 状態・優先度・期限・PR・担当）は、今の書き方を添えて断ります\n- 始める・終える・打ち切る・済みにするは card_action（op: start・finish・cancel・done）で、branch と欄と置き場を 1 回で書きます。終えた goal は Goals の中の完了のセクション（種類 complete）へ、打ち切った goal は打ち切りのセクション（cancelled）へ移ります",
-  "ghostGuide": "カードゴーストは、ほかのセクションのカード（かカードゴースト）を指すショートカットです。本物は元の場所に 1 つだけで、ゴーストは置いたセクションに自分の名前を持ち、指す先を id で覚えます。\n- 作る: card_create の target に <セクション>:<名前>、value に {\"kind\": \"ghost\", \"target\": \"Schemas:User\"}。根のほかどのセクションにも置け、指す先は同じ木の中で、自分のセクションのものは指せない\n- パス: 置いたセクションの中では User、ほかからは Orders:User。ゴーストを通したパス（Orders:User.id）は本物の中へ続き、ゴーストのパスのまま保存する。本物の欄・ゴーストの改名と移動に付いて行く\n- 変える: name で改名、target で付け替え（たどった本物が同じ種類のときだけ。輪になる向きは断る）。topLeft・section・position はカードと同じ。card_delete で消す\n- 読む: kind: ghost・target・resolvesTo（本物が無ければ null で、brokenPaths にも出る）・targetKind。カード数には入らず（ghostCount）、書き出しにも出ない\n- ロック中の main では、作る・消す・付け替える・改名するのは断る",
-  "linesGuide": "線はカードとカードをつなぎます: {line（種類）, from（出る欄か行。省けば頭）, to（相手のカードかカードゴースト）, at（相手の中の着く所。省けばカード）, description（書き出しに載る）, fields（種類の欄）}。card_create は connections に線の並び、card_update は {\"add\": [線…], \"remove\": [線…], \"change\": [{選ぶ鍵…, \"set\": {description, fields}}]}（remove、change、add の順。remove と change は書いたキーの合う 1 本で、change は並びの場所のまま説明と欄だけを変える。同じ線が既にある add は断る）。例: {\"line\": \"points\", \"from\": \"buyer_id\", \"to\": \"Data:User\", \"at\": \"id\", \"fields\": {\"cardinality\": \"N:1\"}}\n- to は相手の改名・移動に付いて行く（from・at も書き換わる）。値を指す線（points と designate の線）は相手の中にだけ着く\n- 種類ごとに出る所（from）・着く所（to）・1 つの所から出せる本数（max）・線の欄（fields）が決まっていて、合わないものは断る。種類は kind_list の lines。組み込み: embed（欄の型が相手になる。guide の about: entity）・points（ID で指す。欄 cardinality・when・discriminatedBy）・link（どのカードからどのカードへも。ボードから main へも）・holds（store から形へ）・rules（flow から文書へ）・implementedBy（仕様・設計から実装へ）・testedBy（仕様の項目からテストへ）・shapeOf（データと表の形。value のキー of で書く）・flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・partner・reads・writes・key（guide の about: flow）・arrow（ホワイトボードの図形・付箋・svg のあいだ。欄 label・dashed・ends・color）。mentions は本文の [[ ]] から拾い、書かない\n- 読む: card_read の connections・refersTo・referencedBy。壊れた線は inspection_list の brokenPaths",
-  "embedGuide": "内包（embed）の線は欄の型を相手（entity・value・enum）にします: 欄は fields に type は string など object 以外で書き、connections に {\"line\": \"embed\", \"from\": \"<欄>\", \"to\": \"<相手>\"}。読むと type: ref。object の欄・fields に無い欄（出元がありません）からの線と、線のある欄の型を変えることは断ります。線を外すと型は string に戻ります。",
-  "kindsGuide": "種類の定義はプロジェクトに 1 つ（branch では変わらず、main のロックも受けない）で、組み込みのあとにプロジェクトのものが並びます。kind_list で一覧、kind_read で定義の全部、kind_create で作り（target に名前、value の of に card・section・line、ほかは定義）、kind_update で変え（書いたキーだけ。null で外す）、kind_delete で消します（使われている定義は断る）。名前はカード・セクション・線と組み込みを通して 1 つの種類にだけ付き、組み込みと重ねられない（ghost・action・module・custom_goal も使えない）。dryRun: true で書かずに確かめ（ok と problems）、直して合わなくなるものは inspection_list の cardProblems・lineProblems・sectionProblems に出る。どの種類も context {purpose, use_when, not_for} を持てる（セクションと線の種類は purpose を省けば description）。組み込みの種類は kind_update で context（null で組み込みの文に戻す）と icon だけを書き換えられる。flow のノードの via の値を足すのは kind_update の target flow・value の vias（[\"kafka\"] で入れ替え、{\"add\": [...], \"remove\": [...]} で足す・外す、null で組み込みだけに戻す）\n- カードの種類（of: card）: {\"label\": \"リスク\", \"color\": \"#C2410C\", \"header\": [\"severity\"], \"fields\": [{\"name\": \"severity\", \"fieldtype\": \"radio\", \"options\": [\"高\", \"中\", \"低\"], \"default\": \"中\"}, {\"name\": \"owner\", \"fieldtype\": \"person\"}], \"rows\": [{\"name\": \"steps\", \"label\": \"対策\", \"fields\": [{\"name\": \"name\", \"fieldtype\": \"text\", \"pattern\": \"identifier\", \"required\": true}, {\"name\": \"done\", \"fieldtype\": \"checkbox\"}]}], \"connectable\": true}。fieldtype は text・longtext・markdown・number・checkbox・date・url・radio・dropdownlist・person・branch・mr・card・path・group・json・map で、欄は label・many・required・options・default・pattern（identifier はカードの名前と同じ決まり: 1〜255 字・制御文字と前後の空白なし）・unique も取る。extends（省けば base。base かプロジェクトの種類）から label・description・tags・metadata を受け継ぐ。holds と opens: card-map で入れ物、opens: markdown で開くと欄 body を Markdown のエディタで、on_double_click: edit_in_place で図の上で欄 body をその場で書く。face で図の上の顔: {\"top\": [欄の名前…], \"markdown\": \"<欄の名前>\"}（top は頭の下の操作、markdown は Markdown で描く欄）。カードは holds にその種類を挙げたセクション（free はどれでも）か入れ物の中に置け、書き出しの型にはならない。1 枚の書き方は guide の about: <種類の名前> と project\n- 定義を変えたとき: 消した欄・名前を変えた欄の値は strayFields（card_read）に残り、card_update の strayFields で消す。kind_update の renames で値も移す（[{\"field\": \"sev\", \"to\": \"severity\"}]。行の種類は {row, to}、行の欄は {row, field, to}）。カードの種類の改名は kind_update の name（カードも付いて行く）\n- セクションの種類（of: section）: {\"label\": \"鍵\", \"holds\": [\"entity\", \"note\"], \"sections\": [\"keys\"], \"opens\": \"relations\", \"icon\": {\"name\": \"key\", \"color\": \"#C2410C\"}, \"trees\": [\"main\"]}。holds は入れられるカードの種類（* でどれでも）、sections は中に作れるセクションの種類（省けば自分）、icon は SF Symbols の名前と #RRGGBB、trees は直下に置ける根（main・board。省けば両方、[] でほかのセクションの中だけ）。中のセクションは section_create の type で作り、根の直下は project_update の project_tree\n- 線の種類（of: line）: {\"label\": \"確かめる\", \"base\": \"link\", \"look\": {\"color\": \"teal\", \"dash\": \"dashed\", \"begin\": \"none\", \"end\": \"arrow\"}, \"from\": [{\"kinds\": [\"entity\"], \"at\": \"card\"}], \"to\": {\"kinds\": [\"*\"], \"at\": [\"card\", \"row\"]}, \"max\": null, \"fields\": [{\"name\": \"payload\", \"fieldtype\": \"text\", \"required\": true}], \"export\": {\"as\": \"annotation\", \"key\": \"x-payloads\"}}。base は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。look の color は amber・blue・green・teal・violet・red・grey、dash は solid・dashed・dotted、begin・end は none・arrow・triangle・open-diamond・filled-diamond。from・to は kinds（* でどれでも）と at（card は頭、row は中の行: entity・value の欄・formatdoc の項目・処理の行・プロジェクトの種類の欄と行）、1 つの種類に行の種類がいくつもあるときは rows で絞る。max は 1 つの出元から出せる本数（null でいくつでも）。visible: false で、名指すまで図に描かない。export の as は none・comment（JSDoc と description）・annotation（加えて key の名前の x- の注記）・schema（データの欄から形への線。json-data が形の JSON Schema を書く）\n- 状態遷移（状態と、状態から状態への移り）は種類と線で作らず flow で書く: 状態は wait（来る出来事を待つ）・eval（分かれ道）のノード、移りはノードの間の線 next・condition（欄 when に出来事）。1 枚のカードの中の行から同じカードの行への線は、図では自分への線になり描かれない\n- owner・siblings・system_only は組み込みだけ",
-  "nodesGuide": "flow は入れ物のカードで、ノード（begin・process・run・eval・wait・join・end）はその中のカードです。パスは <flow のパス>.<ノードの名前>（Behavior:Checkout.review）で、名前は flow の中で一意。flow の中にはノードだけ、ノードは flow の中にだけ置けます。\n- 作る: flow とノードは 1 回の card_create で、target を省いて value をパスごとに（flow が先に作られ、ノードの線は順不同に互いを指せる。例は example）。ノード 1 つは target にそのパス\n- batch でノードを 1 手ずつ作るときは、線の先のノードを先に作る（手は前から順に流れ、あとの手で作るノードは指せない）か、まとめて 1 つの card_create で作る\n- ノードの間の線: next（begin・process・run・wait・join から。2 本以上で並列に分かれ、join で合わせる）・condition（eval から。欄 when。並びの順に当てる）・else（eval から 1 本。必須）・onError（run から）・onTimeout（wait から）。to は同じ flow のノードの名前。ほかの flow へは runs・awaits（欄 outcome が要る: {\"line\": \"awaits\", \"to\": \"Behavior:Refund\", \"fields\": {\"outcome\": \"success\"}}）・partner（同じプロセスの中で別の flow を呼んで振り分けるのは run ノードと runs の線。partner は送る・受ける相手で、相手の側にも send か receive の行が要る）、処理の行の reads・writes・key は from に steps[0] など。ノードの種類ごとのキーは guide の about: <ノードの種類>\n- 読む: card_read の flow は中のノード（cards）と届かないノード（unreachable。無いときはキーごと出ません）。as: markdown で flowchart とノード全部を 1 本で。name で改名すると線も付いて行き、ノードを消すとそこへの線も外れ、flow を消すと中のノードも消える\n- wait の待つ条件: for は approval（承認）・timer（時間）・event（線 awaits の flow の終わり）で、欄は timeout（期限）しかありません。timer の「〜まで待つ」は timeout に文で書きます（\"1 day\"・\"翌営業日 9:00 まで\"）。期限が切れたときの行き先は線 onTimeout\n- 誤り（begin が 2 つ・ノードに書けないキーなど）は断り、書き途中のもの（つながっていないノード・足りない線）は warnings で知らせます\n- 図（シーケンス図）: 生命線はアクター（この flow から見た深さ。as: diagram の lifelines で変える）・store と、書かれていない所（穴）の「相手が書かれていない」「置き場が書かれていない」（点検の missingPartners・missingStores にも出る。相手は呼ぶ flow から推さず、置き場はいくつもの store から選ばない）。呼び手を問わない受け口は begin に anyCaller: true（生命線は「誰からでも」）。処理と実行のノードは帯、矢印は語とデータだけ。行の説明は図に入らない（as: markdown の表にある）",
-  "ownKindGuide": "プロジェクトの種類（kind_create で作ったもの）のカードの書き方。\n- 作る: card_create の value の kind にその名前、欄と行はその名前で書く（例: {\"target\": \"Risks:Outage\", \"value\": {\"kind\": \"risk\", \"label\": \"停止\", \"severity\": \"高\", \"steps\": [{\"name\": \"backup\"}]}}）。置けるのは、holds にその種類を挙げたセクション（組み込みの free はどれでも）と、holds に挙げた入れ物の中（target を <入れ物のパス>.<名前>）\n- 変える: card_update の value に変える欄と行だけ（行は丸ごと置き換え）。線は connections（card_update では {add, remove}）\n- 読む: card_read は定義の欄と行を名前で返し、定義から消した欄・名前を変えた欄の値を strayFields（所 → 値）で返す。card_update の strayFields（null で全部、{\"<所>\": null} でその所だけ）で消す\n- 絞る: card_list の value の kind にその名前、fields で欄の値\n- 点検: 定義に合わなくなったカードは inspection_list の組 cardProblems、定義に無い欄の所は strayFields\n- 書き出しの型にはならない。図と文書には出る",
-  "revGuide": "rev はカードの版です。card_read・card_create・card_update はカードごとに rev を返し（フィールド・行・ノードは持ち主のカードの rev）、batch の実行は revs（パス → rev）を返します。\n- 読んだ値をもとに書くときは、読んだ rev を card_update・card_delete の value の rev に添えます。そのあとカードが変わっていれば何も書かずに断り、今の rev と最後の書き手・時刻を返します。読み直してやり直します\n- 時間切れで答えの無かった書き込みは、rev を添えて送り直します。断られたら読み直し、送った中身が入っていれば最初のが通っています（同じキーを多くのセッションが使うので、書き手の名前だけでは決めない）\n- どの target（カード・フィールド・行・ノード・値）にも rev を書けます。target を省いてパスごとに書くときは、パスごとに {rev}\n- セクション・プロジェクトの設定・種類にも rev があります（section_read・project_read・kind_read が返し、section_create・section_update・project_update・kind_create・kind_update の答えにも付く。中のカードは入らない）。section_update・section_delete・project_update・kind_update・kind_delete の value の rev に添えると、同じく変わっていれば何も書かずに断ります",
-  "pagingGuide": "一覧と本文は既定の量で切って返します: 一覧は 100 件（card_list は 20 枚）と 4 万字まで、本文は 400 行まで。\n- 答えに truncated: true があれば続きがあります。一覧は答えの next を value の after に渡し（ほかのキーは同じに）、limit で 1 回の件数を決めます\n- 本文（card_read）は value の lines: {from, to}（行の番号は 1 から）で一部を読みます。答えに lineCount。value の find で、先に文字を含む行を探せます\n- 4 万字を超える図は depth を下げ、それでも超えればセクションを箱にまとめ、truncated: true と絞り方を添えます\n- entity・value の fields は入れ子まで返します（4 万字を超える所で切って truncated）。formatdoc の項目は見出しと中の行の数（rowCount）で、中は項目のパスで読みます。カードの多いプロジェクトでは card_list を section・kind・tags・query で絞ります",
-  "pathsGuide": "パスは <セクション>/<セクション>:<カード>.<名前>… で、どの branch でも同じです。\n- カードの中: フィールドと行は名前で（Core:User.profile.avatar.url）、formatdoc の項目（Docs:Spec.auth.login）、stackdoc の版（Docs:Notes.v2）、入れ物の中のカード（Behavior:Checkout.review・Goals:Launch.Design）、enum の値（Schemas:Status.paid）、process の手は場所で（Behavior:Checkout.save.steps[0]。線の from と同じ書き方）\n- 並び: Store:Order.lines[].sku（[] は省いてもよい。表の列・絞り・並べ替えのパスでは省けない）。データの並びの要素は条件 Data:Host1.ports[number=8200,protocol=tcp]（値に , ] = を含むなら \"\" で囲む。値そのものの並びは groups[=web]）か添字 Data:Host1.ports[0]\n- 囲み: 空白と / : . [ ] ' @ | { } # \" ` を含む名前は一重引用符で囲む（'release notes.md'。中の ' は ''）\n- value の中のパスはセクションを省ける（target のカードのセクションから読み、フルパスで保存）。カードゴーストを通したパス（Orders:User.id）は本物の中を読み、ゴーストのパスのまま残る\n- 本文と説明: [[パス]] で指す（mentions の線）、[[セクション:]] でセクションを指す（押すとセクションマップ）、[[パス|見せる字]] で見せる字を変える（改名ではパスだけ書き直す）、{{パス}} で値を差し込む（欄の const・列挙のとりうる値（列挙の名前か、それを持つ欄を書く）・データの値）、![[パス]] で図を入れる（![[Data:Order1|total]] で欄を出す）。コードの書式（`…` と ``` のブロック）の中の [[ ]]・{{ }}・![[ ]] は拾わない。どれも改名・移動に付いて行く\n- 答えはフルパスで返します。パスが解決するかは card_read の value {as: \"exists\"}",
-  "sddGuide": "# SDD（仕様を先に書き、実装してから main へ）\n\nmain は実装済みの形、branch は変更の計画です。仕様と設計は goal の branch に書き、実装が済んでから main へ merge します。\n\n## 流れ\n\n1. ボード（branch: _project_board_）に goal を作り、中に task（決めることの塊）を置く。card_action の op: start で branch ができ、goal の workBranch に入る（about: board）\n2. その branch に書く: 仕様は formatdoc の項目に Given・When・Then、形は entity・value・enum、処理と状態の移り変わりは flow（wait と、eval の when で分ける。about: flow）\n3. 実装は branch を読んで進める。card_read の as: context に goal か task を渡すと、指している仕様の行・形・実装の関数の本文が 1 回で返る（workBranch の branch で解く）。仕様から実装へは線 implementedBy（ファイルか、その中の関数と型へ。まだ無いものも指せ、goal の branch では点検の情報に出る。about: connections）\n4. 実装で変わった所・implementedBy・テストへの線を branch に書き戻す。branch_read の as: diff で変えたものを、path を足すと前と後の中身を読む\n5. 実装が済んだら branch_merge で main へ入れ（ロック中は MR）、card_action の op: finish で goal を閉じる。まだ無いファイルへの線が残っていれば warnings に出る\n\n書き出し（export_execute）は branch も名指せ、書く先は targetdir で呼ぶたびに渡せます（例: 実装する側のフォルダ）。\n\n## 置き方の見本\n\n- API・設定ファイル・メッセージの形: 種類 definition のセクションに、形の entity と、その実例の instance（of に形のパス）を置く。並べた表は table、JSON にするのは書き出しの形式 json-data（about: instance・table）\n- テスト: kind_create でテストの種類（例 testcase）と、仕様の項目からそこへ引く線の種類（例 testedBy）を作る（about: ownKinds）\n- CI など人のいない所から: プロジェクト設定の MCP で、使う項目を許可にしておけば request: true は要らない。ロック中の main へは、aiMerge が true なら MR なしで入る（どちらも人が画面で決める）\n\n## 読む順\n\npaths → branch → board → 書く種類（about: formatdoc・entity・flow）→ connections。用語集（glossary）は画面の言葉が要るときだけ",
-  "bodyGuide": "本文は note・freedoc・goal・task の Markdown と、svg の SVG・html の HTML です（プロジェクトの種類の markdown・longtext の欄、formatdoc の text の行の body、stackdoc の版の body も同じ）。文字列で丸ごと置き換え、{edit, append, prepend} で全部を送らずに一部を直します:\n- edit: [{old, new}] を上から順に当てます。old は書いたとおりの文字で、本文のちょうど 1 か所に合わなければなりません（合わない・2 か所以上は何も書かずに断る。all: true で合う所を全部）。直す所は先に card_read の value の find か lines で見ます\n- append・prepend は終わり・初めに行を足します\n- 一部を直した答えは、本文の代わりに lineCount・chars と changed（直した所ごとに、その行と前後の行）を返します\n- bodyFrom: {directory, path}（card_create・card_update。body の代わり。value の一番上と、rows の text の行・versions の版の中でも）は、プロジェクトに登録した作業ディレクトリの中のファイルの中身（UTF-8 の文字）を本文に写します。写したあとはカードが正本で、ファイルとは結び付かず、中身はカードのデータになります。ファイルは書き終えてから呼びます。1 回の呼び出しで読むファイルは合わせて 8 MB まで。作業ディレクトリの外へ出るパス・無いファイル・UTF-8 でないもの・本文の上限を超えるもの・body と一緒は断ります。本文の無い所に書くと、ファイルを読む前に断ります。答えに bodyFrom（[{at, directory, path, chars}]）",
-  "layoutGuide": "図の上の位置はマス（横はカードの幅の 1/10、縦はカードの 1 行。表計算のセルのように）で書きます。見かけなのでコミットにならず、ロック中の main にも書けます。\n- topLeft {x, y}（card_create・card_update）でカードをセクションに置きます（goal・flow の中のカードはその入れ物のコンテンツマップに）。ほかのカードかその周りの余白に重なれば、近い空いたマスへ置いて warnings で知らせます\n- UI のセクション（ui）は、書いた位置のまま置きます（箱のあいだの 1 マスの間も、重なりを飛ばすことも無く、部品を隙間なく並べ、重ねて置けます。画面で動かしたときも）\n- size {w} で幅だけ（高さは中身から）、{w, h} で両方を決めます。枠のあるカードはどれも持て（flow のノードとカードゴーストは除く）、送った形がそのまま大きさです（null で既定に戻す）。広げてほかのカードに新しく重なれば、動かさずに warnings で知らせます\n- places {<カードのパス>: {topLeft}} でまとめて置きます: goal の中のカードは card_update、セクションの図（ほかのセクションのカードとセクションゴーストも）は section_update。全部置いてから重なりを見て、重なったものだけを近い空いたマスへ動かし jumped で返します。読むのは section_read・card_read（goal）の include: [\"places\"]\n- section_update はいくつもまとめて、move で動かし、arrange で並べ（by: lines は線に沿って図全体かグループの中を、by: order は渡した箱を列に）、tidy: true で整えます（位置を保ち、重なりと伸びるカードの分だけ下へずらす）\n- groups {<名前>: {topLeft, size, label, headerPlace, color, fill}} で図の上に名前の付いた枠（グループ）を置きます（セクションの図は section_update、goal の中は card_update）。左上のマスが枠の中にある箱が中のもので、topLeft を変えると中のものも一緒に動きます。作るだけなら new: true（同じ名前のグループがあれば動かさずに断る）。2 つのセッションが同じものを動かすなら move の groups と by（ずらす量）で。読むのは include: [\"groups\"]\n- プロジェクトのマスの大きさは project_update の layout:",
+  "glossary": "# 用語集\n\n画面と MCP で同じ語を使う。語はそれを書くときのキーや値そのもの。\n\n## プロジェクトの形\n\n| 語 | 意味 |\n|---|---|\n| `project` | スキーマと振る舞いの設計図の全体 |\n| `main` | いまの実装を表すツリー。プロジェクトに 1 つ |\n| `branch` | 変更の計画。main から作り、作ったときの main の全部を見て、branch で書いたものだけが branch のものになる。作ったあとの main の変更は、main をマージするまで映らない。main からは見えず、branch どうしも見えない |\n| `section` | カードのグループ。main・branch とボードのルートの直下はプロジェクトの project_tree で決まり（種類と名前と並び）、ほかのセクションはその中に作り、入れ子にできる。パスでは Store/Ordering:Order のように書く |\n| `project_tree` | プロジェクトのツリー。main・branch のルートの直下（main_sections）とボードのルートの直下（board_sections）のセクションの種類・名前・並び。書き換えると、外したセクションは空なら消え、中身があれば _evacuation_ へ退避する |\n| `free` | フリーセクション。どの種類のカードも置ける下書きの場所。種類の合うセクションへ移して整理する |\n| `ui` | UI のセクション。部品（html・svg のカード）と、ほかの UI のセクションをはめ込むフレーム（frame）を置いて画面を組む。note も置ける。中に作るセクションも ui。プロジェクトの project_tree に type: ui で足す。画面ではセクションマップで開き、部品をモックと同じ見た目で、置いた所に並び順に重ねて描く。部品の角に見出しのバッジ（headerPlace）と付箋（notePlace）を重ね、図の上のバーの「見出し」「ノート」で出し入れする |\n| `mock` | モック。UI のセクションの部品を、置いた所に置いたサイズで組み上げた 1 枚の HTML のページ（フレームには指す先の UI のセクションのモックが入る。note のカードは描かない。スクリプトは動かない）。MCP は section_read の as: mock（html・width・height・parts・frames）で読み、faces: true で部品ごとのページ（faces）も添え、as: picture で画像。画面のセクションマップは部品ごとのページで部品を描く。エクスポートすると UI のセクションごとに 1 枚の .html |\n| `board` | プロジェクトボード。やること（目標と小目標・作業のドキュメント）を置く、main・branch の外のツリー。merge・ロック・MR は無く、いつでも書ける。MCP は branch: \"_project_board_\"。ボードのカードからは main のカードへ「つながる」線（link）を引け、本文に main のパスを書ける（main からボードへは引けない） |\n| `ghost` | カードゴースト。セクションに置く、ほかのセクションのカード（かカードゴースト）を指すショートカット（macOS のエイリアスのようなもの。コピーではない）。自分の名前を持ち、置いたセクションの中ではその名前だけで書け、ほかからは section:名前 で書ける。指す先（target）は id で覚えて改名・移動に付いて行き、元のカードが消えると指す先の無いカードゴーストとして残る。セクションの図には指す先のカードが丸ごと出る。カードゴーストの無いほかのセクションのカードは、セクションごとに 1 枚のセクションゴーストにまとまり、指されている所だけが出る。画面で一時的に出すだけのもの（一時カードゴースト）はプロジェクトに残らない |\n| `standalone` | value・enum を自分のセクションの図に、持っているカードの中に畳まずに 1 枚のカードで出す（見かけ。コミットにならない） |\n| `base` | branch で main のカードを初めて書いたときの main の中身。branch で変えたことは base と比べて言う（branch_read） |\n| `merge` | branch で変えたことを main に入れること |\n| `path` | section:Card.field の形式で場所を指す書き方。書いた場所のツリーの中で探す。区切り文字（空白と / : . [ ] ' @ \\| { } # \" `）を含む名前は一重引用符で囲む（Docs:'release notes.md'。名前の中の ' は ''） |\n| `in` | コンテナのカード（flow・goal。種類の定義の holds に中に置ける種類がある）の中のカードが入っているコンテナ。中のカードのパスはコンテナのパスに名前を続ける（Behavior:Checkout.review・Goals:Launch.Design）。card_update の in でコンテナを移す |\n\n## カードの種類（kind）\n\n| 語 | 意味 |\n|---|---|\n| `entity` | 単位で保存・送信されるレコード（ID を持つ） |\n| `value` | 何かの中に入る形（ID を持たない）。セクションマップでは持っているカードの中に畳んで出る |\n| `enum` | 値の集合（open なら網羅でない）。値ごとに表示名と説明を持てる。セクションマップでは持っているカードの中に畳んで出る |\n| `flow` | 部品がすることと、部品をまたぐ処理の流れ（MCP のリクエストを受ける・ユーザー登録など。部品はセクションで表す）。コンテナのカードで、中に開始・処理・実行・判断・待つ・合流・終了のノードのカードを置き、線でつなぐ |\n| `store` | 記録を置く場所（テーブル・コレクション・台帳・ファイル） |\n| `instance` | データ。entity・value の実例（形を持つ実際の値）。定義のセクション（definition。新しいプロジェクトではルートの Definitions）とフリーセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）、値は data に持つ。図とエディタは形のフィールドごとに型のバッジと値を並べる。値 1 つのパスは Data:first.status（配列の要素は Data:first.lines[0]・Data:first.lines[sku=A-1]）。形の JSON Schema の examples と、ドキュメントの card の行の表に出る |\n| `table` | 表。形（entity・value）のデータ（instance）を条件（within・where・columns・sort・unnest）で集めた表のカード。定義・ドキュメント・フリーのセクションに置く。形は線 shapeOf（MCP は value のキー of に形のパス）。図は組み上がった表の画像で、ドキュメントには本文の埋め込みか行 card で表として入り、エクスポートでは Markdown の表 |\n| `note` | カードのそばに置く付箋（メモ・変更履歴）。どの種類のセクションにも置け、本文（body）を持つ。セクションマップで本文が見える |\n| `freedoc` | ドキュメントセクションに置く、Markdown 1 枚（body）のドキュメント。エクスポートすると 1 枚が 1 ファイル |\n| `structdoc` | ドキュメントセクションに置く、項目と行（rows）で組んだ設計書・仕様書。エクスポートすると 1 枚が 1 ファイル |\n| `stackdoc` | ドキュメントセクションに置く、バージョン（versions）を新しい順に重ねたドキュメント（変更履歴など）。図とエディタはセレクタで選んだバージョンを見せる。エクスポートするとカード全体が 1 ファイルで、エクスポートの項目にバージョンのパスを書くとそのバージョンだけ |\n| `spec` | 仕様。ドキュメントセクションに置く、機能のねらい（As・I want・So that）と Scenario（タイトルと Given・When・Then・And・But のステップ）を決まった形式で持つドキュメント。Scenario ごとにパス（<カード>.<name>）があり、確かめるテストへの線（testedBy）を引く。線の無い Scenario はインスペクションに出る。エクスポートすると Markdown（# Feature・## Scenario） |\n| `svg` | SVG の画像。本文（body）に SVG を書き、図の上ではカードの箱に収めて（縦横の比を保って）画像として描く（中のスクリプトは動かず、外のものは読み込まない）。本文は XML として読め、ルートが svg の要素であること。ドキュメント・フリー・UI のセクションに置き、サイズを変えられる。エクスポートすると 1 枚が 1 ファイル（.svg） |\n| `sketch` | ホワイトボードの図形。形（rect・rounded・ellipse・diamond・cylinder・text）と字（Markdown）と塗り・縁の色を持ち、図の上ではカードのヘッダーを描かずに形そのものを描く。矢印（arrow）でつなぐ。サイズは手で決めなければ字から決まり、位置を書かずに作ったものは矢印をたどって左から右へ並ぶ |\n| `image` | ホワイトボードの画像。中身（PNG・JPEG・GIF。5MB まで）はプロジェクトに中身ごとに 1 つだけ持ち、カードは中身の sha256 と形式・原寸を持つ。中身は imageData か imageFrom で渡し、card_read の as: image で画像そのものを読む。サイズは手で決めなければ原寸から決まる |\n| `html` | HTML のページ。本文（body）に HTML（CSS も）を書き、図の上ではカードの箱の幅で組んで箱で切って描く。スクリプト・外の読み込み・フォームの送信は動かない（sb-nav:<パス> のリンクはアプリの中で、http・https はブラウザで開く）。ドキュメント・フリー・UI のセクションに置き、サイズを変えられる。エクスポートすると 1 枚が 1 ファイル（.html。先頭に同じ守りを書く） |\n| `frame` | フレーム。UI のセクションに置き、フィールド target の UI のセクションのモックを自分の箱に 1:1 ではめ込む（はみ出す所は切る）。target はパスで書き、id で覚えて改名・移動に付いて行く。自分のいるセクションと、たどると自分のいるセクションに戻るものは指せない。同じセクションを何枚ものフレームで使える。サイズを変えられ、既定はカード 1 枚分 |\n| `goal` | 目標。status（状態）・priority（優先度）・due（期限）・workBranch（作業する branch）・MR のフィールドと、本文（body）を持つコンテナのカードで、中に goal と task を置く。中の並びが task の作業の順。プロジェクトボードの goals のセクションとフリーセクションに置く |\n| `task` | タスク。済みのチェック（done）と、本文（body。決めたこと・どこまで進んだか・経緯）と、つながる線（connections の line: link）を持つ。goal の中に入れると、goal の行（番号・チェック・名前）として出る。図の上では種類の定義の face のとおり、チェックと本文の Markdown で描き、サイズを変えられる |\n| `file` | ファイル。作業ディレクトリ（このマシンで結び付けたフォルダ）を読んで、コアが作業ディレクトリのセクションの中に作るカード。名前と表示名はファイルの名前（パスでは区切り文字を含む名前を一重引用符で囲む: repo/docs:'CardKinds.md'）、filePath は作業ディレクトリからのパス、language は名前と作業ディレクトリの parsers で決まる言語。読み取り専用で、main と branch のカードから実装の線（implementedBy）で指す。シンボルを読み取る言語のファイルは、中のシンボル（symbol）も指せ、図ではそれを行で並べる |\n| `workdir` | 作業ディレクトリのセクション。main と各 branch のルートの直下に、プロジェクトのツリーに種類 workdir で並べたもの。中はこのマシンのフォルダから読んで作る読み取り専用のもので、置けるのはメモだけ。設定はそのセクションの section_update（readType・exclude・description・folder）、再読み込みはアクションの「再読み込み」（section_action の op: read） |\n| `directory` | 作業ディレクトリのセクションの中のディレクトリ。コアが読んだフォルダから作るセクションで、ファイルが種類 file のカード。読み取り専用 |\n| `symbol` | シンボル。シンボルを読み取る言語の作業ディレクトリのファイルの中の関数・メソッド・型・モジュール・定数・マクロで、コアが同梱の tree-sitter の文法で読むたびにファイルから作るカード（保存しない）。パスはファイルのパスに続ける（repo/src:'a.rs'.Order.total。同じ親に同じ名前が並べば、あとのものに「 (2)」）。of（どの言語でも同じ分け方。画面のバッジは ƒ が関数とメソッド・T が型・M がモジュール・C が定数・# がマクロ）・word（その言語での呼び方: fn・struct・protocol など）・language を持つ。main と branch のカードから実装の線（implementedBy）で指せ、シンボルから線は出せない。card_read で宣言の 1 行（declaration）・中身（body）・呼んでいる名前（calls）を読む |\n| `parsers` | 言語の対応。作業ディレクトリのファイルの拡張子（.h）か名前（Makefile）から、読む言語の id（cpp。null で言語なし）への対応。作業ディレクトリのセクションの section_update の parsers で既定を書き換え、parsers: null で既定に戻す。読み方（readType・exclude）と同じくプロジェクトの設定で、section_read に効いている対応と言語（languages）が出る |\n\n## flow のノード\n\n| 語 | 意味 |\n|---|---|\n| `begin` | 開始。trigger と next の線。受けて始まる（receive）ときは相手のフローへの partner の線（何本でも）と program（どちらも省くのは穴（相手が書かれていない）。呼び出し元を問わないなら anyCaller: true）・carries |\n| `trigger` | 開始のトリガー: manual（手動）・receive（受ける）・event（ほかのフローの終わり）・schedule（定期）・startup（起動のたび） |\n| `process` | 処理。steps にまっすぐ続くステップ（read・write・sign・verify・call・send・receive・compute）と next の線。ステップが読む・書く所は reads・writes の線（from にステップ） |\n| `run` | 実行。runs の線のフローを呼んで終わりを待つ（carries を渡し、returns を受ける）。onError・next の線 |\n| `eval` | 判断。value と、condition の線（フィールド when）・else の線 |\n| `wait` | 待つ。for（approval / timer / event）・timeout と、onTimeout・next の線 |\n| `join` | 合流。next の線を 2 本以上にして分かれた行き先がそろうのを待つ（join: all / any / first、partial: fail / continue） |\n| `end` | 終了。outcome（success / failure / cancelled）がフローの戻り値。返すものは return |\n| `diagram` | flow の図の形式の既定: flowchart（コンテンツマップの図）/ sequence（シーケンス図）。エクスポート・ドキュメントの図・MCP の図はこの形式で描く |\n| `topLeft` | カードやノードの左上の位置（マス。{x, y}） |\n\n## note とドキュメント\n\n| 語 | 意味 |\n|---|---|\n| `body` | note と freedoc の本文（Markdown）。`[[パス]]` でフィールドを指し（`[[セクション:]]` でセクション、`[[パス\\|字]]` で見せる字を変える）、`{{パス}}` で値（const のあるフィールド・列挙・データの値）を差し込み、`![[パス]]` の 1 行で図を入れる |\n| `rows` | structdoc の行。name（パスに使う名前）と kind: item（項目。heading と中の rows、5 段まで）・text（本文）・table（表）・diagram（図）・diagrams（セクションの図）・card（カードの表）。パスはフィールドと同じ形式（Docs:Spec.auth.login） |\n| `versions` | stackdoc のバージョン。name（パスに使う名前）・key（セレクタに出す名前）・heading（見出し。省くと key）・body（本文の Markdown）。並びは新しいバージョンが上で、バージョンのパスは Docs:Changelog.v1_2_0 |\n| `version` | stackdoc で開いているバージョン（バージョンの name。見かけで、コミットにならない）。無ければ一番上のバージョン |\n\n## フィールド\n\n| 語 | 意味 |\n|---|---|\n| `required` | キーが必ずある |\n| `nullable` | null が正当な値（required とは独立） |\n| `const` | 常にこの値を取る |\n| `data` | データ（instance）の値。形と同じ入れ子の JSON（キーはフィールドの名前、配列のフィールドは配列）。書いた値は形のフィールドの型・nullable・const・列挙の値・判別子の枝と、文字の値はフィールドの rules の pattern で確かめ、合わなければエラーにする。required の欠けは書き途中としてインスペクションに出る。形から消えたフィールドの値は strayFields に残る |\n\n## 線（connections）\n\n| 語 | 意味 |\n|---|---|\n| `connections` | カードの線の配列。1 本ずつ line（線の種類）・from（出るフィールドや行。省けばカード）・to（相手）・at（相手の中の着く所）・description・fields（線の種類が決めるフィールド） |\n| `line` | 線の種類。組み込み（embed・points・link・holds・shapeOf・rules・implementedBy・testedBy・mentions と、flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・reads・writes・partner・key）とプロジェクトが定義するもの。意味（定義の base）は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。kind_list・kind_read で読み、kind_create・kind_update で定義する |\n| `embed` | 内包: フィールドが相手の形をそのまま持つ（生成される型が変わる。フィールドの type は ref と読む） |\n| `points` | ID で指す: フィールドの値が相手の ID（型は変わらない） |\n| `of` | 形: データ（instance）と表（table）から形（entity・value）への線。1 本だけで、MCP は value のキー of に形のパスを書く（connections には書かない）。図にははじめから描かず、カードのヘッダーに形の名前が出る |\n| `at` | 線が相手の中で着く所（フィールドか行。相手の外なら、そこのフルパス） |\n| `fromBoard` | 関わるやること。main（と branch）のカードを線か本文のパスで指している、ボードのカードのうち済んでいないもの（済んだ task、完了・打ち切りの goal とその中のカードは出さない）。プロパティパネルと card_read に出る |\n\n## 処理ノードのステップ（steps）\n\n| 語 | 意味 |\n|---|---|\n| `receive` | 受ける（相手のフローへの partner の線は何本でも引け、program と一緒にも書ける。どちらも省くと、開始が受ける相手から。開始が受けない flow では穴） |\n| `return` | 終了ノードが返すもの（carries。返す相手は partner の線（何本でも）と program で、どちらも省くと開始が受ける相手へ） |\n| `call` | プロジェクトに無いツール（program）を呼んで返りを待つ（carries を送り、returns を受ける）。プロジェクトの flow を呼んで待つのは実行ノード |\n| `send` | 渡す（返りを待たない。ほかの flow を始めさせるのも）。相手は partner の線（何本でも。相手ごとに渡す）か program で、どちらかが要る |\n| `read` | ストアから読む（reads の線） |\n| `write` | ストアへ書く（writes の線） |\n| `sign` | 署名する（key の線、use: sign） |\n| `verify` | 署名を確かめる（key の線、use: verify） |\n| `compute` | 計算。業務の検証や計算のような、外に出ない処理（何をするかはステップの description。ほかのフィールド・線は持たない） |\n| `via` | 受け渡しの方法: stdio / file / exec / http / grpc / websocket / queue と、プロジェクトが足した値（kind_update の flow の vias。省くと部品の中） |\n| `initiator` | 呼びに行く側: self / peer（データの向きとは別） |\n\n## 線の種類（凡例）\n\n線の種類の名前と、画面の名前（定義の label）と 1 行の意味（定義の description）。定義と同じ文で書く。\n\n| 語 | 意味 |\n|---|---|\n| `embed` | 内包: フィールドの型が相手の形になる |\n| `points` | ID で指す: フィールドの値が相手の ID を指す |\n| `link` | つながる: 型に関係しない、つながりだけの線 |\n| `holds` | 置く: store が置くレコードの形 |\n| `shapeOf` | 形: データや表がどの形のものか |\n| `rules` | ルール: flow が従うルールを書いたドキュメント |\n| `implementedBy` | 実装: 仕様・設計を実装しているファイルや関数 |\n| `testedBy` | 確かめるテスト: 仕様の項目やカードを、どのテストで確かめているか |\n| `mentions` | 言及: 本文の `[[ ]]` が指す所 |\n| `next` | 次: ノードの次の行き先 |\n| `condition` | 条件: 判断の条件が一致するときの行き先 |\n| `else` | それ以外: 判断のどの条件にも一致しないときの行き先 |\n| `onError` | 失敗したら: 実行が失敗したときの行き先 |\n| `onTimeout` | タイムアウト: 待つがタイムアウトになったときの行き先 |\n| `runs` | 実行する: 実行が呼んで終わりを待つフロー |\n| `awaits` | 待つ終わり: 開始や待つが待つ、ほかのフローの終わり |\n| `reads` | 読む: 処理のステップが読む所 |\n| `writes` | 書く: 処理のステップが書く所 |\n| `partner` | 相手: 送る・受ける・返す相手のフロー |\n| `key` | 鍵: 署名を作る・確かめるのに使う |\n| `arrow` | 矢印: ホワイトボードの図形・付箋・svg・画像のあいだの矢印。字・破線・向き・色を 1 本ごとに持つ |\n",
+  "branchGuide": "# branch\n\nプロジェクトはリモートの無い git のリポジトリのように扱います。main がいまの実装、branch は main から作る変更の計画です。\nパスに branch は書きません（Core:User は、どの branch でも同じカードを指します）。\n\n## 指定のしかた\n\n- section_*・card_*・tag_list・tag_update・export_read・inspection_* は、引数 branch でツリーを指定します: 省くか main で main、\n  branch の名前でその branch、_project_board_ でプロジェクトボード（やることを置く、merge しないツリー）。作業ディレクトリは main と各 branch のセクション\n- 答えの先頭に、どの branch のものかを 1 度出します。画面で開いている branch には縛られません（替えるのは app_control の op: select）\n- プロジェクトに 1 つのもの（設定・タググループ・種類の定義・書き方のルール・作業ディレクトリ・エクスポート）は、どの branch にもすぐ効き、\n  project_read・project_update に branch を付けると拒否します。export_execute は branch も書けます（targetdir に書く先のパス。[default] は main だけ）\n- batch は、開くときに branch を 1 度指定します\n- branch そのもの: branch_list・branch_read（as: diff と against か path（前と後の中身）・diagram・history）・\n  branch_create（main からだけ）・branch_update（改名）・branch_delete（discard: true で merge していない変更ごと）・branch_merge・branch_revert。\n  MR は mr_list・mr_read・mr_delete\n\n## merge\n\n- branch_merge の target が merge 元（main も可）、value の into が merge 先（省けば main）。main をマージするのは target に main、into に branch\n- カードのフィールド・列挙の値・バージョン・structdoc の行ごとに、共通の基点・merge 元・merge 先の 3 つで比べ、片側だけが変えた所はそちらを取ります。\n  両側が変えた所（片方が消して片方が直したものも）は衝突で、take で選びます。branch_read の against でプレビューでき、\n  その conflicts の path と unit をそのまま take に写せます\n- main へ入れると merge 元の branch は退けます（keep: true で残す）。位置は、merge 先に無いものにだけ入ります（places: true で全部）\n\n## 履歴と戻す\n\n- 画面の 1 操作・MCP の 1 回の呼び出し（batch の実行は全体で 1 回）が、branch ごとに 1 コミットで、書き手と変える前の中身が残ります\n- branch_read の as: history で新しい順に読み、branch_revert の to に seq を書くと、そのコミットのすぐあとの状態に「戻す」の\n  1 コミットで戻します（ほかの書き手のコミットを挟むと拒否する）。main を戻すと、main は書き換えずに戻した状態の branch を作るので、それを merge します\n- as: history に seq を足すとそのコミットの中身を読め、branch_revert の undo でそのコミットだけを取り消します（ほかの書き手のは request: true で）\n\n## ロックと MR\n\n- main がロック中（project_read の locked: true）は、main は merge でしか変わりません。branch を指定して書きます。ロック中も main に書けるのは\n  見かけ（位置と並び（topLeft・position・places）・size・view・standalone）・タグ・プロジェクトの設定です\n- ロック中の main へ branch_merge すると、merge をその場で試した MR（title・description）を作成します。人が画面で承認するので、ユーザーに伝えます。\n  拒否されたら mr_read の reason を読んで直し、作り直します。branch か入るものが動くと MR は stale（古い）になり、作り直します。\n  project_read の aiMerge: true なら、MR を作成せずにそのまま入ります\n- batch がロックしている branch は画面から直せず、画面で「まとめて直す」をしている branch へは MCP から書けません\n\n## git と違う所\n\n- branch は作ったときの main を見て、そのあとの main の変更は main をマージするまで映りません（遅れは branch_list・branch_read に出る）。\n  リモート・rebase はありません（main をマージする）\n- branch で書いたカードだけが branch のコピーになり、id は main と同じです",
+  "boardGuide": "goal と task は、プロジェクトボード（branch: \"_project_board_\"）の goals のセクションとフリーセクションに置くカードです。フィールドは種類のキー（guide の about: goal・task）で、フィールドの名前（英語のキー。画面は label の名前）で書きます。個人向けのツールなので、担当のフィールドはありません。\n- goal はコンテナで、中に goal と task を置きます。中のパスは <goal のパス>.<名前>（Goals/Refunds:Launch.Design）で、名前は goal の中で一意。task の中に task は入れず、入れ子は goal で、細かい確かめは task の本文の Markdown のチェックリスト（- [ ]）で書きます\n- goal の中に作るのは card_create の target を <goal のパス>.<名前> に、ほかの goal へ移すのは card_update の in（goal のパス。in: null で goal の外のセクションへ）。task の作業の順は goal の中の並び（position。0 から。画面は 1・2・3…）、目標の予定の順は goal の表示名の先頭の番号（1. 2. …）\n- priority は high・medium・low（表示は 高・中・低。書かなければ決めていない）。status は状態（notStarted・inProgress・done・cancelled。表示は 未着手・進行中・完了・打ち切り）、workBranch は作業する branch、MR は MR の番号\n- 線は connections の line: link で、to に仕様のカード・note・freedoc・goal・task のパス（ボードのカードは main のカードをフルパスで指せる）\n- 読む: card_read の goal は中のカードのパス（cards）。外したフィールドに残る値は strayFields で返し、card_update の strayFields（null で全部）で消します。card_list の kind（goal・task）・fields（{\"status\": \"inProgress\"}・{\"done\": false}。値を配列にするとそのどれか）・in（goal のパス）で issue の一覧のように絞れ、goal は番号の順に progress（済み done と全部 of）を添えて並びます\n- 材料を読む: card_read の value {as: \"context\"} に goal か task を渡すと、指している仕様の行・形・実装の関数の本文を、goal の workBranch の branch で解いて 1 回で返す（進め方は about: sdd）\n- goal を開くと中のカードのコンテンツマップ。task は済みのチェックと本文の Markdown で描き、card_update の size でサイズを変えます（見かけ。null で本文に合わせる）。箱は card_read の include: [\"places\"] で読み、card_update の places（{\"Goals:Refunds.Design\": {\"topLeft\": {\"x\": 0, \"y\": 0}}}）でまとめて置きます\n- 前の形式（goal の items・card_create の in・日本語のキー 状態・優先度・期限・PR・担当）は、今の書き方を添えて拒否します\n- 始める・終える・打ち切る・済みにするは card_action（op: start・finish・cancel・done）で、branch とフィールドと場所を 1 回で書きます。終えた goal は Goals の中の完了のセクション（種類 complete）へ、打ち切った goal は打ち切りのセクション（cancelled）へ移ります",
+  "ghostGuide": "カードゴーストは、ほかのセクションのカード（かカードゴースト）を指すショートカットです。元のカードは元の場所に 1 つだけで、ゴーストは置いたセクションに自分の名前を持ち、指す先を id で覚えます。\n- 作る: card_create の target に <セクション>:<名前>、value に {\"kind\": \"ghost\", \"target\": \"Schemas:User\"}。ルートのほかどのセクションにも置け、指す先は同じツリーの中で、自分のセクションのものは指せない\n- パス: 置いたセクションの中では User、ほかからは Orders:User。ゴーストを通したパス（Orders:User.id）は元のカードの中へ続き、ゴーストのパスのまま保存する。元のカードのフィールド・ゴーストの改名と移動に付いて行く\n- 変える: name で改名、target で付け替え（たどった元のカードが同じ種類のときだけ。循環する向きは拒否する）。topLeft・section・position はカードと同じ。card_delete で消す\n- 読む: kind: ghost・target・resolvesTo（元のカードが無ければ null で、brokenPaths にも出る）・targetKind。カード数には入らず（ghostCount）、エクスポートにも出ない\n- ロック中の main では、作る・消す・付け替える・改名するのは拒否する",
+  "linesGuide": "線はカードとカードをつなぎます: {line（種類）, from（出るフィールドか行。省けばカード）, to（相手のカードかカードゴースト）, at（相手の中の着く所。省けばカード）, description（エクスポートに載る）, fields（種類のフィールド）}。card_create は connections に線の配列、card_update は {\"add\": [線…], \"remove\": [線…], \"change\": [{選ぶキー…, \"set\": {description, fields}}]}（remove、change、add の順。remove と change は書いたキーの合う 1 本で、change は並びの場所のまま説明とフィールドだけを変える。同じ線が既にある add はエラー）。例: {\"line\": \"points\", \"from\": \"buyer_id\", \"to\": \"Data:User\", \"at\": \"id\", \"fields\": {\"cardinality\": \"N:1\"}}\n- to は相手の改名・移動に付いて行く（from・at も書き換わる）。値を指す線（points と designate の線）は相手の中にだけ着く\n- 種類ごとに出る所（from）・着く所（to）・1 つの所から出せる本数（max）・線のフィールド（fields）が決まっていて、合わないものはエラー。種類は kind_list の lines。組み込み: embed（フィールドの型が相手になる。guide の about: entity）・points（ID で指す。フィールド cardinality・when・discriminatedBy）・link（どのカードからどのカードへも。ボードから main へも）・holds（store から形へ）・rules（flow からドキュメントへ）・implementedBy（仕様・設計から実装へ）・testedBy（仕様の項目からテストへ）・shapeOf（データと表の形。value のキー of で書く）・flow のノードの線 next・condition・else・onError・onTimeout・runs・awaits・partner・reads・writes・key（guide の about: flow）・arrow（ホワイトボードの図形・付箋・svg のあいだ。フィールド label・dashed・ends・color）。mentions は本文の [[ ]] から拾い、書かない\n- 読む: card_read の connections・refersTo・referencedBy。壊れた線は inspection_list の brokenPaths",
+  "embedGuide": "内包（embed）の線はフィールドの型を相手（entity・value・enum）にします: フィールドは fields に type は string など object 以外で書き、connections に {\"line\": \"embed\", \"from\": \"<フィールド>\", \"to\": \"<相手>\"}。読むと type: ref。object のフィールド・fields に無いフィールド（出元がありません）からの線と、線のあるフィールドの型を変えることはエラーにします。線を外すと型は string に戻ります。",
+  "kindsGuide": "種類の定義はプロジェクトに 1 つ（branch では変わらず、main のロックも受けない）で、組み込みのあとにプロジェクトのものが並びます。kind_list で一覧、kind_read で定義の全部、kind_create で作り（target に名前、value の of に card・section・line、ほかは定義）、kind_update で変え（書いたキーだけ。null で外す）、kind_delete で消します（使われている定義は拒否する）。名前はカード・セクション・線と組み込みを通して 1 つの種類にだけ付き、組み込みと重ねられない（ghost・action・module・custom_goal も使えない）。dryRun: true で書かずに確かめ（ok と problems）、直して合わなくなるものは inspection_list の cardProblems・lineProblems・sectionProblems に出る。どの種類も context {purpose, use_when, not_for} を持てる（セクションと線の種類は purpose を省けば description）。組み込みの種類は kind_update で context（null で組み込みの文に戻す）と icon だけを書き換えられる。flow のノードの via の値を足すのは kind_update の target flow・value の vias（[\"kafka\"] で入れ替え、{\"add\": [...], \"remove\": [...]} で足す・外す、null で組み込みだけに戻す）\n- カードの種類（of: card）: {\"label\": \"リスク\", \"color\": \"#C2410C\", \"header\": [\"severity\"], \"fields\": [{\"name\": \"severity\", \"fieldtype\": \"radio\", \"options\": [\"高\", \"中\", \"低\"], \"default\": \"中\"}, {\"name\": \"owner\", \"fieldtype\": \"person\"}], \"rows\": [{\"name\": \"steps\", \"label\": \"対策\", \"fields\": [{\"name\": \"name\", \"fieldtype\": \"text\", \"pattern\": \"identifier\", \"required\": true}, {\"name\": \"done\", \"fieldtype\": \"checkbox\"}]}], \"connectable\": true}。fieldtype は text・longtext・markdown・number・checkbox・date・url・radio・dropdownlist・person・branch・mr・card・path・group・json・map で、フィールドは label・many・required・options・default・pattern（identifier はカードの名前と同じルール: 1〜255 字・制御文字と前後の空白なし）・unique も取る。extends（省けば base。base かプロジェクトの種類）から label・description・tags・metadata を継承する。holds と opens: card-map でコンテナ、opens: markdown で開くとフィールド body を Markdown のエディタで、on_double_click: edit_in_place で図の上でフィールド body をその場で書く。face で図の上の顔: {\"top\": [フィールドの名前…], \"markdown\": \"<フィールドの名前>\"}（top はヘッダーの下の操作、markdown は Markdown で描くフィールド）。カードは holds にその種類を挙げたセクション（free はどれでも）かコンテナの中に置け、エクスポートの型にはならない。1 枚の書き方は guide の about: <種類の名前> と project\n- 定義を変えたとき: 消したフィールド・名前を変えたフィールドの値は strayFields（card_read）に残り、card_update の strayFields で消す。kind_update の renames で値も移す（[{\"field\": \"sev\", \"to\": \"severity\"}]。行の種類は {row, to}、行のフィールドは {row, field, to}）。カードの種類の改名は kind_update の name（カードも付いて行く）\n- セクションの種類（of: section）: {\"label\": \"鍵\", \"holds\": [\"entity\", \"note\"], \"sections\": [\"keys\"], \"opens\": \"relations\", \"icon\": {\"name\": \"key\", \"color\": \"#C2410C\"}, \"trees\": [\"main\"]}。holds は入れられるカードの種類（* でどれでも）、sections は中に作れるセクションの種類（省けば自分）、icon は SF Symbols の名前と #RRGGBB、trees は直下に置けるルート（main・board。省けば両方、[] でほかのセクションの中だけ）。中のセクションは section_create の type で作り、ルートの直下は project_update の project_tree\n- 線の種類（of: line）: {\"label\": \"確かめる\", \"base\": \"link\", \"look\": {\"color\": \"teal\", \"dash\": \"dashed\", \"begin\": \"none\", \"end\": \"arrow\"}, \"from\": [{\"kinds\": [\"entity\"], \"at\": \"card\"}], \"to\": {\"kinds\": [\"*\"], \"at\": [\"card\", \"row\"]}, \"max\": null, \"fields\": [{\"name\": \"payload\", \"fieldtype\": \"text\", \"required\": true}], \"export\": {\"as\": \"annotation\", \"key\": \"x-payloads\"}}。base は embed（型が相手になる）・designate（型は変わらず相手を指す）・link（型に関係しない）。look の color は amber・blue・green・teal・violet・red・grey、dash は solid・dashed・dotted、begin・end は none・arrow・triangle・open-diamond・filled-diamond。from・to は kinds（* でどれでも）と at（card はカード、row は中の行: entity・value のフィールド・structdoc の項目・処理のステップ・プロジェクトの種類のフィールドと行）、1 つの種類に行の種類がいくつもあるときは rows で絞る。max は 1 つの出元から出せる本数（null でいくつでも）。visible: false で、指定するまで図に描かない。export の as は none・comment（JSDoc と description）・annotation（加えて key の名前の x- の注記）・schema（データのフィールドから形への線。json-data が形の JSON Schema を書く）\n- 状態遷移（状態と、状態から状態への移り）は種類と線で作らず flow で書く: 状態は wait（来る出来事を待つ）・eval（分岐）のノード、移りはノードの間の線 next・condition（フィールド when に出来事）。1 枚のカードの中の行から同じカードの行への線は、図では自分への線になり描かれない\n- owner・siblings・system_only は組み込みだけ",
+  "nodesGuide": "flow はコンテナのカードで、ノード（begin・process・run・eval・wait・join・end）はその中のカードです。パスは <flow のパス>.<ノードの名前>（Behavior:Checkout.review）で、名前は flow の中で一意。flow の中にはノードだけ、ノードは flow の中にだけ置けます。\n- 作る: flow とノードは 1 回の card_create で、target を省いて value をパスごとに（flow が先に作られ、ノードの線は順不同に互いを指せる。例は example）。ノード 1 つは target にそのパス\n- batch でノードを 1 ステップずつ作るときは、線の先のノードを先に作る（ステップは前から順に実行され、あとのステップで作るノードは指せない）か、まとめて 1 つの card_create で作る\n- ノードの間の線: next（begin・process・run・wait・join から。2 本以上で並列に分かれ、join で合わせる）・condition（eval から。フィールド when。並びの順に一致を調べる）・else（eval から 1 本。必須）・onError（run から）・onTimeout（wait から）。to は同じ flow のノードの名前。ほかの flow へは runs・awaits（フィールド outcome が要る: {\"line\": \"awaits\", \"to\": \"Behavior:Refund\", \"fields\": {\"outcome\": \"success\"}}）・partner（同じプロセスの中で別の flow を呼んで振り分けるのは run ノードと runs の線。partner は送る・受ける相手で、相手の側にも send か receive のステップが要る）、処理のステップの reads・writes・key は from に steps[0] など。ノードの種類ごとのキーは guide の about: <ノードの種類>\n- 読む: card_read の flow は中のノード（cards）と届かないノード（unreachable。無いときはキーごと出ません）。as: markdown で flowchart とノード全部を 1 本で。name で改名すると線も付いて行き、ノードを消すとそこへの線も外れ、flow を消すと中のノードも消える\n- wait の待つ条件: for は approval（承認）・timer（時間）・event（線 awaits の flow の終わり）で、フィールドは timeout（タイムアウト）しかありません。timer の「〜まで待つ」は timeout に文で書きます（\"1 day\"・\"翌営業日 9:00 まで\"）。タイムアウトしたときの行き先は線 onTimeout\n- エラー（begin が 2 つ・ノードに書けないキーなど）は書けずにエラーを返し、書き途中のもの（つながっていないノード・足りない線）は warnings で通知します\n- 図（シーケンス図）: 生命線はアクター（この flow から見た深さ。as: diagram の lifelines で変える）・store と、書かれていない所（穴）の「相手が書かれていない」「ストアが書かれていない」（インスペクションの missingPartners・missingStores にも出る。相手は呼ぶ flow から推さず、ストアはいくつもの store から選ばない）。呼び出し元を問わないエンドポイントは begin に anyCaller: true（生命線は「誰からでも」）。処理と実行のノードは帯、矢印は語とデータだけ。ステップの説明は図に入らない（as: markdown の表にある）",
+  "ownKindGuide": "プロジェクトの種類（kind_create で作ったもの）のカードの書き方。\n- 作る: card_create の value の kind にその名前、フィールドと行はその名前で書く（例: {\"target\": \"Risks:Outage\", \"value\": {\"kind\": \"risk\", \"label\": \"停止\", \"severity\": \"高\", \"steps\": [{\"name\": \"backup\"}]}}）。置けるのは、holds にその種類を挙げたセクション（組み込みの free はどれでも）と、holds に挙げたコンテナの中（target を <コンテナのパス>.<名前>）\n- 変える: card_update の value に変えるフィールドと行だけ（行は丸ごと置き換え）。線は connections（card_update では {add, remove}）\n- 読む: card_read は定義のフィールドと行を名前で返し、定義から消したフィールド・名前を変えたフィールドの値を strayFields（所 → 値）で返す。card_update の strayFields（null で全部、{\"<所>\": null} でその所だけ）で消す\n- 絞る: card_list の value の kind にその名前、fields でフィールドの値\n- インスペクション: 定義に合わなくなったカードは inspection_list の組 cardProblems、定義に無いフィールドの所は strayFields\n- エクスポートの形式にはならない。図とドキュメントには出る",
+  "revGuide": "rev はカードのバージョンです。card_read・card_create・card_update はカードごとに rev を返し（フィールド・行・ノードは親のカードの rev）、batch の実行は revs（パス → rev）を返します。\n- 読んだ値をもとに書くときは、読んだ rev を card_update・card_delete の value の rev に添えます。そのあとカードが変わっていれば何も書かずにエラーを返し、今の rev と最後の書き手・時刻を返します。読み直してやり直します\n- タイムアウトでレスポンスの無かった書き込みは、rev を添えて送り直します。エラーになったら読み直し、送った中身が入っていれば最初のが通っています（同じキーを多くのセッションが使うので、書き手の名前だけでは決めない）\n- どの target（カード・フィールド・行・ノード・値）にも rev を書けます。target を省いてパスごとに書くときは、パスごとに {rev}\n- セクション・プロジェクトの設定・種類にも rev があります（section_read・project_read・kind_read が返し、section_create・section_update・project_update・kind_create・kind_update のレスポンスにも付く。中のカードは入らない）。section_update・section_delete・project_update・kind_update・kind_delete の value の rev に添えると、同じく変わっていれば何も書かずにエラーを返します",
+  "pagingGuide": "一覧と本文は既定の量で切って返します: 一覧は 100 件（card_list は 20 枚）と 4 万字まで、本文は 400 行まで。\n- レスポンスに truncated: true があれば続きがあります。一覧はレスポンスの next を value の after に渡し（ほかのキーは同じに）、limit で 1 回の件数を決めます\n- 本文（card_read）は value の lines: {from, to}（行の番号は 1 から）で一部を読みます。レスポンスに lineCount。value の find で、先に文字を含む行を探せます\n- 4 万字を超える図は depth を下げ、それでも超えればセクションを箱にまとめ、truncated: true と絞り方を添えます\n- entity・value の fields は入れ子まで返します（4 万字を超える所で切って truncated）。structdoc の項目は見出しと中の行の数（rowCount）で、中は項目のパスで読みます。カードの多いプロジェクトでは card_list を section・kind・tags・query で絞ります",
+  "pathsGuide": "パスは <セクション>/<セクション>:<カード>.<名前>… で、どの branch でも同じです。\n- カードの中: フィールドと行は名前で（Core:User.profile.avatar.url）、structdoc の項目（Docs:Spec.auth.login）、stackdoc のバージョン（Docs:Notes.v2）、コンテナの中のカード（Behavior:Checkout.review・Goals:Launch.Design）、enum の値（Schemas:Status.paid）、process のステップは場所で（Behavior:Checkout.save.steps[0]。線の from と同じ書き方）\n- 配列: Store:Order.lines[].sku（[] は省いてもよい。表の列・絞り・並べ替えのパスでは省けない）。データの配列の要素は条件 Data:Host1.ports[number=8200,protocol=tcp]（値に , ] = を含むなら \"\" で囲む。値そのものの配列は groups[=web]）か添字 Data:Host1.ports[0]\n- 囲み: 空白と / : . [ ] ' @ | { } # \" ` を含む名前は一重引用符で囲む（'release notes.md'。中の ' は ''）\n- value の中のパスはセクションを省ける（target のカードのセクションから読み、フルパスで保存）。カードゴーストを通したパス（Orders:User.id）は元のカードの中を読み、ゴーストのパスのまま残る\n- 本文と説明: [[パス]] で指す（mentions の線）、[[セクション:]] でセクションを指す（押すとセクションマップ）、[[パス|見せる字]] で見せる字を変える（改名ではパスだけ書き直す）、{{パス}} で値を差し込む（フィールドの const・enum のとりうる値（enum の名前か、それを持つフィールドを書く）・データの値）、![[パス]] で図を入れる（![[Data:Order1|total]] でフィールドを出す）。コードの書式（`…` と ``` のブロック）の中の [[ ]]・{{ }}・![[ ]] は抽出しない。どれも改名・移動に付いて行く\n- レスポンスはフルパスで返します。パスが解決するかは card_read の value {as: \"exists\"}",
+  "sddGuide": "# SDD（仕様を先に書き、実装してから main へ）\n\nmain は実装済みの形、branch は変更の計画です。仕様と設計は goal の branch に書き、実装が済んでから main へ merge します。\n\n## 流れ\n\n1. ボード（branch: _project_board_）に goal を作り、中に task（決めることの塊）を置く。card_action の op: start で branch ができ、goal の workBranch に入る（about: board）\n2. その branch に書く: 仕様は structdoc の項目に Given・When・Then、形は entity・value・enum、処理と状態の移り変わりは flow（wait と、eval の when で分ける。about: flow）\n3. 実装は branch を読んで進める。card_read の as: context に goal か task を渡すと、指している仕様の行・形・実装の関数の本文が 1 回で返る（workBranch の branch で解く）。仕様から実装へは線 implementedBy（ファイルか、その中のシンボルへ。まだ無いものも指せ、goal の branch ではインスペクションの情報に出る。about: connections）\n4. 実装で変わった所・implementedBy・テストへの線を branch に書き戻す。branch_read の as: diff で変えたものを、path を足すと前と後の中身を読む\n5. 実装が済んだら branch_merge で main へ入れ（ロック中は MR）、card_action の op: finish で goal を閉じる。まだ無いファイルへの線が残っていれば warnings に出る\n\nエクスポート（export_execute）は branch も名指せ、書く先は targetdir で呼ぶたびに渡せます（例: 実装する側のフォルダ）。\n\n## 置き方のサンプル\n\n- API・設定ファイル・メッセージの形式: 種類 definition のセクションに、形の entity と、その実例の instance（of に形のパス）を置く。並べた表は table、JSON にするのはエクスポートの形式 json-data（about: instance・table）\n- テスト: kind_create でテストの種類（例 testcase）と、仕様の項目からそこへ引く線の種類（例 testedBy）を作る（about: ownKinds）\n- CI など人のいない所から: プロジェクト設定の MCP で、使う項目を許可にしておけば request: true は要らない。ロック中の main へは、aiMerge が true なら MR なしで入る（どちらも人が画面で決める）\n\n## 読む順\n\npaths → branch → board → 書く種類（about: structdoc・entity・flow）→ connections。用語集（glossary）は画面の言葉が要るときだけ",
+  "bodyGuide": "本文は note・freedoc・goal・task の Markdown と、svg の SVG・html の HTML です（プロジェクトの種類の markdown・longtext のフィールド、structdoc の text の行の body、stackdoc のバージョンの body も同じ）。文字列で丸ごと置き換え、{edit, append, prepend} で全部を送らずに一部を直します:\n- edit: [{old, new}] を上から順に当てます。old は書いたとおりの文字で、本文のちょうど 1 か所に合わなければなりません（合わない・2 か所以上は何も書かずにエラー。all: true で合う所を全部）。直す所は先に card_read の value の find か lines で見ます\n- append・prepend は終わり・先頭に行を足します\n- 一部を直したレスポンスは、本文の代わりに lineCount・chars と changed（直した所ごとに、その行と前後の行）を返します\n- bodyFrom: {directory, path}（card_create・card_update。body の代わり。value の一番上と、rows の text の行・versions のバージョンの中でも）は、プロジェクトに登録した作業ディレクトリの中のファイルの中身（UTF-8 の文字）を本文に写します。写したあとはカードが正本で、ファイルとは結び付かず、中身はカードのデータになります。ファイルは書き終えてから呼びます。1 回の呼び出しで読むファイルは合わせて 8 MB まで。作業ディレクトリの外へ出るパス・無いファイル・UTF-8 でないもの・本文の上限を超えるもの・body と一緒はエラーになります。本文の無い所に書くと、ファイルを読む前にエラーになります。レスポンスに bodyFrom（[{at, directory, path, chars}]）",
+  "layoutGuide": "図の上の位置はマス（横はカードの幅の 1/10、縦はカードの 1 行。表計算のセルのように）で書きます。見かけなのでコミットにならず、ロック中の main にも書けます。\n- topLeft {x, y}（card_create・card_update）でカードをセクションに置きます（goal・flow の中のカードはそのコンテナのコンテンツマップに）。ほかのカードかその周りの余白に重なれば、近い空いたマスへ置いて warnings で通知します\n- UI のセクション（ui）は、書いた位置のまま置きます（箱のあいだの 1 マスの間も、重なりを飛ばすことも無く、部品を隙間なく並べ、重ねて置けます。画面で動かしたときも）\n- size {w} で幅だけ（高さは中身から）、{w, h} で両方を決めます。枠のあるカードはどれも持て（flow のノードとカードゴーストは除く）、送った形がそのままサイズです（null で既定に戻す）。広げてほかのカードに新しく重なれば、動かさずに warnings で通知します\n- places {<カードのパス>: {topLeft}} でまとめて置きます: goal の中のカードは card_update、セクションの図（ほかのセクションのカードとセクションゴーストも）は section_update。全部置いてから重なりを見て、重なったものだけを近い空いたマスへ動かし jumped で返します。読むのは section_read・card_read（goal）の include: [\"places\"]\n- section_update はいくつもまとめて、move で動かし、arrange で並べ（by: lines は線に沿って図全体かグループの中を、by: order は渡した箱を列に）、tidy: true で整えます（位置を保ち、重なりと伸びるカードの分だけ下へずらす）\n- groups {<名前>: {topLeft, size, label, headerPlace, color, fill}} で図の上に名前の付いた枠（グループ）を置きます（セクションの図は section_update、goal の中は card_update）。左上のマスが枠の中にある箱が中のもので、topLeft を変えると中のものも一緒に動きます。作るだけなら new: true（同じ名前のグループがあれば動かさずにエラーにする）。2 つのセッションが同じものを動かすなら move の groups と by（ずらす量）で。読むのは include: [\"groups\"]\n- プロジェクトのマスのサイズは project_update の layout:",
   "toolGuides": {
     "project_list": {
       "answer": "{projects: [{project, access, cardCount, sections?, updatedAt, archived?, description?}], truncated?, next?}: このキーから見えるプロジェクトを名前の順に 1 行ずつ",
@@ -106,7 +106,7 @@
       },
       "refusals": [
         "branch は渡せません: プロジェクトの設定は branch ごとには持たないので、branch を省きます",
-        "place は説明を書く場所の名前です（card.flow.description など）。知らない名前は、場所の一覧を添えて断ります"
+        "place は説明を書く場所の名前です（card.flow.description など）。知らない名前は、場所の一覧を添えてエラーになります"
       ]
     },
     "project_create": {
@@ -117,7 +117,7 @@
         }
       },
       "refusals": [
-        "同じ名前（または slug）のプロジェクトがあれば断ります: 別の名前にします",
+        "同じ名前（または slug）のプロジェクトがあればエラーになります: 別の名前にします",
         "作るには、アクセスキーの項目 project_create が許可（または都度承認で request: true）であること。変えられるのは人だけです"
       ]
     },
@@ -132,7 +132,7 @@
         }
       },
       "refusals": [
-        "根の直下の名前を変えるときは、renames に加えて project_tree の name も新しい名前にします。先に dryRun: true で確かめます",
+        "ルートの直下の名前を変えるときは、renames に加えて project_tree の name も新しい名前にします。先に dryRun: true で確かめます",
         "rules と slug は既定で都度承認です（main がロック中の project_tree の main_sections・renames も）: request: true を付けます",
         "branch は渡せません（設定は branch ごとには持ちません）"
       ]
@@ -141,7 +141,7 @@
       "answer": "{project, cards, sections, lines}: 種類ごとに 1 行（cards・sections は kind か section・label・purpose（最初の 1 文）・in（置ける所）・own: true（プロジェクト自前の種類）、lines は line・from・to）",
       "example": {},
       "refusals": [
-        "value は取りません（キーを書くと断ります）。1 つの定義を全部読むのは kind_read で、名前は target に"
+        "value は取りません（キーを書くとエラーになります）。1 つの定義を全部読むのは kind_read で、名前は target に"
       ]
     },
     "kind_read": {
@@ -181,13 +181,13 @@
         }
       },
       "refusals": [
-        "名前は 1 つの種類だけのものです（カード・セクション・線・組み込みで共通）: 使われている名前と、ghost・action・module・custom_goal は断ります",
+        "名前は 1 つの種類だけのものです（カード・セクション・線・組み込みで共通）: 使われている名前と、ghost・action・module・custom_goal はエラーになります",
         "value には of（card・section・line）が要ります。名前は target にだけ書きます",
-        "定義の誤りは全部まとめて返り、何も書きません。先に dryRun: true で確かめます"
+        "定義のエラーは全部まとめて返り、何も書きません。先に dryRun: true で確かめます"
       ]
     },
     "kind_update": {
-      "answer": "変えた種類の定義（kind_read と同じ形）。名前を変えたら renamed、連れて変わったものは alsoChanged。dryRun は {dryRun, ok, problems, renamed}",
+      "answer": "変えた種類の定義（kind_read と同じ形式）。名前を変えたら renamed、連れて変わったものは alsoChanged。dryRun は {dryRun, ok, problems, renamed}",
       "example": {
         "target": "risk",
         "value": {
@@ -201,8 +201,8 @@
       },
       "refusals": [
         "組み込みの種類で変えられるのは context（セクションの種類は icon、flow は vias）だけです",
-        "定義から欄や行の名前を変えても値は付いて行きません（strayFields に残る）: 値ごと移すのは renames",
-        "renames は、新しい名前で値を持つカードがあれば断ります"
+        "定義からフィールドや行の名前を変えても値は付いて行きません（strayFields に残る）: 値ごと移すのは renames",
+        "renames は、新しい名前で値を持つカードがあればエラーになります"
       ]
     },
     "kind_delete": {
@@ -211,11 +211,11 @@
         "target": "risk"
       },
       "refusals": [
-        "使われている種類（そのカード・線・セクション）は、使っている所を添えて断ります: 先に移すか消します"
+        "使われている種類（そのカード・線・セクション）は、使っている所を添えてエラーになります: 先に移すか消します"
       ]
     },
     "section_list": {
-      "answer": "{sections: [{section, cardCount, sections?, main?, type?, ghostCount?, description?, files?, missing?}], truncated?, next?}: 木の順。main: true が根",
+      "answer": "{sections: [{section, cardCount, sections?, main?, type?, ghostCount?, description?, files?, missing?}], truncated?, next?}: ツリーの順。main: true がルート",
       "example": {},
       "refusals": [
         "branch「X」はありません: main（省略も可）・branch_list の名前・_project_board_ のどれかを渡します"
@@ -232,7 +232,7 @@
         }
       },
       "refusals": [
-        "セクションは木の頭から Schemas/Ordering のように書きます（最後の名前だけでは書けません）。Rules はセクションではなく設定です"
+        "セクションはツリーの先頭から Schemas/Ordering のように書きます（最後の名前だけでは書けません）。Rules はセクションではなく設定です"
       ]
     },
     "section_create": {
@@ -244,7 +244,7 @@
         }
       },
       "refusals": [
-        "根の直下には作れません: 直下のセクションは project_update の project_tree で決まり、ほかはその中に作ります",
+        "ルートの直下には作れません: 直下のセクションは project_update の project_tree で決まり、ほかはその中に作ります",
         "type に書けるのは、親の種類の定義の sections にある種類だけです（組み込みでは、チャートとアクターのセクションの中に actor か chart）。figure（system・person・outside）はアクターだけ、icon は {name, color}",
         "main はロック中で merge でしか変わりません: branch に書いて branch_merge で入れます（MR になり、人が承認）"
       ]
@@ -259,7 +259,7 @@
         }
       },
       "refusals": [
-        "根の直下のセクションの並び・外すのは project_update の project_tree です（名前と説明はここで変えられます）",
+        "ルートの直下のセクションの並び・外すのは project_update の project_tree です（名前と説明はここで変えられます）",
         "自分の中や、同じ名前のある親へは動かせません。position は 0 から兄弟の数まで",
         "main はロック中で merge でしか変わりません: branch に書いて branch_merge で入れます（MR になり、人が承認）"
       ]
@@ -271,7 +271,7 @@
       },
       "refusals": [
         "空のセクションだけです: カード・カードゴースト・中のセクションを、card_update の section で移すか消してから",
-        "根の直下のセクションは消せません: project_tree から外すと、空なら消え、中身があれば _evacuation_ へ退避します"
+        "ルートの直下のセクションは消せません: project_tree から外すと、空なら消え、中身があれば _evacuation_ へ退避します"
       ]
     },
     "card_list": {
@@ -290,7 +290,7 @@
       ]
     },
     "card_read": {
-      "answer": "{path, form, rev, kind, label?, 種類のキー, connections?, refersTo?, referencedBy?, fromBoard?, codeReview?}（codeReview は覚えたあとでコードが変わったか、覚えていないか、先がコードに無い実装の線: [{line, from?, to, state: changed|unrecorded|broken, recordedAt?, why?}]）。欄は {…, name, type, …}、enum の値は {…, name, label?}、手は {…, do, …}。複数 target は {cards: [...]}。as: markdown は {path, rev, lineCount, markdown}、diagram は {rev, …, mermaid}、impact は {path, flows, notes?, files?}（関数と型は {path, implementedBy, callers}）、exists は {checked, unresolved, results}、picture は image と {project, branch, path, rev, picture, width, height, scale, area?, cards, documentsPending?, hint?}",
+      "answer": "{path, form, rev, kind, label?, 種類のキー, connections?, refersTo?, referencedBy?, fromBoard?, codeReview?}（codeReview は覚えたあとでコードが変わったか、覚えていないか、先がコードに無い実装の線: [{line, from?, to, state: changed|unrecorded|broken, recordedAt?, why?}]）。フィールドは {…, name, type, …}、enum の値は {…, name, label?}、ステップは {…, do, …}。複数 target は {cards: [...]}。as: markdown は {path, rev, lineCount, markdown}、diagram は {rev, …, mermaid}、impact は {path, flows, notes?, files?}（シンボルは {path, implementedBy, callers}）、exists は {checked, unresolved, results}、picture は image と {project, branch, path, rev, picture, width, height, scale, area?, cards, documentsPending?, hint?}",
       "example": {
         "target": "Schemas/Ordering:Order",
         "value": {
@@ -301,13 +301,13 @@
         }
       },
       "refusals": [
-        "パスは Schemas/Ordering:Order のようにセクションとカードを「:」でつなぎ、木は書きません。木は branch で渡します",
-        "as: markdown が読むのは文書（項目・版も）・付箋・表・flow。as: lineKinds の target は 1 か所だけ",
+        "パスは Schemas/Ordering:Order のようにセクションとカードを「:」でつなぎ、ツリーは書きません。ツリーは branch で渡します",
+        "as: markdown が読むのはドキュメント（項目・バージョンも）・付箋・表・flow。as: lineKinds の target は 1 か所だけ",
         "本文は 400 行で切れます（truncated）: 続きは lines {from, to}。find と lines は一緒に使えません"
       ]
     },
     "card_create": {
-      "answer": "{created: [{path, rev, kind, label?}], warnings?}: 作ったカードのフルパスと rev（card_update にそのまま渡せる）。warnings はまだ解決しないパスと、flow に足りないもの。target がフィールド・行・版・enum の値・手なら {path, rev, …}、データの並びの要素なら {path, rev}（warnings に書き途中の必須の欠け）、複数なら {results: [...]}",
+      "answer": "{created: [{path, rev, kind, label?}], warnings?}: 作ったカードのフルパスと rev（card_update にそのまま渡せる）。warnings はまだ解決しないパスと、flow に足りないもの。target がフィールド・行・バージョン・enum の値・ステップなら {path, rev, …}、データの配列の要素なら {path, rev}（warnings に書き途中の必須の欠け）、複数なら {results: [...]}",
       "example": {
         "target": "Schemas:Invoice",
         "value": {
@@ -340,15 +340,15 @@
         }
       },
       "refusals": [
-        "target にはセクションを付けます（Schemas:Invoice）。そのセクションがその種類を置けること（kind_list の in）。根の直下には置けません",
+        "target にはセクションを付けます（Schemas:Invoice）。そのセクションがその種類を置けること（kind_list の in）。ルートの直下には置けません",
         "フィールドには type が要り、入れ子の親（type: object）は同じ fields に入れます。instance と table には of（形のパス）が要ります",
-        "flow のノードや goal の中のカードは、入れ物のパスに名前を続けた target で作ります（Charts/Shop:Checkout.pay）。value の in・nodes・items は使えません",
-        "データの値で作れるのは並びの要素だけ: 主キーのある並びは鍵の条件（もうある鍵は断り、直すのは card_update）、鍵の無い並びは添字、値の並びは [=値]。鍵の欠け・重なりはどの書き込みでも断ります",
+        "flow のノードや goal の中のカードは、コンテナのパスに名前を続けた target で作ります（Charts/Shop:Checkout.pay）。value の in・nodes・items は使えません",
+        "データの値で作れるのは配列の要素だけ: 主キーのある配列はキーの条件（もうあるキーはエラーにし、直すのは card_update）、キーの無い配列は添字、値の配列は [=値]。キーの欠け・重複はどの書き込みでもエラーにします",
         "main はロック中で merge でしか変わりません: branch に書いて branch_merge で入れます（MR になり、人が承認）"
       ]
     },
     "card_update": {
-      "answer": "{path, rev, kind, label?, warnings?, placed?, jumped?}: 変えたあとのカードと新しい rev（フィールド・行・版・enum の値・手なら、そのパスと持ち主のカードの rev。enum の値の改名は書き換えたデータのパスを dataRewritten に）。本文を一部だけ変えると lineCount・chars・changed（変えた行と前後）が付く。表の cells を一部だけ変えると、cells の代わりに rowCount と changed（row は 0 からの番号・rows・前後の行 before・after、外しただけなら removed）が付く。複数 target は {results: [{target, result}]}",
+      "answer": "{path, rev, kind, label?, warnings?, placed?, jumped?}: 変えたあとのカードと新しい rev（フィールド・行・バージョン・enum の値・ステップなら、そのパスと親のカードの rev。enum の値の改名は書き換えたデータのパスを dataRewritten に）。本文を一部だけ変えると lineCount・chars・changed（変えた行と前後）が付く。表の cells を一部だけ変えると、cells の代わりに rowCount と changed（row は 0 からの番号・rows・前後の行 before・after、外しただけなら removed）が付く。複数 target は {results: [{target, result}]}",
       "example": {
         "target": "Schemas:Customer.name",
         "value": {
@@ -357,40 +357,40 @@
         }
       },
       "refusals": [
-        "rev は読んだあとに変わっていれば断ります: card_read で読み直し、新しい rev を渡します（同じ呼び出しで作ったカードには rev を付けません）",
+        "rev は読んだあとに変わっていればエラーになります: card_read で読み直し、新しい rev を渡します（同じ呼び出しで作ったカードには rev を付けません）",
         "本文の edit の old は 1 か所だけに合うこと（0 か 2 か所以上なら何も書かない）: card_read の find か lines で正確に写し、前後を足すか all: true",
-        "入れ物（flow・goal）の中のカードを別の入れ物へ移すのは in です（null で外へ）。section は使えず、flow のノードは flow の外へ出せません",
-        "main がロック中でも、位置・タグ・大きさなどの見た目は書けます。ほかは branch に書いて branch_merge"
+        "コンテナ（flow・goal）の中のカードを別のコンテナへ移すのは in です（null で外へ）。section は使えず、flow のノードは flow の外へ出せません",
+        "main がロック中でも、位置・タグ・サイズなどの見た目は書けます。ほかは branch に書いて branch_merge"
       ]
     },
     "card_delete": {
-      "answer": "{deleted, deletedInside?, danglingRefs, warnings?}: 消したもののフルパスと、指す先を失った線・本文のパス・ゴーストの数（warnings に 1 つずつ）。手とデータの並びの要素は一緒に消した線（要素とその中から出る線）を linesRemoved に、enum の値はまだその値を持つデータを warnings に。複数 target は {results: [{target, result}]}",
+      "answer": "{deleted, deletedInside?, danglingRefs, warnings?}: 消したもののフルパスと、指す先を失った線・本文のパス・ゴーストの数（warnings に 1 つずつ）。ステップとデータの配列の要素は一緒に消した線（要素とその中から出る線）を linesRemoved に、enum の値はまだその値を持つデータを warnings に。複数 target は {results: [{target, result}]}",
       "example": {
         "target": "Free:Memo"
       },
       "refusals": [
-        "value に書けるのは rev だけです（ほかのキーは断ります）",
-        "rev が今と違えば何も消さずに断ります: 読み直して、新しい rev で呼び直します",
+        "value に書けるのは rev だけです（ほかのキーはエラーになります）",
+        "rev が今と違えば何も消さずにエラーになります: 読み直して、新しい rev で呼び直します",
         "main はロック中で merge でしか変わりません: branch に書いて branch_merge で入れます（MR になり、人が承認）"
       ]
     },
     "card_action": {
-      "answer": "{warnings?, path, op, rev, changes, branchCreated?, branchDeleted?, movedTo?, recorded?, notRead?, broken?}: カードの今のパスと rev、書いたことの行（changes）、作った・消した branch、移した先のセクション、reviewed で覚え直した実装の線（recorded: [{from?, to}]）と、覚え直さなかった線: この機械で読めない線（notRead: [{from?, to, why}]）と先がコードに無い線（broken: [{from?, to, why}]）。warnings は finish で済んでいない中の task",
+      "answer": "{warnings?, path, op, rev, changes, branchCreated?, branchDeleted?, movedTo?, recorded?, notRead?, broken?}: カードの今のパスと rev、書いたことの行（changes）、作った・消した branch、移した先のセクション、reviewed で覚え直した実装の線（recorded: [{from?, to}]）と、覚え直さなかった線: このマシンで読めない線（notRead: [{from?, to, why}]）と先がコードに無い線（broken: [{from?, to, why}]）。warnings は finish で済んでいない中の task",
       "example": {
         "branch": "_project_board_",
         "target": "Goals:UserSignup",
         "op": "start"
       },
       "refusals": [
-        "その種類に無い op・今使えない op は、その種類の op と今使えるものを挙げて断ります（今使えるかは card_read の include: [\"actions\"]）",
-        "finish は workBranch の branch に main へ入っていない変更か出ている MR があれば断ります: use の branch_merge で入れてから",
-        "cancel は branch に変更が残れば断ります: 捨てるなら value に discard: true（MR が出ていれば mr_delete で取り下げてから）",
-        "start は branch の名前が使えないかもうあれば断ります: value の branch で別の名前に",
+        "その種類に無い op・今使えない op は、その種類の op と今使えるものを挙げてエラーになります（今使えるかは card_read の include: [\"actions\"]）",
+        "finish は workBranch の branch に main へ入っていない変更か出ている MR があればエラーになります: use の branch_merge で入れてから",
+        "cancel は branch に変更が残ればエラーになります: 捨てるなら value に discard: true（MR が出ていれば mr_delete で取り下げてから）",
+        "start は branch の名前が使えないかもうあればエラーになります: value の branch で別の名前に",
         "main や branch で見つからないボードの goal・task は、branch: _project_board_ を添えた呼び出しを use に出します"
       ]
     },
     "export_create": {
-      "answer": "{created}: 作った書き出しの名前。書くのは export_execute",
+      "answer": "{created}: 作ったエクスポートの名前。書くのは export_execute",
       "example": {
         "target": "types",
         "value": {
@@ -408,8 +408,8 @@
       },
       "refusals": [
         "entries の 1 行には from（main のカードかセクションのパス）と to（ファイル、/ で終わればフォルダ）が要ります",
-        "dir は書けません: 書き出す先は export_execute の targetdir で渡し、この機械の既定の先は path に",
-        "書き出しを作る・変える・消すのは既定で都度承認です: request: true を付けます（path は別の項目でも聞かれます）"
+        "dir は書けません: エクスポート先は export_execute の targetdir で渡し、このマシンの既定の先は path に",
+        "エクスポートを作る・変える・消すのは既定で都度承認です: request: true を付けます（path は別の項目でも聞かれます）"
       ]
     },
     "export_read": {
@@ -420,11 +420,11 @@
       },
       "refusals": [
         "targetdir は必須です（[default] か別のフォルダのパス）。書きはしません。[default] は branch と一緒には使えません",
-        "value の files は、書き出し 1 つの target と、その書き出しが書くファイルの相対パス（置き場から）で渡します"
+        "value の files は、エクスポート 1 つの target と、そのエクスポートが書くファイルの相対パス（エクスポート先から）で渡します"
       ]
     },
     "export_update": {
-      "answer": "変えた書き出しの設定: {name, entries, exclude?, path}（export_read の 1 つ分と同じ形）",
+      "answer": "変えたエクスポートの設定: {name, entries, exclude?, path}（export_read の 1 つ分と同じ形式）",
       "example": {
         "target": "ts",
         "value": {
@@ -440,17 +440,17 @@
       },
       "refusals": [
         "entries と exclude は一覧ではなく {add: [...], remove: [...]} で渡します（entries の remove は {from, to}、to を省くとその from の行すべて。行を変えるのは entries の change: [{from, to, set}]）",
-        "書き出しの変更は既定で都度承認です: request: true を付けます（path を変える・外す（null）のも）"
+        "エクスポートの変更は既定で都度承認です: request: true を付けます（path を変える・外す（null）のも）"
       ]
     },
     "export_delete": {
-      "answer": "{deleted: [name]}: 消した書き出しの名前（書いたファイルは消えない）",
+      "answer": "{deleted: [name]}: 消したエクスポートの名前（書いたファイルは消えない）",
       "example": {
         "target": "schema"
       },
       "refusals": [
-        "その書き出しはありません（ある名前が添えられます）",
-        "書き出しを消すのは既定で都度承認です: request: true を付けます"
+        "そのエクスポートはありません（ある名前が添えられます）",
+        "エクスポートを消すのは既定で都度承認です: request: true を付けます"
       ]
     },
     "export_execute": {
@@ -463,8 +463,8 @@
         "targetdir": "/work/app"
       },
       "refusals": [
-        "書けない理由が 1 つでもあれば何も書きません（置き場が無い・フォルダが無いなど）: 理由は export_read の problems。フォルダは作りません",
-        "書くのは既定で都度承認です（[default] も、パスを渡すのも）: request: true を付けます。[default] は各書き出しの既定の先で、branch とは使えません"
+        "書けない理由が 1 つでもあれば何も書きません（エクスポート先が無い・フォルダが無いなど）: 理由は export_read の problems。フォルダは作りません",
+        "書くのは既定で都度承認です（[default] も、パスを渡すのも）: request: true を付けます。[default] は各エクスポートの既定の先で、branch とは使えません"
       ]
     },
     "tag_list": {
@@ -486,8 +486,8 @@
       },
       "refusals": [
         "タグ名・グループ名にカンマは使えません。グループ名とタグ名は同じ名前空間なので、タグと同じ名前のグループは作れません",
-        "タググループはプロジェクトのもので、branch を付けると断ります（カードのタグの付け外しは branch でもできます）",
-        "add・remove のパスは今ある全部のカードのパスでなければなりません。1 つでも無ければ断ります（探すのは card_list の query）"
+        "タググループはプロジェクトのもので、branch を付けるとエラーになります（カードのタグの付け外しは branch でもできます）",
+        "add・remove のパスは今ある全部のカードのパスでなければなりません。1 つでも無ければエラーになります（探すのは card_list の query）"
       ]
     },
     "branch_list": {
@@ -517,7 +517,7 @@
       },
       "refusals": [
         "名前は main・両端が _ の名前・~ で始まる名前にはできず、@ : . / も含められません（40 字まで、重複不可）。branch は main からだけ作ります",
-        "value の copy はありません: branch は main の全部を見ているので、写しは要りません"
+        "value の copy はありません: branch は main の全部を見ているので、コピーは要りません"
       ]
     },
     "branch_update": {
@@ -542,9 +542,9 @@
         }
       },
       "refusals": [
-        "両側が違うふうに変えた所は衝突で、何も書かずに {パス: {単位}} の一覧を返して断ります: take に source か target を選んで呼び直します（先に branch_read の against で見られます）",
-        "同じパスに別のものがあるとき（名前の重なり）も断ります: どちらかの名前を変えるか消してから",
-        "main がロック中なら merge は MR になります: 答えの said のとおり、人に画面で承認してもらいます。古くなったら出し直します"
+        "両側が違うふうに変えた所は衝突で、何も書かずに {パス: {単位}} の一覧を返してエラーになります: take に source か target を選んで呼び直します（先に branch_read の against で見られます）",
+        "同じパスに別のものがあるとき（名前の重複）もエラーになります: どちらかの名前を変えるか消してから",
+        "main がロック中なら merge は MR になります: レスポンスの said のとおり、人に画面で承認してもらいます。古くなったら出し直します"
       ]
     },
     "branch_revert": {
@@ -557,9 +557,9 @@
         }
       },
       "refusals": [
-        "to は branch_read の as: history の seq です。範囲に別の書き手（画面・別のアクセスキー）のコミットがあれば、並べて断ります。ほかの書き手のコミットは undo で 1 つずつ（項目 branch_revert.others。既定は都度承認で request: true）",
+        "to は branch_read の as: history の seq です。範囲に別の書き手（画面・別のアクセスキー）のコミットがあれば、並べてエラーになります。ほかの書き手のコミットは undo で 1 つずつ（項目 branch_revert.others。既定は都度承認で request: true）",
         "main は書き換えません: made の branch ができるので、branch_merge で main へ入れます",
-        "undo は、あとのコミットも同じ所を変えていれば、何も書かずに conflicts（path・unit・before・after・now）と later を返して断ります（一部だけは取り消さない）"
+        "undo は、あとのコミットも同じ所を変えていれば、何も書かずに conflicts（path・unit・before・after・now）と later を返してエラーになります（一部だけは取り消さない）"
       ]
     },
     "branch_delete": {
@@ -568,8 +568,8 @@
         "target": "discount"
       },
       "refusals": [
-        "変えたカードやセクションが残っていれば、その数を返して断ります: 捨てて消すなら value に discard: true",
-        "ボードの goal の workBranch がその branch を指していれば、warnings で知らせます（選び直すか空にします）"
+        "変えたカードやセクションが残っていれば、その数を返してエラーになります: 捨てて消すなら value に discard: true",
+        "ボードの goal の workBranch がその branch を指していれば、warnings で通知します（選び直すか空にします）"
       ]
     },
     "mr_list": {
@@ -604,18 +604,18 @@
       ]
     },
     "app_control": {
-      "answer": "画面の答えがそのまま返る。state は {project, branch, section, card, field, zoom, …}、windows は開いている窓の一覧、select・view は変えたあとの状態、capture は PNG 画像",
+      "answer": "画面からのレスポンスがそのまま返る。state は {project, branch, section, card, field, zoom, …}、windows は開いているウィンドウの一覧、select・view は変えたあとの状態、capture は PNG 画像",
       "example": {
         "op": "select",
         "target": "Schemas/Ordering:Order"
       },
       "refusals": [
-        "capture は都度承認です: request: true を付けます。画面のアプリが開いていないと、許可を求める窓が無いので断ります",
-        "select と view は、そのプロジェクトを開いている窓だけに効きます（窓の一覧は op: windows、選ぶのは window）"
+        "capture は都度承認です: request: true を付けます。画面のアプリが開いていないと、許可を求めるダイアログが無いので拒否します",
+        "select と view は、そのプロジェクトを開いているウィンドウだけに効きます（ウィンドウの一覧は op: windows、選ぶのは window）"
       ]
     },
     "batch": {
-      "answer": "試す: {said, steps: [{step, tool, changes, warnings?, bodyFrom?}], warnings?}（何も書かず、残らない）。open: true で開く・足す: さらに {batch, staged}。execute: true は {executed, revs, warnings?}（revs はパス → 新しい rev）。discard は {discarded, steps}。stepsFrom で渡したときは、どの答えにも stepsFrom: {directory, path, steps}",
+      "answer": "試す: {said, steps: [{step, tool, changes, warnings?, bodyFrom?}], warnings?}（何も書かず、残らない）。open: true で開く・足す: さらに {batch, staged}。execute: true は {executed, revs, warnings?}（revs はパス → 新しい rev）。discard は {discarded, steps}。stepsFrom で渡したときは、どのレスポンスにも stepsFrom: {directory, path, steps}",
       "example": {
         "execute": true,
         "value": {
@@ -649,10 +649,10 @@
         }
       },
       "refusals": [
-        "1 手でも通らなければ、その手（steps[2]（card_update））と理由を返し、何も積まず何も書きません: 直して送り直します",
-        "手の arguments に project と branch は書きません: branch は batch を開くときに 1 回、batch の引数で渡します。積めるのは project_update・section_*・card_*・tag_update・branch_create/update/delete。手は前の手が通った木に当たるので、後の手で作るカードは前の手で指せない（作る手を先に、線はあとに。断るときは、作るあとの手を言います）",
-        "execute なしは試すだけ（何も書かず、木も押さえない）。手を足していくなら value に open: true でバッチを開き、その id を target にして足す。積んだ手を走らせるのは target に batch の id・execute: true・value なし、その場の手を走らせるのは target なし",
-        "steps が大きいときは stepsFrom: {directory, path}（作業ディレクトリの JSON ファイル。一番上が手の配列）。読むのは受けたときの 1 回で、積んだバッチは読んだ中身を持ちます（手の中の bodyFrom も同じ）"
+        "1 ステップでも通らなければ、そのステップ（steps[2]（card_update））と理由を返し、何も積まず何も書きません: 直して送り直します",
+        "ステップの arguments に project と branch は書きません: branch は batch を開くときに 1 回、batch の引数で渡します。積めるのは project_update・section_*・card_*・tag_update・branch_create/update/delete。ステップは前のステップが通ったツリーに適用されるので、後のステップで作るカードは前のステップで指せない（作るステップを先に、線はあとに。エラーのときは、作るあとのステップを言います）",
+        "execute なしは試すだけ（何も書かず、ツリーもロックしない）。ステップを足していくなら value に open: true でバッチを開き、その id を target にして足す。積んだステップを実行するのは target に batch の id・execute: true・value なし、その場のステップを実行するのは target なし",
+        "steps が大きいときは stepsFrom: {directory, path}（作業ディレクトリの JSON ファイル。一番上がステップの配列）。読むのは受けたときの 1 回で、積んだバッチは読んだ中身を持ちます（ステップの中の bodyFrom も同じ）"
       ]
     },
     "guide": {
@@ -665,7 +665,7 @@
       ]
     },
     "inspection_list": {
-      "answer": "{counts: {fix, info, accepted}, groups: {<group>: {kind, label, count, accepted?}}, items: [{id, group, kind?, at, problem, hint?}], truncated?, next?}: 数は木ぜんぶ、items は show で絞った分",
+      "answer": "{counts: {fix, info, accepted}, groups: {<group>: {kind, label, count, accepted?}}, items: [{id, group, kind?, at, problem, hint?}], truncated?, next?}: 数はツリー全体、items は show で絞った分",
       "example": {
         "value": {
           "show": "fix",
@@ -673,23 +673,23 @@
         }
       },
       "refusals": [
-        "group は答えの groups にある名前だけです（無い名前は、ある名前を並べて断ります）。in はセクションかカードのパス",
-        "show が既定の fix だと、設計どおりの印を付けた件と info は出ません: accepted か all で読みます（group に info の組を名指せば show なしで出る）"
+        "group はレスポンスの groups にある名前だけです（無い名前は、ある名前を並べてエラーになります）。in はセクションかカードのパス",
+        "show が既定の fix だと、設計どおりのマークを付けた件と info は出ません: accepted か all で読みます（group に info のグループを指定すれば show なしで出る）"
       ]
     },
     "inspection_read": {
-      "answer": "{items: [{id, group, kind, label, at, problem, fix, 組ごとの中身, accepted?, acceptedBefore?}], notFound?, hint?}",
+      "answer": "{items: [{id, group, kind, label, at, problem, fix, グループごとの中身, accepted?, acceptedBefore?}], notFound?, hint?}",
       "example": {
         "target": [
           "brokenPaths-3f9a1c07d2"
         ]
       },
       "refusals": [
-        "target は inspection_list の id です。見つからない id（直った・別の木の件）は notFound に入り、1 つも見つからなければ断ります: 同じ branch で読み直します"
+        "target は inspection_list の id です。見つからない id（直った・別のツリーの件）は notFound に入り、1 つも見つからなければエラーになります: 同じ branch で読み直します"
       ]
     },
     "inspection_update": {
-      "answer": "{updated: [{id, accepted: {reason, by, at} | null}]}（null は印を外した）",
+      "answer": "{updated: [{id, accepted: {reason, by, at} | null}]}（null はマークを外した）",
       "example": {
         "target": [
           "brokenPaths-3f9a1c07d2"
@@ -699,31 +699,31 @@
         }
       },
       "refusals": [
-        "accept は理由の文です。true と空の文は断ります。印を外すのは accept: false（印の無い id への false も断ります）",
-        "1 つでも断られれば何も書きません"
+        "accept は理由の文です。true と空の文はエラーになります。マークを外すのは accept: false（マークの無い id への false もエラーになります）",
+        "1 つでもエラーになれば何も書きません"
       ]
     },
     "section_action": {
-      "answer": "{warnings?, project, branch, section, folder, readType, exclude, parsers, languages, problems?, files, problem, actions}: 読み直したあとの作業ディレクトリのセクション（section_read と同じ設定の形）",
+      "answer": "{warnings?, project, branch, section, folder, readType, exclude, parsers, languages, problems?, files, problem, actions}: 再読み込みしたあとの作業ディレクトリのセクション（section_read と同じ設定の形式）",
       "example": {
         "target": "repo",
         "op": "read"
       },
       "refusals": [
-        "作業ディレクトリのセクションでないものと種類に無い op は、その種類のアクションを並べて断ります",
+        "作業ディレクトリのセクションでないものと種類に無い op は、その種類のアクションを並べてエラーになります",
         "フォルダが結び付いていないか読み方が none なら読めません: section_update の folder か readType で直します"
       ]
     }
   },
   "kindKeyTexts": {
     "entity": {
-      "face": "object. データの一覧の顔（図の上の見かけ）。list・header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く。名前は自分の一番上の欄で、改名に付いて行く。丸ごと置き換え、null で外す"
+      "face": "object. データの一覧の顔（図の上の見かけ）。list・header はデータのカードの形に、text・note・mark・fold は配列の要素の形に書く。名前は自分の一番上のフィールドで、改名に付いて行く。丸ごと置き換え、null で外す"
     },
     "value": {
-      "face": "object. データの一覧の顔（図の上の見かけ）。list・header はデータのカードの形に、text・note・mark・fold は並びの要素の形に書く。名前は自分の一番上の欄で、改名に付いて行く。丸ごと置き換え、null で外す"
+      "face": "object. データの一覧の顔（図の上の見かけ）。list・header はデータのカードの形に、text・note・mark・fold は配列の要素の形に書く。名前は自分の一番上のフィールドで、改名に付いて行く。丸ごと置き換え、null で外す"
     },
     "frame": {
-      "target": "はめ込みの指す先: 箱に入れるモックの UI のセクションのパス（例: UI/Header）。自分のいるセクションと、自分のいるセクションをはめ込み返しているセクション（輪になる）は指せない"
+      "target": "フレームの指す先: 箱に入れるモックの UI のセクションのパス（例: UI/Header）。自分のいるセクションと、自分のいるセクションをはめ込み返しているセクション（循環する）は指せない"
     }
   },
   "kindExamples": {
@@ -925,10 +925,10 @@
         "body": "# Guide\n\nOrders are described in [[Schemas/Ordering:Order]]."
       }
     },
-    "formatdoc": {
+    "structdoc": {
       "target": "Docs:Glossary",
       "value": {
-        "kind": "formatdoc",
+        "kind": "structdoc",
         "label": "Glossary",
         "rows": [
           {

@@ -898,7 +898,7 @@ mod tests {
                 json!({ "as": "diagram", "direction": "up" }),
                 At::Section("Schemas")
             ),
-            "value の direction は out / in / both のいずれかです（渡されたのは up）（value の形は guide の about: section_read）"
+            "value の direction は out / in / both のいずれかです（渡されたのは up）（value の形式は guide の about: section_read）"
         );
         assert_eq!(
             refused(json!({ "as": "diagram", "kinds": ["nope"] }), At::Project),

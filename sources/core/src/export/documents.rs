@@ -1,5 +1,5 @@
 //! Notes and documents as Markdown files (`DocumentExport`, `NoteEmbed`, `FormatRender`
-//! in the Swift app): a body as it is; a formatdoc its title, each item a heading as
+//! in the Swift app): a body as it is; a structdoc its title, each item a heading as
 //! deep as it is with its path under it as a comment, and each row what it says — a card's
 //! table under the way to the card. A `![[…]]` becomes a mermaid block, a
 //! `{{…}}` its value, a `[[…]]` the text it shows or the card's label or name (a section's
@@ -64,7 +64,7 @@ pub(crate) enum RowNames {
     Anchored,
 }
 
-/// The anchor of a formatdoc's row in a file it is written to: `row-` and the names of the way down
+/// The anchor of a structdoc's row in a file it is written to: `row-` and the names of the way down
 /// to it joined by `.`, each letter or digit of ASCII, `_` and `-` as it is, any other character as
 /// `_<hex>_`. Made of the path, not the heading, so rewording a heading leaves the links to it whole.
 pub fn row_anchor(names: &[String]) -> String {
@@ -573,13 +573,13 @@ fn place(
     };
     match target.and_then(|t| paths.get(&t.id).map(|there| (t, there))) {
         Some((t, there)) => {
-            // A formatdoc's row: to its item's anchor in that file (`row_anchor`), the nearest item
+            // A structdoc's row: to its item's anchor in that file (`row_anchor`), the nearest item
             // holding a row that is not one; a spec's scenario: to its own.
             let item = field
                 .and_then(|f| {
                     let names = crate::pathtext::names(&f);
                     match t.kind.as_str() {
-                        "formatdoc" => Some(crate::export::paths::format_item(&names, &t.rows)),
+                        "structdoc" => Some(crate::export::paths::format_item(&names, &t.rows)),
                         "spec" => names
                             .first()
                             .filter(|n| t.scenarios().iter().any(|s| &s.name == *n))
@@ -687,7 +687,7 @@ pub fn version_file(
 }
 
 /// A note's or a document's Markdown, each text of it as `r` gives it. A stackdoc: its title,
-/// what it is, then every version in its order (`specboard://SpecBoard/Docs/Design:CardKinds`「積み重ね文書」).
+/// what it is, then every version in its order (`specboard://SpecBoard/Docs/Design:CardKinds`「スタックドキュメント」).
 fn composed(
     note: &Card,
     project: &Project,
@@ -711,7 +711,7 @@ fn composed(
     if note.kind == "spec" {
         return spec_markdown(note, title, r, named);
     }
-    if note.kind != "formatdoc" {
+    if note.kind != "structdoc" {
         return r(&note.body);
     }
     let body = rows_markdown(&note.rows, named, &mut |row| {
@@ -722,7 +722,7 @@ fn composed(
 
 /// A spec as Markdown, as the spec documents read (`specboard://SpecBoard/Docs/Design:CardKinds`「仕様（spec）」):
 /// `# Feature:` and its title, its story under a heading in the language written out, what it says
-/// after it, then each scenario as a heading of its own marked by its name (as a formatdoc's item)
+/// after it, then each scenario as a heading of its own marked by its name (as a structdoc's item)
 /// with its steps as a list, the keywords as Gherkin has them.
 fn spec_markdown(note: &Card, title: &str, r: &dyn Fn(&str) -> String, named: RowNames) -> String {
     let mut parts = vec![format!("# Feature: {title}")];
@@ -789,7 +789,7 @@ fn spec_markdown(note: &Card, title: &str, r: &dyn Fn(&str) -> String, named: Ro
     parts.join("\n\n")
 }
 
-/// One item of a formatdoc (or one row) as Markdown with its texts as written (`card_read`'s
+/// One item of a structdoc (or one row) as Markdown with its texts as written (`card_read`'s
 /// `as: markdown` of an item's path): its part of the document's Markdown, character for
 /// character — its heading and every row inside it. None when no row is at `names`.
 pub fn row_as_written(note: &Card, names: &[String], project: &Project) -> Option<String> {
@@ -800,7 +800,7 @@ pub fn row_as_written(note: &Card, names: &[String], project: &Project) -> Optio
     })
 }
 
-/// What a formatdoc's row other than an item says as Markdown, each text of it as `r` gives it.
+/// What a structdoc's row other than an item says as Markdown, each text of it as `r` gives it.
 fn row_text(
     row: &FormatRow,
     note: &Card,

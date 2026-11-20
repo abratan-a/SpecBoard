@@ -1,6 +1,6 @@
 //! The words a card writes inside itself, place by place: what `card_list`'s `query` and
 //! `card_read`'s `find` look through besides a card's own name, word and body. Each place
-//! is named by the path of what it is in (the card, a formatdoc's row, a stackdoc's version)
+//! is named by the path of what it is in (the card, a structdoc's row, a stackdoc's version)
 //! and where in it (`heading`, `body`, `cells[2][1]`, `steps[0].description`), the two a
 //! `card_update` that changes it is written with.
 
@@ -21,14 +21,14 @@ pub(crate) struct Place {
 }
 
 /// The places a card writes words in besides its head (its name, label, description, body and
-/// lines): a formatdoc's rows (an item's heading, a text's body, a table's headings and cells),
+/// lines): a structdoc's rows (an item's heading, a text's body, a table's headings and cells),
 /// a stackdoc's versions (key, heading, body), and the text a card read by its kind's
 /// definition writes in its fields and rows (a node's steps, a field of the project's own
 /// kind). In the order they read, the places of one path together.
 pub(crate) fn inside(project: &Project, card: &Card) -> Vec<Place> {
     let own = project.full(card);
     let mut out = Vec::new();
-    if card.kind == "formatdoc" {
+    if card.kind == "structdoc" {
         super::facts::walk_format(&card.rows, &mut |row, names, _| {
             let path = format!(
                 "{own}.{}",

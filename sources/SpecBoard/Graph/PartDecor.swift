@@ -1,6 +1,6 @@
 import AppKit
 
-/// What the map lays over a ui part's face (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとはめ込み」):
+/// What the map lays over a ui part's face (`specboard://SpecBoard/Docs/Design:CardKinds`「UI のセクションとフレーム」):
 /// its header shrunk to a one-line tag at the corner `headerPlace` names, its note as the mock's sticky note
 /// at the corner `notePlace` names, and its review dot at the top right. The face is the page the part
 /// makes and nothing more, so what tells the parts apart on the map is drawn here, over it, and switched

@@ -411,7 +411,7 @@ fn a_write_to_a_project_the_key_only_reads_is_refused_as_read_only() {
     );
     assert_eq!(
         on_public,
-        "プロジェクト「公開の」は、このアクセスキーでは読むだけです（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）"
+        "プロジェクト「公開の」は、このアクセスキーでは読み取り専用です（書けるようにするのは、プロジェクト一覧の場所の設定の「アクセスキー」で）"
     );
     op(
         &w.core,
@@ -434,7 +434,7 @@ fn a_write_to_a_project_the_key_only_reads_is_refused_as_read_only() {
     ] {
         let said = refused(&w.core, &w.key.1, name, arguments);
         assert!(
-            said.contains("プロジェクト「よその」は、このアクセスキーでは読むだけです"),
+            said.contains("プロジェクト「よその」は、このアクセスキーでは読み取り専用です"),
             "{name}: {said}"
         );
     }
@@ -544,7 +544,7 @@ fn a_batch_is_made_only_by_a_key_that_writes_its_project_and_is_missing_to_one_t
 {
     let w = world();
     let said = refused(&w.core, &w.key.1, "batch", json!({"project": "公開の"}));
-    assert!(said.contains("読むだけ"), "{said}");
+    assert!(said.contains("読み取り専用"), "{said}");
     let opened = ok(
         &w.core,
         &w.key.1,
@@ -561,7 +561,7 @@ fn a_batch_is_made_only_by_a_key_that_writes_its_project_and_is_missing_to_one_t
     assert_eq!(
         unseen,
         format!(
-            "バッチ「{token}」はありません — 流した・捨てたか、7 日触られず片付けられました。batch で開き直してください"
+            "バッチ「{token}」はありません — 実行した・捨てたか、7 日触られず片付けられました。batch で開き直してください"
         )
     );
     // Given the project to read, it may neither try the batch (that holds the tree) nor run it.
@@ -576,7 +576,7 @@ fn a_batch_is_made_only_by_a_key_that_writes_its_project_and_is_missing_to_one_t
     ] {
         let said = refused(&w.core, stranger, "batch", arguments);
         assert!(
-            said.contains("プロジェクト「自分の」は、このアクセスキーでは読むだけです"),
+            said.contains("プロジェクト「自分の」は、このアクセスキーでは読み取り専用です"),
             "{said}"
         );
     }
@@ -598,11 +598,11 @@ fn key_unrequested(item: &str, tool: &str) -> String {
 }
 
 const CONTROL: &str = "app_control（画面を選ぶ・見え方を変える）";
-const CAPTURE: &str = "app_control.capture（画面を撮る）";
+const CAPTURE: &str = "app_control.capture（画面をキャプチャする）";
 
 /// What the core says once a call passes and nothing answers for the window.
 const NO_APP: &str =
-    "app_control に答えるアプリがありません（画面を読む・動かすのは、開いているアプリです）";
+    "app_control に応答するアプリがありません（画面を読む・動かすのは、開いているアプリです）";
 
 fn permit(w: &World, permits: Value) -> Value {
     let permitted = op(
